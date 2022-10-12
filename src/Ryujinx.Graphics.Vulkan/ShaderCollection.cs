@@ -60,7 +60,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         private ProgramPipelineState _state;
         private DisposableRenderPass _dummyRenderPass;
-        private readonly Task _compileTask;
+        private ShaderCompilationRequest _compileRequest;
         private bool _firstBackgroundUse;
 
         public ShaderCollection(
@@ -139,7 +139,7 @@ namespace Ryujinx.Graphics.Vulkan
             // Updating buffer texture bindings using template updates crashes the Adreno driver on Windows.
             UpdateTexturesWithoutTemplate = gd.IsQualcommProprietary && usesBufferTextures;
 
-            _compileTask = Task.CompletedTask;
+            _compileRequest = new ShaderCompilationRequest(Task.CompletedTask);
             _firstBackgroundUse = false;
         }
 
@@ -153,7 +153,9 @@ namespace Ryujinx.Graphics.Vulkan
         {
             _state = state;
 
-            _compileTask = BackgroundCompilation();
+            _compileRequest = gd.ShaderCompilationQueue != null
+                ? gd.ShaderCompilationQueue.Add(BackgroundCompilation)
+                : new ShaderCompilationRequest(BackgroundCompilationAsync());
             _firstBackgroundUse = !fromCache;
         }
 
@@ -458,10 +460,25 @@ namespace Ryujinx.Graphics.Vulkan
             return (buffer, texture);
         }
 
-        private async Task BackgroundCompilation()
+        private async Task BackgroundCompilationAsync()
         {
             await Task.WhenAll(_shaders.Select(shader => shader.CompileTask));
 
+            BackgroundCompilationImpl();
+        }
+
+        private void BackgroundCompilation()
+        {
+            foreach (var shader in _shaders)
+            {
+                shader.CompileTask.Wait();
+            }
+
+            BackgroundCompilationImpl();
+        }
+
+        private void BackgroundCompilationImpl()
+        {
             if (Array.Exists(_shaders, shader => shader.CompileStatus == ProgramLinkStatus.Failure))
             {
                 LinkStatus = ProgramLinkStatus.Failure;
@@ -604,11 +621,11 @@ namespace Ryujinx.Graphics.Vulkan
                     }
                 }
 
-                if (!_compileTask.IsCompleted)
+                if (!_compileRequest.IsCompleted)
                 {
                     if (blocking)
                     {
-                        _compileTask.Wait();
+                        _compileRequest.Wait();
 
                         if (LinkStatus == ProgramLinkStatus.Failure)
                         {
