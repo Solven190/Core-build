@@ -360,12 +360,6 @@ namespace Ryujinx.Graphics.Vulkan
             }
         }
 
-        public BufferHandle GetHandle()
-        {
-            var handle = _bufferHandle;
-            return Unsafe.As<ulong, BufferHandle>(ref handle);
-        }
-
         public unsafe IntPtr Map(int offset, int mappingSize)
         {
             return _map;
@@ -479,6 +473,17 @@ namespace Ryujinx.Graphics.Vulkan
             }
 
             throw new InvalidOperationException("The buffer is not host mapped.");
+        }
+
+        public ulong GetGpuAddress()
+        {
+            BufferDeviceAddressInfo info = new BufferDeviceAddressInfo()
+            {
+                SType = StructureType.BufferDeviceAddressInfo,
+                Buffer = GetBuffer().GetUnsafe().Value
+            };
+
+            return _gd.Api.GetBufferDeviceAddress(_device, info);
         }
 
         public unsafe void SetData(int offset, ReadOnlySpan<byte> data, CommandBufferScoped? cbs = null, Action endRenderPass = null)

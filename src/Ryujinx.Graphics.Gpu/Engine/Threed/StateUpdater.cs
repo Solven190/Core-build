@@ -37,6 +37,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
         private ProgramPipelineState _pipeline;
 
+        private uint _globalMemoryUseMask;
+        private uint _globalMemoryWriteMask;
         private bool _vsUsesDrawParameters;
         private bool _vtgWritesRtLayer;
         private byte _vsClipDistancesWritten;
@@ -320,9 +322,15 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// </summary>
         private void CommitBindings()
         {
-            UpdateStorageBuffers();
-
             bool unalignedChanged = _currentSpecState.SetHasUnalignedStorageBuffer(_channel.BufferManager.HasUnalignedStorageBuffers);
+            bool usesGlobalMemory = _globalMemoryUseMask != 0;
+
+            UpdateStorageBuffers();
+            
+            if (usesGlobalMemory)
+            {
+                _channel.BufferManager.SynchronizeGraphicsStorageBuffers(_globalMemoryUseMask, _globalMemoryWriteMask);
+            }
 
             if (!_channel.TextureManager.CommitGraphicsBindings(_shaderSpecState) || unalignedChanged)
             {
@@ -331,6 +339,11 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             }
 
             _channel.BufferManager.CommitGraphicsBindings();
+
+            if (usesGlobalMemory)
+            {
+                _channel.BufferManager.UpdatePageTable();
+            }
         }
 
         /// <summary>
@@ -1374,16 +1387,32 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             UpdateShaderBindings(gs.Bindings);
 
+            _globalMemoryUseMask = 0;
+            _globalMemoryWriteMask = 0;
+
             for (int stageIndex = 0; stageIndex < Constants.ShaderStages; stageIndex++)
             {
                 ShaderProgramInfo info = gs.Shaders[stageIndex + 1]?.Info;
 
-                if (info?.UsesRtLayer == true)
-                {
-                    _vtgWritesRtLayer = true;
-                }
-
                 _currentProgramInfo[stageIndex] = info;
+
+                if (info != null)
+                {
+                    if (info.UsesGlobalMemory)
+                    {
+                        _globalMemoryUseMask |= 1u << stageIndex;
+                    }
+
+                    if (info.UsesGlobalMemoryWrite)
+                    {
+                        _globalMemoryWriteMask |= 1u << stageIndex;
+                    }
+                    
+                    if (info?.UsesRtLayer == true)
+                    {
+                        _vtgWritesRtLayer = true;
+                    }
+                }
             }
 
             _context.Renderer.Pipeline.SetProgram(gs.HostProgram);

@@ -20,7 +20,8 @@ namespace Ryujinx.Graphics.Shader
         FragmentIsBgra,
         ViewportInverse,
         FragmentRenderScaleCount,
-        RenderScale
+        RenderScale,
+        PageTableBasePointer
     }
 
     public struct SupportBuffer
@@ -36,6 +37,7 @@ namespace Ryujinx.Graphics.Shader
         public static int FragmentRenderScaleCountOffset;
         public static int GraphicsRenderScaleOffset;
         public static int ComputeRenderScaleOffset;
+        public static int PageTableBasePointerOffset;
 
         public const int FragmentIsBgraCount = 8;
         // One for the render target, 64 for the textures, and 8 for the images.
@@ -59,6 +61,7 @@ namespace Ryujinx.Graphics.Shader
             FragmentRenderScaleCountOffset = OffsetOf(ref instance, ref instance.FragmentRenderScaleCount);
             GraphicsRenderScaleOffset = OffsetOf(ref instance, ref instance.RenderScale);
             ComputeRenderScaleOffset = GraphicsRenderScaleOffset + FieldSize;
+            PageTableBasePointerOffset = OffsetOf(ref instance, ref instance.PageTableBasePointer);
         }
 
         internal static StructureType GetStructureType()
@@ -69,7 +72,8 @@ namespace Ryujinx.Graphics.Shader
                 new StructureField(AggregateType.Array | AggregateType.U32, "s_is_bgra", FragmentIsBgraCount),
                 new StructureField(AggregateType.Vector4 | AggregateType.FP32, "s_viewport_inverse"),
                 new StructureField(AggregateType.S32, "s_frag_scale_count"),
-                new StructureField(AggregateType.Array | AggregateType.FP32, "s_render_scale", RenderScaleMaxCount)
+                new StructureField(AggregateType.Array | AggregateType.FP32, "s_render_scale", RenderScaleMaxCount),
+                new StructureField(AggregateType.Vector4 | AggregateType.U32, "s_page_table")
             });
         }
 
@@ -80,5 +84,6 @@ namespace Ryujinx.Graphics.Shader
 
         // Render scale max count: 1 + 64 + 8. First scale is fragment output scale, others are textures/image inputs.
         public Array73<Vector4<float>> RenderScale;
+        public Vector4<uint> PageTableBasePointer;
     }
 }

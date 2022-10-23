@@ -83,6 +83,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
             Add(Instruction.ImageAtomic,              InstType.Special);
             Add(Instruction.IsNan,                    InstType.CallUnary,      "isnan");
             Add(Instruction.Load,                     InstType.Special);
+            Add(Instruction.LoadGlobal,               InstType.Special);
             Add(Instruction.LoadLocal,                InstType.Special);
             Add(Instruction.LoadShared,               InstType.Special);
             Add(Instruction.LoadStorage,              InstType.Special);
@@ -119,6 +120,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
             Add(Instruction.Sine,                     InstType.CallUnary,      "sin");
             Add(Instruction.SquareRoot,               InstType.CallUnary,      "sqrt");
             Add(Instruction.Store,                    InstType.Special);
+            Add(Instruction.StoreGlobal,              InstType.Special);
             Add(Instruction.StoreLocal,               InstType.Special);
             Add(Instruction.StoreShared,              InstType.Special);
             Add(Instruction.StoreShared16,            InstType.Special);

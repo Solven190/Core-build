@@ -184,6 +184,20 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
                 context.AddGlobalVariable(ubVariable);
                 context.ConstantBuffers.Add(buffer.Binding, ubVariable);
             }
+
+            var blockArrayType = context.TypeArray(context.TypeU32(), context.Constant(context.TypeU32(), 1 << 14));
+            var pointerArrayType = context.TypeRuntimeArray(context.TypeVector(context.TypeU32(), 2));
+
+            context.Decorate(blockArrayType, Decoration.ArrayStride, (LiteralInteger)4);
+            context.Decorate(pointerArrayType, Decoration.ArrayStride, (LiteralInteger)8);
+
+            var ptStructType = context.TypeStruct(false, blockArrayType, pointerArrayType);
+
+            context.MemberDecorate(ptStructType, 0, Decoration.Offset, (LiteralInteger)0);
+            context.MemberDecorate(ptStructType, 1, Decoration.Offset, (LiteralInteger)((1 << 14) * sizeof(uint)));
+            context.Decorate(ptStructType, Decoration.Block);
+
+            context.PageTablePointerType = context.TypePointer(StorageClass.PhysicalStorageBuffer, ptStructType);
         }
 
         private static void DeclareStorageBuffers(CodeGenContext context, BufferDescriptor[] descriptors)

@@ -77,10 +77,10 @@ namespace Ryujinx.Graphics.Shader.Translation
 
                         nextNode = node.Next;
                     }
-                    else if (UsesGlobalMemory(operation.Inst, operation.StorageKind))
+                    /* else if (UsesGlobalMemory(operation.Inst, operation.StorageKind))
                     {
                         nextNode = RewriteGlobalAccess(node, config)?.Next ?? nextNode;
-                    }
+                    } */
 
                     node = nextNode;
                 }

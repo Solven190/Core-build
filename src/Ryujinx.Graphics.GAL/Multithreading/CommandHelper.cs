@@ -57,6 +57,7 @@ namespace Ryujinx.Graphics.GAL.Multithreading
 
             Register<BufferDisposeCommand>(CommandType.BufferDispose);
             Register<BufferGetDataCommand>(CommandType.BufferGetData);
+            Register<BufferGetGpuAddressCommand>(CommandType.BufferGetGpuAddress);
             Register<BufferSetDataCommand>(CommandType.BufferSetData);
 
             Register<CounterEventDisposeCommand>(CommandType.CounterEventDispose);
@@ -138,6 +139,7 @@ namespace Ryujinx.Graphics.GAL.Multithreading
             Register<TextureBarrierTiledCommand>(CommandType.TextureBarrierTiled);
             Register<TryHostConditionalRenderingCommand>(CommandType.TryHostConditionalRendering);
             Register<TryHostConditionalRenderingFlushCommand>(CommandType.TryHostConditionalRenderingFlush);
+            Register<UpdatePageTableGpuAddressCommand>(CommandType.UpdatePageTableGpuAddress);
             Register<UpdateRenderScaleCommand>(CommandType.UpdateRenderScale);
 
             return maxCommandSize;

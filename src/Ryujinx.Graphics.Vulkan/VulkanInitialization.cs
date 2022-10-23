@@ -22,6 +22,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         private static readonly string[] _desirableExtensions = new string[]
         {
+            ExtBufferDeviceAddress.ExtensionName,
             ExtConditionalRendering.ExtensionName,
             ExtExtendedDynamicState.ExtensionName,
             ExtTransformFeedback.ExtensionName,
@@ -500,6 +501,20 @@ namespace Ryujinx.Graphics.Vulkan
                 };
 
                 pExtendedFeatures = &featuresSubgroupSizeControl;
+            }
+
+            PhysicalDeviceBufferDeviceAddressFeaturesEXT featuresBufferDeviceAddress;
+
+            if (physicalDevice.IsDeviceExtensionPresent(ExtBufferDeviceAddress.ExtensionName))
+            {
+                featuresBufferDeviceAddress = new PhysicalDeviceBufferDeviceAddressFeaturesEXT()
+                {
+                    SType = StructureType.PhysicalDeviceBufferAddressFeaturesExt,
+                    PNext = pExtendedFeatures,
+                    BufferDeviceAddress = true
+                };
+
+                pExtendedFeatures = &featuresBufferDeviceAddress;
             }
 
             PhysicalDeviceCustomBorderColorFeaturesEXT featuresCustomBorderColor;

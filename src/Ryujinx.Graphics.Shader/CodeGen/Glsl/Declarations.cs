@@ -60,6 +60,22 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl
                 context.AppendLine("#extension GL_NV_geometry_shader_passthrough : enable");
             }
 
+            if ((info.HelperFunctionsMask & HelperFunctionsMask.GlobalMemory) != 0)
+            {
+                context.AppendLine("#extension GL_EXT_shader_16bit_storage : enable");
+                context.AppendLine("#extension GL_EXT_shader_8bit_storage : enable");
+
+                if (context.Config.Options.TargetApi == TargetApi.Vulkan)
+                {
+                    context.AppendLine("#extension GL_EXT_buffer_reference : enable");
+                    context.AppendLine("#extension GL_EXT_buffer_reference_uvec2 : enable");
+                }
+                else
+                {
+                    context.AppendLine("#extension GL_NV_shader_buffer_load : enable");
+                }
+            }
+
             if (context.Config.GpuAccessor.QueryHostSupportsViewportMask())
             {
                 context.AppendLine("#extension GL_NV_viewport_array2 : enable");
@@ -253,6 +269,13 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl
             if ((info.HelperFunctionsMask & HelperFunctionsMask.AtomicMinMaxS32Storage) != 0)
             {
                 AppendHelperFunction(context, "Ryujinx.Graphics.Shader/CodeGen/Glsl/HelperFunctions/AtomicMinMaxS32Storage.glsl");
+            }
+
+            if ((info.HelperFunctionsMask & HelperFunctionsMask.GlobalMemory) != 0)
+            {
+                AppendHelperFunction(context, context.Config.Options.TargetApi == TargetApi.Vulkan
+                    ? "Ryujinx.Graphics.Shader/CodeGen/Glsl/HelperFunctions/GlobalMemoryVk.glsl"
+                    : "Ryujinx.Graphics.Shader/CodeGen/Glsl/HelperFunctions/GlobalMemory.glsl");
             }
 
             if ((info.HelperFunctionsMask & HelperFunctionsMask.MultiplyHighS32) != 0)

@@ -269,12 +269,16 @@ namespace Ryujinx.Graphics.Shader.StructuredIr
                     operation.SourcesCount));
             }
 
-            // Those instructions needs to be emulated by using helper functions,
-            // because they are NVIDIA specific. Those flags helps the backend to
+            // Those instructions need to be emulated by using helper functions,
+            // because they are NVIDIA specific. Those flags help the backend to
             // decide which helper functions are needed on the final generated code.
             switch (operation.Inst)
             {
+                case Instruction.AtomicAdd:
+                case Instruction.AtomicAnd :
+                case Instruction.AtomicCompareAndSwap:
                 case Instruction.AtomicMaxS32:
+                case Instruction.AtomicMaxU32:
                 case Instruction.AtomicMinS32:
                     if (operation.StorageKind == StorageKind.SharedMemory)
                     {
@@ -284,6 +288,29 @@ namespace Ryujinx.Graphics.Shader.StructuredIr
                     {
                         context.Info.HelperFunctionsMask |= HelperFunctionsMask.AtomicMinMaxS32Storage;
                     }
+                    break;
+                case Instruction.AtomicMinU32:
+                case Instruction.AtomicOr:
+                case Instruction.AtomicSwap:
+                case Instruction.AtomicXor:
+                    context.Config.SetUsedFeature(FeatureFlags.GlobalMemory);
+                    context.Config.SetUsedFeature(FeatureFlags.GlobalMemoryWrite);
+                    context.Info.HelperFunctionsMask |= HelperFunctionsMask.GlobalMemory;
+                    break;
+                case Instruction.LoadGlobal:
+                case Instruction.StoreGlobal:
+                case Instruction.StoreGlobal16:
+                case Instruction.StoreGlobal8:
+                    context.Config.SetUsedFeature(FeatureFlags.GlobalMemory);
+
+                    if (operation.Inst == Instruction.StoreGlobal ||
+                        operation.Inst == Instruction.StoreGlobal16 ||
+                        operation.Inst == Instruction.StoreGlobal8)
+                    {
+                        context.Config.SetUsedFeature(FeatureFlags.GlobalMemoryWrite);
+                    }
+
+                    context.Info.HelperFunctionsMask |= HelperFunctionsMask.GlobalMemory;
                     break;
                 case Instruction.MultiplyHighS32:
                     context.Info.HelperFunctionsMask |= HelperFunctionsMask.MultiplyHighS32;

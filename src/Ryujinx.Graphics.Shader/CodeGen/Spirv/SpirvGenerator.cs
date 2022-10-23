@@ -93,6 +93,13 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
                 context.AddCapability(Capability.DrawParameters);
             }
 
+            if ((info.HelperFunctionsMask & HelperFunctionsMask.GlobalMemory) != 0)
+            {
+                context.AddCapability(Capability.PhysicalStorageBufferAddresses);
+
+                context.AddExtension("SPV_KHR_physical_storage_buffer");
+            }
+            
             if (context.Info.IoDefinitions.Contains(new IoDefinition(StorageKind.Output, IoVariable.ViewportMask)))
             {
                 context.AddExtension("SPV_NV_viewport_array2");

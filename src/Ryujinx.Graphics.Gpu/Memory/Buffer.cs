@@ -66,6 +66,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
         private bool _syncActionRegistered;
 
         private int _referenceCount = 1;
+        private ulong _hostGpuAddress;
 
         private ulong _dirtyStart = ulong.MaxValue;
         private ulong _dirtyEnd = ulong.MaxValue;
@@ -168,6 +169,16 @@ namespace Ryujinx.Graphics.Gpu.Memory
             int offset = (int)(address - Address);
 
             return new BufferRange(Handle, offset, (int)size);
+        }
+
+        public ulong GetHostGpuAddress(ulong address)
+        {
+            if (_hostGpuAddress == 0)
+            {
+                _hostGpuAddress = _context.Renderer.GetBufferGpuAddress(Handle);
+            }
+
+            return _hostGpuAddress + (address - Address);
         }
 
         /// <summary>
