@@ -24,6 +24,7 @@ namespace Ryujinx.Graphics.Shader
         RenderScale,
         TfeOffset,
         TfeVertexCount,
+        BufferTextureOffset,
     }
 
     public struct SupportBuffer
@@ -42,10 +43,13 @@ namespace Ryujinx.Graphics.Shader
         public static readonly int ComputeRenderScaleOffset;
         public static readonly int TfeOffsetOffset;
         public static readonly int TfeVertexCountOffset;
+        public static readonly int BufferTextureOffsetOffset;
 
         public const int FragmentIsBgraCount = 8;
+        public const int TextureCount = 64;
+
         // One for the render target, 64 for the textures, and 8 for the images.
-        public const int RenderScaleMaxCount = 1 + 64 + 8;
+        public const int RenderScaleMaxCount = 1 + TextureCount + 8;
 
         private static int OffsetOf<T>(ref SupportBuffer storage, ref T target)
         {
@@ -68,6 +72,7 @@ namespace Ryujinx.Graphics.Shader
             ComputeRenderScaleOffset = GraphicsRenderScaleOffset + FieldSize;
             TfeOffsetOffset = OffsetOf(ref instance, ref instance.TfeOffset);
             TfeVertexCountOffset = OffsetOf(ref instance, ref instance.TfeVertexCount);
+            BufferTextureOffsetOffset = OffsetOf(ref instance, ref instance.BufferTextureOffset);
         }
 
         internal static StructureType GetStructureType()
@@ -80,7 +85,8 @@ namespace Ryujinx.Graphics.Shader
                 new StructureField(AggregateType.S32, "frag_scale_count"),
                 new StructureField(AggregateType.Array | AggregateType.FP32, "render_scale", RenderScaleMaxCount),
                 new StructureField(AggregateType.Vector4 | AggregateType.S32, "tfe_offset"),
-                new StructureField(AggregateType.S32, "tfe_vertex_count")
+                new StructureField(AggregateType.S32, "tfe_vertex_count"),
+                new StructureField(AggregateType.Array | AggregateType.Vector2 | AggregateType.S32, "buffer_texture_offset")
             ]);
         }
 
@@ -95,5 +101,7 @@ namespace Ryujinx.Graphics.Shader
 
         public Vector4<int> TfeOffset;
         public Vector4<int> TfeVertexCount;
+
+        public Array5<Array64<Vector4<int>>> BufferTextureOffset;
     }
 }

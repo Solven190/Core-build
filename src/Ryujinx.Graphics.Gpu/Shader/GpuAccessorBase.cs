@@ -207,6 +207,10 @@ namespace Ryujinx.Graphics.Gpu.Shader
 
         public bool QueryHostSupportsBgraFormat() => _context.Capabilities.SupportsBgraFormat;
 
+        public bool QueryHostSupportsBufferImagePixelAlignment() => _context.Capabilities.SupportsImageBufferPixelAlignment;
+
+        public bool QueryHostSupportsBufferTexturePixelAlignment() => _context.Capabilities.SupportsTextureBufferPixelAlignment;
+
         public bool QueryHostSupportsFragmentShaderInterlock() => _context.Capabilities.SupportsFragmentShaderInterlock;
 
         public bool QueryHostSupportsFragmentShaderOrderingIntel() => _context.Capabilities.SupportsFragmentShaderOrderingIntel;

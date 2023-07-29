@@ -4,6 +4,7 @@ using Ryujinx.Graphics.Gpu.Engine.Types;
 using Ryujinx.Graphics.Gpu.Memory;
 using Ryujinx.Graphics.Gpu.Shader;
 using Ryujinx.Graphics.Shader;
+using Ryujinx.Memory.Range;
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -67,6 +68,9 @@ namespace Ryujinx.Graphics.Gpu.Image
 
         private int _lastFragmentTotal;
 
+        private readonly int _bufferTextureAlignment;
+        private readonly int _bufferImageAlignment;
+
         /// <summary>
         /// Constructs a new instance of the texture bindings manager.
         /// </summary>
@@ -108,6 +112,10 @@ namespace Ryujinx.Graphics.Gpu.Image
             }
 
             _textureCounts = [];
+
+            int alignment = context.Capabilities.TextureBufferOffsetAlignment;
+            _bufferTextureAlignment = context.Capabilities.SupportsTextureBufferPixelAlignment ? 0 : alignment;
+            _bufferImageAlignment = context.Capabilities.SupportsImageBufferPixelAlignment ? 0 : alignment;
         }
 
         /// <summary>
@@ -521,10 +529,12 @@ namespace Ryujinx.Graphics.Gpu.Image
 
                 if (hostTexture != null && texture.Target == Target.TextureBuffer)
                 {
+                    MultiRange range = GetAlignedBufferTextureRange(texture, index, stageIndex, false);
+
                     // Ensure that the buffer texture is using the correct buffer as storage.
                     // Buffers are frequently re-created to accommodate larger data, so we need to re-bind
                     // to ensure we're not using a old buffer that was already deleted.
-                    _channel.BufferManager.SetBufferTextureStorage(stage, hostTexture, texture.Range, bindingInfo, false);
+                    _channel.BufferManager.SetBufferTextureStorage(stage, hostTexture, range, bindingInfo, false);
 
                     // Cache is not used for buffer texture, it must always rebind.
                     state.CachedTexture = null;
@@ -659,7 +669,9 @@ namespace Ryujinx.Graphics.Gpu.Image
                     // Buffers are frequently re-created to accommodate larger data, so we need to re-bind
                     // to ensure we're not using a old buffer that was already deleted.
 
-                    _channel.BufferManager.SetBufferTextureStorage(stage, hostTexture, texture.Range, bindingInfo, true);
+                    MultiRange range = GetAlignedBufferTextureRange(texture, index, stageIndex, true);
+
+                    _channel.BufferManager.SetBufferTextureStorage(stage, hostTexture, range, bindingInfo, true);
 
                     // Cache is not used for buffer texture, it must always rebind.
                     state.CachedTexture = null;
@@ -690,6 +702,61 @@ namespace Ryujinx.Graphics.Gpu.Image
             }
 
             return specStateMatches;
+        }
+
+        /// <summary>
+        /// Gets the aligned address of the texture according to the host requirements.
+        /// </summary>
+        /// <param name="texture">Texture to have its address aligned</param>
+        /// <param name="index">Index of the texture in the shader</param>
+        /// <param name="stageIndex">Index of the shader stage</param>
+        /// <param name="isImage">True if the texture is bound as image, false for sampled textures</param>
+        /// <returns>Aligned address and size of the buffer texture</returns>
+        private MultiRange GetAlignedBufferTextureRange(Texture texture, int index, int stageIndex, bool isImage)
+        {
+            MultiRange range = texture.Range;
+            int alignment = isImage ? _bufferImageAlignment : _bufferTextureAlignment;
+
+            if (alignment != 0)
+            {
+                MemoryRange firstRange = range.GetSubRange(0);
+                ulong misalign = firstRange.Address & ((ulong)alignment - 1);
+                int offset = misalign != 0 ? (int)misalign / texture.Info.FormatInfo.BytesPerPixel : 0;
+
+                if (misalign != 0)
+                {
+                    firstRange = new MemoryRange(firstRange.Address - misalign, firstRange.Size + misalign);
+
+                    if (range.Count > 1)
+                    {
+                        MemoryRange[] ranges = new MemoryRange[range.Count];
+
+                        ranges[0] = firstRange;
+
+                        for (int i = 1; i < range.Count; i++)
+                        {
+                            ranges[i] = range.GetSubRange(i);
+                        }
+
+                        range = new MultiRange(ranges);
+                    }
+                    else
+                    {
+                        range = new MultiRange(firstRange.Address, firstRange.Size);
+                    }
+                }
+
+                if (isImage)
+                {
+                    _context.SupportBufferUpdater.UpdateBufferImageOffset(stageIndex, index, offset);
+                }
+                else
+                {
+                    _context.SupportBufferUpdater.UpdateBufferTextureOffset(stageIndex, index, offset);
+                }
+            }
+
+            return range;
         }
 
         /// <summary>

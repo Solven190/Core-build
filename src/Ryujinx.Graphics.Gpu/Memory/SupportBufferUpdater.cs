@@ -130,6 +130,38 @@ namespace Ryujinx.Graphics.Gpu.Memory
         }
 
         /// <summary>
+        /// Updates the offset used for accessing buffer textures that are not aligned to the host requirements.
+        /// </summary>
+        /// <param name="stageIndex">Index of the shader stage where the texture is used</param>
+        /// <param name="bindingIndex">Index of the texture binding in the shader</param>
+        /// <param name="offset">Offset for the misaligned part of the address</param>
+        public void UpdateBufferTextureOffset(int stageIndex, int bindingIndex, int offset)
+        {
+            if (_data.BufferTextureOffset[stageIndex][bindingIndex].X != offset)
+            {
+                _data.BufferTextureOffset[stageIndex][bindingIndex].X = offset;
+                int index = stageIndex * SupportBuffer.TextureCount + bindingIndex;
+                MarkDirty(SupportBuffer.BufferTextureOffsetOffset + index * sizeof(int) * 4, sizeof(int));
+            }
+        }
+
+        /// <summary>
+        /// Updates the offset used for accessing buffer images that are not aligned to the host requirements.
+        /// </summary>
+        /// <param name="stageIndex">Index of the shader stage where the image is used</param>
+        /// <param name="bindingIndex">Index of the image binding in the shader</param>
+        /// <param name="offset">Offset for the misaligned part of the address</param>
+        public void UpdateBufferImageOffset(int stageIndex, int bindingIndex, int offset)
+        {
+            if (_data.BufferTextureOffset[stageIndex][bindingIndex].Y != offset)
+            {
+                _data.BufferTextureOffset[stageIndex][bindingIndex].Y = offset;
+                int index = stageIndex * SupportBuffer.TextureCount + bindingIndex;
+                MarkDirty(SupportBuffer.BufferTextureOffsetOffset + index * sizeof(int) * 4 + sizeof(int), sizeof(int));
+            }
+        }
+
+        /// <summary>
         /// Sets whether the format of a given render target is a BGRA format.
         /// </summary>
         /// <param name="index">Render target index</param>

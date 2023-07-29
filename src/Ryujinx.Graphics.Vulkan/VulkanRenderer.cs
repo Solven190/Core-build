@@ -784,6 +784,7 @@ namespace Ryujinx.Graphics.Vulkan
                 supportsGeometryShader: Capabilities.SupportsGeometryShader,
                 supportsGeometryShaderPassthrough: Capabilities.SupportsGeometryShaderPassthrough,
                 supportsTransformFeedback: Capabilities.SupportsTransformFeedback,
+                supportsImageBufferPixelAlignment: false,
                 supportsImageLoadFormatted: features2.Features.ShaderStorageImageReadWithoutFormat,
                 supportsLayerVertexTessellation: featuresVk12.ShaderOutputLayer,
                 supportsMismatchingViewFormat: true,
@@ -797,6 +798,7 @@ namespace Ryujinx.Graphics.Vulkan
                 supportsShaderNonUniformIndexing:
                     featuresVk12.ShaderSampledImageArrayNonUniformIndexing &&
                     featuresVk12.ShaderStorageImageArrayNonUniformIndexing,
+                supportsTextureBufferPixelAlignment: false,
                 supportsTextureGatherOffsets: features2.Features.ShaderImageGatherExtended,
                 supportsTextureShadowLod: false,
                 supportsVertexStoreAndAtomics: features2.Features.VertexPipelineStoresAndAtomics,

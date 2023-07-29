@@ -235,6 +235,24 @@ namespace Ryujinx.Graphics.Shader
         }
 
         /// <summary>
+        /// Queries host support for buffer image access with the buffer offset aligned to a single pixel rather than a fixed alignment.
+        /// </summary>
+        /// <returns>True if the host supports buffer image access with pixel alignment, false otherwise</returns>
+        bool QueryHostSupportsBufferImagePixelAlignment()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Queries host support for buffer texture access with the buffer offset aligned to a single pixel rather than a fixed alignment.
+        /// </summary>
+        /// <returns>True if the host supports buffer texture access with pixel alignment, false otherwise</returns>
+        bool QueryHostSupportsBufferTexturePixelAlignment()
+        {
+            return true;
+        }
+
+        /// <summary>
         /// Queries host support for fragment shader ordering critical sections on the shader code.
         /// </summary>
         /// <returns>True if fragment shader interlock is supported, false otherwise</returns>
