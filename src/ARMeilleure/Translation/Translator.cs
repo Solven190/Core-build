@@ -413,6 +413,10 @@ namespace ARMeilleure.Translation
 
                         context.CurrOp = opCode;
 
+                        Operand nativeContext = context.LoadArgument(OperandType.I64, 0);
+                        Operand dispAddressAddr = context.Add(nativeContext, Const((ulong)NativeContext.GetDispatchAddressOffset()));
+                        context.Store(dispAddressAddr, Const(opCode.Address));
+
                         bool isLastOp = opcIndex == block.OpCodes.Count - 1;
 
                         if (isLastOp)
