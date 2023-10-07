@@ -1,7 +1,7 @@
 using Ryujinx.Graphics.Shader.Decoders;
 using Ryujinx.Graphics.Shader.IntermediateRepresentation;
 using Ryujinx.Graphics.Shader.Translation;
-
+using System;
 using static Ryujinx.Graphics.Shader.Instructions.InstEmitHelper;
 using static Ryujinx.Graphics.Shader.IntermediateRepresentation.OperandHelper;
 
@@ -35,6 +35,38 @@ namespace Ryujinx.Graphics.Shader.Instructions
             InstMov32i op = context.GetOp<InstMov32i>();
 
             context.Copy(GetDest(op.Dest), GetSrcImm(context, op.Imm32));
+        }
+
+        public static void PrmtR(EmitterContext context)
+        {
+            context.GetOp<InstPrmtR>();
+
+            context.TranslatorContext.GpuAccessor.Log("Shader instruction PrmtR is not implemented.");
+        }
+
+        public static void PrmtI(EmitterContext context)
+        {
+            InstPrmtI op = context.GetOp<InstPrmtI>();
+
+            Operand op1 = GetSrcReg(context, op.SrcA);
+            Operand control = GetSrcImm(context, op.Imm20);
+            Operand op2 = GetSrcReg(context, op.SrcC);
+
+            EmitPrmt(context, op1, control, op2, op.PMode, op.Dest);
+        }
+
+        public static void PrmtC(EmitterContext context)
+        {
+            context.GetOp<InstPrmtC>();
+
+            context.TranslatorContext.GpuAccessor.Log("Shader instruction PrmtC is not implemented.");
+        }
+
+        public static void PrmtRc(EmitterContext context)
+        {
+            context.GetOp<InstPrmtRc>();
+
+            context.TranslatorContext.GpuAccessor.Log("Shader instruction PrmtRc is not implemented.");
         }
 
         public static void R2pR(EmitterContext context)
@@ -169,6 +201,39 @@ namespace Ryujinx.Graphics.Shader.Instructions
             context.Copy(GetDest(op.Dest), src);
         }
 
+        public static void SelR(EmitterContext context)
+        {
+            InstSelR op = context.GetOp<InstSelR>();
+
+            Operand srcA = GetSrcReg(context, op.SrcA);
+            Operand srcB = GetSrcReg(context, op.SrcB);
+            Operand srcPred = GetPredicate(context, op.SrcPred, op.SrcPredInv);
+
+            EmitSel(context, srcA, srcB, srcPred, op.Dest);
+        }
+
+        public static void SelI(EmitterContext context)
+        {
+            InstSelI op = context.GetOp<InstSelI>();
+
+            Operand srcA = GetSrcReg(context, op.SrcA);
+            Operand srcB = GetSrcImm(context, Imm20ToSInt(op.Imm20));
+            Operand srcPred = GetPredicate(context, op.SrcPred, op.SrcPredInv);
+
+            EmitSel(context, srcA, srcB, srcPred, op.Dest);
+        }
+
+        public static void SelC(EmitterContext context)
+        {
+            InstSelC op = context.GetOp<InstSelC>();
+
+            Operand srcA = GetSrcReg(context, op.SrcA);
+            Operand srcB = GetSrcCbuf(context, op.CbufSlot, op.CbufOffset);
+            Operand srcPred = GetPredicate(context, op.SrcPred, op.SrcPredInv);
+
+            EmitSel(context, srcA, srcB, srcPred, op.Dest);
+        }
+
         private static Operand EmitLoadSubgroupLaneId(EmitterContext context)
         {
             if (context.TranslatorContext.GpuAccessor.QueryHostSubgroupSize() <= 32)
@@ -215,37 +280,34 @@ namespace Ryujinx.Graphics.Shader.Instructions
             }
         }
 
-        public static void SelR(EmitterContext context)
+        private static void EmitPrmt(EmitterContext context, Operand op1, Operand control, Operand op2, PMode pMode, int rd)
         {
-            InstSelR op = context.GetOp<InstSelR>();
+            if (pMode == PMode.Idx)
+            {
+                Operand res = Const(0);
 
-            Operand srcA = GetSrcReg(context, op.SrcA);
-            Operand srcB = GetSrcReg(context, op.SrcB);
-            Operand srcPred = GetPredicate(context, op.SrcPred, op.SrcPredInv);
+                for (int b = 0; b < 4; b++)
+                {
+                    Operand sel = context.ShiftRightU32(control, Const(b * 4));
+                    Operand byteSel = context.BitwiseAnd(sel, Const(7));
+                    Operand copySign = context.BitwiseAnd(sel, Const(8));
 
-            EmitSel(context, srcA, srcB, srcPred, op.Dest);
-        }
+                    Operand srcOp = context.ConditionalSelect(context.BitwiseAnd(byteSel, Const(4)), op2, op1);
+                    Operand srcValue = context.ShiftRightU32(srcOp, context.ShiftLeft(context.BitwiseAnd(byteSel, Const(3)), Const(3)));
+                    Operand srcSign = context.ShiftRightS32(context.ShiftLeft(srcValue, Const(24)), Const(31));
 
-        public static void SelI(EmitterContext context)
-        {
-            InstSelI op = context.GetOp<InstSelI>();
+                    srcValue = context.ConditionalSelect(copySign, srcSign, srcValue);
+                    srcValue = context.BitwiseAnd(srcValue, Const(0xff));
 
-            Operand srcA = GetSrcReg(context, op.SrcA);
-            Operand srcB = GetSrcImm(context, Imm20ToSInt(op.Imm20));
-            Operand srcPred = GetPredicate(context, op.SrcPred, op.SrcPredInv);
+                    res = context.BitfieldInsert(res, srcValue, Const(b * 8), Const(8));
+                }
 
-            EmitSel(context, srcA, srcB, srcPred, op.Dest);
-        }
-
-        public static void SelC(EmitterContext context)
-        {
-            InstSelC op = context.GetOp<InstSelC>();
-
-            Operand srcA = GetSrcReg(context, op.SrcA);
-            Operand srcB = GetSrcCbuf(context, op.CbufSlot, op.CbufOffset);
-            Operand srcPred = GetPredicate(context, op.SrcPred, op.SrcPredInv);
-
-            EmitSel(context, srcA, srcB, srcPred, op.Dest);
+                context.Copy(GetDest(rd), res);
+            }
+            else
+            {
+                throw new NotImplementedException(pMode.ToString());
+            }
         }
 
         private static void EmitR2p(EmitterContext context, Operand value, Operand mask, ByteSel byteSel, bool ccpr)

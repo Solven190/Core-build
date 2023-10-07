@@ -522,6 +522,7 @@ namespace Ryujinx.Graphics.Shader.Decoders
 
     enum PMode
     {
+        Idx = 0,
         F4e = 1,
         B4e = 2,
         Rc8 = 3,
