@@ -266,7 +266,7 @@ namespace Ryujinx.Graphics.Vulkan
         public void FreeCompleted()
         {
             FenceHolder signalledFence = null;
-            while (_pendingCopies.TryPeek(out PendingCopy pc) && pc.Fence != null && (pc.Fence == signalledFence || pc.Fence.IsSignaled()))
+            while (_pendingCopies.TryPeek(out PendingCopy pc) && pc.Fence != null && (pc.Fence == signalledFence || pc.Fence.IsSignaledLazy()))
             {
                 signalledFence = pc.Fence; // Already checked - don't need to do it again.
                 PendingCopy dequeued = _pendingCopies.Dequeue();

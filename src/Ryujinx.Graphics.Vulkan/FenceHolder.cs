@@ -12,13 +12,15 @@ namespace Ryujinx.Graphics.Vulkan
         private int _referenceCount;
         private int _lock;
         private readonly bool _concurrentWaitUnsupported;
+        private readonly bool _alwaysWaits;
         private bool _disposed;
 
-        public unsafe FenceHolder(Vk api, Device device, bool concurrentWaitUnsupported)
+        public unsafe FenceHolder(Vk api, Device device, bool concurrentWaitUnsupported, bool alwaysWaits)
         {
             _api = api;
             _device = device;
             _concurrentWaitUnsupported = concurrentWaitUnsupported;
+            _alwaysWaits = alwaysWaits;
 
             FenceCreateInfo fenceCreateInfo = new()
             {
@@ -121,6 +123,16 @@ namespace Ryujinx.Graphics.Vulkan
             {
                 FenceHelper.WaitAllIndefinitely(_api, _device, [_fence]);
             }
+        }
+
+        public bool IsSignaledLazy()
+        {
+            if (_alwaysWaits)
+            {
+                return false;
+            }
+
+            return IsSignaled();
         }
 
         public bool IsSignaled()

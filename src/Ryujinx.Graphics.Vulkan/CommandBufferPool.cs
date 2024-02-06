@@ -19,6 +19,7 @@ namespace Ryujinx.Graphics.Vulkan
         private readonly Queue _queue;
         private readonly Lock _queueLock;
         private readonly bool _concurrentFenceWaitUnsupported;
+        private readonly bool _fenceAlwaysWaits;
         private readonly CommandPool _pool;
         private readonly Thread _owner;
 
@@ -66,6 +67,7 @@ namespace Ryujinx.Graphics.Vulkan
             Lock queueLock,
             uint queueFamilyIndex,
             bool concurrentFenceWaitUnsupported,
+            bool fenceAlwaysWaits,
             bool isLight = false)
         {
             _api = api;
@@ -73,6 +75,7 @@ namespace Ryujinx.Graphics.Vulkan
             _queue = queue;
             _queueLock = queueLock;
             _concurrentFenceWaitUnsupported = concurrentFenceWaitUnsupported;
+            _fenceAlwaysWaits = fenceAlwaysWaits;
             _owner = Thread.CurrentThread;
 
             CommandPoolCreateInfo commandPoolCreateInfo = new()
@@ -207,7 +210,7 @@ namespace Ryujinx.Graphics.Vulkan
 
                 ref ReservedCommandBuffer entry = ref _commandBuffers[index];
 
-                if (wait || !entry.InConsumption || entry.Fence.IsSignaled())
+                if (wait || !entry.InConsumption || entry.Fence.IsSignaledLazy())
                 {
                     WaitAndDecrementRef(index);
 
@@ -349,7 +352,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (refreshFence)
             {
-                entry.Fence = new FenceHolder(_api, _device, _concurrentFenceWaitUnsupported);
+                entry.Fence = new FenceHolder(_api, _device, _concurrentFenceWaitUnsupported, _fenceAlwaysWaits);
             }
             else
             {

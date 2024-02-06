@@ -36,6 +36,7 @@ namespace Ryujinx.Graphics.Vulkan
                         queueLock,
                         _gd.QueueFamilyIndex,
                         _gd.IsQualcommProprietary,
+                        _gd.IsTurnip,
                         isLight: true);
                 }
             }

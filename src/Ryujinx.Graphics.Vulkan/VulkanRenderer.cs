@@ -97,6 +97,7 @@ namespace Ryujinx.Graphics.Vulkan
         internal bool IsNvidiaPreTuring { get; private set; }
         internal bool IsIntelArc { get; private set; }
         internal bool IsQualcommProprietary { get; private set; }
+        internal bool IsTurnip { get; private set; }
         internal bool IsMoltenVk { get; private set; }
         internal bool SupportsMTL31 { get; private set; }
         internal bool IsTBDR { get; private set; }
@@ -403,6 +404,8 @@ namespace Ryujinx.Graphics.Vulkan
 
             IsFeedbackLoopDevice = IsAmdRdna3;
 
+            IsTurnip = GpuRenderer.StartsWith("Turnip");
+
             if (Vendor == Vendor.Nvidia)
             {
                 Match match = VendorUtils.NvidiaConsumerClassRegex().Match(GpuRenderer);
@@ -483,7 +486,7 @@ namespace Ryujinx.Graphics.Vulkan
             Api.TryGetDeviceExtension(_instance.Instance, _device, out ExtExternalMemoryHost hostMemoryApi);
             HostMemoryAllocator = new HostMemoryAllocator(MemoryAllocator, Api, hostMemoryApi, _device);
 
-            CommandBufferPool = new CommandBufferPool(Api, _device, Queue, QueueLock, queueFamilyIndex, IsQualcommProprietary);
+            CommandBufferPool = new CommandBufferPool(Api, _device, Queue, QueueLock, queueFamilyIndex, IsQualcommProprietary, IsTurnip);
 
             PipelineLayoutCache = new PipelineLayoutCache();
 
