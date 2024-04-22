@@ -227,7 +227,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         public static CompiledFunction Compile(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, IAddressTable<ulong> funcTable, nint dispatchStubPtr, bool isThumb)
         {
-            MultiBlock multiBlock = Decoder<InstEmit>.DecodeMulti(cpuPreset, memoryManager, address, isThumb);
+            MultiBlock multiBlock = Decoder<InstEmit>.DecodeMulti(cpuPreset, memoryManager, address, singleBlock: true, isThumb);
 
             Dictionary<ulong, int> targets = new();
 

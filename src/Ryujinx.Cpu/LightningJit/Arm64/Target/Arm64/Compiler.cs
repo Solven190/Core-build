@@ -305,7 +305,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
 
         public static CompiledFunction Compile(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, IAddressTable<ulong> funcTable, nint dispatchStubPtr)
         {
-            MultiBlock multiBlock = Decoder.DecodeMulti(cpuPreset, memoryManager, address);
+            MultiBlock multiBlock = Decoder.DecodeMulti(cpuPreset, memoryManager, address, singleBlock: true);
 
             Dictionary<ulong, int> targets = new();
             List<PendingBranch> pendingBranches = [];

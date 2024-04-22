@@ -13,7 +13,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
         private const uint NzcvFlags = 0xfu << 28;
         private const uint CFlag = 0x1u << 29;
 
-        public static MultiBlock DecodeMulti(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address)
+        public static MultiBlock DecodeMulti(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, bool singleBlock)
         {
             List<Block> blocks = [];
             List<ulong> branchTargets = [];
@@ -35,7 +35,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
 
                 blocks.Add(block);
 
-                if (block.IsTruncated || !HasNextBlock(block, block.EndAddress - 4UL, branchTargets))
+                if (block.IsTruncated || (singleBlock && block.EndsWithBranch) || !HasNextBlock(block, block.EndAddress - 4UL, branchTargets))
                 {
                     break;
                 }

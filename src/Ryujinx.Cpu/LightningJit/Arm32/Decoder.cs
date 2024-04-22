@@ -8,7 +8,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32
 {
     static class Decoder<T> where T : IInstEmit
     {
-        public static MultiBlock DecodeMulti(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, bool isThumb)
+        public static MultiBlock DecodeMulti(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, bool singleBlock, bool isThumb)
         {
             List<Block> blocks = [];
             List<ulong> branchTargets = [];
@@ -24,7 +24,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32
 
                 blocks.Add(block);
 
-                if (block.IsTruncated || !HasNextBlock(block, block.EndAddress - 4UL, branchTargets))
+                if (block.IsTruncated || (singleBlock && block.EndsWithBranch) || !HasNextBlock(block, block.EndAddress - 4UL, branchTargets))
                 {
                     break;
                 }
