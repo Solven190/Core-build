@@ -777,6 +777,11 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
                 float width = scaleX * 2;
                 float height = scaleY * 2;
 
+                if (yNegate)
+                {
+                    y += _state.State.ScreenScissorState.Height - MathF.Abs(height);
+                }
+
                 float scale = _channel.TextureManager.RenderTargetScale;
                 if (scale != 1f)
                 {
