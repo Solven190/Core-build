@@ -430,7 +430,8 @@ namespace Ryujinx.Graphics.Gpu.Shader
 
                             TranslatorContext lastInVertexPipeline = geometryToCompute ? translatorContexts[4] ?? currentStage : currentStage;
 
-                            program = lastInVertexPipeline.GenerateVertexPassthroughForCompute();
+                            (program, ShaderProgramInfo vacInfo) = lastInVertexPipeline.GenerateVertexPassthroughForCompute();
+                            infoBuilder.AddStageInfoVac(vacInfo);
                         }
                         else
                         {
@@ -535,7 +536,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
         private ShaderAsCompute CreateHostVertexAsComputeProgram(ShaderProgram program, TranslatorContext context, bool tfEnabled)
         {
             ShaderSource source = new(program.Code, program.BinaryCode, ShaderStage.Compute, program.Language);
-            ShaderInfo info = ShaderInfoBuilder.BuildForVertexAsCompute(_context, program.Info, tfEnabled);
+            ShaderInfo info = ShaderInfoBuilder.BuildForVertexAsCompute(_context, program.Info, context.GetVertexAsComputeInfo(), tfEnabled);
 
             return new(_context.Renderer.CreateProgram([source], info), program.Info, context.GetResourceReservations());
         }

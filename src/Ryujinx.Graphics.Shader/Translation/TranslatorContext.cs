@@ -399,7 +399,7 @@ namespace Ryujinx.Graphics.Shader.Translation
                 {
                     int binding = resourceManager.Reservations.GetTfeBufferStorageBufferBinding(i);
                     BufferDefinition tfeDataBuffer = new(BufferLayout.Std430, 1, binding, $"tfe_data{i}", tfeDataStruct);
-                    resourceManager.Properties.AddOrUpdateStorageBuffer(tfeDataBuffer);
+                    resourceManager.AddVertexAsComputeStorageBuffer(tfeDataBuffer);
                 }
             }
 
@@ -407,7 +407,7 @@ namespace Ryujinx.Graphics.Shader.Translation
             {
                 int vertexInfoCbBinding = resourceManager.Reservations.VertexInfoConstantBufferBinding;
                 BufferDefinition vertexInfoBuffer = new(BufferLayout.Std140, 0, vertexInfoCbBinding, "vb_info", VertexInfoBuffer.GetStructureType());
-                resourceManager.Properties.AddOrUpdateConstantBuffer(vertexInfoBuffer);
+                resourceManager.AddVertexAsComputeConstantBuffer(vertexInfoBuffer);
 
                 StructureType vertexOutputStruct = new([
                     new StructureField(AggregateType.Array | AggregateType.FP32, "data", 0)
@@ -415,13 +415,13 @@ namespace Ryujinx.Graphics.Shader.Translation
 
                 int vertexOutputSbBinding = resourceManager.Reservations.VertexOutputStorageBufferBinding;
                 BufferDefinition vertexOutputBuffer = new(BufferLayout.Std430, 1, vertexOutputSbBinding, "vertex_output", vertexOutputStruct);
-                resourceManager.Properties.AddOrUpdateStorageBuffer(vertexOutputBuffer);
+                resourceManager.AddVertexAsComputeStorageBuffer(vertexOutputBuffer);
 
                 if (Stage == ShaderStage.Vertex)
                 {
                     SetBindingPair ibSetAndBinding = resourceManager.Reservations.GetIndexBufferTextureSetAndBinding();
                     TextureDefinition indexBuffer = new(ibSetAndBinding.SetIndex, ibSetAndBinding.Binding, "ib_data", SamplerType.TextureBuffer);
-                    resourceManager.Properties.AddOrUpdateTexture(indexBuffer);
+                    resourceManager.AddVertexAsComputeTexture(indexBuffer);
 
                     int inputMap = _program.AttributeUsage.UsedInputAttributes;
 
@@ -430,7 +430,7 @@ namespace Ryujinx.Graphics.Shader.Translation
                         int location = BitOperations.TrailingZeroCount(inputMap);
                         SetBindingPair setAndBinding = resourceManager.Reservations.GetVertexBufferTextureSetAndBinding(location);
                         TextureDefinition vaBuffer = new(setAndBinding.SetIndex, setAndBinding.Binding, $"vb_data{location}", SamplerType.TextureBuffer);
-                        resourceManager.Properties.AddOrUpdateTexture(vaBuffer);
+                        resourceManager.AddVertexAsComputeTexture(vaBuffer);
 
                         inputMap &= ~(1 << location);
                     }
@@ -439,11 +439,11 @@ namespace Ryujinx.Graphics.Shader.Translation
                 {
                     SetBindingPair trbSetAndBinding = resourceManager.Reservations.GetTopologyRemapBufferTextureSetAndBinding();
                     TextureDefinition remapBuffer = new(trbSetAndBinding.SetIndex, trbSetAndBinding.Binding, "trb_data", SamplerType.TextureBuffer);
-                    resourceManager.Properties.AddOrUpdateTexture(remapBuffer);
+                    resourceManager.AddVertexAsComputeTexture(remapBuffer);
 
                     int geometryVbOutputSbBinding = resourceManager.Reservations.GeometryVertexOutputStorageBufferBinding;
                     BufferDefinition geometryVbOutputBuffer = new(BufferLayout.Std430, 1, geometryVbOutputSbBinding, "geometry_vb_output", vertexOutputStruct);
-                    resourceManager.Properties.AddOrUpdateStorageBuffer(geometryVbOutputBuffer);
+                    resourceManager.AddVertexAsComputeStorageBuffer(geometryVbOutputBuffer);
 
                     StructureType geometryIbOutputStruct = new([
                         new StructureField(AggregateType.Array | AggregateType.U32, "data", 0)
@@ -451,7 +451,7 @@ namespace Ryujinx.Graphics.Shader.Translation
 
                     int geometryIbOutputSbBinding = resourceManager.Reservations.GeometryIndexOutputStorageBufferBinding;
                     BufferDefinition geometryIbOutputBuffer = new(BufferLayout.Std430, 1, geometryIbOutputSbBinding, "geometry_ib_output", geometryIbOutputStruct);
-                    resourceManager.Properties.AddOrUpdateStorageBuffer(geometryIbOutputBuffer);
+                    resourceManager.AddVertexAsComputeStorageBuffer(geometryIbOutputBuffer);
                 }
 
                 resourceManager.SetVertexAsComputeLocalMemories(Definitions.Stage, Definitions.InputTopology);
@@ -484,12 +484,17 @@ namespace Ryujinx.Graphics.Shader.Translation
             return new ResourceReservations(GpuAccessor, IsTransformFeedbackEmulated, vertexAsCompute: true, _vertexOutput, ioUsage);
         }
 
+        public ShaderProgramInfo GetVertexAsComputeInfo()
+        {
+            return CreateResourceManager(true).GetVertexAsComputeInfo();
+        }
+
         public void SetVertexOutputMapForGeometryAsCompute(TranslatorContext vertexContext)
         {
             _vertexOutput = vertexContext._program.GetIoUsage();
         }
 
-        public ShaderProgram GenerateVertexPassthroughForCompute()
+        public (ShaderProgram, ShaderProgramInfo) GenerateVertexPassthroughForCompute()
         {
             AttributeUsage attributeUsage = new(GpuAccessor);
             ResourceManager resourceManager = new(ShaderStage.Vertex, GpuAccessor);
@@ -501,7 +506,7 @@ namespace Ryujinx.Graphics.Shader.Translation
             if (Stage == ShaderStage.Vertex)
             {
                 BufferDefinition vertexInfoBuffer = new(BufferLayout.Std140, 0, vertexInfoCbBinding, "vb_info", VertexInfoBuffer.GetStructureType());
-                resourceManager.Properties.AddOrUpdateConstantBuffer(vertexInfoBuffer);
+                resourceManager.AddVertexAsComputeConstantBuffer(vertexInfoBuffer);
             }
 
             StructureType vertexInputStruct = new([
@@ -510,7 +515,7 @@ namespace Ryujinx.Graphics.Shader.Translation
 
             int vertexDataSbBinding = reservations.VertexOutputStorageBufferBinding;
             BufferDefinition vertexOutputBuffer = new(BufferLayout.Std430, 1, vertexDataSbBinding, "vb_input", vertexInputStruct);
-            resourceManager.Properties.AddOrUpdateStorageBuffer(vertexOutputBuffer);
+            resourceManager.AddVertexAsComputeStorageBuffer(vertexOutputBuffer);
 
             EmitterContext context = new();
 
@@ -568,14 +573,14 @@ namespace Ryujinx.Graphics.Shader.Translation
                 LastInVertexPipeline = true
             };
 
-            return Generate(
+            return (Generate(
                 [function],
                 attributeUsage,
                 definitions,
                 definitions,
                 resourceManager,
                 FeatureFlags.None,
-                0);
+                0), resourceManager.GetVertexAsComputeInfo(isVertex: true));
         }
 
         public ShaderProgram GenerateGeometryPassthrough()

@@ -95,7 +95,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
         private void PopulateDescriptorAndUsages(ResourceStages stages, ResourceType type, int setIndex, int start, int count, bool write = false)
         {
             AddDescriptor(stages, type, setIndex, start, count);
-            AddUsage(stages, type, setIndex, start, count, write);
+            // AddUsage(stages, type, setIndex, start, count, write);
         }
 
         /// <summary>
@@ -152,6 +152,25 @@ namespace Ryujinx.Graphics.Gpu.Shader
 
             AddArrayDescriptors(info.Textures, stages, isImage: false);
             AddArrayDescriptors(info.Images, stages, isImage: true);
+
+            AddUsage(info.CBuffers, stages, isStorage: false);
+            AddUsage(info.SBuffers, stages, isStorage: true);
+            AddUsage(info.Textures, stages, isImage: false);
+            AddUsage(info.Images, stages, isImage: true);
+        }
+
+        public void AddStageInfoVac(ShaderProgramInfo info)
+        {
+            ResourceStages stages = info.Stage switch
+            {
+                ShaderStage.Compute => ResourceStages.Compute,
+                ShaderStage.Vertex => ResourceStages.Vertex,
+                ShaderStage.TessellationControl => ResourceStages.TessellationControl,
+                ShaderStage.TessellationEvaluation => ResourceStages.TessellationEvaluation,
+                ShaderStage.Geometry => ResourceStages.Geometry,
+                ShaderStage.Fragment => ResourceStages.Fragment,
+                _ => ResourceStages.None,
+            };
 
             AddUsage(info.CBuffers, stages, isStorage: false);
             AddUsage(info.SBuffers, stages, isStorage: true);
@@ -422,10 +441,11 @@ namespace Ryujinx.Graphics.Gpu.Shader
         /// <param name="tfEnabled">Indicates if the graphics shader is used with transform feedback enabled</param>
         /// <param name="fromCache">True if the compute shader comes from a disk cache, false otherwise</param>
         /// <returns>Shader information</returns>
-        public static ShaderInfo BuildForVertexAsCompute(GpuContext context, ShaderProgramInfo info, bool tfEnabled, bool fromCache = false)
+        public static ShaderInfo BuildForVertexAsCompute(GpuContext context, ShaderProgramInfo info, ShaderProgramInfo info2, bool tfEnabled, bool fromCache = false)
         {
             ShaderInfoBuilder builder = new(context, tfEnabled, vertexAsCompute: true);
 
+            builder.AddStageInfoVac(info2);
             builder.AddStageInfo(info, vertexAsCompute: true);
 
             return builder.Build(null, fromCache);
