@@ -295,6 +295,11 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
+        public string TextureDumpPath { get; set; }
+        public int TextureDumpFormatIndex { get; set; }
+        public bool EnableTextureDump { get; set; }
+        public bool EnableTextureRealTimeEditing { get; set; }
+
         public int Language { get; set; }
         public int Region { get; set; }
         public int FsGlobalAccessLogMode { get; set; }
@@ -652,6 +657,10 @@ namespace Ryujinx.Ava.UI.ViewModels
             AspectRatio = (int)config.Graphics.AspectRatio.Value;
             GraphicsBackendMultithreadingIndex = (int)config.Graphics.BackendThreading.Value;
             ShaderDumpPath = config.Graphics.ShadersDumpPath;
+            TextureDumpPath = config.Graphics.TexturesDumpPath.Value;
+            TextureDumpFormatIndex = (int)config.Graphics.TexturesDumpFileFormat.Value;
+            EnableTextureDump = config.Graphics.EnableTextureDump.Value;
+            EnableTextureRealTimeEditing = config.Graphics.EnableTextureRealTimeEdit.Value;
             AntiAliasingEffect = (int)config.Graphics.AntiAliasing.Value;
             ScalingFilter = (int)config.Graphics.ScalingFilter.Value;
             ScalingFilterLevel = config.Graphics.ScalingFilterLevel.Value;
@@ -777,6 +786,10 @@ namespace Ryujinx.Ava.UI.ViewModels
 
             config.Graphics.BackendThreading.Value = (BackendThreading)GraphicsBackendMultithreadingIndex;
             config.Graphics.ShadersDumpPath.Value = ShaderDumpPath;
+            config.Graphics.TexturesDumpPath.Value = TextureDumpPath;
+            config.Graphics.TexturesDumpFileFormat.Value = (TextureFileFormat)TextureDumpFormatIndex;
+            config.Graphics.EnableTextureDump.Value = EnableTextureDump;
+            config.Graphics.EnableTextureRealTimeEdit.Value = EnableTextureRealTimeEditing;
 
             // Audio
             AudioBackend audioBackend = (AudioBackend)AudioBackend;

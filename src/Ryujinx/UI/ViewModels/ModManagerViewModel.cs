@@ -141,6 +141,15 @@ namespace Ryujinx.Ava.UI.ViewModels
                 {
                     Mods.Add(new ModModel(mod.Path.FullName, mod.Name, mod.Enabled, inSd));
                 }
+                
+                foreach (var mod in modCache.TextureDirs)
+                {
+                    var modModel = new ModModel(mod.Path.Parent?.FullName, mod.Name, mod.Enabled, inSd);
+                    if (Mods.All(x => x.Path != mod.Path.Parent?.FullName))
+                    {
+                        Mods.Add(modModel);
+                    }
+                }
             }
 
             Sort();

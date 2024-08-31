@@ -103,6 +103,9 @@ namespace Ryujinx.HLE.Loaders.Processes.Extensions
             Graphics.Gpu.GraphicsConfig.TitleId = $"{programId:x16}";
             device.Gpu.HostInitalized.Set();
 
+            // Load texture replacements.
+            device.Configuration.VirtualFileSystem.ModLoader.ApplyTextureMods(programId, device.Gpu);
+
             if (!MemoryBlock.SupportsFlags(MemoryAllocationFlags.ViewCompatible))
             {
                 device.Configuration.MemoryManagerMode = MemoryManagerMode.SoftwarePageTable;
