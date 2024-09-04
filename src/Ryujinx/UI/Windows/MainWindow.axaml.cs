@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
@@ -581,6 +582,7 @@ namespace Ryujinx.Ava.UI.Windows
             GraphicsConfig.TextureDumpFormatPng       = ConfigurationState.Instance.Graphics.TexturesDumpFileFormat == TextureFileFormat.Png;
             GraphicsConfig.EnableTextureDump          = ConfigurationState.Instance.Graphics.EnableTextureDump;
             GraphicsConfig.EnableTextureRealTimeEdit  = ConfigurationState.Instance.Graphics.EnableTextureRealTimeEdit;
+            GraphicsConfig.EnableMacroJit             = RuntimeFeature.IsDynamicCodeSupported ? ConfigurationState.Instance.Graphics.EnableMacroHLE : false;
 #pragma warning restore IDE0055
         }
 
@@ -676,18 +678,18 @@ namespace Ryujinx.Ava.UI.Windows
             ReloadGameList();
         }
 
-        public void ToggleFileType(string fileType)
+        public void ToggleFileType(FileTypes fileType)
         {
             _ = fileType switch
             {
 #pragma warning disable IDE0055 // Disable formatting
-                "NSP"  => ConfigurationState.Instance.UI.ShownFileTypes.NSP.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NSP,
-                "PFS0" => ConfigurationState.Instance.UI.ShownFileTypes.PFS0.Value = !ConfigurationState.Instance.UI.ShownFileTypes.PFS0,
-                "XCI"  => ConfigurationState.Instance.UI.ShownFileTypes.XCI.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.XCI,
-                "NCA"  => ConfigurationState.Instance.UI.ShownFileTypes.NCA.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NCA,
-                "NRO"  => ConfigurationState.Instance.UI.ShownFileTypes.NRO.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NRO,
-                "NSO"  => ConfigurationState.Instance.UI.ShownFileTypes.NSO.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NSO,
-                _  => throw new ArgumentOutOfRangeException(fileType),
+                FileTypes.NSP  => ConfigurationState.Instance.UI.ShownFileTypes.NSP.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NSP,
+                FileTypes.PFS0 => ConfigurationState.Instance.UI.ShownFileTypes.PFS0.Value = !ConfigurationState.Instance.UI.ShownFileTypes.PFS0,
+                FileTypes.XCI  => ConfigurationState.Instance.UI.ShownFileTypes.XCI.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.XCI,
+                FileTypes.NCA  => ConfigurationState.Instance.UI.ShownFileTypes.NCA.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NCA,
+                FileTypes.NRO  => ConfigurationState.Instance.UI.ShownFileTypes.NRO.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NRO,
+                FileTypes.NSO  => ConfigurationState.Instance.UI.ShownFileTypes.NSO.Value  = !ConfigurationState.Instance.UI.ShownFileTypes.NSO,
+                _  => throw new ArgumentOutOfRangeException(fileType.ToString()),
 #pragma warning restore IDE0055
             };
 

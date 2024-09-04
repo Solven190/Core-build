@@ -86,7 +86,7 @@ namespace Ryujinx.UI.App.Common
 
         private static byte[] GetResourceBytes(string resourceName)
         {
-            Stream resourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream(resourceName);
+            Stream resourceStream = typeof(ApplicationLibrary).Assembly.GetManifestResourceStream(resourceName);
             if (resourceStream != null)
             {
                 byte[] resourceByteArray = new byte[resourceStream.Length];

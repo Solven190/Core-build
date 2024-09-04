@@ -168,4 +168,17 @@
   <ItemGroup>
     <TrimmerRootDescriptor Include="TrimmerRootDescriptor.xml" />
   </ItemGroup>
+  <ItemGroup Condition="$(Configuration.EndsWith('AOT'))">
+    <RdXmlFile Include="rd.xml" />
+  </ItemGroup>
+  <PropertyGroup Condition="$(Configuration.EndsWith('AOT'))">
+    <PublishAot>true</PublishAot>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <OptimizationPreference>Speed</OptimizationPreference>
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <PublishSingleFile>false</PublishSingleFile>
+    <TrimMode>full</TrimMode>
+  </PropertyGroup>
 </Project>

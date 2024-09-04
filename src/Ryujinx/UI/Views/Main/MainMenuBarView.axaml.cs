@@ -40,13 +40,12 @@ namespace Ryujinx.Ava.UI.Views.Main
         {
             List<CheckBox> checkBoxes = [];
 
-            foreach (object item in Enum.GetValues(typeof(FileTypes)))
+            foreach (FileTypes fileName in Enum.GetValues<FileTypes>())
             {
-                string fileName = Enum.GetName(typeof(FileTypes), item);
                 checkBoxes.Add(new CheckBox
                 {
                     Content = $".{fileName}",
-                    IsChecked = ((FileTypes)item).GetConfigValue(ConfigurationState.Instance.UI.ShownFileTypes),
+                    IsChecked = fileName.GetConfigValue(ConfigurationState.Instance.UI.ShownFileTypes),
                     Command = MiniCommand.Create(() => Window.ToggleFileType(fileName)),
                 });
             }
