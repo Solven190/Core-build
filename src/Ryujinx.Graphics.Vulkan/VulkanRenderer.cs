@@ -446,7 +446,8 @@ namespace Ryujinx.Graphics.Vulkan
                 portabilityFlags,
                 vertexBufferAlignment,
                 properties.Limits.SubTexelPrecisionBits,
-                minResourceAlignment);
+                minResourceAlignment,
+                _physicalDevice.PhysicalDeviceProperties.Limits.MinTexelBufferOffsetAlignment);
 
             IsSharedMemory = MemoryAllocator.IsDeviceMemoryShared(_physicalDevice);
 
