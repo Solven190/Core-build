@@ -27,6 +27,7 @@ namespace Ryujinx.Graphics.Vulkan
             KhrDrawIndirectCount.ExtensionName,
             KhrPushDescriptor.ExtensionName,
             ExtExternalMemoryHost.ExtensionName,
+            ExtPageableDeviceLocalMemory.ExtensionName,
             "VK_EXT_blend_operation_advanced",
             "VK_EXT_custom_border_color",
             "VK_EXT_descriptor_indexing", // Enabling this works around an issue with disposed buffer bindings on RADV.
@@ -382,6 +383,14 @@ namespace Ryujinx.Graphics.Vulkan
                 features2.PNext = &supportedFeaturesDynamicAttachmentFeedbackLoopLayout;
             }
 
+            PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT supportedPageableDeviceLocalMemoryFeatures = new()
+            {
+                SType = StructureType.PhysicalDevicePageableDeviceLocalMemoryFeaturesExt,
+                PNext = features2.PNext,
+            };
+
+            features2.PNext = &supportedPageableDeviceLocalMemoryFeatures;
+
             PhysicalDeviceVulkan12Features supportedPhysicalDeviceVulkan12Features = new()
             {
                 SType = StructureType.PhysicalDeviceVulkan12Features,
@@ -586,6 +595,15 @@ namespace Ryujinx.Graphics.Vulkan
 
                 pExtendedFeatures = &featuresDynamicAttachmentFeedbackLoopLayout;
             }
+            
+            PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT featuresPageableDeviceLocalMemory = new()
+            {
+                SType = StructureType.PhysicalDevicePageableDeviceLocalMemoryFeaturesExt,
+                PNext = pExtendedFeatures,
+                PageableDeviceLocalMemory = supportedPageableDeviceLocalMemoryFeatures.PageableDeviceLocalMemory,
+            };
+
+            pExtendedFeatures = &featuresPageableDeviceLocalMemory;
 
             var enabledExtensions = _requiredExtensions.Union(_desirableExtensions.Intersect(physicalDevice.DeviceExtensions)).ToArray();
 
