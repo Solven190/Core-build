@@ -184,6 +184,11 @@ namespace Ryujinx.Graphics.Shader
             return false;
         }
 
+        bool QueryStorageImageExtendedFormats()
+        {
+            return true;
+        }
+
         /// <summary>
         /// Queries host about the presence of the FrontFacing built-in variable bug.
         /// </summary>

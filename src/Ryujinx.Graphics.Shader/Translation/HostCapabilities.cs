@@ -11,6 +11,7 @@ namespace Ryujinx.Graphics.Shader.Translation
         public readonly bool SupportsShaderFloat64;
         public readonly bool SupportsTextureShadowLod;
         public readonly bool SupportsViewportMask;
+        public readonly bool StorageImageExtendedFormats;
 
         public HostCapabilities(
             bool reducedPrecision,
@@ -21,7 +22,8 @@ namespace Ryujinx.Graphics.Shader.Translation
             bool supportsShaderBarrierDivergence,
             bool supportsShaderFloat64,
             bool supportsTextureShadowLod,
-            bool supportsViewportMask)
+            bool supportsViewportMask,
+            bool storageImageExtendedFormats)
         {
             ReducedPrecision = reducedPrecision;
             SupportsFragmentShaderInterlock = supportsFragmentShaderInterlock;
@@ -32,6 +34,7 @@ namespace Ryujinx.Graphics.Shader.Translation
             SupportsShaderFloat64 = supportsShaderFloat64;
             SupportsTextureShadowLod = supportsTextureShadowLod;
             SupportsViewportMask = supportsViewportMask;
+            StorageImageExtendedFormats = storageImageExtendedFormats;
         }
     }
 }
