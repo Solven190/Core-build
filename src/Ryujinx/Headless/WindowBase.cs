@@ -10,6 +10,7 @@ using Ryujinx.Graphics.GAL.Multithreading;
 using Ryujinx.Graphics.Gpu;
 using Ryujinx.Graphics.OpenGL;
 using Ryujinx.HLE.HOS.Applets;
+using Ryujinx.HLE.HOS.Services.Account.Acc;
 using Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.ApplicationProxy.Types;
 using Ryujinx.HLE.Loaders.Processes;
 using Ryujinx.HLE.UI;
@@ -28,6 +29,7 @@ using static SDL.SDL3;
 using AntiAliasing = Ryujinx.Common.Configuration.AntiAliasing;
 using ScalingFilter = Ryujinx.Common.Configuration.ScalingFilter;
 using Switch = Ryujinx.HLE.Switch;
+using UserProfile = Ryujinx.HLE.HOS.Services.Account.Acc.UserProfile;
 
 namespace Ryujinx.Headless
 {
@@ -589,6 +591,11 @@ namespace Ryujinx.Headless
         public void TakeScreenshot()
         {
             throw new NotImplementedException();
+        }
+        
+        public UserProfile ShowPlayerSelectDialog()
+        {
+            return AccountSaveDataManager.GetLastUsedUser();
         }
     }
 }

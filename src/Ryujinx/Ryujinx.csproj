@@ -169,4 +169,10 @@
   <ItemGroup>
     <TrimmerRootDescriptor Include="TrimmerRootDescriptor.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="UI\Applet\UserSelectorDialog.axaml.cs">
+      <DependentUpon>UserSelectorDialog.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using Ryujinx.HLE.HOS.Applets;
+using Ryujinx.HLE.HOS.Services.Account.Acc;
 using Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.ApplicationProxy.Types;
 
 namespace Ryujinx.HLE.UI
@@ -65,5 +66,10 @@ namespace Ryujinx.HLE.UI
         /// Takes a screenshot from the current renderer and saves it in the screenshots folder.
         /// </summary>
         void TakeScreenshot();
+
+        /// <summary>
+        /// Displays the player select dialog and returns the selected profile.
+        /// </summary>
+        UserProfile ShowPlayerSelectDialog();
     }
 }
