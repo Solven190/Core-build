@@ -6,7 +6,7 @@ namespace Ryujinx.UI.Common.Models
         public bool IsBundled { get; } = System.IO.Path.GetExtension(ContainerPath)?.ToLower() == ".xci";
 
         public string FileName => System.IO.Path.GetFileName(ContainerPath);
-        public string TitleIdStr => TitleId.ToString("x16");
+        public string TitleIdStr => TitleId.ToString("x16").ToUpper();
         public ulong TitleIdBase => TitleId & ~0x1FFFUL;
     }
 }

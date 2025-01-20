@@ -73,7 +73,7 @@ namespace Ryujinx.Ava.UI.Controls
         public static async Task Show(AccountManager ownerAccountManager, ContentManager ownerContentManager,
             VirtualFileSystem ownerVirtualFileSystem, HorizonClient ownerHorizonClient)
         {
-            var content = new NavigationDialogHost(ownerAccountManager, ownerContentManager, ownerVirtualFileSystem, ownerHorizonClient);
+            NavigationDialogHost content = new(ownerAccountManager, ownerContentManager, ownerVirtualFileSystem, ownerHorizonClient);
             ContentDialog contentDialog = new()
             {
                 Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle],

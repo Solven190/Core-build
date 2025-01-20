@@ -821,5 +821,8 @@
   "FpsStatusBarText": "{0} FPS ({1}ms)",
   "SettingsTabHotkeysTurboMode": "Mode Turbo :",
   "SettingsTabHotkeysTurboModeToolTip": "Le raccourci clavier Mode Turbo.\\nConfigurez le comportement du Mode Turbo dans les paramètres de CPU de Ryujinx.\\n\\nLaisser Non Attribuée si incertain.",
-  "SettingsTabHotkeysOnlyWhilePressed": "Seulement quand le raccourci est maintenu"
+  "SettingsTabHotkeysOnlyWhilePressed": "Seulement quand le raccourci est maintenu",
+  "GameListContextMenuExtractDataAocRomFS": "RomFS de DLC",
+  "GameListContextMenuExtractDataAocRomFSToolTip": "Extraire les RomFS d'un fichier DLC choisi",
+  "ExtractAocListHeader": "Choisissez un DLC à extraire"
 }

@@ -13,6 +13,7 @@ using Ryujinx.Common.Configuration;
 using Ryujinx.HLE.HOS;
 using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Helper;
+using Ryujinx.UI.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -369,6 +370,22 @@ namespace Ryujinx.Ava.UI.Controls
                     NcaSectionType.Data,
                     viewModel.SelectedApplication.Path,
                     viewModel.SelectedApplication.Name);
+            }
+        }
+        
+        public async void ExtractAocRomFs_Click(object sender, RoutedEventArgs args)
+        {
+            if (sender is not MenuItem { DataContext: MainWindowViewModel { SelectedApplication: not null } viewModel })
+                return;
+
+            DownloadableContentModel selectedDlc = await DlcSelectView.Show(viewModel.SelectedApplication.IdBase, viewModel.ApplicationLibrary);
+            
+            if (selectedDlc is not null)
+            {
+                await ApplicationHelper.ExtractAoc(
+                    viewModel.StorageProvider,
+                    selectedDlc.ContainerPath,
+                    selectedDlc.FileName);
             }
         }
 
