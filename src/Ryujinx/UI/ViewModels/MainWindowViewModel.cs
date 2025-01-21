@@ -1102,6 +1102,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                     ApplicationSort.FileSize => LocaleManager.Instance[LocaleKeys.GameListHeaderFileSize],
                     ApplicationSort.Path => LocaleManager.Instance[LocaleKeys.GameListHeaderPath],
                     ApplicationSort.Favorite => LocaleManager.Instance[LocaleKeys.CommonFavorite],
+                    ApplicationSort.TitleId => LocaleManager.Instance[LocaleKeys.DlcManagerTableHeadingTitleIdLabel],
                     _ => string.Empty,
                 };
             }
@@ -1171,6 +1172,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         public IHostUIHandler UiHandler { get; internal set; }
         public bool IsSortedByFavorite => SortMode == ApplicationSort.Favorite;
         public bool IsSortedByTitle => SortMode == ApplicationSort.Title;
+        public bool IsSortedByTitleId => SortMode == ApplicationSort.TitleId;
         public bool IsSortedByDeveloper => SortMode == ApplicationSort.Developer;
         public bool IsSortedByLastPlayed => SortMode == ApplicationSort.LastPlayed;
         public bool IsSortedByTimePlayed => SortMode == ApplicationSort.TotalTimePlayed;
@@ -1204,7 +1206,9 @@ namespace Ryujinx.Ava.UI.ViewModels
                 ApplicationSort.Path            => IsAscending ? SortExpressionComparer<ApplicationData>.Ascending(app => app.Path)
                                                                : SortExpressionComparer<ApplicationData>.Descending(app => app.Path),
                 ApplicationSort.Favorite        => IsAscending ? SortExpressionComparer<ApplicationData>.Ascending(app => new AppListFavoriteComparable(app))
-                                                                : SortExpressionComparer<ApplicationData>.Descending(app => new AppListFavoriteComparable(app)),
+                                                               : SortExpressionComparer<ApplicationData>.Descending(app => new AppListFavoriteComparable(app)),
+                ApplicationSort.TitleId         => IsAscending ? SortExpressionComparer<ApplicationData>.Ascending(app => app.Id)
+                                                               : SortExpressionComparer<ApplicationData>.Descending(app => app.Id),
                 _ => null,
 #pragma warning restore IDE0055
             };

@@ -107,6 +107,12 @@
                                 Tag="Title" />
                             <RadioButton
                                 IsCheckedChanged="Sort_Checked"
+                                Content="{locale:Locale DlcManagerTableHeadingTitleIdLabel}"
+                                GroupName="Sort"
+                                IsChecked="{Binding IsSortedByTitleId, Mode=OneTime}"
+                                Tag="TitleId" />
+                            <RadioButton
+                                IsCheckedChanged="Sort_Checked"
                                 Content="{locale:Locale GameListHeaderDeveloper}"
                                 GroupName="Sort"
                                 IsChecked="{Binding IsSortedByDeveloper, Mode=OneTime}"
