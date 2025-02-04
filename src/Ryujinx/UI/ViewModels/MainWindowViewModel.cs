@@ -481,6 +481,8 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
+        public bool HasDlc => ApplicationLibrary.HasDlcs(SelectedApplication.Id);
+
         public string CacheLoadStatus
         {
             get => _cacheLoadStatus;

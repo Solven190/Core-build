@@ -378,7 +378,7 @@ namespace Ryujinx.Ava.UI.Controls
             if (sender is not MenuItem { DataContext: MainWindowViewModel { SelectedApplication: not null } viewModel })
                 return;
 
-            DownloadableContentModel selectedDlc = await DlcSelectView.Show(viewModel.SelectedApplication.IdBase, viewModel.ApplicationLibrary);
+            DownloadableContentModel selectedDlc = await DlcSelectView.Show(viewModel.SelectedApplication.Id, viewModel.ApplicationLibrary);
             
             if (selectedDlc is not null)
             {

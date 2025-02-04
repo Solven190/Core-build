@@ -98,6 +98,7 @@
             Header="{locale:Locale GameListContextMenuExtractDataRomFS}"
             ToolTip.Tip="{locale:Locale GameListContextMenuExtractDataRomFSToolTip}" />
         <MenuItem
+            IsVisible="{Binding HasDlc}"
             Click="ExtractAocRomFs_Click"
             Header="{locale:Locale GameListContextMenuExtractDataAocRomFS}"
             ToolTip.Tip="{locale:Locale GameListContextMenuExtractDataAocRomFSToolTip}" />

@@ -126,6 +126,24 @@ namespace Ryujinx.UI.App.Common
 
             return data;
         }
+        
+        public bool FindUpdate(ulong id, out TitleUpdateModel foundData)
+        {
+            Gommon.Optional<TitleUpdateModel> appData = 
+                TitleUpdates.Keys.FindFirst(x => x.TitleId == id);
+            foundData = appData.HasValue ? appData.Value : null;
+
+            return appData.HasValue;
+        }
+        
+        public TitleUpdateModel[] FindUpdatesFor(ulong id)
+            => TitleUpdates.Keys.Where(x => x.TitleIdBase == (id & ~0x1FFFUL)).ToArray();
+        
+        public DownloadableContentModel[] FindDlcsFor(ulong id)
+            => DownloadableContents.Keys.Where(x => x.TitleIdBase == (id & ~0x1FFFUL)).ToArray();
+        
+        public bool HasDlcs(ulong id)
+            => DownloadableContents.Keys.Any(x => x.TitleIdBase == (id & ~0x1FFFUL));
 
         /// <exception cref="LibHac.Common.Keys.MissingKeyException">The configured key set is missing a key.</exception>
         /// <exception cref="InvalidDataException">The NCA header could not be decrypted.</exception>
