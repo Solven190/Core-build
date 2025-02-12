@@ -221,7 +221,7 @@ namespace Ryujinx.Ava.UI.Applet
             _parent.ViewModel.AppHost?.Stop();
         }
 
-        public bool DisplayErrorAppletDialog(string title, string message, string[] buttons)
+        public bool DisplayErrorAppletDialog(string title, string message, string[] buttons, (uint Module, uint Description)? errorCode = null)
         {
             ManualResetEvent dialogCloseEvent = new(false);
 
