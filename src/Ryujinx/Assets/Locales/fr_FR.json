@@ -814,5 +814,12 @@
   "MultiplayerMode": "Mode :",
   "MultiplayerModeTooltip": "Changer le mode multijoueur LDN.\n\nLdnMitm modifiera la fonctionnalité de jeu sans fil local/jeu local dans les jeux pour fonctionner comme s'il s'agissait d'un LAN, permettant des connexions locales sur le même réseau avec d'autres instances de Ryujinx et des consoles Nintendo Switch piratées ayant le module ldn_mitm installé.\n\nLe multijoueur nécessite que tous les joueurs soient sur la même version du jeu (par exemple, Super Smash Bros. Ultimate v13.0.1 ne peut pas se connecter à v13.0.0).\n\nLaissez DÉSACTIVÉ si vous n'êtes pas sûr.",
   "MultiplayerModeDisabled": "Désactivé",
-  "MultiplayerModeLdnMitm": "ldn_mitm"
+  "MultiplayerModeLdnMitm": "ldn_mitm",
+  "SettingsTabSystemTurboMultiplier": "Multiplicateur du Mode Turbo :",
+  "SettingsTabSystemTurboMultiplierValueToolTip": "La valeur souhaitée du multiplicateur du Mode Turbo.\\n\\nGarder à 200 si incertain.",
+  "SettingsTabSystemTurboMultiplierToolTip": "Le Mode Turbo est une fonctionnalité de l'émulateur qui accélère ou ralentit le jeu lorsque ce dernier n'est pas sensible au framerate.\\nVous pouvez changer cette option en jeu avec un raccourci clavier, configurable dans les paramètres de Raccourcis clavier de Ryujinx.\\n\\nGarder à 200 si incertain.",
+  "FpsStatusBarText": "{0} FPS ({1}ms)",
+  "SettingsTabHotkeysTurboMode": "Mode Turbo :",
+  "SettingsTabHotkeysTurboModeToolTip": "Le raccourci clavier Mode Turbo.\\nConfigurez le comportement du Mode Turbo dans les paramètres de CPU de Ryujinx.\\n\\nLaisser Non Attribuée si incertain.",
+  "SettingsTabHotkeysOnlyWhilePressed": "Seulement quand le raccourci est maintenu"
 }

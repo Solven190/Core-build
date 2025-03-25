@@ -126,22 +126,46 @@ namespace Ryujinx.Ava.UI.Models.Input
             }
         }
 
+        private Key _turboMode;
+        public Key TurboMode
+        {
+            get => _turboMode;
+            set
+            {
+                _turboMode = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        private bool _turboModeWhileHeld;
+        public bool TurboModeWhileHeld
+        {
+            get => _turboModeWhileHeld;
+            set
+            {
+                _turboModeWhileHeld = value;
+                OnPropertyChanged();
+            }
+        }
+
         public HotkeyConfig(KeyboardHotkeys config)
         {
-            if (config != null)
-            {
-                ToggleVSyncMode = config.ToggleVSyncMode;
-                Screenshot = config.Screenshot;
-                ShowUI = config.ShowUI;
-                Pause = config.Pause;
-                ToggleMute = config.ToggleMute;
-                ResScaleUp = config.ResScaleUp;
-                ResScaleDown = config.ResScaleDown;
-                VolumeUp = config.VolumeUp;
-                VolumeDown = config.VolumeDown;
-                CustomVSyncIntervalIncrement = config.CustomVSyncIntervalIncrement;
-                CustomVSyncIntervalDecrement = config.CustomVSyncIntervalDecrement;
-            }
+            if (config == null)
+                return;
+
+            ToggleVSyncMode = config.ToggleVSyncMode;
+            Screenshot = config.Screenshot;
+            ShowUI = config.ShowUI;
+            Pause = config.Pause;
+            ToggleMute = config.ToggleMute;
+            ResScaleUp = config.ResScaleUp;
+            ResScaleDown = config.ResScaleDown;
+            VolumeUp = config.VolumeUp;
+            VolumeDown = config.VolumeDown;
+            CustomVSyncIntervalIncrement = config.CustomVSyncIntervalIncrement;
+            CustomVSyncIntervalDecrement = config.CustomVSyncIntervalDecrement;
+            TurboMode = config.TurboMode;
+            TurboModeWhileHeld = config.TurboModeWhileHeld;
         }
 
         public KeyboardHotkeys GetConfig()
@@ -159,6 +183,8 @@ namespace Ryujinx.Ava.UI.Models.Input
                 VolumeDown = VolumeDown,
                 CustomVSyncIntervalIncrement = CustomVSyncIntervalIncrement,
                 CustomVSyncIntervalDecrement = CustomVSyncIntervalDecrement,
+                TurboMode = TurboMode,
+                TurboModeWhileHeld = TurboModeWhileHeld
             };
 
             return config;

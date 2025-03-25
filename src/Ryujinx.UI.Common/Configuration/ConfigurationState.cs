@@ -12,7 +12,6 @@ using Ryujinx.UI.Common.Configuration.UI;
 using Ryujinx.UI.Common.Helper;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace Ryujinx.UI.Common.Configuration
@@ -342,6 +341,11 @@ namespace Ryujinx.UI.Common.Configuration
             public ReactiveObject<bool> EnablePtc { get; private set; }
 
             /// <summary>
+            /// Clock tick scalar, in percent points (100 = 1.0).
+            /// </summary>
+            public ReactiveObject<long> TickScalar { get; set; }
+
+            /// <summary>
             /// Enables or disables low-power profiled translation cache persistency loading
             /// </summary>
             public ReactiveObject<bool> EnableLowPowerPtc { get; private set; }
@@ -406,6 +410,15 @@ namespace Ryujinx.UI.Common.Configuration
                 EnablePtc.Event += static (sender, e) => LogValueChange(e, nameof(EnablePtc));
                 EnableLowPowerPtc = new ReactiveObject<bool>();
                 EnableLowPowerPtc.Event += static (sender, e) => LogValueChange(e, nameof(EnableLowPowerPtc));
+                TickScalar = new ReactiveObject<long>();
+                TickScalar.Event += static (sender, e) => LogValueChange(e, nameof(TickScalar));
+                TickScalar.Event += static (sender, e) => 
+                {
+                    if (Switch.Shared is null)
+                        return;
+
+                    Switch.Shared.Configuration.TickScalar = e.NewValue;
+                };
                 EnableInternetAccess = new ReactiveObject<bool>();
                 EnableInternetAccess.Event += static (sender, e) => LogValueChange(e, nameof(EnableInternetAccess));
                 EnableFsIntegrityChecks = new ReactiveObject<bool>();
@@ -813,6 +826,7 @@ namespace Ryujinx.UI.Common.Configuration
                 EnableColorSpacePassthrough = Graphics.EnableColorSpacePassthrough,
                 EnablePtc = System.EnablePtc,
                 EnableLowPowerPtc = System.EnableLowPowerPtc,
+                TickScalar = System.TickScalar,
                 EnableInternetAccess = System.EnableInternetAccess,
                 EnableFsIntegrityChecks = System.EnableFsIntegrityChecks,
                 FsGlobalAccessLogMode = System.FsGlobalAccessLogMode,
@@ -1000,6 +1014,10 @@ namespace Ryujinx.UI.Common.Configuration
                 ResScaleDown = Key.Unbound,
                 VolumeUp = Key.Unbound,
                 VolumeDown = Key.Unbound,
+                CustomVSyncIntervalIncrement = Key.Unbound,
+                CustomVSyncIntervalDecrement = Key.Unbound,
+                TurboMode = Key.Unbound,
+                TurboModeWhileHeld = false
             };
             Hid.InputConfig.Value =
             [
@@ -1690,6 +1708,26 @@ namespace Ryujinx.UI.Common.Configuration
 
                 configurationFileFormat.MatchSystemTime = false;
 
+                // Turbo Mode should be version 59 - KeatonTheBot
+                // TODO: Fix config migration for Turbo Mode
+                configurationFileFormat.TickScalar = 200;
+                configurationFileFormat.Hotkeys = new KeyboardHotkeys
+                {
+                    ToggleVSyncMode = configurationFileFormat.Hotkeys.ToggleVSyncMode,
+                    Screenshot = configurationFileFormat.Hotkeys.Screenshot,
+                    ShowUI = configurationFileFormat.Hotkeys.ShowUI,
+                    Pause = configurationFileFormat.Hotkeys.Pause,
+                    ToggleMute = configurationFileFormat.Hotkeys.ToggleMute,
+                    ResScaleUp = configurationFileFormat.Hotkeys.ResScaleUp,
+                    ResScaleDown = configurationFileFormat.Hotkeys.ResScaleDown,
+                    VolumeUp = configurationFileFormat.Hotkeys.VolumeUp,
+                    VolumeDown = configurationFileFormat.Hotkeys.VolumeDown,
+                    CustomVSyncIntervalIncrement = configurationFileFormat.Hotkeys.CustomVSyncIntervalIncrement,
+                    CustomVSyncIntervalDecrement = configurationFileFormat.Hotkeys.CustomVSyncIntervalDecrement,
+                    TurboMode = Key.Unbound,
+                    TurboModeWhileHeld = false
+                };
+
                 configurationFileUpdated = true;
             }
             
@@ -1737,6 +1775,7 @@ namespace Ryujinx.UI.Common.Configuration
             Graphics.EnableColorSpacePassthrough.Value = configurationFileFormat.EnableColorSpacePassthrough;
             System.EnablePtc.Value = configurationFileFormat.EnablePtc;
             System.EnableLowPowerPtc.Value = configurationFileFormat.EnableLowPowerPtc;
+            System.TickScalar.Value = configurationFileFormat.TickScalar;
             System.EnableInternetAccess.Value = configurationFileFormat.EnableInternetAccess;
             System.EnableFsIntegrityChecks.Value = configurationFileFormat.EnableFsIntegrityChecks;
             System.FsGlobalAccessLogMode.Value = configurationFileFormat.FsGlobalAccessLogMode;

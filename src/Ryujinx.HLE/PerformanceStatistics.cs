@@ -6,6 +6,8 @@ namespace Ryujinx.HLE
 {
     public class PerformanceStatistics
     {
+        private readonly Switch _device;
+        
         private const int FrameTypeGame = 0;
         private const int PercentTypeFifo = 0;
 
@@ -28,8 +30,10 @@ namespace Ryujinx.HLE
 
         private readonly System.Timers.Timer _resetTimer;
 
-        public PerformanceStatistics()
+        public PerformanceStatistics(Switch device)
         {
+            _device = device;
+            
             _frameRate = new double[1];
             _accumulatedFrameTime = new double[1];
             _previousFrameTime = new double[1];

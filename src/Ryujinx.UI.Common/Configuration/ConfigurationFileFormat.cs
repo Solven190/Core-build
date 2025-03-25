@@ -239,6 +239,11 @@ namespace Ryujinx.UI.Common.Configuration
         /// Enables or disables low-power profiled translation cache persistency loading
         /// </summary>
         public bool EnableLowPowerPtc { get; set; }
+        
+        /// <summary>
+        /// Clock tick scalar, in percent points (100 = 1.0).
+        /// </summary>
+        public long TickScalar { get; set; }
 
         /// <summary>
         /// Enables or disables guest Internet access

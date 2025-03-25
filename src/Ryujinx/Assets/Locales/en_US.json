@@ -905,5 +905,13 @@
   "SettingsTabDebugGDBStubToggleTooltip": "Enables the GDB stub, which makes it possible to debug the running application. For development use only!",
   "SettingsTabDebugGDBStubPort": "GDB Stub Port:",
   "SettingsTabDebugSuspendOnStart": "Suspend Application on Start",
-  "SettingsTabDebugSuspendOnStartTooltip": "Suspends the application before executing the first instruction, allowing for debugging from the earliest point."
+  "SettingsTabDebugSuspendOnStartTooltip": "Suspends the application before executing the first instruction, allowing for debugging from the earliest point.",
+  "SettingsTabSystemTurboMultiplier": "Turbo Mode multiplier:",
+  "SettingsTabSystemTurboMultiplierValueToolTip": "The Turbo mode multiplier target value.\\n\\nLeave at 200 if unsure.",
+  "SettingsTabSystemTurboMultiplierToolTip": "Turbo mode is an emulator feature which effectively causes speed up or slow down when a game is not frame-rate sensitive.\\nYou can toggle this feature in-game with a hotkey, configurable in Ryujinx Keyboard Hotkeys settings.\\n\\nLeave at 200 if unsure.",
+  "FpsStatusBarText": "{0} FPS ({1}ms)",
+  "FpsTurboStatusBarText": "{0} FPS ({1}ms), Turbo ({2}%)",
+  "SettingsTabHotkeysTurboMode": "Turbo mode:",
+  "SettingsTabHotkeysTurboModeToolTip": "The Turbo mode hotkey.\\nConfigure the behavior of Turbo mode in Ryujinx CPU settings.\\n\\nLeave Unbound if unsure.",
+  "SettingsTabHotkeysOnlyWhilePressed": "Only while pressed"
 }

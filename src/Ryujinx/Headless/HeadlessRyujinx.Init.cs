@@ -9,6 +9,7 @@ using Ryujinx.Common.Configuration.Hid.Controller.Motion;
 using Ryujinx.Common.Configuration.Hid.Keyboard;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.Utilities;
+using Ryujinx.Cpu;
 using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.GAL.Multithreading;
 using Ryujinx.Graphics.OpenGL;
@@ -339,6 +340,7 @@ namespace Ryujinx.Headless
                 options.VSyncMode,
                 !options.DisableDockedMode,
                 !options.DisablePTC,
+                ITickSource.RealityTickScalar,
                 options.EnableInternetAccess,
                 !options.DisableFsIntegrityChecks ? IntegrityCheckLevel.ErrorOnInvalid : IntegrityCheckLevel.None,
                 options.FsGlobalAccessLogMode,

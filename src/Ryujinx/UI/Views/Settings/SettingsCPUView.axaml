@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:locale="clr-namespace:Ryujinx.Ava.Common.Locale"
     xmlns:viewModels="clr-namespace:Ryujinx.Ava.UI.ViewModels"
+    xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
     mc:Ignorable="d"
     x:DataType="viewModels:SettingsViewModel">
     <Design.DataContext>
@@ -69,6 +70,57 @@
                         <TextBlock Text="{locale:Locale SettingsTabSystemUseHypervisor}"
                                    ToolTip.Tip="{locale:Locale UseHypervisorTooltip}" />
                     </CheckBox>
+                </StackPanel>
+                <Separator Height="1" />
+                <StackPanel
+                    Orientation="Vertical"
+                    Spacing="5">
+                    <TextBlock
+                        Classes="h1"
+                        Text="{locale:Locale SettingsTabSystemHacks}" />
+                    <TextBlock
+                        Foreground="{DynamicResource SecondaryTextColor}"
+                        TextDecorations="Underline"
+                        Text="{locale:Locale SettingsTabSystemHacksNote}" />
+                </StackPanel>
+                <StackPanel
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    Orientation="Vertical">
+                    <StackPanel Margin="0,0,0,10"
+                                Orientation="Horizontal">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            Text="{locale:Locale SettingsTabSystemTurboMultiplier}"
+                            ToolTip.Tip="{locale:Locale SettingsTabSystemTurboMultiplierToolTip}"
+                            Width="250" />
+                        <ui:NumberBox ToolTip.Tip="{locale:Locale SettingsTabSystemTurboMultiplierValueToolTip}"
+                                      Value="{Binding TurboMultiplier}"
+                                      Width="165"
+                                      SmallChange="1.0"
+                                      LargeChange="10"
+                                      SimpleNumberFormat="F0"
+                                      SpinButtonPlacementMode="Hidden"
+                                      Minimum="50"
+                                      Maximum="1000" />
+                        <Slider Value="{Binding TurboMultiplier}"
+                                ToolTip.Tip="{locale:Locale SettingsTabSystemTurboMultiplierValueToolTip}"
+                                MinWidth="175"
+                                Margin="10,-3,0,0"
+                                Height="32"
+                                Padding="0,-5"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                SmallChange="1"
+                                VerticalAlignment="Center"
+                                Minimum="50"
+                                Maximum="1000" />
+                        <TextBlock Margin="5,0"
+                                   Width="40"
+                                   Text="{Binding TurboMultiplierPercentageText}"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </Border>

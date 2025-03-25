@@ -106,6 +106,9 @@ namespace Ryujinx.Ava.UI.Views.Settings
                                         case "CustomVSyncIntervalDecrement":
                                             viewModel.KeyboardHotkey.CustomVSyncIntervalDecrement = buttonValue.AsHidType<Key>();
                                             break;
+                                        case "TurboMode":
+                                            viewModel.KeyboardHotkey.TurboMode = buttonValue.AsHidType<Key>();
+                                            break;
                                     }
                                 }
                             }

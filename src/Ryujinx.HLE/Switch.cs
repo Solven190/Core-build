@@ -1,6 +1,7 @@
 using Ryujinx.Audio.Backends.CompatLayer;
 using Ryujinx.Audio.Integration;
 using Ryujinx.Common.Configuration;
+using Ryujinx.Cpu;
 using Ryujinx.Graphics.Gpu;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS;
@@ -17,12 +18,23 @@ namespace Ryujinx.HLE
 {
     public class Switch : IDisposable
     {
+        public static Switch Shared { get; private set; }
+
         public HLEConfiguration Configuration { get; }
         public IHardwareDeviceDriver AudioDeviceDriver { get; }
         public MemoryBlock Memory { get; }
         public GpuContext Gpu { get; }
         public VirtualFileSystem FileSystem { get; }
         public HOS.Horizon System { get; }
+
+        public bool TurboMode = false;
+
+        public long TickScalar
+        {
+            get => System?.TickSource?.TickScalar ?? ITickSource.RealityTickScalar;
+            set => System.TickSource.TickScalar = value;
+        }
+        
         public ProcessLoader Processes { get; }
         public PerformanceStatistics Statistics { get; }
         public Hid Hid { get; }
@@ -30,12 +42,11 @@ namespace Ryujinx.HLE
         public IHostUIHandler UIHandler { get; }
         public Debugger.Debugger Debugger { get; }
 
-        public int CpuCoresCount = 4; //Switch 1 has 4 cores
+        public int CpuCoresCount = 4; // Switch has a quad-core Tegra X1 SoC
 
         public VSyncMode VSyncMode { get; set; } = VSyncMode.Switch;
         public bool CustomVSyncIntervalEnabled { get; set; } = false;
         public int CustomVSyncInterval { get; set; }
-
         public long TargetVSyncInterval { get; set; } = 60;
 
         public bool IsFrameAvailable => Gpu.Window.IsFrameAvailable;
@@ -60,7 +71,7 @@ namespace Ryujinx.HLE
             Gpu               = new GpuContext(Configuration.GpuRenderer);
             Debugger          = Configuration.EnableGdbStub ? new Debugger.Debugger(this, Configuration.GdbStubPort) : null;
             System            = new HOS.Horizon(this);
-            Statistics        = new PerformanceStatistics();
+            Statistics        = new PerformanceStatistics(this);
             Hid               = new Hid(this, System.HidStorage);
             Processes         = new ProcessLoader(this);
             TamperMachine     = new TamperMachine();
@@ -71,6 +82,7 @@ namespace Ryujinx.HLE
 
             VSyncMode                               = Configuration.VSyncMode;
             CustomVSyncInterval                     = Configuration.CustomVSyncInterval;
+            TickScalar                              = TurboMode ? Configuration.TickScalar : ITickSource.RealityTickScalar;
             System.State.DockedMode                 = Configuration.EnableDockedMode;
             System.PerformanceState.PerformanceMode = System.State.DockedMode ? PerformanceMode.Boost : PerformanceMode.Default;
             System.EnablePtc                        = Configuration.EnablePtc;
@@ -78,6 +90,8 @@ namespace Ryujinx.HLE
             System.GlobalAccessLogMode              = Configuration.FsGlobalAccessLogMode;
             UpdateVSyncInterval();
 #pragma warning restore IDE0055
+            
+            Shared = this;
         }
 
         public bool LoadCart(string exeFsDir, string romFsFile = null)
@@ -175,6 +189,12 @@ namespace Ryujinx.HLE
             }
         }
 
+        public void ToggleTurbo()
+        {
+            TurboMode = !TurboMode;
+            TickScalar = TurboMode ? Configuration.TickScalar : ITickSource.RealityTickScalar;
+        }
+
         public void SetVolume(float volume)
         {
             AudioDeviceDriver.Volume = Math.Clamp(volume, 0f, 1f);
@@ -215,6 +235,8 @@ namespace Ryujinx.HLE
                 FileSystem.Dispose();
                 Memory.Dispose();
                 Debugger?.Dispose();
+
+                Shared = null;
             }
         }
     }
