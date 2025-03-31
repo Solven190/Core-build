@@ -808,5 +808,7 @@
   "MultiplayerMode": "模式:",
   "MultiplayerModeTooltip": "變更 LDN 多人遊戲模式。\n\nLdnMitm 將修改遊戲中的本機無線/本機遊戲功能，使其如同區域網路一樣執行，允許與其他安裝了 ldn_mitm 模組的 Ryujinx 實例和已破解的 Nintendo Switch 遊戲機進行本機同網路連線。\n\n多人遊戲要求所有玩家使用相同的遊戲版本 (例如，Super Smash Bros. Ultimate v13.0.1 無法連接 v13.0.0)。\n\n如果不確定，請保持 Disabled (停用) 狀態。",
   "MultiplayerModeDisabled": "已停用",
-  "MultiplayerModeLdnMitm": "ldn_mitm"
+  "MultiplayerModeLdnMitm": "ldn_mitm",
+  "SettingsTabSystemSkipUserProfilesManager": "略過對話框「管理使用者設定檔」",
+  "SkipUserProfilesTooltip": "這個選項跳過遊戲過程中的「管理使用者設定檔」對話框，使用預先選取的設定。\n\n可以在「設定」-「管理使用者設定檔」中找到設定檔切換。 在載入遊戲前選擇您需要的設定檔。"
 }

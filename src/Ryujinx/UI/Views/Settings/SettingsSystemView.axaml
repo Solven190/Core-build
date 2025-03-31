@@ -287,6 +287,11 @@
                         ToolTip.Tip="{locale:Locale SettingsTabSystemEnableCustomVSyncIntervalTooltip}">
                         <TextBlock Text="{locale:Locale SettingsTabSystemEnableCustomVSyncInterval}" />
                     </CheckBox>
+                    <CheckBox
+                        IsChecked="{Binding SkipUserProfiles}"
+                        ToolTip.Tip="{locale:Locale SkipUserProfilesTooltip}">
+                        <TextBlock Text="{locale:Locale SettingsTabSystemSkipUserProfilesManager}" />
+                    </CheckBox>
                 </StackPanel>
             </StackPanel>
         </Border>

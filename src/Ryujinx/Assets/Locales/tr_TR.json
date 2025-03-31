@@ -803,5 +803,7 @@
   "MultiplayerMode": "Mod:",
   "MultiplayerModeTooltip": "Change LDN multiplayer mode.\n\nLdnMitm will modify local wireless/local play functionality in games to function as if it were LAN, allowing for local, same-network connections with other Ryujinx instances and hacked Nintendo Switch consoles that have the ldn_mitm module installed.\n\nMultiplayer requires all players to be on the same game version (i.e. Super Smash Bros. Ultimate v13.0.1 can't connect to v13.0.0).\n\nLeave DISABLED if unsure.",
   "MultiplayerModeDisabled": "Devre Dışı",
-  "MultiplayerModeLdnMitm": "ldn_mitm"
+  "MultiplayerModeLdnMitm": "ldn_mitm",
+  "SettingsTabSystemSkipUserProfilesManager": "'Kullanıcı Profillerini Yönet' iletişim kutusunu atla",
+  "SkipUserProfilesTooltip": "Bu seçenek, oyun sırasında 'Kullanıcı Profillerini Yönet' iletişim kutusunu atlar ve önceden seçilmiş bir profil kullanır.\n\nProfil değiştirme 'Seçenekler' - 'Kullanıcı Profillerini Yönet' bölümünde bulunur. Oyunu yüklemeden önce istediğiniz profili seçin."
 }

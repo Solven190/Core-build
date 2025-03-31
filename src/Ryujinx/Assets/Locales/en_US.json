@@ -916,5 +916,7 @@
   "SettingsTabHotkeysOnlyWhilePressed": "Only while pressed",
   "GameListContextMenuExtractDataAocRomFS": "DLC RomFS",
   "GameListContextMenuExtractDataAocRomFSToolTip": "Extract the RomFS from a selected DLC file",
-  "ExtractAocListHeader": "Select a DLC to Extract"
+  "ExtractAocListHeader": "Select a DLC to Extract",
+  "SettingsTabSystemSkipUserProfilesManager": "Skip Dialog 'Manage User Profiles'",
+  "SkipUserProfilesTooltip": "This option skips the 'Manage User Profiles' dialog during gameplay, using a pre-selected profile.\n\nProfile switching is found in 'Settings' - 'Manager User Profiles'. Select the desired profile before loading the game."
 }

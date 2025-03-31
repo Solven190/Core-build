@@ -391,6 +391,11 @@ namespace Ryujinx.UI.Common.Configuration
             public ReactiveObject<bool> IgnoreMissingServices { get; private set; }
 
             /// <summary>
+            ///  Skip User Profiles Manager
+            /// </summary>
+            public ReactiveObject<bool> SkipUserProfilesManager { get; private set; }
+
+            /// <summary>
             /// Uses Hypervisor over JIT if available
             /// </summary>
             public ReactiveObject<bool> UseHypervisor { get; private set; }
@@ -433,6 +438,8 @@ namespace Ryujinx.UI.Common.Configuration
                 DramSize.Event += static (_, e) => LogValueChange(e, nameof(DramSize));
                 IgnoreMissingServices = new ReactiveObject<bool>();
                 IgnoreMissingServices.Event += static (_, e) => LogValueChange(e, nameof(IgnoreMissingServices));
+                SkipUserProfilesManager = new ReactiveObject<bool>();
+                SkipUserProfilesManager.Event += static (_, e) => LogValueChange(e, nameof(SkipUserProfilesManager));
                 AudioVolume = new ReactiveObject<float>();
                 AudioVolume.Event += static (_, e) => LogValueChange(e, nameof(AudioVolume));
                 UseHypervisor = new ReactiveObject<bool>();
@@ -835,6 +842,7 @@ namespace Ryujinx.UI.Common.Configuration
                 MemoryManagerMode = System.MemoryManagerMode,
                 DramSize = System.DramSize,
                 IgnoreMissingServices = System.IgnoreMissingServices,
+                SkipUserProfiles = System.SkipUserProfilesManager,
                 UseHypervisor = System.UseHypervisor,
                 GuiColumns = new GuiColumns
                 {
@@ -959,6 +967,7 @@ namespace Ryujinx.UI.Common.Configuration
             System.MemoryManagerMode.Value = MemoryManagerMode.HostMappedUnsafe;
             System.DramSize.Value = MemoryConfiguration.MemoryConfiguration4GiB;
             System.IgnoreMissingServices.Value = false;
+            System.SkipUserProfilesManager.Value = false;
             System.UseHypervisor.Value = true;
             Multiplayer.LanInterfaceId.Value = "0";
             Multiplayer.Mode.Value = MultiplayerMode.Disabled;
@@ -1735,6 +1744,15 @@ namespace Ryujinx.UI.Common.Configuration
 
                 configurationFileUpdated = true;
             }
+            
+            if (configurationFileFormat.Version < 60)
+            {
+                Ryujinx.Common.Logging.Logger.Warning?.Print(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 60.");
+
+                configurationFileFormat.SkipUserProfiles = false;
+
+                configurationFileUpdated = true;
+            }
 
             Logger.EnableFileLog.Value = configurationFileFormat.EnableFileLog;
             Graphics.ResScale.Value = configurationFileFormat.ResScale;
@@ -1789,6 +1807,7 @@ namespace Ryujinx.UI.Common.Configuration
             System.MemoryManagerMode.Value = configurationFileFormat.MemoryManagerMode;
             System.DramSize.Value = configurationFileFormat.DramSize;
             System.IgnoreMissingServices.Value = configurationFileFormat.IgnoreMissingServices;
+            System.SkipUserProfilesManager.Value = configurationFileFormat.SkipUserProfiles;
             System.UseHypervisor.Value = configurationFileFormat.UseHypervisor;
             UI.GuiColumns.FavColumn.Value = configurationFileFormat.GuiColumns.FavColumn;
             UI.GuiColumns.IconColumn.Value = configurationFileFormat.GuiColumns.IconColumn;

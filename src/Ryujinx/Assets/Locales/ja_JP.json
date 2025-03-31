@@ -803,5 +803,7 @@
   "MultiplayerMode": "モード:",
   "MultiplayerModeTooltip": "LDNマルチプレイヤーモードを変更します.\n\nldn_mitmモジュールがインストールされた, 他のRyujinxインスタンスや,ハックされたNintendo Switchコンソールとのローカル/同一ネットワーク接続を可能にします.\n\nマルチプレイでは, すべてのプレイヤーが同じゲームバージョンである必要があります（例：Super Smash Bros. Ultimate v13.0.1はv13.0.0に接続できません）.\n\n不明な場合は｢無効｣のままにしてください.",
   "MultiplayerModeDisabled": "無効",
-  "MultiplayerModeLdnMitm": "ldn_mitm"
+  "MultiplayerModeLdnMitm": "ldn_mitm",
+  "SettingsTabSystemSkipUserProfilesManager": "「ユーザプロファイルを管理」ダイアログをスキップ",
+  "SkipUserProfilesTooltip": "このオプションは、ゲームプレイ中に「ユーザプロファイルを管理」ダイアログをスキップし、事前に選択されたプロファイルを使用します。\n\nプロファイルの切り替えは、「設定」-「ユーザプロファイルを管理」で見つけることができます。ゲームのロード前に目的のプロファイルをを選択してください。"
 }

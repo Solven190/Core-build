@@ -803,5 +803,7 @@
   "MultiplayerMode": "Modo:",
   "MultiplayerModeTooltip": "Cambiar modo LDN multijugador.\n\nLdnMitm modificará la funcionalidad local de juego inalámbrico para funcionar como si fuera LAN, permitiendo locales conexiones de la misma red con otras instancias de Ryujinx y consolas hackeadas de Nintendo Switch que tienen instalado el módulo ldn_mitm.\n\nMultijugador requiere que todos los jugadores estén en la misma versión del juego (por ejemplo, Super Smash Bros. Ultimate v13.0.1 no se puede conectar a v13.0.0).\n\nDejar DESACTIVADO si no está seguro.",
   "MultiplayerModeDisabled": "Deshabilitar",
-  "MultiplayerModeLdnMitm": "ldn_mitm"
+  "MultiplayerModeLdnMitm": "ldn_mitm",
+  "SettingsTabSystemSkipUserProfilesManager": "Omitir el Diálogo 'Gestionar Perfiles de Usuario'",
+  "SkipUserProfilesTooltip": "Esta opción omite el diálogo de 'Gestionar perfiles de usuario' durante el juego, utilizando un perfil preseleccionado.\n\nEl cambio de perfil se encuentra en 'Configuración' - 'Gestionar perfiles de usuario'. Seleccione el perfil deseado antes de cargar el juego."
 }

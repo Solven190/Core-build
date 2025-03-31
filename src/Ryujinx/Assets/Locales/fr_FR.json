@@ -824,5 +824,7 @@
   "SettingsTabHotkeysOnlyWhilePressed": "Seulement quand le raccourci est maintenu",
   "GameListContextMenuExtractDataAocRomFS": "RomFS de DLC",
   "GameListContextMenuExtractDataAocRomFSToolTip": "Extraire les RomFS d'un fichier DLC choisi",
-  "ExtractAocListHeader": "Choisissez un DLC à extraire"
+  "ExtractAocListHeader": "Choisissez un DLC à extraire",
+  "SettingsTabSystemSkipUserProfilesManager": "Ignorer la Boîte de Dialogue « Gérer les Profils d'Utilisateurs »",
+  "SkipUserProfilesTooltip": "Cette option permet d'éviter le dialogue du 'Gérer les profils d'utilisateurs' pendant le jeu, en utilisant un profil pré-sélectionné.\n\nLa sélection du profil se trouve dans 'Paramètres' - 'Gérer les profils d'utilisateurs'. Sélectionnez le profil souhaité avant de charger la partie."
 }

@@ -146,7 +146,9 @@ namespace Ryujinx.Headless
             
             if (NeedsOverride(nameof(IgnoreControllerApplet)))
                 IgnoreControllerApplet = configurationState.IgnoreControllerApplet;
-            
+
+            if (NeedsOverride(nameof(SkipUserProfilesManager)))
+                SkipUserProfilesManager = configurationState.System.SkipUserProfilesManager;
             return;
 
             bool NeedsOverride(string argKey) =>
@@ -384,6 +386,9 @@ namespace Ryujinx.Headless
         
         [Option("ignore-controller-applet", Required = false, Default = false, HelpText = "Enable ignoring the controller applet when your game loses connection to your controller.")]
         public bool IgnoreControllerApplet { get; set; }
+
+        [Option("skip-user-profiles-manager", Required = false, Default = false, HelpText = "Enable skips the Profiles Manager popup during gameplay. Select the desired profile before starting the game")]
+        public bool SkipUserProfilesManager { get; set; }
 
         // Debug
 

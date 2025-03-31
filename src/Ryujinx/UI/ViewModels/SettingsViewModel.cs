@@ -158,6 +158,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         public bool CheckUpdatesOnStart { get; set; }
         public bool ShowConfirmExit { get; set; }
         public bool IgnoreApplet { get; set; }
+        public bool SkipUserProfiles { get; set; }
         public bool RememberWindowState { get; set; }
         public int HideCursor { get; set; }
         public bool EnableDockedMode { get; set; }
@@ -629,6 +630,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             EnableFsIntegrityChecks = config.System.EnableFsIntegrityChecks;
             DramSize = config.System.DramSize;
             IgnoreMissingServices = config.System.IgnoreMissingServices;
+            SkipUserProfiles = config.System.SkipUserProfilesManager;
 
             // CPU
             EnablePptc = config.System.EnablePtc;
@@ -744,6 +746,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             config.System.EnableFsIntegrityChecks.Value = EnableFsIntegrityChecks;
             config.System.DramSize.Value = DramSize;
             config.System.IgnoreMissingServices.Value = IgnoreMissingServices;
+            config.System.SkipUserProfilesManager.Value = SkipUserProfiles;
 
             // CPU
             config.System.EnablePtc.Value = EnablePptc;
