@@ -31,11 +31,13 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
         private readonly KEvent _friendInvitationStorageChannelEvent;
         private readonly KEvent _notificationStorageChannelEvent;
         private readonly KEvent _healthWarningDisappearedSystemEvent;
+        private readonly KEvent _unknownEvent;
 
         private int _gpuErrorDetectedSystemEventHandle;
         private int _friendInvitationStorageChannelEventHandle;
         private int _notificationStorageChannelEventHandle;
         private int _healthWarningDisappearedSystemEventHandle;
+        private int _unknownEventHandle;
 
         private bool _gamePlayRecordingState;
 
@@ -50,6 +52,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
             _friendInvitationStorageChannelEvent = new KEvent(system.KernelContext);
             _notificationStorageChannelEvent = new KEvent(system.KernelContext);
             _healthWarningDisappearedSystemEvent = new KEvent(system.KernelContext);
+            _unknownEvent = new KEvent(system.KernelContext);
 
             _horizon = system.LibHacHorizonManager.AmClient;
         }
@@ -657,6 +660,23 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
             }
 
             context.Response.HandleDesc = IpcHandleDesc.MakeCopy(_healthWarningDisappearedSystemEventHandle);
+
+            return ResultCode.Success;
+        }
+        
+        [CommandCmif(210)] // 20.0.0+
+        // GetUnknownEvent() -> handle<copy>
+        public ResultCode GetUnknownEvent(ServiceCtx context)
+        {
+            if (_unknownEventHandle == 0)
+            {
+                if (context.Process.HandleTable.GenerateHandle(_unknownEvent.ReadableEvent, out _unknownEventHandle) != Result.Success)
+                {
+                    throw new InvalidOperationException("Out of handles!");
+                }
+            }
+
+            context.Response.HandleDesc = IpcHandleDesc.MakeCopy(_unknownEventHandle);
 
             return ResultCode.Success;
         }
