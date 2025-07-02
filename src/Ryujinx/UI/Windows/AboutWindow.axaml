@@ -6,8 +6,11 @@
     xmlns:locale="clr-namespace:Ryujinx.Ava.Common.Locale"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModel="clr-namespace:Ryujinx.Ava.UI.ViewModels"
-    Width="550"
-    Height="260"
+    xmlns:interopServices="clr-namespace:System.Runtime.InteropServices;assembly=System.Runtime"
+    MinWidth="550"
+    MinHeight="260"
+    MaxWidth="600"
+    MaxHeight="500"
     Margin="0,-12,0,0"
     d:DesignHeight="260"
     d:DesignWidth="550"
@@ -71,6 +74,13 @@
                     FontSize="10"
                     LineHeight="12"
                     Text="{Binding Version}"
+                    TextAlignment="Center" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="10"
+                    LineHeight="12"
+                    Text="{x:Static interopServices:RuntimeInformation.FrameworkDescription}"
                     TextAlignment="Center" />
                 <Border
                     Height="1"
