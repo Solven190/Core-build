@@ -112,12 +112,8 @@ namespace Ryujinx.Horizon.Sdk.Codec.Detail
                 return CodecResult.InvalidChannelCount;
             }
 
-            if (!IsValidSampleRate(parameter.SampleRate))
-            {
-                return CodecResult.InvalidSampleRate;
-            }
-
-            if (!IsValidNumberOfStreams(parameter.NumberOfStreams, parameter.NumberOfStereoStreams, parameter.ChannelsCount))
+            if (!IsValidSampleRate(parameter.SampleRate)
+                || !IsValidNumberOfStreams(parameter.NumberOfStreams, parameter.NumberOfStereoStreams, parameter.ChannelsCount))
             {
                 return CodecResult.InvalidSampleRate;
             }
@@ -262,12 +258,8 @@ namespace Ryujinx.Horizon.Sdk.Codec.Detail
                 return CodecResult.InvalidChannelCount;
             }
 
-            if (!IsValidSampleRate(parameter.SampleRate))
-            {
-                return CodecResult.InvalidSampleRate;
-            }
-
-            if (!IsValidNumberOfStreams(parameter.NumberOfStreams, parameter.NumberOfStereoStreams, parameter.ChannelsCount))
+            if (!IsValidSampleRate(parameter.SampleRate)
+                || !IsValidNumberOfStreams(parameter.NumberOfStreams, parameter.NumberOfStereoStreams, parameter.ChannelsCount))
             {
                 return CodecResult.InvalidSampleRate;
             }

@@ -368,11 +368,7 @@ namespace Ryujinx.Graphics.Shader.Translation.Transforms
                 copyCount += coordsCount * 2;
             }
 
-            if (isMultisample)
-            {
-                copyCount++;
-            }
-            else if (hasLodLevel)
+            if (isMultisample || hasLodLevel)
             {
                 copyCount++;
             }

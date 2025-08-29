@@ -189,28 +189,10 @@ namespace ARMeilleure.Translation.PTC
             {
                 OuterHeader outerHeader = DeserializeStructure<OuterHeader>(compressedStream);
 
-                if (!outerHeader.IsHeaderValid())
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.Magic != _outerHeaderMagic)
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.InfoFileVersion != InternalVersion && !_migrateInternalVersions.Contains(outerHeader.InfoFileVersion))
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.Endianness != Ptc.GetEndianness())
+                if (!outerHeader.IsHeaderValid() ||
+                    outerHeader.Magic != _outerHeaderMagic ||
+                    outerHeader.InfoFileVersion != InternalVersion && !_migrateInternalVersions.Contains(outerHeader.InfoFileVersion) ||
+                    outerHeader.Endianness != Ptc.GetEndianness())
                 {
                     InvalidateCompressedStream(compressedStream);
 

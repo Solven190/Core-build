@@ -276,29 +276,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
                 WakeClientThread(request, clientResult);
             }
 
-            if (clientHeader.ReceiveListType < 2 &&
-                clientHeader.ReceiveListOffset > clientMsg.Size)
-            {
-                CleanUpForError();
-
-                return KernelResult.InvalidCombination;
-            }
-            else if (clientHeader.ReceiveListType == 2 &&
-                     clientHeader.ReceiveListOffset + 8 > clientMsg.Size)
-            {
-                CleanUpForError();
-
-                return KernelResult.InvalidCombination;
-            }
-            else if (clientHeader.ReceiveListType > 2 &&
-                     clientHeader.ReceiveListType * 8 - 0x10 + clientHeader.ReceiveListOffset > clientMsg.Size)
-            {
-                CleanUpForError();
-
-                return KernelResult.InvalidCombination;
-            }
-
-            if (clientHeader.ReceiveListOffsetInWords < clientHeader.MessageSizeInWords)
+            if (clientHeader.ReceiveListType < 2 && clientHeader.ReceiveListOffset > clientMsg.Size ||
+                clientHeader.ReceiveListType == 2 && clientHeader.ReceiveListOffset + 8 > clientMsg.Size ||
+                clientHeader.ReceiveListType > 2 && clientHeader.ReceiveListType * 8 - 0x10 + clientHeader.ReceiveListOffset > clientMsg.Size ||
+                clientHeader.ReceiveListOffsetInWords < clientHeader.MessageSizeInWords)
             {
                 CleanUpForError();
 
@@ -629,29 +610,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
                 FinishRequest(request, clientResult);
             }
 
-            if (clientHeader.ReceiveListType < 2 &&
-                clientHeader.ReceiveListOffset > clientMsg.Size)
-            {
-                CleanUpForError();
-
-                return KernelResult.InvalidCombination;
-            }
-            else if (clientHeader.ReceiveListType == 2 &&
-                     clientHeader.ReceiveListOffset + 8 > clientMsg.Size)
-            {
-                CleanUpForError();
-
-                return KernelResult.InvalidCombination;
-            }
-            else if (clientHeader.ReceiveListType > 2 &&
-                     clientHeader.ReceiveListType * 8 - 0x10 + clientHeader.ReceiveListOffset > clientMsg.Size)
-            {
-                CleanUpForError();
-
-                return KernelResult.InvalidCombination;
-            }
-
-            if (clientHeader.ReceiveListOffsetInWords < clientHeader.MessageSizeInWords)
+            if (clientHeader.ReceiveListType < 2 && clientHeader.ReceiveListOffset > clientMsg.Size ||
+                clientHeader.ReceiveListType == 2 && clientHeader.ReceiveListOffset + 8 > clientMsg.Size ||
+                clientHeader.ReceiveListType > 2 && clientHeader.ReceiveListType * 8 - 0x10 + clientHeader.ReceiveListOffset > clientMsg.Size ||
+                clientHeader.ReceiveListOffsetInWords < clientHeader.MessageSizeInWords)
             {
                 CleanUpForError();
 

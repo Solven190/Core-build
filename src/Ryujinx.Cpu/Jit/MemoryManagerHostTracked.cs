@@ -409,12 +409,8 @@ namespace Ryujinx.Cpu.Jit
 
             for (int page = 0; page < pages - 1; page++)
             {
-                if (!ValidateAddress(va + PageSize))
-                {
-                    return contiguousSize;
-                }
-
-                if (GetPhysicalAddressInternal(va) + PageSize != GetPhysicalAddressInternal(va + PageSize))
+                if (!ValidateAddress(va + PageSize) ||
+                    GetPhysicalAddressInternal(va) + PageSize != GetPhysicalAddressInternal(va + PageSize))
                 {
                     return contiguousSize;
                 }

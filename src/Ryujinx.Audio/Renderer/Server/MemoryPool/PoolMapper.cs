@@ -262,12 +262,8 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
                 return UpdateResult.Success;
             }
 
-            if (inParameter.CpuAddress == 0 || (inParameter.CpuAddress % PageSize) != 0)
-            {
-                return UpdateResult.InvalidParameter;
-            }
-
-            if (inParameter.Size == 0 || (inParameter.Size % PageSize) != 0)
+            if (inParameter.CpuAddress == 0 || (inParameter.CpuAddress % PageSize) != 0 ||
+                inParameter.Size == 0 || (inParameter.Size % PageSize) != 0)
             {
                 return UpdateResult.InvalidParameter;
             }

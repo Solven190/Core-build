@@ -90,12 +90,8 @@ namespace Ryujinx.Memory
                 throw new SystemException(Marshal.GetLastPInvokeErrorMessage());
             }
 
-            if (madvise(address, size, MADV_REMOVE) != 0)
-            {
-                throw new SystemException(Marshal.GetLastPInvokeErrorMessage());
-            }
-
-            if (mprotect(address, size, MmapProts.PROT_NONE) != 0)
+            if (madvise(address, size, MADV_REMOVE) != 0
+                || mprotect(address, size, MmapProts.PROT_NONE) != 0)
             {
                 throw new SystemException(Marshal.GetLastPInvokeErrorMessage());
             }
@@ -164,12 +160,7 @@ namespace Ryujinx.Memory
                 fixed (byte* pFileName = fileName)
                 {
                     fd = mkstemp((IntPtr)pFileName);
-                    if (fd == -1)
-                    {
-                        throw new SystemException(Marshal.GetLastPInvokeErrorMessage());
-                    }
-
-                    if (unlink((IntPtr)pFileName) != 0)
+                    if (fd == -1 || unlink((IntPtr)pFileName) != 0)
                     {
                         throw new SystemException(Marshal.GetLastPInvokeErrorMessage());
                     }

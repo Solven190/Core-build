@@ -117,11 +117,8 @@ namespace Ryujinx.HLE.HOS.Services.Ro
             {
                 return ResultCode.TooManyNro;
             }
-            else if (nroSize == 0 || nroAddress + nroSize <= nroAddress || (nroSize & 0xFFF) != 0)
-            {
-                return ResultCode.InvalidSize;
-            }
-            else if (bssSize != 0 && bssAddress + bssSize <= bssAddress)
+            else if (nroSize == 0 || nroAddress + nroSize <= nroAddress || (nroSize & 0xFFF) != 0 ||
+                     bssSize != 0 && bssAddress + bssSize <= bssAddress)
             {
                 return ResultCode.InvalidSize;
             }

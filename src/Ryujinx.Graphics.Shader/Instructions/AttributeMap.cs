@@ -275,12 +275,8 @@ namespace Ryujinx.Graphics.Shader.Instructions
         {
             location = 0;
 
-            if (!_attributes.TryGetValue(offset, out AttributeEntry entry))
-            {
-                return IoVariable.Invalid;
-            }
-
-            if (((StagesMask)(1 << (int)definitions.Stage) & entry.OutputMask) == StagesMask.None)
+            if (!_attributes.TryGetValue(offset, out AttributeEntry entry) ||
+                ((StagesMask)(1 << (int)definitions.Stage) & entry.OutputMask) == StagesMask.None)
             {
                 return IoVariable.Invalid;
             }

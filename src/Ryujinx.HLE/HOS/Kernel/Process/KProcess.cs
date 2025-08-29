@@ -310,17 +310,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
 
             if (KernelContext.EnableVersionChecks)
             {
-                if (requiredKernelVersionMajor > KernelVersionMajor)
-                {
-                    return KernelResult.InvalidCombination;
-                }
-
-                if (requiredKernelVersionMajor != KernelVersionMajor && requiredKernelVersionMajor < 3)
-                {
-                    return KernelResult.InvalidCombination;
-                }
-
-                if (requiredKernelVersionMinor > KernelVersionMinor)
+                if (requiredKernelVersionMajor > KernelVersionMajor ||
+                    requiredKernelVersionMajor != KernelVersionMajor && requiredKernelVersionMajor < 3 ||
+                    requiredKernelVersionMinor > KernelVersionMinor)
                 {
                     return KernelResult.InvalidCombination;
                 }

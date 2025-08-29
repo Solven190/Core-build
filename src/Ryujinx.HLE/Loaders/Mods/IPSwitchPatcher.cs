@@ -236,14 +236,8 @@ namespace Ryujinx.HLE.Loaders.Mods
 
                     var tokens = line.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
 
-                    if (tokens.Length < 2)
-                    {
-                        ParseWarn();
-
-                        continue;
-                    }
-
-                    if (!int.TryParse(tokens[0], System.Globalization.NumberStyles.HexNumber, null, out int offset))
+                    if (tokens.Length < 2 ||
+                        !int.TryParse(tokens[0], System.Globalization.NumberStyles.HexNumber, null, out int offset))
                     {
                         ParseWarn();
 

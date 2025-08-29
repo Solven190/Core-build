@@ -366,12 +366,8 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
 
                 int maxBufferCount = Core.GetMaxBufferCountLocked(input.Async != 0);
 
-                if (input.Async != 0 && Core.OverrideMaxBufferCount != 0 && Core.OverrideMaxBufferCount < maxBufferCount)
-                {
-                    return Status.BadValue;
-                }
-
-                if (slot < 0 || slot >= Core.Slots.Length || !Core.IsOwnedByProducerLocked(slot))
+                if (input.Async != 0 && Core.OverrideMaxBufferCount != 0 && Core.OverrideMaxBufferCount < maxBufferCount ||
+                    slot < 0 || slot >= Core.Slots.Length || !Core.IsOwnedByProducerLocked(slot))
                 {
                     return Status.BadValue;
                 }

@@ -1187,12 +1187,8 @@ namespace Ryujinx.Graphics.Gpu.Image
                 return matchQuality;
             }
 
-            if (!TextureCompatibility.LayoutMatches(Info, info))
-            {
-                return TextureMatchQuality.NoMatch;
-            }
-
-            if (!TextureCompatibility.SizeMatches(Info, info, forSampler))
+            if (!TextureCompatibility.LayoutMatches(Info, info)
+                || !TextureCompatibility.SizeMatches(Info, info, forSampler))
             {
                 return TextureMatchQuality.NoMatch;
             }
@@ -1277,17 +1273,9 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             int offset = Range.FindOffset(range);
 
-            if (offset < 0 || !_sizeInfo.FindView(offset, out firstLayer, out firstLevel))
-            {
-                return TextureViewCompatibility.LayoutIncompatible;
-            }
-
-            if (!TextureCompatibility.ViewLayoutCompatible(Info, info, firstLevel))
-            {
-                return TextureViewCompatibility.LayoutIncompatible;
-            }
-
-            if (info.GetSlices() > 1 && LayerSize != layerSize)
+            if (offset < 0 || !_sizeInfo.FindView(offset, out firstLayer, out firstLevel) ||
+                !TextureCompatibility.ViewLayoutCompatible(Info, info, firstLevel) ||
+                info.GetSlices() > 1 && LayerSize != layerSize)
             {
                 return TextureViewCompatibility.LayoutIncompatible;
             }

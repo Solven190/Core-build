@@ -54,7 +54,7 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.Nfp
         {
             VirtualAmiiboFile amiiboFile = LoadAmiiboFile(amiiboId);
 
-            return new CommonInfo()
+            return new CommonInfo
             {
                 LastWriteYear = (ushort)amiiboFile.LastWriteDate.Year,
                 LastWriteMonth = (byte)amiiboFile.LastWriteDate.Month,
@@ -115,16 +115,10 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.Nfp
         public static bool OpenApplicationArea(string amiiboId, uint applicationAreaId)
         {
             VirtualAmiiboFile virtualAmiiboFile = LoadAmiiboFile(amiiboId);
-            if (ApplicationBytes.Length > 0)
+            if (ApplicationBytes.Length > 0 ||
+                virtualAmiiboFile.ApplicationAreas.Any(item => item.ApplicationAreaId == applicationAreaId))
             {
                 OpenedApplicationAreaId = applicationAreaId;
-                return true;
-            }
-
-            if (virtualAmiiboFile.ApplicationAreas.Any(item => item.ApplicationAreaId == applicationAreaId))
-            {
-                OpenedApplicationAreaId = applicationAreaId;
-
                 return true;
             }
 
@@ -161,7 +155,7 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.Nfp
                 return false;
             }
 
-            virtualAmiiboFile.ApplicationAreas.Add(new VirtualAmiiboApplicationArea()
+            virtualAmiiboFile.ApplicationAreas.Add(new VirtualAmiiboApplicationArea
             {
                 ApplicationAreaId = applicationAreaId,
                 ApplicationArea = applicationAreaData,
@@ -187,7 +181,7 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.Nfp
                 {
                     if (virtualAmiiboFile.ApplicationAreas[i].ApplicationAreaId == OpenedApplicationAreaId)
                     {
-                        virtualAmiiboFile.ApplicationAreas[i] = new VirtualAmiiboApplicationArea()
+                        virtualAmiiboFile.ApplicationAreas[i] = new VirtualAmiiboApplicationArea
                         {
                             ApplicationAreaId = OpenedApplicationAreaId,
                             ApplicationArea = applicationAreaData,
@@ -215,7 +209,7 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.Nfp
             }
             else
             {
-                virtualAmiiboFile = new VirtualAmiiboFile()
+                virtualAmiiboFile = new VirtualAmiiboFile
                 {
                     FileVersion = 0,
                     TagUuid = [],

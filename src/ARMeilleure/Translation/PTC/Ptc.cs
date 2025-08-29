@@ -244,63 +244,15 @@ namespace ARMeilleure.Translation.PTC
             {
                 OuterHeader outerHeader = DeserializeStructure<OuterHeader>(compressedStream);
 
-                if (!outerHeader.IsHeaderValid())
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.Magic != _outerHeaderMagic)
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.CacheFileVersion != InternalVersion)
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.Endianness != GetEndianness())
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.FeatureInfo != GetFeatureInfo())
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.MemoryManagerMode != GetMemoryManagerMode())
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.OSPlatform != GetOSPlatform())
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.Architecture != (uint)RuntimeInformation.ProcessArchitecture)
-                {
-                    InvalidateCompressedStream(compressedStream);
-
-                    return false;
-                }
-
-                if (outerHeader.DebuggerMode != Optimizations.EnableDebugging)
+                if (!outerHeader.IsHeaderValid() ||
+                    outerHeader.Magic != _outerHeaderMagic ||
+                    outerHeader.CacheFileVersion != InternalVersion ||
+                    outerHeader.Endianness != GetEndianness() ||
+                    outerHeader.FeatureInfo != GetFeatureInfo() ||
+                    outerHeader.MemoryManagerMode != GetMemoryManagerMode() ||
+                    outerHeader.OSPlatform != GetOSPlatform() ||
+                    outerHeader.Architecture != (uint)RuntimeInformation.ProcessArchitecture ||
+                    outerHeader.DebuggerMode != Optimizations.EnableDebugging)
                 {
                     InvalidateCompressedStream(compressedStream);
 
@@ -331,14 +283,7 @@ namespace ARMeilleure.Translation.PTC
 
                     InnerHeader innerHeader = DeserializeStructure<InnerHeader>(stream);
 
-                    if (!innerHeader.IsHeaderValid())
-                    {
-                        InvalidateCompressedStream(compressedStream);
-
-                        return false;
-                    }
-
-                    if (innerHeader.Magic != _innerHeaderMagic)
+                    if (!innerHeader.IsHeaderValid() || innerHeader.Magic != _innerHeaderMagic)
                     {
                         InvalidateCompressedStream(compressedStream);
 

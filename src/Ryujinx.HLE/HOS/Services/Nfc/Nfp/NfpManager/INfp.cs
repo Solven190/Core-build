@@ -214,12 +214,7 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.Nfp
             DeviceType deviceType = (DeviceType)context.RequestData.ReadUInt32();
             MountTarget mountTarget = (MountTarget)context.RequestData.ReadUInt32();
 
-            if (deviceType != 0)
-            {
-                return ResultCode.WrongArgument;
-            }
-
-            if (((uint)mountTarget & 3) == 0)
+            if (deviceType != 0 || ((uint)mountTarget & 3) == 0)
             {
                 return ResultCode.WrongArgument;
             }

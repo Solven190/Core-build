@@ -352,14 +352,11 @@ namespace Ryujinx.Input.SDL2
 
         public (float, float) GetStick(StickInputId inputId)
         {
-            if (inputId == StickInputId.Unbound)
+            if (inputId == StickInputId.Unbound ||
+                inputId == StickInputId.Left && _joyConType == JoyConType.Right ||
+                inputId == StickInputId.Right && _joyConType == JoyConType.Left)
                 return (0.0f, 0.0f);
 
-            if (inputId == StickInputId.Left && _joyConType == JoyConType.Right || inputId == StickInputId.Right && _joyConType == JoyConType.Left)
-            {
-                return (0.0f, 0.0f);
-            }
-            
             (short stickX, short stickY) = GetStickXY();
 
             float resultX = ConvertRawStickValue(stickX);
