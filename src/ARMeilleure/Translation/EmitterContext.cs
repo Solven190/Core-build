@@ -97,14 +97,7 @@ namespace ARMeilleure.Translation
 
         public virtual Operand Call(MethodInfo info, params Operand[] callArgs)
         {
-#if ANDROID
-            // For Android, use the Delegates class to get the function pointer
-            int index = Delegates.GetDelegateIndex(info);
-            IntPtr funcPtr = Delegates.GetDelegateFuncPtrByIndex(index);
-#else
-            // For other platforms, use direct method handle approach
             IntPtr funcPtr = info.MethodHandle.GetFunctionPointer();
-#endif
 
             OperandType returnType = GetOperandType(info.ReturnType);
 

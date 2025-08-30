@@ -1,4 +1,3 @@
-using Ryujinx.Common;
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -90,9 +89,6 @@ namespace Ryujinx.Memory
         [LibraryImport("libc", SetLastError = true)]
         public static partial int shm_unlink(IntPtr name);
 
-        [DllImport("android")]
-        internal static extern int ASharedMemory_create(IntPtr name, nuint size);
-
         private static int MmapFlagsToSystemFlags(MmapFlags flags)
         {
             int result = 0;
@@ -114,7 +110,7 @@ namespace Ryujinx.Memory
 
             if (flags.HasFlag(MmapFlags.MAP_ANONYMOUS))
             {
-                if (OperatingSystem.IsLinux() || PlatformInfo.IsBionic)
+                if (OperatingSystem.IsLinux())
                 {
                     result |= MAP_ANONYMOUS_LINUX_GENERIC;
                 }
@@ -130,7 +126,7 @@ namespace Ryujinx.Memory
 
             if (flags.HasFlag(MmapFlags.MAP_NORESERVE))
             {
-                if (OperatingSystem.IsLinux() || PlatformInfo.IsBionic)
+                if (OperatingSystem.IsLinux())
                 {
                     result |= MAP_NORESERVE_LINUX_GENERIC;
                 }
@@ -146,7 +142,7 @@ namespace Ryujinx.Memory
 
             if (flags.HasFlag(MmapFlags.MAP_UNLOCKED))
             {
-                if (OperatingSystem.IsLinux() || PlatformInfo.IsBionic)
+                if (OperatingSystem.IsLinux())
                 {
                     result |= MAP_UNLOCKED_LINUX_GENERIC;
                 }

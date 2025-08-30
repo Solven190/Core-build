@@ -5,8 +5,6 @@ namespace Ryujinx.Cpu
 {
     public class AddressSpace : IDisposable
     {
-        private const MemoryAllocationFlags AsFlags = MemoryAllocationFlags.Reserve | MemoryAllocationFlags.ViewCompatible;
-
         private readonly MemoryBlock _backingMemory;
 
         public MemoryBlock Base { get; }
@@ -27,42 +25,28 @@ namespace Ryujinx.Cpu
         {
             addressSpace = null;
 
-            MemoryBlock baseMemory = null;
-            MemoryBlock mirrorMemory = null;
-
-            try
-            {
-                baseMemory = new MemoryBlock(asSize, AsFlags);
-                mirrorMemory = new MemoryBlock(asSize, AsFlags);
-                addressSpace = new AddressSpace(backingMemory, baseMemory, mirrorMemory, asSize);
-            }
-            catch (SystemException)
-            {
-                baseMemory?.Dispose();
-                mirrorMemory?.Dispose();
-            }
-
-            return addressSpace != null;
-        }
-
-        public static bool TryCreateWithoutMirror(ulong asSize, out MemoryBlock addressSpace)
-        {
-            addressSpace = null;
+            const MemoryAllocationFlags AsFlags = MemoryAllocationFlags.Reserve | MemoryAllocationFlags.ViewCompatible;
 
             ulong minAddressSpaceSize = Math.Min(asSize, 1UL << 36);
 
             // Attempt to create the address space with expected size or try to reduce it until it succeed.
-            for (ulong addressSpaceSize = asSize; addressSpaceSize >= minAddressSpaceSize; addressSpaceSize -= 0x100000000UL)
+            for (ulong addressSpaceSize = asSize; addressSpaceSize >= minAddressSpaceSize; addressSpaceSize >>= 1)
             {
+                MemoryBlock baseMemory = null;
+                MemoryBlock mirrorMemory = null;
+
                 try
                 {
-                    MemoryBlock baseMemory = new MemoryBlock(addressSpaceSize, AsFlags);
-                    addressSpace = baseMemory;
+                    baseMemory = new MemoryBlock(addressSpaceSize, AsFlags);
+                    mirrorMemory = new MemoryBlock(addressSpaceSize, AsFlags);
+                    addressSpace = new AddressSpace(backingMemory, baseMemory, mirrorMemory, addressSpaceSize);
 
                     break;
                 }
                 catch (SystemException)
                 {
+                    baseMemory?.Dispose();
+                    mirrorMemory?.Dispose();
                 }
             }
 

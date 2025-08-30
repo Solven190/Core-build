@@ -1,7 +1,6 @@
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.Utilities;
-using Silk.NET.Core;
 using Silk.NET.Vulkan;
 using Silk.NET.Vulkan.Extensions.EXT;
 using System;
@@ -17,7 +16,6 @@ namespace Ryujinx.Graphics.Vulkan
         private readonly ExtDebugUtils _debugUtils;
         private readonly DebugUtilsMessengerEXT? _debugUtilsMessenger;
         private bool _disposed;
-        private unsafe delegate* unmanaged[Cdecl]<DebugUtilsMessageSeverityFlagsEXT, DebugUtilsMessageTypeFlagsEXT, DebugUtilsMessengerCallbackDataEXT*, void*, Bool32> _messageDelegate;
 
         public VulkanDebugMessenger(Vk api, Instance instance, GraphicsDebugLevel logLevel)
         {
@@ -73,8 +71,7 @@ namespace Ryujinx.Graphics.Vulkan
 
                 unsafe
                 {
-                    _messageDelegate = (delegate* unmanaged[Cdecl]<DebugUtilsMessageSeverityFlagsEXT, DebugUtilsMessageTypeFlagsEXT, DebugUtilsMessengerCallbackDataEXT*, void*, Bool32>)Marshal.GetFunctionPointerForDelegate(UserCallback);
-                    debugUtilsMessengerCreateInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(_messageDelegate);
+                    debugUtilsMessengerCreateInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(UserCallback);
                 }
 
                 DebugUtilsMessengerEXT messengerHandle = default;
@@ -92,7 +89,7 @@ namespace Ryujinx.Graphics.Vulkan
             return Result.Success;
         }
 
-        private unsafe static Bool32 UserCallback(
+        private unsafe static uint UserCallback(
             DebugUtilsMessageSeverityFlagsEXT messageSeverity,
             DebugUtilsMessageTypeFlagsEXT messageTypes,
             DebugUtilsMessengerCallbackDataEXT* pCallbackData,

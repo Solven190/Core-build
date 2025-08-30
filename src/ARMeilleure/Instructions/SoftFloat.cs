@@ -1,11 +1,7 @@
 using ARMeilleure.State;
 using System;
 using System.Diagnostics;
-#if ANDROID
-using System.Runtime.CompilerServices;
-#else
 using System.Runtime.InteropServices;
-#endif
 
 namespace ARMeilleure.Instructions
 {
@@ -317,11 +313,7 @@ namespace ARMeilleure.Instructions
 
     static class SoftFloat16_32
     {
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPConvert(ushort valueBits)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -497,11 +489,7 @@ namespace ARMeilleure.Instructions
 
     static class SoftFloat16_64
     {
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPConvert(ushort valueBits)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -677,11 +665,7 @@ namespace ARMeilleure.Instructions
 
     static class SoftFloat32_16
     {
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static ushort FPConvert(float value)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -801,21 +785,13 @@ namespace ARMeilleure.Instructions
 
     static class SoftFloat32
     {
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPAdd(float value1, float value2)
         {
             return FPAddFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPAddFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPAddFpscrImpl(value1, value2, standardFpscr == 1);
@@ -872,11 +848,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static int FPCompare(float value1, float value2, byte signalNaNs)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -915,11 +887,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareEQ(float value1, float value2)
         {
             return FPCompareEQFpscrImpl(value1, value2, false);
@@ -952,31 +920,19 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareEQFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPCompareEQFpscrImpl(value1, value2, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareGE(float value1, float value2)
         {
             return FPCompareGEFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareGEFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPCompareGEFpscrImpl(value1, value2, standardFpscr == 1);
@@ -1006,21 +962,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareGT(float value1, float value2)
         {
             return FPCompareGTFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareGTFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPCompareGTFpscrImpl(value1, value2, standardFpscr == 1);
@@ -1050,51 +998,31 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareLE(float value1, float value2)
         {
             return FPCompareGEFpscrImpl(value2, value1, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareLT(float value1, float value2)
         {
             return FPCompareGTFpscrImpl(value2, value1, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareLEFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPCompareGEFpscrImpl(value2, value1, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPCompareLTFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPCompareGEFpscrImpl(value2, value1, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPDiv(float value1, float value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -1147,21 +1075,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMax(float value1, float value2)
         {
             return FPMaxFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMaxFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPMaxFpscrImpl(value1, value2, standardFpscr == 1);
@@ -1228,11 +1148,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMaxNum(float value1, float value2)
         {
             return FPMaxNumFpscrImpl(value1, value2, false);
@@ -1258,31 +1174,19 @@ namespace ARMeilleure.Instructions
             return FPMaxFpscrImpl(value1, value2, standardFpscr);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMaxNumFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPMaxNumFpscrImpl(value1, value2, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMin(float value1, float value2)
         {
             return FPMinFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMinFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPMinFpscrImpl(value1, value2, standardFpscr == 1);
@@ -1349,21 +1253,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMinNum(float value1, float value2)
         {
             return FPMinNumFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMinNumFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPMinNumFpscrImpl(value1, value2, standardFpscr == 1);
@@ -1389,21 +1285,13 @@ namespace ARMeilleure.Instructions
             return FPMinFpscrImpl(value1, value2, standardFpscr);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMul(float value1, float value2)
         {
             return FPMulFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMulFpscr(float value1, float value2, byte standardFpscr)
         {
             return FPMulFpscrImpl(value1, value2, standardFpscr == 1);
@@ -1456,21 +1344,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMulAdd(float valueA, float value1, float value2)
         {
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMulAddFpscr(float valueA, float value1, float value2, byte standardFpscr)
         {
             return FPMulAddFpscrImpl(valueA, value1, value2, standardFpscr == 1);
@@ -1542,11 +1422,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMulSub(float valueA, float value1, float value2)
         {
             value1 = value1.FPNeg();
@@ -1554,11 +1430,7 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMulSubFpscr(float valueA, float value1, float value2, byte standardFpscr)
         {
             value1 = value1.FPNeg();
@@ -1566,11 +1438,7 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPMulX(float value1, float value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -1616,11 +1484,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPNegMulAdd(float valueA, float value1, float value2)
         {
             valueA = valueA.FPNeg();
@@ -1629,11 +1493,7 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPNegMulSub(float valueA, float value1, float value2)
         {
             valueA = valueA.FPNeg();
@@ -1641,21 +1501,13 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRecipEstimate(float value)
         {
             return FPRecipEstimateFpscrImpl(value, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRecipEstimateFpscr(float value, byte standardFpscr)
         {
             return FPRecipEstimateFpscrImpl(value, standardFpscr == 1);
@@ -1748,11 +1600,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRecipStep(float value1, float value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -1787,11 +1635,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRecipStepFused(float value1, float value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -1835,11 +1679,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRecpX(float value)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -1865,21 +1705,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRSqrtEstimate(float value)
         {
             return FPRSqrtEstimateFpscrImpl(value, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRSqrtEstimateFpscr(float value, byte standardFpscr)
         {
             return FPRSqrtEstimateFpscrImpl(value, standardFpscr == 1);
@@ -1999,11 +1831,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRSqrtStep(float value1, float value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -2038,11 +1866,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPRSqrtStepFused(float value1, float value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -2086,11 +1910,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPSqrt(float value)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -2133,11 +1953,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static float FPSub(float value1, float value2)
         {
             return FPSubFpscrImpl(value1, value2, false);
@@ -2384,11 +2200,7 @@ namespace ARMeilleure.Instructions
 
     static class SoftFloat64_16
     {
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static ushort FPConvert(double value)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -2508,21 +2320,13 @@ namespace ARMeilleure.Instructions
 
     static class SoftFloat64
     {
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPAdd(double value1, double value2)
         {
             return FPAddFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPAddFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPAddFpscrImpl(value1, value2, standardFpscr == 1);
@@ -2579,11 +2383,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static int FPCompare(double value1, double value2, byte signalNaNs)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -2622,21 +2422,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareEQ(double value1, double value2)
         {
             return FPCompareEQFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareEQFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPCompareEQFpscrImpl(value1, value2, standardFpscr == 1);
@@ -2669,21 +2461,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareGE(double value1, double value2)
         {
             return FPCompareGEFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareGEFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPCompareGEFpscrImpl(value1, value2, standardFpscr == 1);
@@ -2713,21 +2497,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareGT(double value1, double value2)
         {
             return FPCompareGTFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareGTFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPCompareGTFpscrImpl(value1, value2, standardFpscr == 1);
@@ -2757,51 +2533,31 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareLE(double value1, double value2)
         {
             return FPCompareGEFpscrImpl(value2, value1, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareLT(double value1, double value2)
         {
             return FPCompareGTFpscrImpl(value2, value1, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareLEFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPCompareGEFpscrImpl(value2, value1, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPCompareLTFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPCompareGTFpscrImpl(value2, value1, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPDiv(double value1, double value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -2854,21 +2610,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMax(double value1, double value2)
         {
             return FPMaxFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMaxFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPMaxFpscrImpl(value1, value2, standardFpscr == 1);
@@ -2935,21 +2683,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMaxNum(double value1, double value2)
         {
             return FPMaxNumFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMaxNumFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPMaxNumFpscrImpl(value1, value2, standardFpscr == 1);
@@ -2975,21 +2715,13 @@ namespace ARMeilleure.Instructions
             return FPMaxFpscrImpl(value1, value2, standardFpscr);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMin(double value1, double value2)
         {
             return FPMinFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMinFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPMinFpscrImpl(value1, value2, standardFpscr == 1);
@@ -3056,21 +2788,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMinNum(double value1, double value2)
         {
             return FPMinNumFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMinNumFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPMinNumFpscrImpl(value1, value2, standardFpscr == 1);
@@ -3096,21 +2820,13 @@ namespace ARMeilleure.Instructions
             return FPMinFpscrImpl(value1, value2, standardFpscr);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMul(double value1, double value2)
         {
             return FPMulFpscrImpl(value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMulFpscr(double value1, double value2, byte standardFpscr)
         {
             return FPMulFpscrImpl(value1, value2, standardFpscr == 1);
@@ -3163,21 +2879,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMulAdd(double valueA, double value1, double value2)
         {
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMulAddFpscr(double valueA, double value1, double value2, byte standardFpscr)
         {
             return FPMulAddFpscrImpl(valueA, value1, value2, standardFpscr == 1);
@@ -3249,11 +2957,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMulSub(double valueA, double value1, double value2)
         {
             value1 = value1.FPNeg();
@@ -3261,11 +2965,7 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMulSubFpscr(double valueA, double value1, double value2, byte standardFpscr)
         {
             value1 = value1.FPNeg();
@@ -3273,11 +2973,7 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, standardFpscr == 1);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPMulX(double value1, double value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3323,11 +3019,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPNegMulAdd(double valueA, double value1, double value2)
         {
             valueA = valueA.FPNeg();
@@ -3336,11 +3028,7 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPNegMulSub(double valueA, double value1, double value2)
         {
             valueA = valueA.FPNeg();
@@ -3348,21 +3036,13 @@ namespace ARMeilleure.Instructions
             return FPMulAddFpscrImpl(valueA, value1, value2, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRecipEstimate(double value)
         {
             return FPRecipEstimateFpscrImpl(value, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRecipEstimateFpscr(double value, byte standardFpscr)
         {
             return FPRecipEstimateFpscrImpl(value, standardFpscr == 1);
@@ -3455,11 +3135,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRecipStep(double value1, double value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3494,11 +3170,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRecipStepFused(double value1, double value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3542,11 +3214,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRecpX(double value)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3572,21 +3240,13 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRSqrtEstimate(double value)
         {
             return FPRSqrtEstimateFpscrImpl(value, false);
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRSqrtEstimateFpscr(double value, byte standardFpscr)
         {
             return FPRSqrtEstimateFpscrImpl(value, standardFpscr == 1);
@@ -3706,11 +3366,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRSqrtStep(double value1, double value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3745,11 +3401,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPRSqrtStepFused(double value1, double value2)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3793,11 +3445,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPSqrt(double value)
         {
             ExecutionContext context = NativeInterface.GetContext();
@@ -3840,11 +3488,7 @@ namespace ARMeilleure.Instructions
             return result;
         }
 
-#if ANDROID
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#else
         [UnmanagedCallersOnly]
-#endif
         public static double FPSub(double value1, double value2)
         {
             return FPSubFpscr(value1, value2, false);

@@ -25,10 +25,7 @@ namespace Ryujinx.HLE.HOS.Services.Nifm.StaticService
                 IsAnyInternetRequestAccepted = true, // NOTE: Why not accept any internet request?
             };
 
-            if (!PlatformInfo.IsBionic)
-            {
-                NetworkChange.NetworkAddressChanged += LocalInterfaceCacheHandler;
-            }
+            NetworkChange.NetworkAddressChanged += LocalInterfaceCacheHandler;
 
             GeneralServiceManager.Add(_generalServiceDetail);
         }
@@ -87,7 +84,7 @@ namespace Ryujinx.HLE.HOS.Services.Nifm.StaticService
             networkProfile.IpSettingData.IpAddressSetting = new IpAddressSetting(interfaceProperties, unicastAddress);
             networkProfile.IpSettingData.DnsSetting = new DnsSetting(interfaceProperties);
 
-            "KenjinxNetwork"u8.CopyTo(networkProfile.Name.AsSpan());
+            "RyujinxNetwork"u8.CopyTo(networkProfile.Name.AsSpan());
 
             context.Memory.Write(networkProfileDataPosition, networkProfile);
 
@@ -199,10 +196,7 @@ namespace Ryujinx.HLE.HOS.Services.Nifm.StaticService
         {
             if (isDisposing)
             {
-                if (!PlatformInfo.IsBionic)
-                {
-                    NetworkChange.NetworkAddressChanged -= LocalInterfaceCacheHandler;
-                }
+                NetworkChange.NetworkAddressChanged -= LocalInterfaceCacheHandler;
 
                 GeneralServiceManager.Remove(_generalServiceDetail.ClientId);
             }

@@ -24,8 +24,6 @@ namespace Ryujinx.HLE.HOS
         private readonly ICpuContext _cpuContext;
         private T _memoryManager;
 
-        public ulong ReservedSize { get; }
-
         public IVirtualMemoryManager AddressSpace => _memoryManager;
 
         public ulong AddressSpaceSize { get; }
@@ -36,8 +34,7 @@ namespace Ryujinx.HLE.HOS
             GpuContext gpuContext,
             T memoryManager,
             ulong addressSpaceSize,
-            bool for64Bit,
-            ulong reservedSize = 0UL)
+            bool for64Bit)
         {
             if (memoryManager is IRefCounted rc)
             {
@@ -50,8 +47,8 @@ namespace Ryujinx.HLE.HOS
             _gpuContext = gpuContext;
             _cpuContext = cpuEngine.CreateCpuContext(memoryManager, for64Bit);
             _memoryManager = memoryManager;
+
             AddressSpaceSize = addressSpaceSize;
-            ReservedSize = reservedSize;
         }
 
         public IExecutionContext CreateExecutionContext(ExceptionCallbacks exceptionCallbacks)
