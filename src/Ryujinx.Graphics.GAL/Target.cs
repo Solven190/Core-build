@@ -18,17 +18,17 @@ namespace Ryujinx.Graphics.GAL
     {
         public static bool IsMultisample(this Target target)
         {
-            return target == Target.Texture2DMultisample || target == Target.Texture2DMultisampleArray;
+            return target is Target.Texture2DMultisample or Target.Texture2DMultisampleArray;
         }
 
         public static bool HasDepthOrLayers(this Target target)
         {
-            return target == Target.Texture3D ||
-                target == Target.Texture1DArray ||
-                target == Target.Texture2DArray ||
-                target == Target.Texture2DMultisampleArray ||
-                target == Target.Cubemap ||
-                target == Target.CubemapArray;
+            return target is Target.Texture3D
+                or Target.Texture1DArray
+                or Target.Texture2DArray
+                or Target.Texture2DMultisampleArray
+                or Target.Cubemap
+                or Target.CubemapArray;
         }
     }
 }

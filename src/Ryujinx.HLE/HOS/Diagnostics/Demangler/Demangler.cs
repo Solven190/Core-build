@@ -1430,10 +1430,10 @@ namespace Ryujinx.HLE.HOS.Diagnostics.Demangler
             }
 
             char foldKind = Peek();
-            bool hasInitializer = foldKind == 'L' || foldKind == 'R';
-            bool isLeftFold = foldKind == 'l' || foldKind == 'L';
+            bool hasInitializer = foldKind is 'L' or 'R';
+            bool isLeftFold = foldKind is 'l' or 'L';
 
-            if (!isLeftFold && !(foldKind == 'r' || foldKind == 'R'))
+            if (!isLeftFold && !(foldKind is 'r' or 'R'))
             {
                 return null;
             }

@@ -21,7 +21,7 @@ namespace Ryujinx.Graphics.Shader
         /// <returns>True if the shader stage supports render scale, false otherwise</returns>
         public static bool SupportsRenderScale(this ShaderStage stage)
         {
-            return stage == ShaderStage.Vertex || stage == ShaderStage.Fragment || stage == ShaderStage.Compute;
+            return stage is ShaderStage.Vertex or ShaderStage.Fragment or ShaderStage.Compute;
         }
 
         /// <summary>
@@ -31,10 +31,10 @@ namespace Ryujinx.Graphics.Shader
         /// <returns>True if the shader stage is vertex, tessellation or geometry, false otherwise</returns>
         public static bool IsVtg(this ShaderStage stage)
         {
-            return stage == ShaderStage.Vertex ||
-                   stage == ShaderStage.TessellationControl ||
-                   stage == ShaderStage.TessellationEvaluation ||
-                   stage == ShaderStage.Geometry;
+            return stage is ShaderStage.Vertex
+                or ShaderStage.TessellationControl
+                or ShaderStage.TessellationEvaluation
+                or ShaderStage.Geometry;
         }
     }
 }

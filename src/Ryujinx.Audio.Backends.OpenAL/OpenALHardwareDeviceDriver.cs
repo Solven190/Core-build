@@ -178,7 +178,7 @@ namespace Ryujinx.Audio.Backends.OpenAL
 
         public bool SupportsChannelCount(uint channelCount)
         {
-            return channelCount == 1 || channelCount == 2 || channelCount == 6;
+            return channelCount is 1 or 2 or 6;
         }
 
         public bool SupportsDirection(Direction direction)

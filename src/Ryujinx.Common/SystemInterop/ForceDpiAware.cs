@@ -57,7 +57,7 @@ namespace Ryujinx.Common.SystemInterop
                 {
                     string xdgSessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE")?.ToLower();
 
-                    if (xdgSessionType == null || xdgSessionType == "x11")
+                    if (xdgSessionType is null or "x11")
                     {
                         IntPtr display = XOpenDisplay(null);
                         string dpiString = Marshal.PtrToStringAnsi(XGetDefault(display, "Xft", "dpi"));

@@ -635,7 +635,7 @@ namespace ARMeilleure.Instructions
 
         private static Operand EmitFPConvert(ArmEmitterContext context, Operand value, OperandType type, bool signed)
         {
-            Debug.Assert(value.Type == OperandType.I32 || value.Type == OperandType.I64);
+            Debug.Assert(value.Type is OperandType.I32 or OperandType.I64);
 
             if (signed)
             {

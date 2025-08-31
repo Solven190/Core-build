@@ -216,7 +216,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>The number of texture layers</returns>
         public static int GetLayers(Target target, int depthOrLayers)
         {
-            if (target == Target.Texture2DArray || target == Target.Texture2DMultisampleArray)
+            if (target is Target.Texture2DArray or Target.Texture2DMultisampleArray)
             {
                 return depthOrLayers;
             }
@@ -241,7 +241,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>The number of texture slices</returns>
         public int GetSlices()
         {
-            if (Target == Target.Texture3D || Target == Target.Texture2DArray || Target == Target.Texture2DMultisampleArray)
+            if (Target is Target.Texture3D or Target.Texture2DArray or Target.Texture2DMultisampleArray)
             {
                 return DepthOrLayers;
             }

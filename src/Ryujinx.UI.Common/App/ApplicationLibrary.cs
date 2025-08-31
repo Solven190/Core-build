@@ -1184,7 +1184,7 @@ namespace Ryujinx.UI.App.Common
 
                     using FileStream file = new(applicationPath ?? string.Empty, FileMode.Open, FileAccess.Read);
 
-                    if (extension == ".nsp" || extension == ".pfs0" || extension == ".xci")
+                    if (extension is ".nsp" or ".pfs0" or ".xci")
                     {
                         try
                         {

@@ -104,8 +104,7 @@ namespace Ryujinx.Graphics.OpenGL
                 int offset = attrib.Offset;
                 int size = fmtInfo.Components;
 
-                bool isFloat = fmtInfo.PixelType == PixelType.Float ||
-                               fmtInfo.PixelType == PixelType.HalfFloat;
+                bool isFloat = fmtInfo.PixelType is PixelType.Float or PixelType.HalfFloat;
 
                 if (isFloat || fmtInfo.Normalized || fmtInfo.Scaled)
                 {

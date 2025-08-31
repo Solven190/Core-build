@@ -85,8 +85,7 @@ namespace Ryujinx.Graphics.Gpu.Engine
             {
                 _state.WriteWithRedundancyCheck(offset, value, out changed);
             }
-            else if (shadowRamControl == SetMmeShadowRamControlMode.MethodTrack ||
-                     shadowRamControl == SetMmeShadowRamControlMode.MethodTrackWithFilter)
+            else if (shadowRamControl is SetMmeShadowRamControlMode.MethodTrack or SetMmeShadowRamControlMode.MethodTrackWithFilter)
             {
                 _shadowState.Write(offset, value);
                 _state.WriteWithRedundancyCheck(offset, value, out changed);

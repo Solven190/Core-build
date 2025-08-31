@@ -531,7 +531,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32
     {
         public static bool IsCall(this InstName name)
         {
-            return name == InstName.BlI || name == InstName.BlxR;
+            return name is InstName.BlI or InstName.BlxR;
         }
 
         public static bool IsSystem(this InstName name)

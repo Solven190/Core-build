@@ -98,9 +98,7 @@ namespace Ryujinx.Graphics.GAL
 
         public int GetLayers()
         {
-            if (Target == Target.Texture2DArray ||
-                Target == Target.Texture2DMultisampleArray ||
-                Target == Target.CubemapArray)
+            if (Target is Target.Texture2DArray or Target.Texture2DMultisampleArray or Target.CubemapArray)
             {
                 return Depth;
             }

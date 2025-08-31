@@ -55,7 +55,7 @@ namespace Ryujinx.Ava.UI.Applet
 
             return culture.TwoLetterISOLanguageName switch
             {
-                "zh" => langCode == "zh-CN" || langCode == "zh-Hans" || langCode == "zh-SG"
+                "zh" => langCode is "zh-CN" or "zh-Hans" or "zh-SG"
                     ? "Microsoft YaHei UI"  // Simplified Chinese
                     : "Microsoft JhengHei UI", // Traditional Chinese
 

@@ -355,11 +355,7 @@ namespace Ryujinx.Graphics.Vulkan
             IsAmdWindows = Vendor == Vendor.Amd && OperatingSystem.IsWindows();
             IsIntelWindows = Vendor == Vendor.Intel && OperatingSystem.IsWindows();
             IsTBDR =
-                Vendor == Vendor.Apple ||
-                Vendor == Vendor.Qualcomm ||
-                Vendor == Vendor.ARM ||
-                Vendor == Vendor.Broadcom ||
-                Vendor == Vendor.ImgTec;
+                Vendor is Vendor.Apple or Vendor.Qualcomm or Vendor.ARM or Vendor.Broadcom or Vendor.ImgTec;
 
             GpuVendor = VendorUtils.GetNameFromId(properties.VendorID);
             GpuDriver = hasDriverProperties && !OperatingSystem.IsMacOS() ?

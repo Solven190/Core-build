@@ -63,7 +63,7 @@ namespace Ryujinx.HLE.HOS.Services.Settings
 
             RegionCode regionCode = (RegionCode)context.Device.System.State.DesiredRegionCode;
 
-            if (regionCode < RegionCode.Min || regionCode > RegionCode.Max)
+            if (regionCode is < RegionCode.Min or > RegionCode.Max)
             {
                 regionCode = RegionCode.USA;
             }

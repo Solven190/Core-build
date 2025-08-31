@@ -175,8 +175,7 @@ namespace ARMeilleure.CodeGen.X86
                     // The only blocks which can have 0 successors are exit blocks.
                     Operation last = block.Operations.Last;
 
-                    Debug.Assert(last.Instruction == Instruction.Tailcall ||
-                                 last.Instruction == Instruction.Return);
+                    Debug.Assert(last.Instruction is Instruction.Tailcall or Instruction.Return);
                 }
                 else
                 {
@@ -478,7 +477,7 @@ namespace ARMeilleure.CodeGen.X86
                             Debug.Assert(HardwareCapabilities.SupportsVexEncoding);
 
                             Debug.Assert(dest.Kind == OperandKind.Register && src1.Kind == OperandKind.Register && src2.Kind == OperandKind.Register);
-                            Debug.Assert(src3.Kind == OperandKind.Register || src3.Kind == OperandKind.Memory);
+                            Debug.Assert(src3.Kind is OperandKind.Register or OperandKind.Memory);
 
                             EnsureSameType(dest, src1, src2, src3);
                             Debug.Assert(dest.Type == OperandType.V128);
@@ -788,7 +787,7 @@ namespace ARMeilleure.CodeGen.X86
             Operand dest = operation.Destination;
             Operand source = operation.GetSource(0);
 
-            Debug.Assert(dest.Type == OperandType.FP32 || dest.Type == OperandType.FP64);
+            Debug.Assert(dest.Type is OperandType.FP32 or OperandType.FP64);
 
             if (dest.Type == OperandType.FP32)
             {
@@ -1723,7 +1722,7 @@ namespace ARMeilleure.CodeGen.X86
                 return;
             }
 
-            Debug.Assert(op1.Kind == OperandKind.Register || op1.Kind == OperandKind.Memory);
+            Debug.Assert(op1.Kind is OperandKind.Register or OperandKind.Memory);
             Debug.Assert(op1.Kind == op2.Kind);
             Debug.Assert(op1.Value == op2.Value);
         }

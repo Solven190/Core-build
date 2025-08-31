@@ -77,9 +77,7 @@ namespace Ryujinx.Graphics.Vulkan
             var swizzleB = info.SwizzleB.Convert();
             var swizzleA = info.SwizzleA.Convert();
 
-            if (info.Format == Format.R5G5B5A1Unorm ||
-                info.Format == Format.R5G5B5X1Unorm ||
-                info.Format == Format.R5G6B5Unorm)
+            if (info.Format is Format.R5G5B5A1Unorm or Format.R5G5B5X1Unorm or Format.R5G6B5Unorm)
             {
                 (swizzleB, swizzleR) = (swizzleR, swizzleB);
             }

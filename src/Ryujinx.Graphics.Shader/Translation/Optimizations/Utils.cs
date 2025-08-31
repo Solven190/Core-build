@@ -96,7 +96,7 @@ namespace Ryujinx.Graphics.Shader.Translation.Optimizations
 
         private static bool IsConditionalBranch(Instruction inst)
         {
-            return inst == Instruction.BranchIfFalse || inst == Instruction.BranchIfTrue;
+            return inst is Instruction.BranchIfFalse or Instruction.BranchIfTrue;
         }
 
         private static bool IsSameCondition(Operand currentCondition, Operand queryCondition)

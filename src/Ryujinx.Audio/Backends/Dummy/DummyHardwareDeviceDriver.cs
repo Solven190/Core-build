@@ -81,12 +81,12 @@ namespace Ryujinx.Audio.Backends.Dummy
 
         public bool SupportsDirection(Direction direction)
         {
-            return direction == Direction.Output || direction == Direction.Input;
+            return direction is Direction.Output or Direction.Input;
         }
 
         public bool SupportsChannelCount(uint channelCount)
         {
-            return channelCount == 1 || channelCount == 2 || channelCount == 6;
+            return channelCount is 1 or 2 or 6;
         }
     }
 }

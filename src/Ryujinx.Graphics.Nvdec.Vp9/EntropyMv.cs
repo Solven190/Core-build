@@ -33,12 +33,12 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
 
         private static bool JointVertical(MvJointType type)
         {
-            return type == MvJointType.Hzvnz || type == MvJointType.Hnzvnz;
+            return type is MvJointType.Hzvnz or MvJointType.Hnzvnz;
         }
 
         private static bool JointHorizontal(MvJointType type)
         {
-            return type == MvJointType.Hnzvz || type == MvJointType.Hnzvnz;
+            return type is MvJointType.Hnzvz or MvJointType.Hnzvnz;
         }
 
         private static readonly byte[] LogInBase2 =

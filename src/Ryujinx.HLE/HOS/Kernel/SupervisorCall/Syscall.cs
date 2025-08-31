@@ -1191,7 +1191,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
                 return KernelResult.InvalidMemState;
             }
 
-            if (permission > KMemoryPermission.ReadAndWrite || permission == KMemoryPermission.Write)
+            if (permission is > KMemoryPermission.ReadAndWrite or KMemoryPermission.Write)
             {
                 return KernelResult.InvalidPermission;
             }
@@ -1253,7 +1253,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
                 return KernelResult.InvalidMemState;
             }
 
-            if (permission > KMemoryPermission.ReadAndWrite || permission == KMemoryPermission.Write)
+            if (permission is > KMemoryPermission.ReadAndWrite or KMemoryPermission.Write)
             {
                 return KernelResult.InvalidPermission;
             }
@@ -2126,7 +2126,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
 
                 case InfoType.ThreadTickCount:
                     {
-                        if (subId < -1 || subId > 3)
+                        if (subId is < -1 or > 3)
                         {
                             return KernelResult.InvalidCombination;
                         }

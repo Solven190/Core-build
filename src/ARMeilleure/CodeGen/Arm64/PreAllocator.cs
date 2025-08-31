@@ -736,19 +736,19 @@ namespace ARMeilleure.CodeGen.Arm64
         {
             IntrinsicInfo info = IntrinsicTable.GetInfo(intrinsic & ~(Intrinsic.Arm64VTypeMask | Intrinsic.Arm64VSizeMask));
 
-            return info.Type == IntrinsicType.ScalarBinaryRd ||
-                   info.Type == IntrinsicType.ScalarTernaryFPRdByElem ||
-                   info.Type == IntrinsicType.ScalarTernaryShlRd ||
-                   info.Type == IntrinsicType.ScalarTernaryShrRd ||
-                   info.Type == IntrinsicType.Vector128BinaryRd ||
-                   info.Type == IntrinsicType.VectorBinaryRd ||
-                   info.Type == IntrinsicType.VectorInsertByElem ||
-                   info.Type == IntrinsicType.VectorTernaryRd ||
-                   info.Type == IntrinsicType.VectorTernaryRdBitwise ||
-                   info.Type == IntrinsicType.VectorTernaryFPRdByElem ||
-                   info.Type == IntrinsicType.VectorTernaryRdByElem ||
-                   info.Type == IntrinsicType.VectorTernaryShlRd ||
-                   info.Type == IntrinsicType.VectorTernaryShrRd;
+            return info.Type is IntrinsicType.ScalarBinaryRd
+                or IntrinsicType.ScalarTernaryFPRdByElem
+                or IntrinsicType.ScalarTernaryShlRd
+                or IntrinsicType.ScalarTernaryShrRd
+                or IntrinsicType.Vector128BinaryRd
+                or IntrinsicType.VectorBinaryRd
+                or IntrinsicType.VectorInsertByElem
+                or IntrinsicType.VectorTernaryRd
+                or IntrinsicType.VectorTernaryRdBitwise
+                or IntrinsicType.VectorTernaryFPRdByElem
+                or IntrinsicType.VectorTernaryRdByElem
+                or IntrinsicType.VectorTernaryShlRd
+                or IntrinsicType.VectorTernaryShrRd;
         }
 
         private static bool HasConstSrc1(Operation node, ulong value)
@@ -849,7 +849,7 @@ namespace ARMeilleure.CodeGen.Arm64
 
                         var compType = (Comparison)comp.AsInt32();
 
-                        return compType == Comparison.Equal || compType == Comparison.NotEqual;
+                        return compType is Comparison.Equal or Comparison.NotEqual;
                     }
             }
 

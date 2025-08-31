@@ -811,7 +811,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9.Types
             if (ColorSpace != VpxColorSpace.Srgb)
             {
                 ColorRange = (VpxColorRange)rb.ReadBit();
-                if (Profile == BitstreamProfile.Profile1 || Profile == BitstreamProfile.Profile3)
+                if (Profile is BitstreamProfile.Profile1 or BitstreamProfile.Profile3)
                 {
                     SubsamplingX = rb.ReadBit();
                     SubsamplingY = rb.ReadBit();
@@ -834,7 +834,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9.Types
             else
             {
                 ColorRange = VpxColorRange.Full;
-                if (Profile == BitstreamProfile.Profile1 || Profile == BitstreamProfile.Profile3)
+                if (Profile is BitstreamProfile.Profile1 or BitstreamProfile.Profile3)
                 {
                     // Note if colorspace is SRGB then 4:4:4 chroma sampling is assumed.
                     // 4:2:2 or 4:4:0 chroma sampling is not allowed.

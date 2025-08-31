@@ -648,7 +648,7 @@ namespace Ryujinx.HLE.Debugger
 
                 // Note: We don't support signals yet.
                 ushort? signal = null;
-                if (cmd == 'C' || cmd == 'S')
+                if (cmd is 'C' or 'S')
                 {
                     signal = (ushort)stream.ReadLengthAsHex(2);
                 }
@@ -857,7 +857,7 @@ namespace Ryujinx.HLE.Debugger
 
         void CommandSetThread(char op, ulong? threadId)
         {
-            if (threadId == 0 || threadId == null)
+            if (threadId is 0 or null)
             {
                 threadId = GetThreads().First().ThreadUid;
             }

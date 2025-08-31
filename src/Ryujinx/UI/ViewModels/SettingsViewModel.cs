@@ -168,9 +168,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             get => _vSyncMode;
             set
             {
-                if (value == VSyncMode.Custom ||
-                    value == VSyncMode.Switch ||
-                    value == VSyncMode.Unbounded)
+                if (value is VSyncMode.Custom or VSyncMode.Switch or VSyncMode.Unbounded)
                 {
                     _vSyncMode = value;
                     OnPropertyChanged();

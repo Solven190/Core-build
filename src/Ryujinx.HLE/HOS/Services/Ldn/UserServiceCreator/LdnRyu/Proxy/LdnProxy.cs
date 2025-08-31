@@ -47,7 +47,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu.Proxy
             {
                 Logger.Error?.PrintMsg(LogClass.ServiceLdn, "Tcp proxy networking is untested. Please report this game so that it can be tested.");
             }
-            return domain == AddressFamily.InterNetwork && (protocol == ProtocolType.Tcp || protocol == ProtocolType.Udp);
+            return domain == AddressFamily.InterNetwork && protocol is ProtocolType.Tcp or ProtocolType.Udp;
         }
 
         private void RegisterHandlers(RyuLdnProtocol protocol)

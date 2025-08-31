@@ -1477,7 +1477,7 @@ namespace ARMeilleure.CodeGen.X86
 
         private static bool Is64Bits(OperandType type)
         {
-            return type == OperandType.I64 || type == OperandType.FP64;
+            return type is OperandType.I64 or OperandType.FP64;
         }
 
         private static bool IsImm8(ulong immediate, OperandType type)

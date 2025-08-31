@@ -336,7 +336,7 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
 
         public Status SetMaxAcquiredBufferCount(int maxAcquiredBufferCount)
         {
-            if (maxAcquiredBufferCount < 0 || maxAcquiredBufferCount > BufferSlotArray.MaxAcquiredBuffers)
+            if (maxAcquiredBufferCount is < 0 or > BufferSlotArray.MaxAcquiredBuffers)
             {
                 return Status.BadValue;
             }

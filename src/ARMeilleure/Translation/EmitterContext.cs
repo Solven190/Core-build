@@ -668,8 +668,7 @@ namespace ARMeilleure.Translation
             Operation last = block.Operations.Last;
 
             return last != default &&
-               (last.Instruction == Instruction.Return ||
-                last.Instruction == Instruction.Tailcall);
+               last.Instruction is Instruction.Return or Instruction.Tailcall;
         }
 
         public ControlFlowGraph GetControlFlowGraph()

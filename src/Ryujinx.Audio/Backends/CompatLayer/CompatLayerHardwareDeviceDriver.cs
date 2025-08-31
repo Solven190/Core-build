@@ -162,7 +162,7 @@ namespace Ryujinx.Audio.Backends.CompatLayer
 
         public bool SupportsChannelCount(uint channelCount)
         {
-            return channelCount == 1 || channelCount == 2 || channelCount == 6;
+            return channelCount is 1 or 2 or 6;
         }
 
         public bool SupportsSampleFormat(SampleFormat sampleFormat)
@@ -184,7 +184,7 @@ namespace Ryujinx.Audio.Backends.CompatLayer
 
         public bool SupportsDirection(Direction direction)
         {
-            return direction == Direction.Input || direction == Direction.Output;
+            return direction is Direction.Input or Direction.Output;
         }
     }
 }

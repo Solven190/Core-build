@@ -126,7 +126,7 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
             {
                 BufferState state = Slots[slot].BufferState;
 
-                if (state == BufferState.Queued || state == BufferState.Dequeued)
+                if (state is BufferState.Queued or BufferState.Dequeued)
                 {
                     maxBufferCount = slot + 1;
                 }

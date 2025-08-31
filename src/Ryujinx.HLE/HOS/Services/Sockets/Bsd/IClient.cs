@@ -79,7 +79,7 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Bsd
             {
                 return WriteBsdResult(context, -1, LinuxError.EPROTONOSUPPORT);
             }
-            else if ((type == BsdSocketType.Seqpacket || type == BsdSocketType.Raw) && !_isPrivileged)
+            else if (type is BsdSocketType.Seqpacket or BsdSocketType.Raw && !_isPrivileged)
             {
                 if (domain != BsdAddressFamily.InterNetwork || type != BsdSocketType.Raw || protocol != ProtocolType.Icmp)
                 {

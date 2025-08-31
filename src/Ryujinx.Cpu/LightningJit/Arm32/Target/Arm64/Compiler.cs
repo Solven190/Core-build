@@ -560,7 +560,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
                 }
             }
 
-            Debug.Assert(name == InstName.B || name == InstName.Cbnz, $"Unknown branch instruction \"{name}\".");
+            Debug.Assert(name is InstName.B or InstName.Cbnz, $"Unknown branch instruction \"{name}\".");
         }
 
         private static void RewriteCallInstructionWithTarget(in Context context, uint targetAddress, uint nextAddress, int branchIndex)

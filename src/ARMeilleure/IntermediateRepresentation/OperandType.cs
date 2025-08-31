@@ -16,8 +16,7 @@ namespace ARMeilleure.IntermediateRepresentation
     {
         public static bool IsInteger(this OperandType type)
         {
-            return type == OperandType.I32 ||
-                   type == OperandType.I64;
+            return type is OperandType.I32 or OperandType.I64;
         }
 
         public static RegisterType ToRegisterType(this OperandType type)

@@ -421,8 +421,7 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
             Format format = ConvertColorFormat(item.GraphicBuffer.Object.Buffer.Surfaces[0].ColorFormat);
 
             byte bytesPerPixel =
-                format == Format.B5G6R5Unorm ||
-                format == Format.R4G4B4A4Unorm ? (byte)2 : (byte)4;
+                format is Format.B5G6R5Unorm or Format.R4G4B4A4Unorm ? (byte)2 : (byte)4;
 
             int gobBlocksInY = 1 << item.GraphicBuffer.Object.Buffer.Surfaces[0].BlockHeightLog2;
 

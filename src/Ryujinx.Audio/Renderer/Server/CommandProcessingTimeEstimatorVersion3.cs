@@ -23,7 +23,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(PerformanceCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -35,7 +35,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(ClearMixBufferCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             float costPerBuffer = 440.68f;
             float baseCost = 0;
@@ -50,7 +50,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(BiquadFilterCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -64,7 +64,7 @@ namespace Ryujinx.Audio.Renderer.Server
         {
             float costPerSample = 6.4434f;
 
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -86,7 +86,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(MixRampCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -103,7 +103,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(VolumeRampCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -115,7 +115,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(PcmInt16DataSourceCommandVersion1 command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             float costPerSample = 710.143f;
             float baseCost = 7853.286f;
@@ -131,7 +131,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(AdpcmDataSourceCommandVersion1 command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             float costPerSample = 3564.1f;
             float baseCost = 9736.702f;
@@ -147,7 +147,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(DepopForMixBuffersCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -159,7 +159,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(CopyMixBufferCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -171,7 +171,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(MixCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -183,7 +183,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public virtual uint Estimate(DelayCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -233,7 +233,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public virtual uint Estimate(ReverbCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -283,7 +283,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public virtual uint Estimate(Reverb3dCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -333,7 +333,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(AuxiliaryBufferCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -355,7 +355,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(VolumeCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -367,7 +367,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(CircularBufferSinkCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             float costPerBuffer = 770.26f;
             float baseCost = 0f;
@@ -382,7 +382,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(DownMixSurroundToStereoCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -394,7 +394,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(UpsampleCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -406,8 +406,8 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(DeviceSinkCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
-            Debug.Assert(command.InputCount == 2 || command.InputCount == 6);
+            Debug.Assert(SampleCount is 160 or 240);
+            Debug.Assert(command.InputCount is 2 or 6);
 
             if (command.InputCount == 2)
             {
@@ -429,7 +429,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(PcmFloatDataSourceCommandVersion1 command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             float costPerSample = 3490.9f;
             float baseCost = 10090.9f;
@@ -445,7 +445,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(DataSourceVersion2Command command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             (float baseCost, float costPerSample) = GetCostByFormat(SampleCount, command.SampleFormat, command.SrcQuality);
 
@@ -454,7 +454,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         private static (float, float) GetCostByFormat(uint sampleCount, SampleFormat format, SampleRateConversionQuality quality)
         {
-            Debug.Assert(sampleCount == 160 || sampleCount == 240);
+            Debug.Assert(sampleCount is 160 or 240);
 
             switch (format)
             {
@@ -540,7 +540,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         private uint EstimateLimiterCommandCommon(LimiterParameter parameter, bool enabled)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -590,14 +590,14 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public uint Estimate(LimiterCommandVersion1 command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             return EstimateLimiterCommandCommon(command.Parameter, command.IsEffectEnabled);
         }
 
         public uint Estimate(LimiterCommandVersion2 command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (!command.Parameter.StatisticsEnabled || !command.IsEffectEnabled)
             {

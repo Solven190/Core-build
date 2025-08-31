@@ -13,7 +13,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(DelayCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -63,7 +63,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(ReverbCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -113,7 +113,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(Reverb3dCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -163,7 +163,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(CompressorCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -241,7 +241,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(BiquadFilterAndMixCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (command.HasVolumeRamp)
             {
@@ -265,7 +265,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(MultiTapBiquadFilterAndMixCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (command.HasVolumeRamp)
             {

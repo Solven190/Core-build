@@ -227,11 +227,11 @@ namespace ARMeilleure.CodeGen.Optimizations
 
         private static bool HasSideEffects(Operation node)
         {
-            return node.Instruction == Instruction.Call
-                || node.Instruction == Instruction.Tailcall
-                || node.Instruction == Instruction.CompareAndSwap
-                || node.Instruction == Instruction.CompareAndSwap16
-                || node.Instruction == Instruction.CompareAndSwap8;
+            return node.Instruction is Instruction.Call
+                or Instruction.Tailcall
+                or Instruction.CompareAndSwap
+                or Instruction.CompareAndSwap16
+                or Instruction.CompareAndSwap8;
         }
 
         private static bool IsPropagableCompare(Operation operation)

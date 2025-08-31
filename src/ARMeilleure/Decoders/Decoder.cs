@@ -254,8 +254,7 @@ namespace ARMeilleure.Decoders
             }
 
             // Compare and branch instructions are always conditional.
-            if (opCode.Instruction.Name == InstName.Cbz ||
-                opCode.Instruction.Name == InstName.Cbnz)
+            if (opCode.Instruction.Name is InstName.Cbz or InstName.Cbnz)
             {
                 return false;
             }
@@ -284,7 +283,7 @@ namespace ARMeilleure.Decoders
             // register (Rt == 15 or (mask & (1 << 15)) != 0), and cases where there is
             // a write back to PC (wback == true && Rn == 15), however the later may
             // be "undefined" depending on the CPU, so compilers should not produce that.
-            if (opCode is IOpCode32Mem || opCode is IOpCode32MemMult)
+            if (opCode is IOpCode32Mem or IOpCode32MemMult)
             {
                 int rt, rn;
 
@@ -326,15 +325,12 @@ namespace ARMeilleure.Decoders
             }
 
             // Explicit branch instructions.
-            return opCode is IOpCode32BImm ||
-                   opCode is IOpCode32BReg;
+            return opCode is IOpCode32BImm or IOpCode32BReg;
         }
 
         private static bool IsCall(OpCode opCode)
         {
-            return opCode.Instruction.Name == InstName.Bl ||
-                   opCode.Instruction.Name == InstName.Blr ||
-                   opCode.Instruction.Name == InstName.Blx;
+            return opCode.Instruction.Name is InstName.Bl or InstName.Blr or InstName.Blx;
         }
 
         private static bool IsException(OpCode opCode)
@@ -344,9 +340,7 @@ namespace ARMeilleure.Decoders
 
         private static bool IsTrap(OpCode opCode)
         {
-            return opCode.Instruction.Name == InstName.Brk ||
-                   opCode.Instruction.Name == InstName.Trap ||
-                   opCode.Instruction.Name == InstName.Und;
+            return opCode.Instruction.Name is InstName.Brk or InstName.Trap or InstName.Und;
         }
 
         public static OpCode DecodeOpCode(IMemoryManager memory, ulong address, ExecutionMode mode)

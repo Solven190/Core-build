@@ -554,7 +554,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             int width = target == Target.TextureBuffer ? descriptor.UnpackBufferTextureWidth() : descriptor.UnpackWidth();
             int height = descriptor.UnpackHeight();
 
-            if (target == Target.Texture2DMultisample || target == Target.Texture2DMultisampleArray)
+            if (target is Target.Texture2DMultisample or Target.Texture2DMultisampleArray)
             {
                 // This is divided back before the backend texture is created.
                 width *= samplesInX;
@@ -771,8 +771,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>True if the swizzle component is equal to the red or green, false otherwise</returns>
         private static bool IsRG(SwizzleComponent component)
         {
-            return component == SwizzleComponent.Red ||
-                   component == SwizzleComponent.Green;
+            return component is SwizzleComponent.Red or SwizzleComponent.Green;
         }
 
         /// <summary>

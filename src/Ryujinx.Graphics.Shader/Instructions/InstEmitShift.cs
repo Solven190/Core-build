@@ -115,7 +115,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
             bool left,
             bool writeCC)
         {
-            bool isLongShift = maxShift == MaxShift.U64 || maxShift == MaxShift.S64;
+            bool isLongShift = maxShift is MaxShift.U64 or MaxShift.S64;
             bool signedShift = maxShift == MaxShift.S64;
             int maxShiftConst = isLongShift ? 64 : 32;
 

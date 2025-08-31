@@ -165,7 +165,7 @@ namespace Ryujinx.Horizon.Generators.Hipc
                                         arg = $"new CommandArg({bufferFlags})";
                                     }
                                 }
-                                else if (argType == CommandArgType.InArgument || argType == CommandArgType.OutArgument)
+                                else if (argType is CommandArgType.InArgument or CommandArgType.OutArgument)
                                 {
                                     string alignment = GetTypeAlignmentExpression(compilation, parameter.Type);
 

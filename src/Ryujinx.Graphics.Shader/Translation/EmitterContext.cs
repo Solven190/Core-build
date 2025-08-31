@@ -349,7 +349,7 @@ namespace Ryujinx.Graphics.Shader.Translation
             }
 
             if (TranslatorContext.Definitions.LastInVertexPipeline &&
-                (TranslatorContext.Definitions.Stage == ShaderStage.Vertex || TranslatorContext.Definitions.Stage == ShaderStage.TessellationEvaluation) &&
+                TranslatorContext.Definitions.Stage is ShaderStage.Vertex or ShaderStage.TessellationEvaluation &&
                 (TranslatorContext.Options.Flags & TranslationFlags.VertexA) == 0)
             {
                 PrepareForVertexReturn();
@@ -493,7 +493,7 @@ namespace Ryujinx.Graphics.Shader.Translation
                         Operand src = Register(regIndexBase + component, RegisterType.Gpr);
 
                         // Perform B <-> R swap if needed, for BGRA formats (not supported on OpenGL).
-                        if (!supportsBgra && (component == 0 || component == 2))
+                        if (!supportsBgra && component is 0 or 2)
                         {
                             Operand isBgra = this.Load(StorageKind.ConstantBuffer, SupportBuffer.Binding, Const((int)SupportBufferField.FragmentIsBgra), Const(rtIndex));
 

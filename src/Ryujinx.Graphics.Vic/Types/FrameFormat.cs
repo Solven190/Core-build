@@ -54,8 +54,7 @@ namespace Ryujinx.Graphics.Vic.Types
 
         public static bool IsInterlacedBottomFirst(this FrameFormat frameFormat)
         {
-            return frameFormat == FrameFormat.InterlacedBottomFieldFirst ||
-                   frameFormat == FrameFormat.SubPicInterlacedBottomFieldFirst;
+            return frameFormat is FrameFormat.InterlacedBottomFieldFirst or FrameFormat.SubPicInterlacedBottomFieldFirst;
         }
 
         public static bool IsTopField(this FrameFormat frameFormat, bool isLuma)

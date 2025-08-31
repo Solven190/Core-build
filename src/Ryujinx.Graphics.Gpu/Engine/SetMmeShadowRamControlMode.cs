@@ -15,7 +15,7 @@ namespace Ryujinx.Graphics.Gpu.Engine
     {
         public static bool IsTrack(this SetMmeShadowRamControlMode mode)
         {
-            return mode == SetMmeShadowRamControlMode.MethodTrack || mode == SetMmeShadowRamControlMode.MethodTrackWithFilter;
+            return mode is SetMmeShadowRamControlMode.MethodTrack or SetMmeShadowRamControlMode.MethodTrackWithFilter;
         }
 
         public static bool IsPassthrough(this SetMmeShadowRamControlMode mode)

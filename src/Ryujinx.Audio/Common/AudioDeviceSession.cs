@@ -109,7 +109,7 @@ namespace Ryujinx.Audio.Common
         /// <returns>The state of the session</returns>
         public AudioDeviceState GetState()
         {
-            Debug.Assert(_state == AudioDeviceState.Started || _state == AudioDeviceState.Stopped);
+            Debug.Assert(_state is AudioDeviceState.Started or AudioDeviceState.Stopped);
 
             return _state;
         }

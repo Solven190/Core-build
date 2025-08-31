@@ -243,9 +243,9 @@ namespace Ryujinx.HLE.HOS.Services.Nv.NvDrvServices.NvHostCtrl
                     return NvInternalResult.Success;
                 }
 
-                if (hostEvent.State == NvHostEventState.Available ||
-                    hostEvent.State == NvHostEventState.Cancelled ||
-                    hostEvent.State == NvHostEventState.Signaled)
+                if (hostEvent.State is NvHostEventState.Available
+                    or NvHostEventState.Cancelled
+                    or NvHostEventState.Signaled)
                 {
                     _events[userEventId].CloseEvent(Context);
                     _events[userEventId] = null;
@@ -392,9 +392,9 @@ namespace Ryujinx.HLE.HOS.Services.Nv.NvDrvServices.NvHostCtrl
                 {
                     lock (hostEvent.Lock)
                     {
-                        if (hostEvent.State == NvHostEventState.Available ||
-                            hostEvent.State == NvHostEventState.Signaled ||
-                            hostEvent.State == NvHostEventState.Cancelled)
+                        if (hostEvent.State is NvHostEventState.Available
+                            or NvHostEventState.Signaled
+                            or NvHostEventState.Cancelled)
                         {
                             bool timedOut = hostEvent.Wait(_device.Gpu, fence);
 
@@ -456,9 +456,9 @@ namespace Ryujinx.HLE.HOS.Services.Nv.NvDrvServices.NvHostCtrl
 
                 if (Event != null)
                 {
-                    if (Event.State == NvHostEventState.Available ||
-                        Event.State == NvHostEventState.Signaled ||
-                        Event.State == NvHostEventState.Cancelled)
+                    if (Event.State is NvHostEventState.Available
+                        or NvHostEventState.Signaled
+                        or NvHostEventState.Cancelled)
                     {
                         eventIndex = index;
 

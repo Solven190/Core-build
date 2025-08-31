@@ -52,12 +52,12 @@ namespace Ryujinx.Graphics.Nvdec.Vp9.Types
 
         public static bool JointVertical(MvJointType type)
         {
-            return type == MvJointType.Hzvnz || type == MvJointType.Hnzvnz;
+            return type is MvJointType.Hzvnz or MvJointType.Hnzvnz;
         }
 
         public static bool JointHorizontal(MvJointType type)
         {
-            return type == MvJointType.Hnzvz || type == MvJointType.Hnzvnz;
+            return type is MvJointType.Hnzvz or MvJointType.Hnzvnz;
         }
 
         private static int ClassBase(MvClassType c)

@@ -52,7 +52,7 @@ namespace ARMeilleure.CodeGen.Arm64
             // Any value AND all ones will be equal itself, so it's effectively a no-op.
             // Any value OR all ones will be equal all ones, so one can just use MOV.
             // Any value XOR all ones will be equal its inverse, so one can just use MVN.
-            if (value == 0 || value == ulong.MaxValue)
+            if (value is 0 or ulong.MaxValue)
             {
                 immN = 0;
                 immS = 0;

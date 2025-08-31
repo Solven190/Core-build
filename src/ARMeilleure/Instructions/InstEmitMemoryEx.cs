@@ -140,7 +140,7 @@ namespace ARMeilleure.Instructions
 
             if (pair)
             {
-                Debug.Assert(op.Size == 2 || op.Size == 3, "Invalid size for pairwise store.");
+                Debug.Assert(op.Size is 2 or 3, "Invalid size for pairwise store.");
 
                 Operand t2 = GetIntOrZR(context, op.Rt2);
 

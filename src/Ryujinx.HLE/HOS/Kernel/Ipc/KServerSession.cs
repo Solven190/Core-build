@@ -943,7 +943,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
             {
                 return KernelResult.OutOfResource;
             }
-            else if (recvListType == 1 || recvListType == 2)
+            else if (recvListType is 1 or 2)
             {
                 ulong recvListBaseAddr;
                 ulong recvListEndAddr;

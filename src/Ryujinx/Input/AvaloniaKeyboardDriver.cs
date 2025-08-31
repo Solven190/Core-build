@@ -84,7 +84,7 @@ namespace Ryujinx.Ava.Input
 
         internal bool IsPressed(Key key)
         {
-            if (key == Key.Unbound || key == Key.Unknown)
+            if (key is Key.Unbound or Key.Unknown)
             {
                 return false;
             }

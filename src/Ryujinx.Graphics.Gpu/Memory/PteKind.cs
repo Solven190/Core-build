@@ -262,7 +262,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
         /// <returns>True if pitch, false otherwise</returns>
         public static bool IsPitch(this PteKind kind)
         {
-            return kind == PteKind.Pitch || kind == PteKind.PitchNoSwizzle;
+            return kind is PteKind.Pitch or PteKind.PitchNoSwizzle;
         }
     }
 }

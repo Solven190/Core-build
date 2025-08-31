@@ -290,7 +290,7 @@ namespace Ryujinx.Graphics.OpenGL.Image
 
         private static FramebufferAttachment AttachmentForFormat(Format format)
         {
-            if (format == Format.D24UnormS8Uint || format == Format.D32FloatS8Uint)
+            if (format is Format.D24UnormS8Uint or Format.D32FloatS8Uint)
             {
                 return FramebufferAttachment.DepthStencilAttachment;
             }

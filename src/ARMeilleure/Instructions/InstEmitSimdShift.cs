@@ -1634,7 +1634,7 @@ namespace ARMeilleure.Instructions
             int eSize = 8 << size;
 
             Debug.Assert(op.Type == OperandType.I64);
-            Debug.Assert(eSize == 8 || eSize == 16 || eSize == 32 || eSize == 64);
+            Debug.Assert(eSize is 8 or 16 or 32 or 64);
 
             Operand res = context.AllocateLocal(OperandType.I64);
 
@@ -1657,7 +1657,7 @@ namespace ARMeilleure.Instructions
             int eSize = 8 << size;
 
             Debug.Assert(op.Type == OperandType.I64);
-            Debug.Assert(eSize == 8 || eSize == 16 || eSize == 32 || eSize == 64);
+            Debug.Assert(eSize is 8 or 16 or 32 or 64);
 
             Operand lblEnd = Label();
 
@@ -1732,7 +1732,7 @@ namespace ARMeilleure.Instructions
 
             Debug.Assert(op.Type == OperandType.I64);
             Debug.Assert(shiftLsB.Type == OperandType.I32);
-            Debug.Assert(eSize == 8 || eSize == 16 || eSize == 32 || eSize == 64);
+            Debug.Assert(eSize is 8 or 16 or 32 or 64);
 
             Operand lbl1 = Label();
             Operand lblEnd = Label();
@@ -1769,7 +1769,7 @@ namespace ARMeilleure.Instructions
 
             Debug.Assert(op.Type == OperandType.I64);
             Debug.Assert(shiftLsB.Type == OperandType.I32);
-            Debug.Assert(eSize == 8 || eSize == 16 || eSize == 32 || eSize == 64);
+            Debug.Assert(eSize is 8 or 16 or 32 or 64);
 
             Operand lbl1 = Label();
             Operand lbl2 = Label();

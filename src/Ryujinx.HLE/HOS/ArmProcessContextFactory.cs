@@ -69,14 +69,17 @@ namespace Ryujinx.HLE.HOS
                     mode = MemoryManagerMode.SoftwarePageTable;
                 }
 
-                ICpuEngine cpuEngine = isArm64Host && (mode == MemoryManagerMode.HostMapped || mode == MemoryManagerMode.HostMappedUnsafe) && !context.Device.Configuration.EnableGdbStub
+                ICpuEngine cpuEngine = isArm64Host &&
+                                       mode is MemoryManagerMode.HostMapped or MemoryManagerMode.HostMappedUnsafe &&
+                                       !context.Device.Configuration.EnableGdbStub
                     ? new LightningJitEngine(_tickSource)
                     : new JitEngine(_tickSource);
 
                 AddressSpace addressSpace = null;
 
                 // We want to use host tracked mode if the host page size is > 4KB.
-                if ((mode == MemoryManagerMode.HostMapped || mode == MemoryManagerMode.HostMappedUnsafe) && MemoryBlock.GetPageSize() <= 0x1000)
+                if (mode is MemoryManagerMode.HostMapped or MemoryManagerMode.HostMappedUnsafe &&
+                    MemoryBlock.GetPageSize() <= 0x1000)
                 {
                     if (!AddressSpace.TryCreate(context.Memory, addressSpaceSize, out addressSpace))
                     {

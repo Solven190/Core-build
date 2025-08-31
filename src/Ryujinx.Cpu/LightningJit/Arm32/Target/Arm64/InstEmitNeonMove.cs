@@ -252,7 +252,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             }
             else
             {
-                Debug.Assert(opc1 == 0 || opc1 == 1);
+                Debug.Assert(opc1 is 0 or 1);
                 Debug.Assert(opc2 == 0);
 
                 index = opc1 & 1u;
@@ -307,7 +307,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             }
             else
             {
-                Debug.Assert(opc1 == 0 || opc1 == 1);
+                Debug.Assert(opc1 is 0 or 1);
                 Debug.Assert(opc2 == 0);
                 Debug.Assert(!u);
 

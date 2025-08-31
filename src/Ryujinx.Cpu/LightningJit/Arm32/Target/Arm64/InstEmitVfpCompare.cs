@@ -27,7 +27,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         private static void EmitVcmpVcmpe(CodeGenContext context, uint cond, uint rd, uint rm, uint size, bool zero, bool e)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
             uint ftype = size ^ 2u;

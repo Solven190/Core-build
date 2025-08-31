@@ -208,11 +208,11 @@ namespace Spv.Generator
 
         private void AddConstant(Instruction constant)
         {
-            Debug.Assert(constant.Opcode == Op.OpConstant ||
-                         constant.Opcode == Op.OpConstantFalse ||
-                         constant.Opcode == Op.OpConstantTrue ||
-                         constant.Opcode == Op.OpConstantNull ||
-                         constant.Opcode == Op.OpConstantComposite);
+            Debug.Assert(constant.Opcode is Op.OpConstant
+                or Op.OpConstantFalse
+                or Op.OpConstantTrue
+                or Op.OpConstantNull
+                or Op.OpConstantComposite);
 
             var key = new ConstantKey(constant);
 

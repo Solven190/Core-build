@@ -352,8 +352,7 @@ namespace Ryujinx.HLE.HOS.Services
             _requestDataStream.Write(request.RawData);
             _requestDataStream.Position = 0;
 
-            if (request.Type == IpcMessageType.CmifRequest ||
-                request.Type == IpcMessageType.CmifRequestWithContext)
+            if (request.Type is IpcMessageType.CmifRequest or IpcMessageType.CmifRequestWithContext)
             {
                 response.Type = IpcMessageType.CmifResponse;
 
@@ -373,8 +372,7 @@ namespace Ryujinx.HLE.HOS.Services
 
                 response.RawData = _responseDataStream.ToArray();
             }
-            else if (request.Type == IpcMessageType.CmifControl ||
-                     request.Type == IpcMessageType.CmifControlWithContext)
+            else if (request.Type is IpcMessageType.CmifControl or IpcMessageType.CmifControlWithContext)
             {
 #pragma warning disable IDE0059 // Remove unnecessary value assignment
                 uint magic = (uint)_requestDataReader.ReadUInt64();
@@ -424,7 +422,7 @@ namespace Ryujinx.HLE.HOS.Services
                         throw new NotImplementedException(cmdId.ToString());
                 }
             }
-            else if (request.Type == IpcMessageType.CmifCloseSession || request.Type == IpcMessageType.TipcCloseSession)
+            else if (request.Type is IpcMessageType.CmifCloseSession or IpcMessageType.TipcCloseSession)
             {
                 DestroySession(serverSessionHandle);
                 shouldReply = false;

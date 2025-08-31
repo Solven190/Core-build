@@ -20,7 +20,7 @@ namespace Ryujinx.Graphics.Vulkan
             float minLod = info.MinLod;
             float maxLod = info.MaxLod;
 
-            if (info.MinFilter == MinFilter.Nearest || info.MinFilter == MinFilter.Linear)
+            if (info.MinFilter is MinFilter.Nearest or MinFilter.Linear)
             {
                 minLod = 0;
                 maxLod = 0.25f;

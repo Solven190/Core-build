@@ -501,7 +501,7 @@ namespace Ryujinx.Graphics.Shader.Decoders
         {
             InstConditional condOp = new(op.RawOpCode);
 
-            if ((op.Name == InstName.Bra || op.Name == InstName.Exit) && condOp.Ccc != Ccc.T)
+            if (op.Name is InstName.Bra or InstName.Exit && condOp.Ccc != Ccc.T)
             {
                 return false;
             }
@@ -879,7 +879,7 @@ namespace Ryujinx.Graphics.Shader.Decoders
 
         public static bool IsPopBranch(InstName name)
         {
-            return name == InstName.Brk || name == InstName.Cont || name == InstName.Sync;
+            return name is InstName.Brk or InstName.Cont or InstName.Sync;
         }
 
         private static MergeType GetMergeTypeFromPush(InstName name)

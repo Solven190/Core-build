@@ -534,7 +534,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
             {
                 res = Const(IrConsts.False);
             }
-            else if (cond == FComp.Nan || cond == FComp.Num)
+            else if (cond is FComp.Nan or FComp.Num)
             {
                 res = context.BitwiseOr(context.IsNan(srcA, fpType), context.IsNan(srcB, fpType));
 

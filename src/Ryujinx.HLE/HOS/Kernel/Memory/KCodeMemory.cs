@@ -86,7 +86,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                     return KernelResult.InvalidState;
                 }
 
-                Debug.Assert(permission == KMemoryPermission.Read || permission == KMemoryPermission.ReadAndExecute);
+                Debug.Assert(permission is KMemoryPermission.Read or KMemoryPermission.ReadAndExecute);
 
                 Result result = Owner.MemoryManager.MapPages(address, _pageList, MemoryState.CodeReadOnly, permission);
 

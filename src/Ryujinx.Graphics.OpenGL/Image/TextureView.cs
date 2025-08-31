@@ -358,7 +358,7 @@ namespace Ryujinx.Graphics.OpenGL.Image
             PixelFormat pixelFormat = format.PixelFormat;
             PixelType pixelType = format.PixelType;
 
-            if (target == TextureTarget.TextureCubeMap || target == TextureTarget.TextureCubeMapArray)
+            if (target is TextureTarget.TextureCubeMap or TextureTarget.TextureCubeMapArray)
             {
                 target = TextureTarget.TextureCubeMapPositiveX + (layer % 6);
             }

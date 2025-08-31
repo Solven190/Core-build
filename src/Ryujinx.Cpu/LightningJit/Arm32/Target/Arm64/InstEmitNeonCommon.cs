@@ -118,7 +118,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         public static void EmitScalarUnaryF(CodeGenContext context, uint rd, uint rm, uint size, Action<Operand, Operand, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -133,7 +133,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         public static void EmitScalarUnaryF(CodeGenContext context, uint rd, uint rm, uint size, Action<Operand, Operand, uint> action, Action<Operand, Operand> actionHalf)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -161,7 +161,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             uint sf,
             Action<Operand, Operand, uint, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -182,7 +182,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             uint sf,
             Action<Operand, Operand, uint, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -197,7 +197,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         public static void EmitScalarUnaryFixedF(CodeGenContext context, uint rd, uint rm, uint fbits, uint size, bool is16Bit, Action<Operand, Operand, uint, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -214,7 +214,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         public static void EmitScalarBinaryF(CodeGenContext context, uint rd, uint rn, uint rm, uint size, Action<Operand, Operand, Operand, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -252,7 +252,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
 
         public static void EmitScalarTernaryRdF(CodeGenContext context, uint rd, uint rn, uint rm, uint size, Action<Operand, Operand, Operand, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -276,7 +276,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             uint size,
             Action<Operand, Operand, Operand, Operand, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -300,7 +300,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             bool negD,
             bool negProduct)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 
@@ -918,7 +918,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             Action<Operand, Operand, uint, uint> action,
             Action<Operand, Operand, uint> actionHalf)
         {
-            Debug.Assert(sz == 0 || sz == 1);
+            Debug.Assert(sz is 0 or 1);
 
             if (q == 0)
             {
@@ -962,7 +962,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             Action<Operand, Operand, uint, uint> action,
             Action<Operand, Operand, uint> actionHalf)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
             Debug.Assert(size != 3 || q == 1);
 
             if (q == 0)
@@ -1007,7 +1007,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             uint q,
             Action<Operand, Operand, uint, uint, uint> action)
         {
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
             Debug.Assert(size != 3 || q == 1);
 
             (uint immb, uint immh) = GetImmbImmh(fbits, size);
@@ -1040,7 +1040,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             Action<Operand, Operand, Operand, uint, uint> action,
             Action<Operand, Operand, Operand, uint> actionHalf)
         {
-            Debug.Assert(sz == 0 || sz == 1);
+            Debug.Assert(sz is 0 or 1);
 
             if (q == 0)
             {
@@ -1100,7 +1100,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             Action<Operand, Operand, Operand, uint, uint> action,
             Action<Operand, Operand, Operand, uint> actionHalf)
         {
-            Debug.Assert(sz == 0 || sz == 1);
+            Debug.Assert(sz is 0 or 1);
 
             if (q == 0)
             {
@@ -1148,7 +1148,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             uint q,
             bool negProduct)
         {
-            Debug.Assert(sz == 0 || sz == 1);
+            Debug.Assert(sz is 0 or 1);
 
             if (q == 0)
             {

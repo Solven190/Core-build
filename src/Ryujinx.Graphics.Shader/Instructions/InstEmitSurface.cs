@@ -258,7 +258,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
             }
 
             // TODO: FP and 64-bit formats.
-            TextureFormat format = size == SuatomSize.Sd32 || size == SuatomSize.Sd64
+            TextureFormat format = size is SuatomSize.Sd32 or SuatomSize.Sd64
                 ? (isBindless ? TextureFormat.Unknown : ShaderProperties.GetTextureFormatAtomic(context.TranslatorContext.GpuAccessor, imm))
                 : GetTextureFormat(size);
 
@@ -537,7 +537,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
             }
 
             // TODO: FP and 64-bit formats.
-            TextureFormat format = size == SuatomSize.Sd32 || size == SuatomSize.Sd64
+            TextureFormat format = size is SuatomSize.Sd32 or SuatomSize.Sd64
                 ? (isBindless ? TextureFormat.Unknown : ShaderProperties.GetTextureFormatAtomic(context.TranslatorContext.GpuAccessor, imm))
                 : GetTextureFormat(size);
 

@@ -72,7 +72,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
                 case InstName.Cbz:
                 case InstName.Tbnz:
                 case InstName.Tbz:
-                    if (name == InstName.Tbnz || name == InstName.Tbz)
+                    if (name is InstName.Tbnz or InstName.Tbz)
                     {
                         originalOffset = ImmUtils.ExtractSImm14Times4(encoding);
                     }
@@ -369,7 +369,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
                 case InstName.Cbz:
                 case InstName.Tbnz:
                 case InstName.Tbz:
-                    int imm = name == InstName.Tbnz || name == InstName.Tbz
+                    int imm = name is InstName.Tbnz or InstName.Tbz
                         ? ImmUtils.ExtractSImm14Times4(encoding)
                         : ImmUtils.ExtractSImm19Times4(encoding);
 

@@ -232,7 +232,7 @@ namespace Ryujinx.Horizon.Sdk.Ngc.Detail
                     text[startOffset] = 0xc1;
                     text[startOffset + 1] = 0xc1;
                 }
-                else if (maskMode == MaskMode.Overwrite || maskMode == MaskMode.ReplaceByOneCharacter)
+                else if (maskMode is MaskMode.Overwrite or MaskMode.ReplaceByOneCharacter)
                 {
                     text[startOffset] = 0xc0;
                     text[startOffset + 1] = 0xc0;

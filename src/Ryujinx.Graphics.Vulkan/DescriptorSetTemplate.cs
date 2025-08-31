@@ -194,12 +194,12 @@ namespace Ryujinx.Graphics.Vulkan
 
         private static bool IsBufferType(ResourceType type)
         {
-            return type == ResourceType.UniformBuffer || type == ResourceType.StorageBuffer;
+            return type is ResourceType.UniformBuffer or ResourceType.StorageBuffer;
         }
 
         private static bool IsBufferTextureType(ResourceType type)
         {
-            return type == ResourceType.BufferTexture || type == ResourceType.BufferImage;
+            return type is ResourceType.BufferTexture or ResourceType.BufferImage;
         }
 
         public unsafe void Dispose()

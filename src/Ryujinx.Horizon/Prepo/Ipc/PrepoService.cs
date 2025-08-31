@@ -137,7 +137,7 @@ namespace Ryujinx.Horizon.Prepo.Ipc
         {
             enabled = false;
 
-            if (_permissionLevel == PrepoServicePermissionLevel.User || _permissionLevel == PrepoServicePermissionLevel.System)
+            if (_permissionLevel is PrepoServicePermissionLevel.User or PrepoServicePermissionLevel.System)
             {
                 enabled = _userAgreementCheckEnabled;
 
@@ -154,7 +154,7 @@ namespace Ryujinx.Horizon.Prepo.Ipc
         [CmifCommand(40101)] // 2.0.0+
         public Result SetUserAgreementCheckEnabled(bool enabled)
         {
-            if (_permissionLevel == PrepoServicePermissionLevel.User || _permissionLevel == PrepoServicePermissionLevel.System)
+            if (_permissionLevel is PrepoServicePermissionLevel.User or PrepoServicePermissionLevel.System)
             {
                 _userAgreementCheckEnabled = enabled;
 

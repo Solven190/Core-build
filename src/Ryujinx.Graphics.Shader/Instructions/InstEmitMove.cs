@@ -98,8 +98,8 @@ namespace Ryujinx.Graphics.Shader.Instructions
                         // but it seems to be NVIDIA implementation specific as it's only used
                         // to calculate ISBE offsets, so we can just keep it as zero.
 
-                        if (context.TranslatorContext.Definitions.Stage == ShaderStage.TessellationControl ||
-                            context.TranslatorContext.Definitions.Stage == ShaderStage.TessellationEvaluation)
+                        if (context.TranslatorContext.Definitions.Stage is ShaderStage.TessellationControl
+                            or ShaderStage.TessellationEvaluation)
                         {
                             src = context.ShiftLeft(context.Load(StorageKind.Input, IoVariable.PatchVertices), Const(16));
                         }

@@ -134,7 +134,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
 
             Pid = KernelContext.NewKipId();
 
-            if (Pid == 0 || Pid >= KernelConstants.InitialProcessId)
+            if (Pid is 0 or >= KernelConstants.InitialProcessId)
             {
                 throw new InvalidOperationException($"Invalid KIP Id {Pid}.");
             }
@@ -237,7 +237,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
 
             Pid = KernelContext.NewProcessId();
 
-            if (Pid == ulong.MaxValue || Pid < KernelConstants.InitialProcessId)
+            if (Pid is ulong.MaxValue or < KernelConstants.InitialProcessId)
             {
                 throw new InvalidOperationException($"Invalid Process Id {Pid}.");
             }
@@ -897,10 +897,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
             {
                 if (State >= ProcessState.Started)
                 {
-                    if (State == ProcessState.Started ||
-                        State == ProcessState.Crashed ||
-                        State == ProcessState.Attached ||
-                        State == ProcessState.DebugSuspended)
+                    if (State is ProcessState.Started
+                        or ProcessState.Crashed
+                        or ProcessState.Attached
+                        or ProcessState.DebugSuspended)
                     {
                         SetState(ProcessState.Exiting);
 
@@ -938,16 +938,12 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
 
             lock (_processLock)
             {
-                if (State >= ProcessState.Started)
+                if (State is >= ProcessState.Started
+                    and (ProcessState.Started or ProcessState.Attached or ProcessState.DebugSuspended))
                 {
-                    if (State == ProcessState.Started ||
-                        State == ProcessState.Attached ||
-                        State == ProcessState.DebugSuspended)
-                    {
-                        SetState(ProcessState.Exiting);
+                    SetState(ProcessState.Exiting);
 
-                        shallTerminate = true;
-                    }
+                    shallTerminate = true;
                 }
             }
 

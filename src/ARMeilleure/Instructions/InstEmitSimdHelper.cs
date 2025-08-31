@@ -363,7 +363,7 @@ namespace ARMeilleure.Instructions
 
         public static Operand EmitCountSetBits8(ArmEmitterContext context, Operand op) // "size" is 8 (SIMD&FP Inst.).
         {
-            Debug.Assert(op.Type == OperandType.I32 || op.Type == OperandType.I64);
+            Debug.Assert(op.Type is OperandType.I32 or OperandType.I64);
 
             Operand op0 = context.Subtract(op, context.BitwiseAnd(context.ShiftRightUI(op, Const(1)), Const(op.Type, 0x55L)));
 
@@ -489,7 +489,7 @@ namespace ARMeilleure.Instructions
 
         public static Operand EmitRoundByRMode(ArmEmitterContext context, Operand op)
         {
-            Debug.Assert(op.Type == OperandType.FP32 || op.Type == OperandType.FP64);
+            Debug.Assert(op.Type is OperandType.FP32 or OperandType.FP64);
 
             Operand lbl1 = Label();
             Operand lbl2 = Label();
@@ -1676,7 +1676,7 @@ namespace ARMeilleure.Instructions
             int eSize = 8 << size;
 
             Debug.Assert(op.Type == OperandType.I64);
-            Debug.Assert(eSize == 8 || eSize == 16 || eSize == 32 || eSize == 64);
+            Debug.Assert(eSize is 8 or 16 or 32 or 64);
 
             Operand lbl1 = Label();
             Operand lblEnd = Label();
@@ -1709,7 +1709,7 @@ namespace ARMeilleure.Instructions
             int eSize = 8 << size;
 
             Debug.Assert(op.Type == OperandType.I64);
-            Debug.Assert(eSize == 8 || eSize == 16 || eSize == 32 || eSize == 64);
+            Debug.Assert(eSize is 8 or 16 or 32 or 64);
 
             Operand lblEnd = Label();
 
@@ -1735,7 +1735,7 @@ namespace ARMeilleure.Instructions
             int eSizeDst = 8 << sizeDst;
 
             Debug.Assert(op.Type == OperandType.I64);
-            Debug.Assert(eSizeDst == 8 || eSizeDst == 16 || eSizeDst == 32);
+            Debug.Assert(eSizeDst is 8 or 16 or 32);
 
             Operand lbl1 = Label();
             Operand lblEnd = Label();
@@ -1768,7 +1768,7 @@ namespace ARMeilleure.Instructions
             int eSizeDst = 8 << sizeDst;
 
             Debug.Assert(op.Type == OperandType.I64);
-            Debug.Assert(eSizeDst == 8 || eSizeDst == 16 || eSizeDst == 32);
+            Debug.Assert(eSizeDst is 8 or 16 or 32);
 
             Operand lblEnd = Label();
 

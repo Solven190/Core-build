@@ -235,8 +235,7 @@ namespace ARMeilleure.Diagnostics
                     {
                         _builder.Append('.').Append(operation.Intrinsic);
                     }
-                    else if (operation.Instruction == Instruction.BranchIf ||
-                             operation.Instruction == Instruction.Compare)
+                    else if (operation.Instruction is Instruction.BranchIf or Instruction.Compare)
                     {
                         comparison = true;
                     }

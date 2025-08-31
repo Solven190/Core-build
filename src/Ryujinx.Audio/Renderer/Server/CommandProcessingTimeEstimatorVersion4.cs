@@ -12,7 +12,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(MultiTapBiquadFilterCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {
@@ -24,7 +24,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public override uint Estimate(CaptureBufferCommand command)
         {
-            Debug.Assert(SampleCount == 160 || SampleCount == 240);
+            Debug.Assert(SampleCount is 160 or 240);
 
             if (SampleCount == 160)
             {

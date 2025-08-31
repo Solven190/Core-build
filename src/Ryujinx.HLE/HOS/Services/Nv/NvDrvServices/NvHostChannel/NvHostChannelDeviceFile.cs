@@ -400,7 +400,7 @@ namespace Ryujinx.HLE.HOS.Services.Nv.NvDrvServices.NvHostChannel
 
         private NvInternalResult SetTimeslice(ref uint timeslice)
         {
-            if (timeslice < 1000 || timeslice > 50000)
+            if (timeslice is < 1000 or > 50000)
             {
                 return NvInternalResult.InvalidInput;
             }

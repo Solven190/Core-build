@@ -847,7 +847,7 @@ namespace ARMeilleure.CodeGen.RegisterAllocators
                             // If this is a copy (or copy-like operation), set the copy source interval as well.
                             // This is used for register preferencing later on, which allows the copy to be eliminated
                             // in some cases.
-                            if (node.Instruction == Instruction.Copy || node.Instruction == Instruction.ZeroExtend32)
+                            if (node.Instruction is Instruction.Copy or Instruction.ZeroExtend32)
                             {
                                 Operand source = node.GetSource(0);
 
@@ -1120,8 +1120,7 @@ namespace ARMeilleure.CodeGen.RegisterAllocators
 
         private static bool IsLocalOrRegister(OperandKind kind)
         {
-            return kind == OperandKind.LocalVariable ||
-                   kind == OperandKind.Register;
+            return kind is OperandKind.LocalVariable or OperandKind.Register;
         }
     }
 }

@@ -173,7 +173,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
                         res = context.FPMultiply(res, context.Load(StorageKind.Input, IoVariable.FragmentCoord, null, Const(3)));
                     }
                 }
-                else if (op.Imm10 == AttributeConsts.PositionX || op.Imm10 == AttributeConsts.PositionY)
+                else if (op.Imm10 is AttributeConsts.PositionX or AttributeConsts.PositionY)
                 {
                     // FragCoord X/Y must be divided by the render target scale, if resolution scaling is active,
                     // because the shader code is not expecting scaled values.

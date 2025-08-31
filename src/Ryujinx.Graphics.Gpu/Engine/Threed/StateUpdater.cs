@@ -1111,7 +1111,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         private void UpdateVertexBufferState()
         {
             IndexType indexType = _state.State.IndexBufferState.Type;
-            bool indexTypeSmall = indexType == IndexType.UByte || indexType == IndexType.UShort;
+            bool indexTypeSmall = indexType is IndexType.UByte or IndexType.UShort;
 
             _drawState.IsAnyVbInstanced = false;
 

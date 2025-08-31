@@ -179,8 +179,8 @@ namespace Ryujinx.Graphics.Shader.Instructions
 
             Instruction fpType = srcType.ToInstFPType();
 
-            bool isSignedInt = dstType == IDstFmt.S16 || dstType == IDstFmt.S32 || dstType == IDstFmt.S64;
-            bool isSmallInt = dstType == IDstFmt.U16 || dstType == IDstFmt.S16;
+            bool isSignedInt = dstType is IDstFmt.S16 or IDstFmt.S32 or IDstFmt.S64;
+            bool isSmallInt = dstType is IDstFmt.U16 or IDstFmt.S16;
 
             Operand srcB = context.FPAbsNeg(src, absolute, negate, fpType);
 
@@ -242,15 +242,9 @@ namespace Ryujinx.Graphics.Shader.Instructions
             bool negate)
         {
             bool isSignedInt =
-                srcType == ISrcFmt.S8 ||
-                srcType == ISrcFmt.S16 ||
-                srcType == ISrcFmt.S32 ||
-                srcType == ISrcFmt.S64;
+                srcType is ISrcFmt.S8 or ISrcFmt.S16 or ISrcFmt.S32 or ISrcFmt.S64;
             bool isSmallInt =
-                srcType == ISrcFmt.U16 ||
-                srcType == ISrcFmt.S16 ||
-                srcType == ISrcFmt.U8 ||
-                srcType == ISrcFmt.S8;
+                srcType is ISrcFmt.U16 or ISrcFmt.S16 or ISrcFmt.U8 or ISrcFmt.S8;
 
             // TODO: Handle S/U64.
 
@@ -258,7 +252,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
 
             if (isSmallInt)
             {
-                int size = srcType == ISrcFmt.U16 || srcType == ISrcFmt.S16 ? 16 : 8;
+                int size = srcType is ISrcFmt.U16 or ISrcFmt.S16 ? 16 : 8;
 
                 srcB = isSignedInt
                     ? context.BitfieldExtractS32(srcB, Const((int)byteSelection * 8), Const(size))
@@ -302,22 +296,15 @@ namespace Ryujinx.Graphics.Shader.Instructions
             }
 
             bool srcIsSignedInt =
-                srcType == ISrcDstFmt.S8 ||
-                srcType == ISrcDstFmt.S16 ||
-                srcType == ISrcDstFmt.S32;
+                srcType is ISrcDstFmt.S8 or ISrcDstFmt.S16 or ISrcDstFmt.S32;
             bool dstIsSignedInt =
-                dstType == ISrcDstFmt.S8 ||
-                dstType == ISrcDstFmt.S16 ||
-                dstType == ISrcDstFmt.S32;
+                dstType is ISrcDstFmt.S8 or ISrcDstFmt.S16 or ISrcDstFmt.S32;
             bool srcIsSmallInt =
-                srcType == ISrcDstFmt.U16 ||
-                srcType == ISrcDstFmt.S16 ||
-                srcType == ISrcDstFmt.U8 ||
-                srcType == ISrcDstFmt.S8;
+                srcType is ISrcDstFmt.U16 or ISrcDstFmt.S16 or ISrcDstFmt.U8 or ISrcDstFmt.S8;
 
             if (srcIsSmallInt)
             {
-                int size = srcType == ISrcDstFmt.U16 || srcType == ISrcDstFmt.S16 ? 16 : 8;
+                int size = srcType is ISrcDstFmt.U16 or ISrcDstFmt.S16 ? 16 : 8;
 
                 src = srcIsSignedInt
                     ? context.BitfieldExtractS32(src, Const((int)byteSelection * 8), Const(size))

@@ -248,12 +248,12 @@ namespace ARMeilleure.CodeGen.X86
 
         private static bool IsMemoryLoadOrStore(Instruction inst)
         {
-            return inst == Instruction.Load ||
-                   inst == Instruction.Load16 ||
-                   inst == Instruction.Load8 ||
-                   inst == Instruction.Store ||
-                   inst == Instruction.Store16 ||
-                   inst == Instruction.Store8;
+            return inst is Instruction.Load
+                or Instruction.Load16
+                or Instruction.Load8
+                or Instruction.Store
+                or Instruction.Store16
+                or Instruction.Store8;
         }
     }
 }

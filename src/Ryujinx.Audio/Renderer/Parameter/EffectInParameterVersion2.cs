@@ -91,7 +91,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// <returns>Returns true if the channel count is valid.</returns>
         public static bool IsChannelCountValid(int channelCount)
         {
-            return channelCount == 1 || channelCount == 2 || channelCount == 4 || channelCount == 6;
+            return channelCount is 1 or 2 or 4 or 6;
         }
     }
 }

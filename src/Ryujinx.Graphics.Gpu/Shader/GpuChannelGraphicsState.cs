@@ -133,7 +133,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 };
             }
 
-            bool isQuad = Topology == PrimitiveTopology.Quads || Topology == PrimitiveTopology.QuadStrip;
+            bool isQuad = Topology is PrimitiveTopology.Quads or PrimitiveTopology.QuadStrip;
             bool halvePrimitiveId = !hostSupportsQuads && !hasGeometryShader && isQuad;
 
             return new GpuGraphicsState(

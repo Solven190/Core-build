@@ -446,7 +446,7 @@ namespace ARMeilleure.IntermediateRepresentation
                 Data* data = null;
 
                 // If constant or register, then try to look up in the intern table before allocating.
-                if (kind == OperandKind.Constant || kind == OperandKind.Register)
+                if (kind is OperandKind.Constant or OperandKind.Register)
                 {
                     uint hash = (uint)HashCode.Combine(kind, type, value);
 

@@ -250,13 +250,11 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
                     };
                 }
 
-                if (mayConvertVtgToCompute && (size == VertexAttribSize.Rgb10A2 || size == VertexAttribSize.Rg11B10))
+                if (mayConvertVtgToCompute && size is VertexAttribSize.Rgb10A2 or VertexAttribSize.Rg11B10)
                 {
                     value |= AttributeType.Packed;
 
-                    if (type == VertexAttribType.Snorm ||
-                        type == VertexAttribType.Sint ||
-                        type == VertexAttribType.Sscaled)
+                    if (type is VertexAttribType.Snorm or VertexAttribType.Sint or VertexAttribType.Sscaled)
                     {
                         value |= AttributeType.PackedRgb10A2Signed;
                     }

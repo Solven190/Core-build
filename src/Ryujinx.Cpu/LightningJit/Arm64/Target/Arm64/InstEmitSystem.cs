@@ -230,7 +230,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
                 case InstName.Bl:
                 case InstName.Blr:
                 case InstName.Br:
-                    if (name == InstName.BUncond || name == InstName.Bl)
+                    if (name is InstName.BUncond or InstName.Bl)
                     {
                         int imm = ImmUtils.ExtractSImm26Times4(encoding);
 

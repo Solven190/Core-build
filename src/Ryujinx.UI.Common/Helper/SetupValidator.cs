@@ -96,7 +96,7 @@ namespace Ryujinx.UI.Common.Helper
                 string baseApplicationExtension = Path.GetExtension(baseApplicationPath).ToLowerInvariant();
 
                 // NOTE: We don't force homebrew developers to install a system firmware.
-                if (baseApplicationExtension == ".nro" || baseApplicationExtension == ".nso")
+                if (baseApplicationExtension is ".nro" or ".nso")
                 {
                     error = UserError.Success;
 

@@ -153,7 +153,7 @@ namespace Ryujinx.Graphics.Texture.Encoders
 
             int selectedPartition = 0;
 
-            if (selectedMode == 1 || selectedMode == 7)
+            if (selectedMode is 1 or 7)
             {
                 int partitionSelectionLowestError = int.MaxValue;
 
@@ -180,7 +180,7 @@ namespace Ryujinx.Graphics.Texture.Encoders
 
             for (int m = 0; m < 8; m++)
             {
-                for (int r = 0; r < (m == 4 || m == 5 ? 4 : 1); r++)
+                for (int r = 0; r < (m is 4 or 5 ? 4 : 1); r++)
                 {
                     for (int im = 0; im < (m == 4 ? 2 : 1); im++)
                     {

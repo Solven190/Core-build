@@ -1141,7 +1141,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             NpadStyleIndex deviceType = (NpadStyleIndex)deviceHandle.DeviceType;
             NpadIdType npadIdType = (NpadIdType)deviceHandle.PlayerId;
 
-            if (deviceType < NpadStyleIndex.System || deviceType >= NpadStyleIndex.FullKey)
+            if (deviceType is < NpadStyleIndex.System or >= NpadStyleIndex.FullKey)
             {
                 if (!HidUtils.IsValidNpadIdType(npadIdType))
                 {

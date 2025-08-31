@@ -83,7 +83,7 @@ namespace Ryujinx.Graphics.Shader.StructuredIr
             Instruction inst = operation.Inst;
             StorageKind storageKind = operation.StorageKind;
 
-            if (inst == Instruction.Load || inst == Instruction.Store)
+            if (inst is Instruction.Load or Instruction.Store)
             {
                 if (storageKind.IsInputOrOutput())
                 {

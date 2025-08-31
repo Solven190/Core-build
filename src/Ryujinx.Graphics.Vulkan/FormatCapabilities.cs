@@ -222,14 +222,12 @@ namespace Ryujinx.Graphics.Vulkan
 
         public static bool IsD24S8(Format format)
         {
-            return format == Format.D24UnormS8Uint || format == Format.S8UintD24Unorm || format == Format.X8UintD24Unorm;
+            return format is Format.D24UnormS8Uint or Format.S8UintD24Unorm or Format.X8UintD24Unorm;
         }
 
         private static bool IsRGB16IntFloat(Format format)
         {
-            return format == Format.R16G16B16Float ||
-                   format == Format.R16G16B16Sint ||
-                   format == Format.R16G16B16Uint;
+            return format is Format.R16G16B16Float or Format.R16G16B16Sint or Format.R16G16B16Uint;
         }
     }
 }

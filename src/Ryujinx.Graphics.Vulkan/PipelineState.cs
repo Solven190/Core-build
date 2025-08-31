@@ -432,11 +432,11 @@ namespace Ryujinx.Graphics.Vulkan
                 }
                 else
                 {
-                    topologySupportsRestart = Topology == PrimitiveTopology.LineStrip ||
-                                              Topology == PrimitiveTopology.TriangleStrip ||
-                                              Topology == PrimitiveTopology.TriangleFan ||
-                                              Topology == PrimitiveTopology.LineStripWithAdjacency ||
-                                              Topology == PrimitiveTopology.TriangleStripWithAdjacency;
+                    topologySupportsRestart = Topology is PrimitiveTopology.LineStrip
+                        or PrimitiveTopology.TriangleStrip
+                        or PrimitiveTopology.TriangleFan
+                        or PrimitiveTopology.LineStripWithAdjacency
+                        or PrimitiveTopology.TriangleStripWithAdjacency;
                 }
 
                 primitiveRestartEnable &= topologySupportsRestart;

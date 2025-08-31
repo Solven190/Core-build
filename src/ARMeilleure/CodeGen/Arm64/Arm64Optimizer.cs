@@ -254,7 +254,7 @@ namespace ARMeilleure.CodeGen.Arm64
 
         private static bool IsMemoryLoadOrStore(Instruction inst)
         {
-            return inst == Instruction.Load || inst == Instruction.Store;
+            return inst is Instruction.Load or Instruction.Store;
         }
 
         private static bool ConstTooLong(Operand constOp, OperandType accessType)

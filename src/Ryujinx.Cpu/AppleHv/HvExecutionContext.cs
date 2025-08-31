@@ -219,7 +219,7 @@ namespace Ryujinx.Cpu.AppleHv
                     address = SynchronousException(memoryManager, ref vcpu);
                     HvApi.hv_vcpu_set_reg(vcpu.Handle, HvReg.PC, address).ThrowOnError();
                 }
-                else if (reason == HvExitReason.Canceled || reason == HvExitReason.VTimerActivated)
+                else if (reason is HvExitReason.Canceled or HvExitReason.VTimerActivated)
                 {
                     if (GetAndClearInterruptRequested())
                     {

@@ -639,7 +639,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
             type &= ~(AttributeType.Packed | AttributeType.PackedRgb10A2Signed);
 
             if (channel.Capabilities.SupportsScaledVertexFormats &&
-                (type == AttributeType.Sscaled || type == AttributeType.Uscaled))
+                type is AttributeType.Sscaled or AttributeType.Uscaled)
             {
                 type = AttributeType.Float;
             }

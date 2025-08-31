@@ -322,9 +322,9 @@ namespace Ryujinx.Graphics.Shader.Instructions
                 return false;
             }
 
-            return stage == ShaderStage.TessellationControl ||
-                   stage == ShaderStage.TessellationEvaluation ||
-                   stage == ShaderStage.Geometry;
+            return stage is ShaderStage.TessellationControl
+                or ShaderStage.TessellationEvaluation
+                or ShaderStage.Geometry;
         }
 
         public static bool HasInvocationId(ShaderStage stage, bool isOutput)

@@ -1044,7 +1044,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64
     {
         public static bool IsCall(this InstName name)
         {
-            return name == InstName.Bl || name == InstName.Blr;
+            return name is InstName.Bl or InstName.Blr;
         }
 
         public static bool IsControlFlowOrException(this InstName name)

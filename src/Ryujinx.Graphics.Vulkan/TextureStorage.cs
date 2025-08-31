@@ -98,7 +98,7 @@ namespace Ryujinx.Graphics.Vulkan
             var flags = ImageCreateFlags.CreateMutableFormatBit | ImageCreateFlags.CreateExtendedUsageBit;
 
             // This flag causes mipmapped texture arrays to break on AMD GCN, so for that copy dependencies are forced for aliasing as cube.
-            bool isCube = info.Target == Target.Cubemap || info.Target == Target.CubemapArray;
+            bool isCube = info.Target is Target.Cubemap or Target.CubemapArray;
             bool cubeCompatible = gd.IsAmdGcn ? isCube : (info.Width == info.Height && layers >= 6);
 
             if (type == ImageType.Type2D && cubeCompatible)
@@ -338,7 +338,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public static SampleCountFlags ConvertToSampleCountFlags(SampleCountFlags supportedSampleCounts, uint samples)
         {
-            if (samples == 0 || samples > (uint)SampleCountFlags.Count64Bit)
+            if (samples is 0 or > (uint)SampleCountFlags.Count64Bit)
             {
                 return SampleCountFlags.Count1Bit;
             }

@@ -347,16 +347,16 @@ namespace Ryujinx.Graphics.Vulkan
 
                 if (segment.IsArray)
                 {
-                    if (segment.Type == ResourceType.Texture ||
-                        segment.Type == ResourceType.Sampler ||
-                        segment.Type == ResourceType.TextureAndSampler ||
-                        segment.Type == ResourceType.BufferTexture)
+                    if (segment.Type is ResourceType.Texture
+                        or ResourceType.Sampler
+                        or ResourceType.TextureAndSampler
+                        or ResourceType.BufferTexture)
                     {
                         ref var arrayRef = ref _textureArrayExtraRefs[setIndex - PipelineBase.DescriptorSetLayouts];
                         PipelineStageFlags stageFlags = arrayRef.Stage.ConvertToPipelineStageFlags();
                         arrayRef.Array?.QueueWriteToReadBarriers(cbs, stageFlags);
                     }
-                    else if (segment.Type == ResourceType.Image || segment.Type == ResourceType.BufferImage)
+                    else if (segment.Type is ResourceType.Image or ResourceType.BufferImage)
                     {
                         ref var arrayRef = ref _imageArrayExtraRefs[setIndex - PipelineBase.DescriptorSetLayouts];
                         PipelineStageFlags stageFlags = arrayRef.Stage.ConvertToPipelineStageFlags();
@@ -1101,10 +1101,10 @@ namespace Ryujinx.Graphics.Vulkan
                 {
                     DescriptorSet[] sets = null;
 
-                    if (segment.Type == ResourceType.Texture ||
-                        segment.Type == ResourceType.Sampler ||
-                        segment.Type == ResourceType.TextureAndSampler ||
-                        segment.Type == ResourceType.BufferTexture)
+                    if (segment.Type is ResourceType.Texture
+                        or ResourceType.Sampler
+                        or ResourceType.TextureAndSampler
+                        or ResourceType.BufferTexture)
                     {
                         sets = _textureArrayExtraRefs[setIndex - PipelineBase.DescriptorSetLayouts].Array.GetDescriptorSets(
                             _device,
@@ -1115,7 +1115,7 @@ namespace Ryujinx.Graphics.Vulkan
                             _dummyTexture,
                             _dummySampler);
                     }
-                    else if (segment.Type == ResourceType.Image || segment.Type == ResourceType.BufferImage)
+                    else if (segment.Type is ResourceType.Image or ResourceType.BufferImage)
                     {
                         sets = _imageArrayExtraRefs[setIndex - PipelineBase.DescriptorSetLayouts].Array.GetDescriptorSets(
                             _device,

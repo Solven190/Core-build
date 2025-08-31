@@ -40,7 +40,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.State
 
             DelayFeedbackBaseGain = (1.0f - channelSpread) * FeedbackGain;
 
-            if (parameter.ChannelCount == 4 || parameter.ChannelCount == 6)
+            if (parameter.ChannelCount is 4 or 6)
             {
                 DelayFeedbackCrossGain = channelSpread * 0.5f * FeedbackGain;
             }

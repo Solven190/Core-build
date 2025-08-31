@@ -575,7 +575,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
                 case InstName.Tbz:
                     uint branchMask;
 
-                    if (name == InstName.Tbnz || name == InstName.Tbz)
+                    if (name is InstName.Tbnz or InstName.Tbz)
                     {
                         originalOffset = ImmUtils.ExtractSImm14Times4(encoding);
                         branchMask = 0x3fff;
@@ -653,7 +653,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
                 case InstName.Tbz:
                     uint branchMask;
 
-                    if (name == InstName.Tbnz || name == InstName.Tbz)
+                    if (name is InstName.Tbnz or InstName.Tbz)
                     {
                         originalOffset = ImmUtils.ExtractSImm14Times4(encoding);
                         branchMask = 0x3fff;

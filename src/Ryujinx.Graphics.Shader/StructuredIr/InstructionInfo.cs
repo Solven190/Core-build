@@ -150,11 +150,11 @@ namespace Ryujinx.Graphics.Shader.StructuredIr
         {
             // TODO: Return correct type depending on source index,
             // that can improve the decompiler output.
-            if (inst == Instruction.ImageLoad ||
-                inst == Instruction.ImageStore ||
-                inst == Instruction.ImageAtomic ||
-                inst == Instruction.Lod ||
-                inst == Instruction.TextureSample)
+            if (inst is Instruction.ImageLoad
+                or Instruction.ImageStore
+                or Instruction.ImageAtomic
+                or Instruction.Lod
+                or Instruction.TextureSample)
             {
                 return AggregateType.FP32;
             }

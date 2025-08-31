@@ -231,7 +231,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
         {
             bool unsigned = (op & 1) == 0;
 
-            Debug.Assert(size == 1 || size == 2 || size == 3);
+            Debug.Assert(size is 1 or 2 or 3);
 
             bool singleRegs = size != 3;
 

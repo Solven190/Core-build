@@ -47,12 +47,12 @@ namespace ARMeilleure.Memory
     {
         public static bool IsHostMapped(this MemoryManagerType type)
         {
-            return type == MemoryManagerType.HostMapped || type == MemoryManagerType.HostMappedUnsafe;
+            return type is MemoryManagerType.HostMapped or MemoryManagerType.HostMappedUnsafe;
         }
 
         public static bool IsHostTracked(this MemoryManagerType type)
         {
-            return type == MemoryManagerType.HostTracked || type == MemoryManagerType.HostTrackedUnsafe;
+            return type is MemoryManagerType.HostTracked or MemoryManagerType.HostTrackedUnsafe;
         }
 
         public static bool IsHostMappedOrTracked(this MemoryManagerType type)

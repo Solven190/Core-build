@@ -189,8 +189,7 @@ namespace ARMeilleure.CodeGen.Arm64
                     // The only blocks which can have 0 successors are exit blocks.
                     Operation last = block.Operations.Last;
 
-                    Debug.Assert(last.Instruction == Instruction.Tailcall ||
-                                 last.Instruction == Instruction.Return);
+                    Debug.Assert(last.Instruction is Instruction.Tailcall or Instruction.Return);
                 }
                 else
                 {
@@ -464,7 +463,7 @@ namespace ARMeilleure.CodeGen.Arm64
             Operand dest = operation.Destination;
             Operand source = operation.GetSource(0);
 
-            Debug.Assert(dest.Type == OperandType.FP32 || dest.Type == OperandType.FP64);
+            Debug.Assert(dest.Type is OperandType.FP32 or OperandType.FP64);
             Debug.Assert(dest.Type != source.Type);
             Debug.Assert(source.Type != OperandType.V128);
 
@@ -483,7 +482,7 @@ namespace ARMeilleure.CodeGen.Arm64
             Operand dest = operation.Destination;
             Operand source = operation.GetSource(0);
 
-            Debug.Assert(dest.Type == OperandType.FP32 || dest.Type == OperandType.FP64);
+            Debug.Assert(dest.Type is OperandType.FP32 or OperandType.FP64);
             Debug.Assert(dest.Type != source.Type);
             Debug.Assert(source.Type.IsInteger());
 
@@ -1463,7 +1462,7 @@ namespace ARMeilleure.CodeGen.Arm64
 
         private static bool IsLoadOrStore(Operation operation)
         {
-            return operation.Instruction == Instruction.Load || operation.Instruction == Instruction.Store;
+            return operation.Instruction is Instruction.Load or Instruction.Store;
         }
 
         private static OperandType GetMemOpValueType(Operation operation)
@@ -1553,7 +1552,7 @@ namespace ARMeilleure.CodeGen.Arm64
 
         private static void EnsureSameReg(Operand op1, Operand op2)
         {
-            Debug.Assert(op1.Kind == OperandKind.Register || op1.Kind == OperandKind.Memory);
+            Debug.Assert(op1.Kind is OperandKind.Register or OperandKind.Memory);
             Debug.Assert(op1.Kind == op2.Kind);
             Debug.Assert(op1.Value == op2.Value);
         }

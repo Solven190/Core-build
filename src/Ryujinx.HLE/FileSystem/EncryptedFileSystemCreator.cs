@@ -12,7 +12,7 @@ namespace Ryujinx.HLE.FileSystem
             ref readonly SharedRef<IFileSystem> baseFileSystem, IEncryptedFileSystemCreator.KeyId idIndex,
             in EncryptionSeed encryptionSeed)
         {
-            if (idIndex < IEncryptedFileSystemCreator.KeyId.Save || idIndex > IEncryptedFileSystemCreator.KeyId.CustomStorage)
+            if (idIndex is < IEncryptedFileSystemCreator.KeyId.Save or > IEncryptedFileSystemCreator.KeyId.CustomStorage)
             {
                 return ResultFs.InvalidArgument.Log();
             }

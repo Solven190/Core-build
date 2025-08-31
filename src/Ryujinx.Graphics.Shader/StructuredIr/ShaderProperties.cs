@@ -87,7 +87,7 @@ namespace Ryujinx.Graphics.Shader.StructuredIr
 
         private static bool FormatSupportsAtomic(TextureFormat format)
         {
-            return format == TextureFormat.R32Sint || format == TextureFormat.R32Uint;
+            return format is TextureFormat.R32Sint or TextureFormat.R32Uint;
         }
 
         public static TextureFormat GetTextureFormatAtomic(IGpuAccessor gpuAccessor, int handle, int cbufSlot = -1)

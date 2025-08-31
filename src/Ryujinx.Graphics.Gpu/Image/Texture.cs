@@ -1343,7 +1343,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>True if anisotropic filtering can be forced, false otherwise</returns>
         private bool CanTextureForceAnisotropy()
         {
-            if (!(Target == Target.Texture2D || Target == Target.Texture2DArray))
+            if (!(Target is Target.Texture2D or Target.Texture2DArray))
             {
                 return false;
             }
@@ -1367,16 +1367,16 @@ namespace Ryujinx.Graphics.Gpu.Image
             {
                 case Target.Texture1D:
                 case Target.Texture1DArray:
-                    return target == Target.Texture1D || target == Target.Texture1DArray;
+                    return target is Target.Texture1D or Target.Texture1DArray;
                 case Target.Texture2D:
                 case Target.Texture2DArray:
-                    return target == Target.Texture2D || target == Target.Texture2DArray;
+                    return target is Target.Texture2D or Target.Texture2DArray;
                 case Target.Cubemap:
                 case Target.CubemapArray:
-                    return target == Target.Cubemap || target == Target.CubemapArray;
+                    return target is Target.Cubemap or Target.CubemapArray;
                 case Target.Texture2DMultisample:
                 case Target.Texture2DMultisampleArray:
-                    return target == Target.Texture2DMultisample || target == Target.Texture2DMultisampleArray;
+                    return target is Target.Texture2DMultisample or Target.Texture2DMultisampleArray;
                 case Target.Texture3D:
                     return target == Target.Texture3D;
                 default:

@@ -447,8 +447,7 @@ namespace ARMeilleure.Translation.PTC
 
         public void Start()
         {
-            if (_ptc.State == PtcState.Enabled ||
-                _ptc.State == PtcState.Continuing)
+            if (_ptc.State is PtcState.Enabled or PtcState.Continuing)
             {
                 Enabled = true;
 

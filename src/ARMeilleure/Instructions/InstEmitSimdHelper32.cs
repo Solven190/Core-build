@@ -31,7 +31,7 @@ namespace ARMeilleure.Instructions
         {
             Debug.Assert(type != OperandType.V128);
 
-            if (type == OperandType.FP64 || type == OperandType.I64)
+            if (type is OperandType.FP64 or OperandType.I64)
             {
                 // From dreg.
                 return context.VectorExtract(type, GetVecA32(reg >> 1), reg & 1);
@@ -48,7 +48,7 @@ namespace ARMeilleure.Instructions
             Debug.Assert(value.Type != OperandType.V128);
 
             Operand vec, insert;
-            if (value.Type == OperandType.FP64 || value.Type == OperandType.I64)
+            if (value.Type is OperandType.FP64 or OperandType.I64)
             {
                 // From dreg.
                 vec = GetVecA32(reg >> 1);
@@ -71,7 +71,7 @@ namespace ARMeilleure.Instructions
 
         public static void InsertScalar16(ArmEmitterContext context, int reg, bool top, Operand value)
         {
-            Debug.Assert(value.Type == OperandType.FP32 || value.Type == OperandType.I32);
+            Debug.Assert(value.Type is OperandType.FP32 or OperandType.I32);
 
             Operand vec, insert;
             vec = GetVecA32(reg >> 2);

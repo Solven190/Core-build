@@ -97,8 +97,8 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl
                             }
 
                             IoVariable ioVariable = (IoVariable)varId.Value;
-                            bool isOutput = operation.StorageKind == StorageKind.Output || operation.StorageKind == StorageKind.OutputPerPatch;
-                            bool isPerPatch = operation.StorageKind == StorageKind.InputPerPatch || operation.StorageKind == StorageKind.OutputPerPatch;
+                            bool isOutput = operation.StorageKind is StorageKind.Output or StorageKind.OutputPerPatch;
+                            bool isPerPatch = operation.StorageKind is StorageKind.InputPerPatch or StorageKind.OutputPerPatch;
                             int location = 0;
                             int component = 0;
 

@@ -498,12 +498,12 @@ namespace Ryujinx.Horizon.Kernel.Generators
 
         private static bool Is32BitInteger(string canonicalTypeName)
         {
-            return canonicalTypeName == TypeSystemInt32 || canonicalTypeName == TypeSystemUInt32;
+            return canonicalTypeName is TypeSystemInt32 or TypeSystemUInt32;
         }
 
         private static bool Is64BitInteger(string canonicalTypeName)
         {
-            return canonicalTypeName == TypeSystemInt64 || canonicalTypeName == TypeSystemUInt64;
+            return canonicalTypeName is TypeSystemInt64 or TypeSystemUInt64;
         }
 
         private static string GenerateCastFromUInt64(string value, string canonicalTargetTypeName, string targetTypeName)

@@ -28,8 +28,7 @@ namespace ARMeilleure.Decoders
             MemOp type = WBack ? (MemOp)((opCode >> 10) & 3) : MemOp.Unsigned;
 
             PostIdx = type == MemOp.PostIndexed;
-            Unscaled = type == MemOp.Unscaled ||
-                       type == MemOp.Unprivileged;
+            Unscaled = type is MemOp.Unscaled or MemOp.Unprivileged;
 
             // Unscaled and Unprivileged doesn't write back,
             // but they do use the 9-bits Signed Immediate.

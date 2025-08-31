@@ -784,8 +784,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                     samplerHandle = samplerWordOffset;
                 }
 
-                if (handleType == TextureHandleType.SeparateSamplerId ||
-                    handleType == TextureHandleType.SeparateConstantSamplerHandle)
+                if (handleType is TextureHandleType.SeparateSamplerId or TextureHandleType.SeparateConstantSamplerHandle)
                 {
                     samplerHandle <<= 20;
                 }

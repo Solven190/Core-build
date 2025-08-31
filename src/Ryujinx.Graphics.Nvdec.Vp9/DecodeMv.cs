@@ -961,7 +961,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
                         int j = (idy * 2) + idx;
                         bMode = ReadInterMode(ref cm, ref xd, ref r, interModeCtx);
 
-                        if (bMode == PredictionMode.NearestMv || bMode == PredictionMode.NearMv)
+                        if (bMode is PredictionMode.NearestMv or PredictionMode.NearMv)
                         {
                             for (refr = 0; refr < 1 + isCompound; ++refr)
                             {
@@ -1028,7 +1028,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
 
         private static PredictionMode LeftBlockMode(Ptr<ModeInfo> curMi, Ptr<ModeInfo> leftMi, int b)
         {
-            if (b == 0 || b == 2)
+            if (b is 0 or 2)
             {
                 if (leftMi.IsNull || leftMi.Value.IsInterBlock())
                 {
@@ -1038,13 +1038,13 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
                 return leftMi.Value.GetYMode(b + 1);
             }
 
-            Debug.Assert(b == 1 || b == 3);
+            Debug.Assert(b is 1 or 3);
             return curMi.Value.Bmi[b - 1].Mode;
         }
 
         private static PredictionMode AboveBlockMode(Ptr<ModeInfo> curMi, Ptr<ModeInfo> aboveMi, int b)
         {
-            if (b == 0 || b == 1)
+            if (b is 0 or 1)
             {
                 if (aboveMi.IsNull || aboveMi.Value.IsInterBlock())
                 {
@@ -1054,7 +1054,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
                 return aboveMi.Value.GetYMode(b + 2);
             }
 
-            Debug.Assert(b == 2 || b == 3);
+            Debug.Assert(b is 2 or 3);
             return curMi.Value.Bmi[b - 2].Mode;
         }
 

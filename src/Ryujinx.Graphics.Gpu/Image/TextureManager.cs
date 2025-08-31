@@ -143,7 +143,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>True if the scale needs updating, false if the scale is up to date</returns>
         private static bool ScaleNeedsUpdated(Texture texture)
         {
-            return texture != null && !(texture.ScaleMode == TextureScaleMode.Blacklisted || texture.ScaleMode == TextureScaleMode.Undesired) && texture.ScaleFactor != GraphicsConfig.ResScale;
+            return texture != null && !(texture.ScaleMode is TextureScaleMode.Blacklisted or TextureScaleMode.Undesired) && texture.ScaleFactor != GraphicsConfig.ResScale;
         }
 
         /// <summary>
