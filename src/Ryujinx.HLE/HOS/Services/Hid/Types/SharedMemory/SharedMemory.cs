@@ -46,6 +46,12 @@ namespace Ryujinx.HLE.HOS.Services.Hid.Types.SharedMemory
         [FieldOffset(0x9A00)]
         public Array10<NpadState> Npads;
 
+        /// <summary>
+        /// Pad Condition.
+        /// </summary>
+        [FieldOffset(0x3e200)]
+        public NpadCondition Condition;
+
         public static SharedMemory Create()
         {
             SharedMemory result = new()
@@ -54,6 +60,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid.Types.SharedMemory
                 TouchScreen = RingLifo<TouchScreenState>.Create(),
                 Mouse = RingLifo<MouseState>.Create(),
                 Keyboard = RingLifo<KeyboardState>.Create(),
+                Condition = NpadCondition.Create(),
             };
             
             Span<NpadState> npadsSpan = result.Npads.AsSpan();
