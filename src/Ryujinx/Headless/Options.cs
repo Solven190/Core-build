@@ -1,5 +1,4 @@
 using CommandLine;
-using Gommon;
 using Ryujinx.Common.Configuration;
 using Ryujinx.HLE;
 using Ryujinx.HLE.HOS.SystemState;
@@ -149,8 +148,10 @@ namespace Ryujinx.Headless
                 IgnoreControllerApplet = configurationState.IgnoreControllerApplet;
             
             return;
-            
-            bool NeedsOverride(string argKey) => originalArgs.None(arg => arg.TrimStart('-').EqualsIgnoreCase(OptionName(argKey)));
+
+            bool NeedsOverride(string argKey) =>
+                argKey != null && originalArgs.None(arg =>
+                    arg.TrimStart('-').Equals(OptionName(argKey), StringComparison.OrdinalIgnoreCase));
 
             string OptionName(string propertyName) =>
                 typeof(Options)!.GetProperty(propertyName)!.GetCustomAttribute<OptionAttribute>()!.LongName;

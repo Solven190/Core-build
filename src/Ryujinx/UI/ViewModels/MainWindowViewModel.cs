@@ -8,7 +8,6 @@ using Avalonia.Threading;
 using DynamicData;
 using DynamicData.Binding;
 using FluentAvalonia.UI.Controls;
-using Gommon;
 using LibHac.Common;
 using Ryujinx.Ava.Common;
 using Ryujinx.Ava.Common.Locale;
@@ -1571,7 +1570,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                     VolumeStatusText = args.VolumeStatus;
                     FifoStatusText = args.FifoStatus;
                     ShaderCountText = args.ShaderCount > 0 ? $"Compiling shaders: {args.ShaderCount}" : string.Empty;
-                    ShowRightmostSeparator = !ShaderCountText.IsNullOrEmpty();
+                    ShowRightmostSeparator = !string.IsNullOrEmpty(ShaderCountText);
 
                     ShowStatusSeparator = true;
                 });
