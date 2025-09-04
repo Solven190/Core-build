@@ -320,6 +320,7 @@ namespace Ryujinx.UI.Common
             "0100535012974000", // Hades
             "01003620068ea000", // Hand of Fate 2
             "0100f7e00c70e000", // Hogwarts Legacy
+            "010013c00e930000", // Hollow Knight: Silksong
             "010079901c898000", // Legacy of Kain: Soul Reaver 1 & 2 Remastered
             "010085500130a000", // Lego City: Undercover
             "010073c01af34000", // LEGO Horizon Adventures
