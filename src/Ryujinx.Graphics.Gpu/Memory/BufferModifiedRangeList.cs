@@ -473,6 +473,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
             ranges._migrationTarget = this;
 
             Lock.EnterWriteLock();
+            
             foreach (BufferModifiedRange range in inheritRanges)
             {
                 Add(range);
