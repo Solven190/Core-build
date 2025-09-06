@@ -194,7 +194,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
                 return;
             }
 
-            thread.SiblingsPerCore[core] = SuggestedQueue(prio, core).AddFirst(thread);
+            SuggestedQueue(prio, core).AddFirst(thread.SiblingsPerCore[core]);
 
             _suggestedPrioritiesPerCore[core] |= 1L << prio;
         }
@@ -223,7 +223,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
                 return;
             }
 
-            thread.SiblingsPerCore[core] = ScheduledQueue(prio, core).AddLast(thread);
+            ScheduledQueue(prio, core).AddLast(thread.SiblingsPerCore[core]);
 
             _scheduledPrioritiesPerCore[core] |= 1L << prio;
         }
@@ -235,7 +235,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
                 return;
             }
 
-            thread.SiblingsPerCore[core] = ScheduledQueue(prio, core).AddFirst(thread);
+            ScheduledQueue(prio, core).AddFirst(thread.SiblingsPerCore[core]);
 
             _scheduledPrioritiesPerCore[core] |= 1L << prio;
         }
@@ -251,7 +251,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
 
             queue.Remove(thread.SiblingsPerCore[core]);
 
-            thread.SiblingsPerCore[core] = queue.AddLast(thread);
+            queue.AddLast(thread.SiblingsPerCore[core]);
 
             return queue.First?.Value;
         }

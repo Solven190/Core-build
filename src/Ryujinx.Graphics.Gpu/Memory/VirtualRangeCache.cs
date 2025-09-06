@@ -122,7 +122,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
             ulong originalVa = gpuVa;
 
             _virtualRanges.Lock.EnterWriteLock();
-            (RangeItem<VirtualRange> first, RangeItem<VirtualRange> last) = _virtualRanges.FindOverlaps(gpuVa, size);
+            (RangeItem<VirtualRange> first, RangeItem<VirtualRange> last) = _virtualRanges.FindOverlapsAsNodes(gpuVa, size);
             
             if (first is not null)
             {

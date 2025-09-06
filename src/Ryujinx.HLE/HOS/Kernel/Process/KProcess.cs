@@ -873,7 +873,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
         {
             lock (_threadingLock)
             {
-                thread.ProcessListNode = _threads.AddLast(thread);
+                _threads.AddLast(thread.ProcessListNode);
             }
         }
 
@@ -1235,7 +1235,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
                     {
                         thread.Suspend(ThreadSchedState.ThreadPauseFlag);
                         thread.Context.RequestInterrupt();
-                        if (!thread.DebugHalt.WaitOne(TimeSpan.FromMilliseconds(50)))
+                        if (!thread.DebugHalt.Wait(TimeSpan.FromMilliseconds(50)))
                         {
                             Logger.Warning?.Print(LogClass.Kernel, $"Failed to suspend thread {thread.ThreadUid} in time.");
                         }

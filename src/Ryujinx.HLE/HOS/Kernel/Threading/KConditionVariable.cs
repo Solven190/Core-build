@@ -13,16 +13,8 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
 
             Monitor.Exit(mutex);
 
-            currentThread.Withholder = threadList;
-
-            currentThread.Reschedule(ThreadSchedState.Paused);
-
-            currentThread.WithholderNode = threadList.AddLast(currentThread);
-
             if (currentThread.TerminationRequested)
             {
-                threadList.Remove(currentThread.WithholderNode);
-
                 currentThread.Reschedule(ThreadSchedState.Running);
 
                 currentThread.Withholder = null;
@@ -31,6 +23,12 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
             }
             else
             {
+                currentThread.Withholder = threadList;
+
+                currentThread.Reschedule(ThreadSchedState.Paused);
+                
+                threadList.AddLast(currentThread.WithholderNode);
+                
                 if (timeout > 0)
                 {
                     context.TimeManager.ScheduleFutureInvocation(currentThread, timeout);

@@ -110,7 +110,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
             ulong size,
             BufferStage stage,
             bool sparseCompatible,
-            List<Buffer> baseBuffers)
+            RangeItem<Buffer>[] baseBuffers)
         {
             _context = context;
             _physicalMemory = physicalMemory;
@@ -128,18 +128,18 @@ namespace Ryujinx.Graphics.Gpu.Memory
 
             List<IRegionHandle> baseHandles = null;
 
-            if (baseBuffers.Count != 0)
+            if (baseBuffers.Length != 0)
             {
                 baseHandles = new List<IRegionHandle>();
-                foreach (Buffer buffer in baseBuffers)
+                foreach (RangeItem<Buffer> item in baseBuffers)
                 {
-                    if (buffer._useGranular)
+                    if (item.Value._useGranular)
                     {
-                        baseHandles.AddRange((buffer._memoryTrackingGranular.GetHandles()));
+                        baseHandles.AddRange((item.Value._memoryTrackingGranular.GetHandles()));
                     }
                     else
                     {
-                        baseHandles.Add(buffer._memoryTracking);
+                        baseHandles.Add(item.Value._memoryTracking);
                     }
                 }
             }
