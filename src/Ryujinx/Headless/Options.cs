@@ -390,7 +390,7 @@ namespace Ryujinx.Headless
         [Option("enable-gdb-stub", Required = false, Default = false, HelpText = "Enables the GDB stub so that a developer can attach a debugger to the emulated process.")]
         public bool EnableGdbStub { get; set; }
 
-        [Option("gdb-stub-port", Required = false, Default = 55555, HelpText = "Specifies which TCP port the GDB stub listens on.")]
+        [Option("gdb-stub-port", Required = false, Default = (ushort)55555, HelpText = "Specifies which TCP port the GDB stub listens on.")]
         public ushort GdbStubPort { get; set; }
 
         [Option("suspend-on-start", Required = false, Default = false, HelpText = "Suspend execution when starting an application.")]
