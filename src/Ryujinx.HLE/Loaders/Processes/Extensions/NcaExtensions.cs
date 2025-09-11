@@ -127,7 +127,7 @@ namespace Ryujinx.HLE.Loaders.Processes.Extensions
             return nca.Header.ContentType == NcaContentType.Control;
         }
 
-        public static (Nca, Nca) GetUpdateData(this Nca mainNca, VirtualFileSystem fileSystem, IntegrityCheckLevel checkLevel, int programIndex, out string updatePath, Stream updateStream = null)
+        public static (Nca, Nca) GetUpdateData(this Nca mainNca, VirtualFileSystem fileSystem, IntegrityCheckLevel checkLevel, int programIndex, out string updatePath)
         {
             updatePath = null;
 
@@ -138,38 +138,26 @@ namespace Ryujinx.HLE.Loaders.Processes.Extensions
             // Clear the program index part.
             ulong titleIdBase = mainNca.GetProgramIdBase();
 
-            IFileSystem updatePartitionFileSystem = null;
-
-            if (updateStream == null)
+            // Load update information if exists.
+            string titleUpdateMetadataPath = Path.Combine(AppDataManager.GamesDirPath, titleIdBase.ToString("x16"), "updates.json");
+            if (File.Exists(titleUpdateMetadataPath))
             {
-                // Load update information if exists.
-                string titleUpdateMetadataPath = Path.Combine(AppDataManager.GamesDirPath, titleIdBase.ToString("x16"), "updates.json");
-                if (File.Exists(titleUpdateMetadataPath))
+                updatePath = JsonHelper.DeserializeFromFile(titleUpdateMetadataPath, _applicationSerializerContext.TitleUpdateMetadata).Selected;
+                if (File.Exists(updatePath))
                 {
-                    updatePath = JsonHelper.DeserializeFromFile(titleUpdateMetadataPath, _applicationSerializerContext.TitleUpdateMetadata).Selected;
-                    if (File.Exists(updatePath))
-                    {
-                        updatePartitionFileSystem = PartitionFileSystemUtils.OpenApplicationFileSystem(updatePath, fileSystem);
-                    }
-                }
-            }
-            else
-            {
-                updatePartitionFileSystem = PartitionFileSystemUtils.OpenApplicationFileSystem(updateStream, false, fileSystem);
-            }
+                    IFileSystem updatePartitionFileSystem = PartitionFileSystemUtils.OpenApplicationFileSystem(updatePath, fileSystem);
 
-            if (updatePartitionFileSystem != null)
-            {
-                foreach ((ulong applicationTitleId, ContentMetaData content) in updatePartitionFileSystem.GetContentData(ContentMetaType.Patch, fileSystem, checkLevel))
-                {
-                    if ((applicationTitleId & ~0x1FFFUL) != titleIdBase)
+                    foreach ((ulong applicationTitleId, ContentMetaData content) in updatePartitionFileSystem.GetContentData(ContentMetaType.Patch, fileSystem, checkLevel))
                     {
-                        continue;
-                    }
+                        if ((applicationTitleId & ~0x1FFFUL) != titleIdBase)
+                        {
+                            continue;
+                        }
 
-                    updatePatchNca = content.GetNcaByType(fileSystem.KeySet, ContentType.Program, programIndex);
-                    updateControlNca = content.GetNcaByType(fileSystem.KeySet, ContentType.Control, programIndex);
-                    break;
+                        updatePatchNca = content.GetNcaByType(fileSystem.KeySet, ContentType.Program, programIndex);
+                        updateControlNca = content.GetNcaByType(fileSystem.KeySet, ContentType.Control, programIndex);
+                        break;
+                    }
                 }
             }
 

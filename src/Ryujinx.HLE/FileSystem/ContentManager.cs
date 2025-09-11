@@ -43,15 +43,11 @@ namespace Ryujinx.HLE.FileSystem
         private readonly struct AocItem
         {
             public readonly string ContainerPath;
-            public readonly Stream ContainerStream;
             public readonly string NcaPath;
-            public readonly string Extension;
 
-            public AocItem(string containerPath, Stream containerStream, string ncaPath, string extension)
+            public AocItem(string containerPath, string ncaPath)
             {
                 ContainerPath = containerPath;
-                ContainerStream = containerStream;
-                Extension = extension;
                 NcaPath = ncaPath;
             }
         }
@@ -191,10 +187,10 @@ namespace Ryujinx.HLE.FileSystem
             }
         }
 
-        public void AddAocItem(ulong titleId, string containerPath, Stream containerStream, string ncaPath, string extension, bool mergedToContainer = false)
+        public void AddAocItem(ulong titleId, string containerPath, string ncaPath, bool mergedToContainer = false)
         {
             // TODO: Check Aoc version.
-            if (!AocData.TryAdd(titleId, new AocItem(containerPath, containerStream, ncaPath, extension)))
+            if (!AocData.TryAdd(titleId, new AocItem(containerPath, ncaPath)))
             {
                 Logger.Warning?.Print(LogClass.Application, $"Duplicate AddOnContent detected. TitleId {titleId:X16}");
             }
@@ -204,20 +200,12 @@ namespace Ryujinx.HLE.FileSystem
 
                 if (!mergedToContainer)
                 {
-                    using var pfs = PartitionFileSystemUtils.OpenApplicationFileSystem(containerStream, extension == ".xci", _virtualFileSystem);
+                    using var pfs = PartitionFileSystemUtils.OpenApplicationFileSystem(containerPath, _virtualFileSystem);
                 }
             }
         }
 
-        public void ClearAocData()
-        {
-            foreach (var aoc in AocData)
-            {
-                aoc.Value.ContainerStream?.Dispose();
-            }
-
-            AocData.Clear();
-        }
+        public void ClearAocData() => AocData.Clear();
 
         public int GetAocCount() => AocData.Count;
 
@@ -232,11 +220,11 @@ namespace Ryujinx.HLE.FileSystem
                 var file = new FileStream(aoc.ContainerPath, FileMode.Open, FileAccess.Read);
                 using var ncaFile = new UniqueRef<IFile>();
 
-                switch (aoc.Extension)
+                switch (Path.GetExtension(aoc.ContainerPath))
                 {
                     case ".xci":
-                        var xci = new Xci(_virtualFileSystem.KeySet, aoc.ContainerStream.AsStorage()).OpenPartition(XciPartitionType.Secure);
-                        xci.OpenFile(ref ncaFile.Ref, aoc.NcaPath.ToU8Span(), OpenMode.Read);
+                        var xci = new Xci(_virtualFileSystem.KeySet, file.AsStorage()).OpenPartition(XciPartitionType.Secure);
+                        xci.OpenFile(ref ncaFile.Ref, aoc.NcaPath.ToU8Span(), OpenMode.Read).ThrowIfFailure();
                         break;
                     case ".nsp":
                         var pfs = new PartitionFileSystem();
@@ -488,27 +476,6 @@ namespace Ryujinx.HLE.FileSystem
             FinishInstallation(temporaryDirectory, registeredDirectory);
         }
 
-        public void InstallFirmware(Stream stream, bool isXci)
-        {
-            ContentPath.TryGetContentPath(StorageId.BuiltInSystem, out var contentPathString);
-            ContentPath.TryGetRealPath(contentPathString, out var contentDirectory);
-            string registeredDirectory = Path.Combine(contentDirectory, "registered");
-            string temporaryDirectory = Path.Combine(contentDirectory, "temp");
-
-            if (!isXci)
-            {
-                using ZipArchive archive = new ZipArchive(stream);
-                InstallFromZip(archive, temporaryDirectory);
-            }
-            else
-            {
-                Xci xci = new(_virtualFileSystem.KeySet, stream.AsStorage());
-                InstallFromCart(xci, temporaryDirectory);
-            }
-
-            FinishInstallation(temporaryDirectory, registeredDirectory);
-        }
-
         public void InstallKeys(string keysSource, string installDirectory)
         {
             if (Directory.Exists(keysSource))
@@ -695,14 +662,11 @@ namespace Ryujinx.HLE.FileSystem
                 throw new MissingKeyException("HeaderKey is empty. Cannot decrypt NCA headers.");
             }
 
+            Dictionary<ulong, List<(NcaContentType type, string path)>> updateNcas = new();
+
             if (Directory.Exists(firmwarePackage))
             {
                 return VerifyAndGetVersionDirectory(firmwarePackage);
-            }
-
-            SystemVersion VerifyAndGetVersionDirectory(string firmwareDirectory)
-            {
-                return VerifyAndGetVersion(new LocalFileSystem(firmwareDirectory));
             }
 
             if (!File.Exists(firmwarePackage))
@@ -712,144 +676,72 @@ namespace Ryujinx.HLE.FileSystem
 
             FileInfo info = new(firmwarePackage);
 
-            if (info.Extension == ".zip" || info.Extension == ".xci")
+            using FileStream file = File.OpenRead(firmwarePackage);
+
+            switch (info.Extension)
             {
-                using FileStream file = File.OpenRead(firmwarePackage);
-
-                var isXci = info.Extension == ".xci";
-
-                return VerifyFirmwarePackage(file, isXci);
-            }
-
-            return null;
-        }
-
-        public SystemVersion VerifyFirmwarePackage(Stream file, bool isXci)
-        {
-            if (!isXci)
-            {
-                using ZipArchive archive = new ZipArchive(file, ZipArchiveMode.Read);
-                return VerifyAndGetVersionZip(archive);
-            }
-            else
-            {
-                Xci xci = new(_virtualFileSystem.KeySet, file.AsStorage());
-
-                if (xci.HasPartition(XciPartitionType.Update))
-                {
-                    XciPartition partition = xci.OpenPartition(XciPartitionType.Update);
-
-                    return VerifyAndGetVersion(partition);
-                }
-                else
-                {
-                    throw new InvalidFirmwarePackageException("Update not found in xci file.");
-                }
-            }
-        }
-
-        private SystemVersion VerifyAndGetVersionZip(ZipArchive archive)
-        {
-            Dictionary<ulong, List<(NcaContentType type, string path)>> updateNcas = new();
-
-            SystemVersion systemVersion = null;
-
-            foreach (var entry in archive.Entries)
-            {
-                if (entry.FullName.EndsWith(".nca") || entry.FullName.EndsWith(".nca/00"))
-                {
-                    using Stream ncaStream = GetZipStream(entry);
-                    IStorage storage = ncaStream.AsStorage();
-
-                    Nca nca = new(_virtualFileSystem.KeySet, storage);
-
-                    if (updateNcas.TryGetValue(nca.Header.TitleId, out var updateNcasItem))
+                case ".zip":
+                    using (ZipArchive archive = ZipFile.OpenRead(firmwarePackage))
                     {
-                        updateNcasItem.Add((nca.Header.ContentType, entry.FullName));
+                        return VerifyAndGetVersionZip(archive);
                     }
-                    else if (updateNcas.TryAdd(nca.Header.TitleId, new List<(NcaContentType, string)>()))
+                case ".xci":
+                    Xci xci = new(_virtualFileSystem.KeySet, file.AsStorage());
+
+                    if (xci.HasPartition(XciPartitionType.Update))
                     {
-                        updateNcas[nca.Header.TitleId].Add((nca.Header.ContentType, entry.FullName));
+                        XciPartition partition = xci.OpenPartition(XciPartitionType.Update);
+
+                        return VerifyAndGetVersion(partition);
                     }
-                }
+                    else
+                    {
+                        throw new InvalidFirmwarePackageException("Update not found in xci file.");
+                    }
+                default:
+                    break;
             }
 
-            if (updateNcas.TryGetValue(SystemUpdateTitleId, out var ncaEntry))
+            SystemVersion VerifyAndGetVersionDirectory(string firmwareDirectory)
             {
-                string metaPath = ncaEntry.FirstOrDefault(x => x.type == NcaContentType.Meta).path;
+                return VerifyAndGetVersion(new LocalFileSystem(firmwareDirectory));
+            }
 
-                CnmtContentMetaEntry[] metaEntries = null;
+            SystemVersion VerifyAndGetVersionZip(ZipArchive archive)
+            {
+                SystemVersion systemVersion = null;
 
-                var fileEntry = archive.GetEntry(metaPath);
-
-                using (Stream ncaStream = GetZipStream(fileEntry))
+                foreach (var entry in archive.Entries)
                 {
-                    Nca metaNca = new(_virtualFileSystem.KeySet, ncaStream.AsStorage());
-
-                    IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
-
-                    string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
-
-                    using var metaFile = new UniqueRef<IFile>();
-
-                    if (fs.OpenFile(ref metaFile.Ref, cnmtPath.ToU8Span(), OpenMode.Read).IsSuccess())
+                    if (entry.FullName.EndsWith(".nca") || entry.FullName.EndsWith(".nca/00"))
                     {
-                        var meta = new Cnmt(metaFile.Get.AsStream());
+                        using Stream ncaStream = GetZipStream(entry);
+                        IStorage storage = ncaStream.AsStorage();
 
-                        if (meta.Type == ContentMetaType.SystemUpdate)
+                        Nca nca = new(_virtualFileSystem.KeySet, storage);
+
+                        if (updateNcas.TryGetValue(nca.Header.TitleId, out var updateNcasItem))
                         {
-                            metaEntries = meta.MetaEntries;
-
-                            updateNcas.Remove(SystemUpdateTitleId);
+                            updateNcasItem.Add((nca.Header.ContentType, entry.FullName));
+                        }
+                        else if (updateNcas.TryAdd(nca.Header.TitleId, new List<(NcaContentType, string)>()))
+                        {
+                            updateNcas[nca.Header.TitleId].Add((nca.Header.ContentType, entry.FullName));
                         }
                     }
                 }
 
-                if (metaEntries == null)
+                if (updateNcas.TryGetValue(SystemUpdateTitleId, out var ncaEntry))
                 {
-                    throw new FileNotFoundException("System update title was not found in the firmware package.");
-                }
+                    string metaPath = ncaEntry.FirstOrDefault(x => x.type == NcaContentType.Meta).path;
 
-                if (updateNcas.TryGetValue(SystemVersionTitleId, out var updateNcasItem))
-                {
-                    string versionEntry = updateNcasItem.FirstOrDefault(x => x.type != NcaContentType.Meta).path;
+                    CnmtContentMetaEntry[] metaEntries = null;
 
-                    using Stream ncaStream = GetZipStream(archive.GetEntry(versionEntry));
-                    Nca nca = new(_virtualFileSystem.KeySet, ncaStream.AsStorage());
+                    var fileEntry = archive.GetEntry(metaPath);
 
-                    var romfs = nca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
-
-                    using var systemVersionFile = new UniqueRef<IFile>();
-
-                    if (romfs.OpenFile(ref systemVersionFile.Ref, "/file".ToU8Span(), OpenMode.Read).IsSuccess())
+                    using (Stream ncaStream = GetZipStream(fileEntry))
                     {
-                        systemVersion = new SystemVersion(systemVersionFile.Get.AsStream());
-                    }
-                }
-
-                foreach (CnmtContentMetaEntry metaEntry in metaEntries)
-                {
-                    if (updateNcas.TryGetValue(metaEntry.TitleId, out ncaEntry))
-                    {
-                        metaPath = ncaEntry.FirstOrDefault(x => x.type == NcaContentType.Meta).path;
-
-                        string contentPath = ncaEntry.FirstOrDefault(x => x.type != NcaContentType.Meta).path;
-
-                        // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
-                        // This is a perfect valid case, so we should just ignore the missing content nca and continue.
-                        if (contentPath == null)
-                        {
-                            updateNcas.Remove(metaEntry.TitleId);
-
-                            continue;
-                        }
-
-                        ZipArchiveEntry metaZipEntry = archive.GetEntry(metaPath);
-                        ZipArchiveEntry contentZipEntry = archive.GetEntry(contentPath);
-
-                        using Stream metaNcaStream = GetZipStream(metaZipEntry);
-                        using Stream contentNcaStream = GetZipStream(contentZipEntry);
-                        Nca metaNca = new(_virtualFileSystem.KeySet, metaNcaStream.AsStorage());
+                        Nca metaNca = new(_virtualFileSystem.KeySet, ncaStream.AsStorage());
 
                         IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
 
@@ -861,7 +753,208 @@ namespace Ryujinx.HLE.FileSystem
                         {
                             var meta = new Cnmt(metaFile.Get.AsStream());
 
-                            IStorage contentStorage = contentNcaStream.AsStorage();
+                            if (meta.Type == ContentMetaType.SystemUpdate)
+                            {
+                                metaEntries = meta.MetaEntries;
+
+                                updateNcas.Remove(SystemUpdateTitleId);
+                            }
+                        }
+                    }
+
+                    if (metaEntries == null)
+                    {
+                        throw new FileNotFoundException("System update title was not found in the firmware package.");
+                    }
+
+                    if (updateNcas.TryGetValue(SystemVersionTitleId, out var updateNcasItem))
+                    {
+                        string versionEntry = updateNcasItem.FirstOrDefault(x => x.type != NcaContentType.Meta).path;
+
+                        using Stream ncaStream = GetZipStream(archive.GetEntry(versionEntry));
+                        Nca nca = new(_virtualFileSystem.KeySet, ncaStream.AsStorage());
+
+                        var romfs = nca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
+
+                        using var systemVersionFile = new UniqueRef<IFile>();
+
+                        if (romfs.OpenFile(ref systemVersionFile.Ref, "/file".ToU8Span(), OpenMode.Read).IsSuccess())
+                        {
+                            systemVersion = new SystemVersion(systemVersionFile.Get.AsStream());
+                        }
+                    }
+
+                    foreach (CnmtContentMetaEntry metaEntry in metaEntries)
+                    {
+                        if (updateNcas.TryGetValue(metaEntry.TitleId, out ncaEntry))
+                        {
+                            metaPath = ncaEntry.FirstOrDefault(x => x.type == NcaContentType.Meta).path;
+
+                            string contentPath = ncaEntry.FirstOrDefault(x => x.type != NcaContentType.Meta).path;
+
+                            // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
+                            // This is a perfect valid case, so we should just ignore the missing content nca and continue.
+                            if (contentPath == null)
+                            {
+                                updateNcas.Remove(metaEntry.TitleId);
+
+                                continue;
+                            }
+
+                            ZipArchiveEntry metaZipEntry = archive.GetEntry(metaPath);
+                            ZipArchiveEntry contentZipEntry = archive.GetEntry(contentPath);
+
+                            using Stream metaNcaStream = GetZipStream(metaZipEntry);
+                            using Stream contentNcaStream = GetZipStream(contentZipEntry);
+                            Nca metaNca = new(_virtualFileSystem.KeySet, metaNcaStream.AsStorage());
+
+                            IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
+
+                            string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
+
+                            using var metaFile = new UniqueRef<IFile>();
+
+                            if (fs.OpenFile(ref metaFile.Ref, cnmtPath.ToU8Span(), OpenMode.Read).IsSuccess())
+                            {
+                                var meta = new Cnmt(metaFile.Get.AsStream());
+
+                                IStorage contentStorage = contentNcaStream.AsStorage();
+                                if (contentStorage.GetSize(out long size).IsSuccess())
+                                {
+                                    byte[] contentData = new byte[size];
+
+                                    Span<byte> content = new(contentData);
+
+                                    contentStorage.Read(0, content);
+
+                                    Span<byte> hash = new(new byte[32]);
+
+                                    LibHac.Crypto.Sha256.GenerateSha256Hash(content, hash);
+
+                                    if (LibHac.Common.Utilities.ArraysEqual(hash.ToArray(), meta.ContentEntries[0].Hash))
+                                    {
+                                        updateNcas.Remove(metaEntry.TitleId);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (updateNcas.Count > 0)
+                    {
+                        StringBuilder extraNcas = new();
+
+                        foreach (var entry in updateNcas)
+                        {
+                            foreach (var (type, path) in entry.Value)
+                            {
+                                extraNcas.AppendLine(path);
+                            }
+                        }
+
+                        throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: {Environment.NewLine}{extraNcas}");
+                    }
+                }
+                else
+                {
+                    throw new FileNotFoundException("System update title was not found in the firmware package.");
+                }
+
+                return systemVersion;
+            }
+
+            SystemVersion VerifyAndGetVersion(IFileSystem filesystem)
+            {
+                SystemVersion systemVersion = null;
+
+                CnmtContentMetaEntry[] metaEntries = null;
+
+                foreach (var entry in filesystem.EnumerateEntries("/", "*.nca"))
+                {
+                    IStorage ncaStorage = OpenPossibleFragmentedFile(filesystem, entry.FullPath, OpenMode.Read).AsStorage();
+
+                    Nca nca = new(_virtualFileSystem.KeySet, ncaStorage);
+
+                    if (nca.Header.TitleId == SystemUpdateTitleId && nca.Header.ContentType == NcaContentType.Meta)
+                    {
+                        IFileSystem fs = nca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
+
+                        string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
+
+                        using var metaFile = new UniqueRef<IFile>();
+
+                        if (fs.OpenFile(ref metaFile.Ref, cnmtPath.ToU8Span(), OpenMode.Read).IsSuccess())
+                        {
+                            var meta = new Cnmt(metaFile.Get.AsStream());
+
+                            if (meta.Type == ContentMetaType.SystemUpdate)
+                            {
+                                metaEntries = meta.MetaEntries;
+                            }
+                        }
+
+                        continue;
+                    }
+                    else if (nca.Header.TitleId == SystemVersionTitleId && nca.Header.ContentType == NcaContentType.Data)
+                    {
+                        var romfs = nca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
+
+                        using var systemVersionFile = new UniqueRef<IFile>();
+
+                        if (romfs.OpenFile(ref systemVersionFile.Ref, "/file".ToU8Span(), OpenMode.Read).IsSuccess())
+                        {
+                            systemVersion = new SystemVersion(systemVersionFile.Get.AsStream());
+                        }
+                    }
+
+                    if (updateNcas.TryGetValue(nca.Header.TitleId, out var updateNcasItem))
+                    {
+                        updateNcasItem.Add((nca.Header.ContentType, entry.FullPath));
+                    }
+                    else if (updateNcas.TryAdd(nca.Header.TitleId, new List<(NcaContentType, string)>()))
+                    {
+                        updateNcas[nca.Header.TitleId].Add((nca.Header.ContentType, entry.FullPath));
+                    }
+
+                    ncaStorage.Dispose();
+                }
+
+                if (metaEntries == null)
+                {
+                    throw new FileNotFoundException("System update title was not found in the firmware package.");
+                }
+
+                foreach (CnmtContentMetaEntry metaEntry in metaEntries)
+                {
+                    if (updateNcas.TryGetValue(metaEntry.TitleId, out var ncaEntry))
+                    {
+                        string metaNcaPath = ncaEntry.FirstOrDefault(x => x.type == NcaContentType.Meta).path;
+                        string contentPath = ncaEntry.FirstOrDefault(x => x.type != NcaContentType.Meta).path;
+
+                        // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
+                        // This is a perfect valid case, so we should just ignore the missing content nca and continue.
+                        if (contentPath == null)
+                        {
+                            updateNcas.Remove(metaEntry.TitleId);
+
+                            continue;
+                        }
+
+                        IStorage metaStorage = OpenPossibleFragmentedFile(filesystem, metaNcaPath, OpenMode.Read).AsStorage();
+                        IStorage contentStorage = OpenPossibleFragmentedFile(filesystem, contentPath, OpenMode.Read).AsStorage();
+
+                        Nca metaNca = new(_virtualFileSystem.KeySet, metaStorage);
+
+                        IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
+
+                        string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
+
+                        using var metaFile = new UniqueRef<IFile>();
+
+                        if (fs.OpenFile(ref metaFile.Ref, cnmtPath.ToU8Span(), OpenMode.Read).IsSuccess())
+                        {
+                            var meta = new Cnmt(metaFile.Get.AsStream());
+
                             if (contentStorage.GetSize(out long size).IsSuccess())
                             {
                                 byte[] contentData = new byte[size];
@@ -897,146 +990,11 @@ namespace Ryujinx.HLE.FileSystem
 
                     throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: {Environment.NewLine}{extraNcas}");
                 }
-            }
-            else
-            {
-                throw new FileNotFoundException("System update title was not found in the firmware package.");
+
+                return systemVersion;
             }
 
-            return systemVersion;
-        }
-
-        private SystemVersion VerifyAndGetVersion(IFileSystem filesystem)
-        {
-            Dictionary<ulong, List<(NcaContentType type, string path)>> updateNcas = new();
-
-            SystemVersion systemVersion = null;
-
-            CnmtContentMetaEntry[] metaEntries = null;
-
-            foreach (var entry in filesystem.EnumerateEntries("/", "*.nca"))
-            {
-                IStorage ncaStorage = OpenPossibleFragmentedFile(filesystem, entry.FullPath, OpenMode.Read).AsStorage();
-
-                Nca nca = new(_virtualFileSystem.KeySet, ncaStorage);
-
-                if (nca.Header.TitleId == SystemUpdateTitleId && nca.Header.ContentType == NcaContentType.Meta)
-                {
-                    IFileSystem fs = nca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
-
-                    string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
-
-                    using var metaFile = new UniqueRef<IFile>();
-
-                    if (fs.OpenFile(ref metaFile.Ref, cnmtPath.ToU8Span(), OpenMode.Read).IsSuccess())
-                    {
-                        var meta = new Cnmt(metaFile.Get.AsStream());
-
-                        if (meta.Type == ContentMetaType.SystemUpdate)
-                        {
-                            metaEntries = meta.MetaEntries;
-                        }
-                    }
-
-                    continue;
-                }
-                else if (nca.Header.TitleId == SystemVersionTitleId && nca.Header.ContentType == NcaContentType.Data)
-                {
-                    var romfs = nca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
-
-                    using var systemVersionFile = new UniqueRef<IFile>();
-
-                    if (romfs.OpenFile(ref systemVersionFile.Ref, "/file".ToU8Span(), OpenMode.Read).IsSuccess())
-                    {
-                        systemVersion = new SystemVersion(systemVersionFile.Get.AsStream());
-                    }
-                }
-
-                if (updateNcas.TryGetValue(nca.Header.TitleId, out var updateNcasItem))
-                {
-                    updateNcasItem.Add((nca.Header.ContentType, entry.FullPath));
-                }
-                else if (updateNcas.TryAdd(nca.Header.TitleId, new List<(NcaContentType, string)>()))
-                {
-                    updateNcas[nca.Header.TitleId].Add((nca.Header.ContentType, entry.FullPath));
-                }
-
-                ncaStorage.Dispose();
-            }
-
-            if (metaEntries == null)
-            {
-                throw new FileNotFoundException("System update title was not found in the firmware package.");
-            }
-
-            foreach (CnmtContentMetaEntry metaEntry in metaEntries)
-            {
-                if (updateNcas.TryGetValue(metaEntry.TitleId, out var ncaEntry))
-                {
-                    string metaNcaPath = ncaEntry.FirstOrDefault(x => x.type == NcaContentType.Meta).path;
-                    string contentPath = ncaEntry.FirstOrDefault(x => x.type != NcaContentType.Meta).path;
-
-                    // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
-                    // This is a perfect valid case, so we should just ignore the missing content nca and continue.
-                    if (contentPath == null)
-                    {
-                        updateNcas.Remove(metaEntry.TitleId);
-
-                        continue;
-                    }
-
-                    IStorage metaStorage = OpenPossibleFragmentedFile(filesystem, metaNcaPath, OpenMode.Read).AsStorage();
-                    IStorage contentStorage = OpenPossibleFragmentedFile(filesystem, contentPath, OpenMode.Read).AsStorage();
-
-                    Nca metaNca = new(_virtualFileSystem.KeySet, metaStorage);
-
-                    IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, IntegrityCheckLevel.ErrorOnInvalid);
-
-                    string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
-
-                    using var metaFile = new UniqueRef<IFile>();
-
-                    if (fs.OpenFile(ref metaFile.Ref, cnmtPath.ToU8Span(), OpenMode.Read).IsSuccess())
-                    {
-                        var meta = new Cnmt(metaFile.Get.AsStream());
-
-                        if (contentStorage.GetSize(out long size).IsSuccess())
-                        {
-                            byte[] contentData = new byte[size];
-
-                            Span<byte> content = new(contentData);
-
-                            contentStorage.Read(0, content);
-
-                            Span<byte> hash = new(new byte[32]);
-
-                            LibHac.Crypto.Sha256.GenerateSha256Hash(content, hash);
-
-                            if (LibHac.Common.Utilities.ArraysEqual(hash.ToArray(), meta.ContentEntries[0].Hash))
-                            {
-                                updateNcas.Remove(metaEntry.TitleId);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (updateNcas.Count > 0)
-            {
-                StringBuilder extraNcas = new();
-
-                foreach (var entry in updateNcas)
-                {
-                    foreach (var (type, path) in entry.Value)
-                    {
-                        extraNcas.AppendLine(path);
-                    }
-                }
-
-                throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: {Environment.NewLine}{extraNcas}");
-            }
-
-            return systemVersion;
+            return null;
         }
 
         public SystemVersion GetCurrentFirmwareVersion()
