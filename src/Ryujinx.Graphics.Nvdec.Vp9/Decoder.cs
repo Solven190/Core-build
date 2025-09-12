@@ -85,6 +85,9 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
             cm.Lf.RefDeltas = pictureInfo.RefDeltas;
             cm.Lf.ModeDeltas = pictureInfo.ModeDeltas;
 
+            cm.Fc = new Ptr<Vp9EntropyProbs>(ref pictureInfo.Entropy);
+            cm.Counts = new Ptr<Vp9BackwardUpdates>(ref pictureInfo.BackwardUpdateCounts);
+
             Span<RefBuffer> frameRefsSpan = cm.FrameRefs.AsSpan();
             frameRefsSpan[0].Buf = (Surface)pictureInfo.LastReference;
             frameRefsSpan[1].Buf = (Surface)pictureInfo.GoldenReference;
