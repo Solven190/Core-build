@@ -1708,8 +1708,13 @@ namespace Ryujinx.UI.Common.Configuration
 
                 configurationFileFormat.MatchSystemTime = false;
 
-                // Turbo Mode should be version 59 - KeatonTheBot
-                // TODO: Fix config migration for Turbo Mode
+                configurationFileUpdated = true;
+            }
+
+            if (configurationFileFormat.Version < 59)
+            {
+                Ryujinx.Common.Logging.Logger.Warning?.Print(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 59.");
+
                 configurationFileFormat.TickScalar = 200;
                 configurationFileFormat.Hotkeys = new KeyboardHotkeys
                 {
@@ -1730,7 +1735,7 @@ namespace Ryujinx.UI.Common.Configuration
 
                 configurationFileUpdated = true;
             }
-            
+
             Logger.EnableFileLog.Value = configurationFileFormat.EnableFileLog;
             Graphics.ResScale.Value = configurationFileFormat.ResScale;
             Graphics.ResScaleCustom.Value = configurationFileFormat.ResScaleCustom;
