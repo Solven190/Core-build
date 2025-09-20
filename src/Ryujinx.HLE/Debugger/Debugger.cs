@@ -1105,7 +1105,7 @@ namespace Ryujinx.HLE.Debugger
                     {
                         var image = images[i];
                         ulong endAddress = image.BaseAddress + image.Size - 1;
-                        string name = debugger.GetGuessedNsoNameFromIndex(i);
+                        string name = image.Name;
                         sb.AppendLine($"  0x{image.BaseAddress:x10} - 0x{endAddress:x10} {name}");
                     }
                 }
