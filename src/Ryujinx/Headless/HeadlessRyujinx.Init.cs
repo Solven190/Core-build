@@ -176,8 +176,8 @@ namespace Ryujinx.Headless
                             ButtonMinus = ConfigGamepadInputId.Minus,
                             ButtonL = ConfigGamepadInputId.LeftShoulder,
                             ButtonZl = ConfigGamepadInputId.LeftTrigger,
-                            ButtonSl = ConfigGamepadInputId.Unbound,
-                            ButtonSr = ConfigGamepadInputId.Unbound,
+                            ButtonSl = ConfigGamepadInputId.SingleLeftTrigger0,
+                            ButtonSr = ConfigGamepadInputId.SingleRightTrigger0,
                         },
 
                         LeftJoyconStick = new JoyconConfigControllerStick<ConfigGamepadInputId, ConfigStickInputId>
@@ -198,8 +198,8 @@ namespace Ryujinx.Headless
                             ButtonPlus = ConfigGamepadInputId.Plus,
                             ButtonR = ConfigGamepadInputId.RightShoulder,
                             ButtonZr = ConfigGamepadInputId.RightTrigger,
-                            ButtonSl = ConfigGamepadInputId.Unbound,
-                            ButtonSr = ConfigGamepadInputId.Unbound,
+                            ButtonSl = ConfigGamepadInputId.SingleLeftTrigger1,
+                            ButtonSr = ConfigGamepadInputId.SingleRightTrigger1,
                         },
 
                         RightJoyconStick = new JoyconConfigControllerStick<ConfigGamepadInputId, ConfigStickInputId>
