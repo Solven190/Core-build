@@ -11,6 +11,8 @@
                   Dynamic="Required All"/>
             <Type Name="Silk.NET.Vulkan.Extensions.EXT.ExtTransformFeedback"
                   Dynamic="Required All"/>
+            <Type Name="Silk.NET.Vulkan.Extensions.EXT.ExtAttachmentFeedbackLoopDynamicState"
+                  Dynamic="Required All"/>
         </Assembly>
         <Assembly Name="Silk.NET.Vulkan.Extensions.KHR">
             <Type Name="Silk.NET.Vulkan.Extensions.KHR.KhrSurface"
