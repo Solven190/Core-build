@@ -22,7 +22,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu
     {
         public bool NeedsRealId => true;
 
-        private static InitializeMessage InitializeMemory = new InitializeMessage();
+        private static InitializeMessage InitializeMemory = new();
 
         private const int InactiveTimeout = 6000;
         private const int FailureTimeout = 4000;
@@ -31,11 +31,11 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu
         private bool _useP2pProxy;
         private NetworkError _lastError;
 
-        private readonly ManualResetEvent _connected = new ManualResetEvent(false);
-        private readonly ManualResetEvent _error = new ManualResetEvent(false);
-        private readonly ManualResetEvent _scan = new ManualResetEvent(false);
-        private readonly ManualResetEvent _reject = new ManualResetEvent(false);
-        private readonly AutoResetEvent _apConnected = new AutoResetEvent(false);
+        private readonly ManualResetEvent _connected = new(false);
+        private readonly ManualResetEvent _error = new(false);
+        private readonly ManualResetEvent _scan = new(false);
+        private readonly ManualResetEvent _reject = new(false);
+        private readonly AutoResetEvent _apConnected = new(false);
 
         private readonly RyuLdnProtocol _protocol;
         private readonly NetworkTimeout _timeout;

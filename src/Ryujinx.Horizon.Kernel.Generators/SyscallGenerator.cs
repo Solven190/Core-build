@@ -128,7 +128,7 @@ namespace Ryujinx.Horizon.Kernel.Generators
         {
             SyscallSyntaxReceiver syntaxReceiver = (SyscallSyntaxReceiver)context.SyntaxReceiver;
 
-            CodeGenerator generator = new CodeGenerator();
+            CodeGenerator generator = new();
 
             generator.AppendLine("using Ryujinx.Common.Logging;");
             generator.AppendLine("using Ryujinx.Cpu;");
@@ -206,7 +206,7 @@ namespace Ryujinx.Horizon.Kernel.Generators
             string[] args = new string[method.ParameterList.Parameters.Count];
             int index = 0;
 
-            RegisterAllocatorA32 regAlloc = new RegisterAllocatorA32();
+            RegisterAllocatorA32 regAlloc = new();
 
             List<OutParameter> outParameters = [];
             List<string> logInArgs = [];

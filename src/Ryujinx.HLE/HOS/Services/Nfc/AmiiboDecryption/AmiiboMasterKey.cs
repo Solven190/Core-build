@@ -33,8 +33,8 @@ namespace Ryujinx.HLE.HOS.Services.Nfc.AmiiboDecryption
             byte[] dataBin = combinedBin.Take(80).ToArray();
             byte[] tagBin = combinedBin.Skip(80).Take(80).ToArray();
 
-            AmiiboMasterKey dataKey = new AmiiboMasterKey(dataBin);
-            AmiiboMasterKey tagKey = new AmiiboMasterKey(tagBin);
+            AmiiboMasterKey dataKey = new(dataBin);
+            AmiiboMasterKey tagKey = new(tagBin);
 
             return (dataKey, tagKey);
         }

@@ -18,7 +18,7 @@ namespace Ryujinx.HLE.Debugger
         private static string GetEmbeddedResourceContent(string resourceName)
         {
             Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Ryujinx.HLE.Debugger.GdbXml." + resourceName);
-            StreamReader reader = new StreamReader(stream);
+            StreamReader reader = new(stream);
             string result = reader.ReadToEnd();
             reader.Dispose();
             stream.Dispose();

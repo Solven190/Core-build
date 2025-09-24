@@ -28,11 +28,11 @@ namespace Ryujinx.HLE.Debugger
         private Socket ClientSocket = null;
         private NetworkStream ReadStream = null;
         private NetworkStream WriteStream = null;
-        private BlockingCollection<IMessage> Messages = new BlockingCollection<IMessage>(1);
+        private BlockingCollection<IMessage> Messages = new(1);
         private Thread DebuggerThread;
         private Thread MessageHandlerThread;
         private bool _shuttingDown = false;
-        private ManualResetEventSlim _breakHandlerEvent = new ManualResetEventSlim(false);
+        private ManualResetEventSlim _breakHandlerEvent = new(false);
 
         private ulong? cThread;
         private ulong? gThread;
@@ -259,7 +259,7 @@ namespace Ryujinx.HLE.Debugger
 
         private void ProcessCommand(string cmd)
         {
-            StringStream ss = new StringStream(cmd);
+            StringStream ss = new(cmd);
 
             switch (ss.ReadChar())
             {

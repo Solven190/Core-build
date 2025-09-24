@@ -991,7 +991,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             bool isImage,
             out bool isNew)
         {
-            CacheEntryFromPoolKey key = new CacheEntryFromPoolKey(isImage, bindingInfo, texturePool, samplerPool);
+            CacheEntryFromPoolKey key = new(isImage, bindingInfo, texturePool, samplerPool);
 
             isNew = !_cacheFromPool.TryGetValue(key, out CacheEntry entry);
 
@@ -1034,7 +1034,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             ref BufferBounds textureBufferBounds,
             out bool isNew)
         {
-            CacheEntryFromBufferKey key = new CacheEntryFromBufferKey(
+            CacheEntryFromBufferKey key = new(
                 isImage,
                 bindingInfo,
                 texturePool,

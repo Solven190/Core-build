@@ -11,7 +11,7 @@ namespace Ryujinx.HLE.Generators
         public void Execute(GeneratorExecutionContext context)
         {
             var syntaxReceiver = (ServiceSyntaxReceiver)context.SyntaxReceiver;
-            CodeGenerator generator = new CodeGenerator();
+            CodeGenerator generator = new();
 
             generator.AppendLine("#nullable enable");
             generator.AppendLine("using System;");

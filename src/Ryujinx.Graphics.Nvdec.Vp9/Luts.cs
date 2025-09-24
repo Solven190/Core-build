@@ -213,19 +213,19 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
         // and 8x8. 1000 means we just split the 64x64 to 32x32
         public static readonly PartitionContextPair[] PartitionContextLookup =
         [
-            new PartitionContextPair(15, 15),  // 4X4   - {0b1111, 0b1111}
-            new PartitionContextPair(15, 14),  // 4x8   - {0b1111, 0b1110}
-            new PartitionContextPair(14, 15),  // 8x4   - {0b1110, 0b1111}
-            new PartitionContextPair(14, 14),  // 8X8   - {0b1110, 0b1110}
-            new PartitionContextPair(14, 12),  // 8x16  - {0b1110, 0b1100}
-            new PartitionContextPair(12, 14),  // 16x8  - {0b1100, 0b1110}
-            new PartitionContextPair(12, 12),  // 16X16 - {0b1100, 0b1100}
-            new PartitionContextPair(12, 8),   // 16x32 - {0b1100, 0b1000}
-            new PartitionContextPair(8, 12),   // 32x16 - {0b1000, 0b1100}
-            new PartitionContextPair(8, 8),    // 32X32 - {0b1000, 0b1000}
-            new PartitionContextPair(8, 0),    // 32x64 - {0b1000, 0b0000}
-            new PartitionContextPair(0, 8),    // 64x32 - {0b0000, 0b1000}
-            new PartitionContextPair(0, 0) // 64x64 - {0b0000, 0b0000}
+            new(15, 15),  // 4X4   - {0b1111, 0b1111}
+            new(15, 14),  // 4x8   - {0b1111, 0b1110}
+            new(14, 15),  // 8x4   - {0b1110, 0b1111}
+            new(14, 14),  // 8X8   - {0b1110, 0b1110}
+            new(14, 12),  // 8x16  - {0b1110, 0b1100}
+            new(12, 14),  // 16x8  - {0b1100, 0b1110}
+            new(12, 12),  // 16X16 - {0b1100, 0b1100}
+            new(12, 8),   // 16x32 - {0b1100, 0b1000}
+            new(8, 12),   // 32x16 - {0b1000, 0b1100}
+            new(8, 8),    // 32X32 - {0b1000, 0b1000}
+            new(8, 0),    // 32x64 - {0b1000, 0b0000}
+            new(0, 8),    // 64x32 - {0b0000, 0b1000}
+            new(0, 0) // 64x64 - {0b0000, 0b0000}
         ];
 
         // Filter
@@ -1015,10 +1015,10 @@ namespace Ryujinx.Graphics.Nvdec.Vp9
 
         public static readonly ScanOrder[] DefaultScanOrders =
         [
-            new ScanOrder(DefaultScan4X4, DefaultIscan4X4, DefaultScan4X4Neighbors),
-            new ScanOrder(DefaultScan8X8, DefaultIscan8X8, DefaultScan8X8Neighbors),
-            new ScanOrder(DefaultScan16X16, DefaultIscan16X16, DefaultScan16X16Neighbors),
-            new ScanOrder(DefaultScan32X32, DefaultIscan32X32, DefaultScan32X32Neighbors)
+            new(DefaultScan4X4, DefaultIscan4X4, DefaultScan4X4Neighbors),
+            new(DefaultScan8X8, DefaultIscan8X8, DefaultScan8X8Neighbors),
+            new(DefaultScan16X16, DefaultIscan16X16, DefaultScan16X16Neighbors),
+            new(DefaultScan32X32, DefaultIscan32X32, DefaultScan32X32Neighbors)
         ];
 
         public static readonly ScanOrder[][] ScanOrders = new ScanOrder[][]

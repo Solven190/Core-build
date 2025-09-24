@@ -24,7 +24,7 @@ namespace Ryujinx.Horizon.Generators.Hipc
                     return;
                 }
 
-                CommandInterface commandInterface = new CommandInterface(classDeclaration);
+                CommandInterface commandInterface = new(classDeclaration);
 
                 foreach (var memberDeclaration in classDeclaration.Members)
                 {

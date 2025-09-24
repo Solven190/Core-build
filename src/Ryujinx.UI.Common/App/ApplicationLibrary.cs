@@ -799,7 +799,7 @@ namespace Ryujinx.UI.App.Common
                     {
                         ldnWebHost = DefaultLanPlayWebHost;
                     }
-                    using HttpClient httpClient = new HttpClient();
+                    using HttpClient httpClient = new();
                     string ldnGameDataArrayString = await httpClient.GetStringAsync($"https://{ldnWebHost}/api/public_games");
                     IEnumerable<LdnGameData> ldnGameDataArray = JsonHelper.Deserialize(ldnGameDataArrayString, _ldnDataSerializerContext.IEnumerableLdnGameData);
                     var evt = new LdnGameDataReceivedEventArgs

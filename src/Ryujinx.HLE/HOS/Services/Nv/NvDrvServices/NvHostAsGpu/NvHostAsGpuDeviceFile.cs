@@ -34,8 +34,8 @@ namespace Ryujinx.HLE.HOS.Services.Nv.NvDrvServices.NvHostAsGpu
 
         private static readonly VmRegion[] _vmRegions =
         [
-            new VmRegion((ulong)BigPageSize << 16, SmallRegionLimit),
-            new VmRegion(SmallRegionLimit, DefaultUserSize)
+            new((ulong)BigPageSize << 16, SmallRegionLimit),
+            new(SmallRegionLimit, DefaultUserSize)
         ];
 
         private readonly AddressSpaceContext _asContext;

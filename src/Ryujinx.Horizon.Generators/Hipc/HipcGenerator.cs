@@ -70,7 +70,7 @@ namespace Ryujinx.Horizon.Generators.Hipc
                         continue;
                     }
 
-                    CodeGenerator generator = new CodeGenerator();
+                    CodeGenerator generator = new();
                     string className = commandInterface.ClassDeclarationSyntax.Identifier.ToString();
 
                     generator.AppendLine("using Ryujinx.Horizon.Common;");

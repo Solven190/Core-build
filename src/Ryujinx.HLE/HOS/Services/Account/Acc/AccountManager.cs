@@ -60,7 +60,7 @@ namespace Ryujinx.HLE.HOS.Services.Account.Acc
             }
         }
 
-        public void AddUser(string name, byte[] image, UserId userId = new UserId())
+        public void AddUser(string name, byte[] image, UserId userId = new())
         {
             if (userId.IsNull)
             {
