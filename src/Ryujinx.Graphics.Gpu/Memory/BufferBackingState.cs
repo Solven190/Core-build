@@ -1,7 +1,6 @@
 using Ryujinx.Graphics.GAL;
 using Ryujinx.Memory.Range;
 using System;
-using System.Collections.Generic;
 
 namespace Ryujinx.Graphics.Gpu.Memory
 {

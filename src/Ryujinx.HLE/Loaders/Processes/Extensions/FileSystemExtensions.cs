@@ -8,7 +8,6 @@ using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.Loaders.Executables;
 using Ryujinx.Memory;
-using System;
 using System.Linq;
 using static Ryujinx.HLE.HOS.ModLoader;
 

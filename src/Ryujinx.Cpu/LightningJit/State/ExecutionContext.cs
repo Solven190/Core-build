@@ -1,4 +1,3 @@
-using ARMeilleure;
 using ARMeilleure.Memory;
 using ARMeilleure.State;
 using System;

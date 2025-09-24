@@ -1,7 +1,6 @@
 using ARMeilleure.State;
 using Ryujinx.Common.Logging;
 using Ryujinx.Cpu;
-using Ryujinx.HLE.Debugger;
 using Ryujinx.HLE.HOS.Kernel.Common;
 using Ryujinx.HLE.HOS.Kernel.Process;
 using Ryujinx.HLE.HOS.Kernel.SupervisorCall;

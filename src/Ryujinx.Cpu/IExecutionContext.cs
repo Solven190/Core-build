@@ -1,6 +1,5 @@
 using ARMeilleure.State;
 using System;
-using System.Threading;
 
 namespace Ryujinx.Cpu
 {

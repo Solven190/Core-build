@@ -1,6 +1,4 @@
-using Ryujinx.Common;
 using Ryujinx.Common.Logging;
-using Ryujinx.HLE.HOS.Kernel.Threading;
 using Ryujinx.Memory;
 using System.Collections.Concurrent;
 using System.Linq;

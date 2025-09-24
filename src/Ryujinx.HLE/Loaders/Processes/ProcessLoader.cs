@@ -9,7 +9,6 @@ using LibHac.Tools.FsSystem.NcaUtils;
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.Loaders.Executables;
 using Ryujinx.HLE.Loaders.Processes.Extensions;
-using System;
 using System.Collections.Concurrent;
 using System.IO;
 using Path = System.IO.Path;
