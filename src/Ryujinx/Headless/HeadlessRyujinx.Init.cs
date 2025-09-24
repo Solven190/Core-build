@@ -41,7 +41,7 @@ namespace Ryujinx.Headless
             Task.Run(Updater.CleanupUpdate);
 
             // Hook unhandled exception and process exit events.
-            AppDomain.CurrentDomain.UnhandledException += (sender, e) 
+            AppDomain.CurrentDomain.UnhandledException += (_, e) 
                 => Program.ProcessUnhandledException(e.ExceptionObject as Exception, e.IsTerminating);
             AppDomain.CurrentDomain.ProcessExit += (_, _) => Program.Exit();
 
@@ -307,7 +307,7 @@ namespace Ryujinx.Headless
 
                 return new VulkanRenderer(
                     api,
-                    (instance, vk) => new SurfaceKHR((ulong)(vulkanWindow.CreateWindowSurface(instance.Handle))),
+                    (instance, _) => new SurfaceKHR((ulong)(vulkanWindow.CreateWindowSurface(instance.Handle))),
                     vulkanWindow.GetRequiredInstanceExtensions,
                     preferredGpuId);
             }

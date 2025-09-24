@@ -47,7 +47,7 @@ namespace Ryujinx.Ava.UI.Views.Input
                 CloseButtonText = LocaleManager.Instance[LocaleKeys.ControllerSettingsClose],
                 Content = content,
             };
-            contentDialog.PrimaryButtonClick += (sender, args) =>
+            contentDialog.PrimaryButtonClick += (_, _) =>
             {
                 var config = viewModel.Config;
                 config.Slot = content._viewModel.Slot;

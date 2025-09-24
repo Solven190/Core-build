@@ -69,7 +69,7 @@ namespace Ryujinx.HLE.HOS.Services.Account.Acc
 
             UserProfile profile = new(userId, name, image);
 
-            _profiles.AddOrUpdate(userId.ToString(), profile, (key, old) => profile);
+            _profiles.AddOrUpdate(userId.ToString(), profile, (_, _) => profile);
 
             _accountSaveDataManager.Save(_profiles);
         }

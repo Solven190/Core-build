@@ -257,7 +257,7 @@ namespace Ryujinx.Modules
                 XamlRoot = parent,
             };
 
-            taskDialog.Opened += (s, e) =>
+            taskDialog.Opened += (_, _) =>
             {
                 if (_buildSize >= 0)
                 {

@@ -153,7 +153,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu.Proxy
 
             if (_publicPort != 0)
             {
-                _ = Task.Delay(PortLeaseRenew * 1000, _disposedCancellation.Token).ContinueWith((task) => Task.Run(RefreshLease));
+                _ = Task.Delay(PortLeaseRenew * 1000, _disposedCancellation.Token).ContinueWith((_) => Task.Run(RefreshLease));
             }
 
             _natDevice = device;
@@ -257,7 +257,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu.Proxy
 
             }
 
-            _ = Task.Delay(PortLeaseRenew, _disposedCancellation.Token).ContinueWith((task) => Task.Run(RefreshLease));
+            _ = Task.Delay(PortLeaseRenew, _disposedCancellation.Token).ContinueWith((_) => Task.Run(RefreshLease));
         }
 
         public bool TryRegisterUser(P2pProxySession session, ExternalProxyConfig config)
@@ -367,7 +367,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu.Proxy
                 Task delete = _natDevice?.DeletePortMapAsync(new Mapping(Protocol.Tcp, PrivatePort, _publicPort, 60, "Ryujinx Local Multiplayer"));
 
                 // Just absorb any exceptions.
-                delete?.ContinueWith((task) => { });
+                delete?.ContinueWith((_) => { });
             }
             catch (Exception)
             {

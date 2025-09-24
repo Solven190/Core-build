@@ -257,7 +257,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         {
             bool dirty = false;
 
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -288,7 +288,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <param name="texture">The texture being discarded</param>
         public void DiscardData(Texture texture)
         {
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -461,7 +461,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <param name="texture">The texture to synchronize dependents of</param>
         public void SynchronizeDependents(Texture texture)
         {
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -694,7 +694,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             ClearIncompatibleOverlaps(texture);
 
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -716,7 +716,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             ClearIncompatibleOverlaps(texture);
 
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -1441,8 +1441,8 @@ namespace Ryujinx.Graphics.Gpu.Image
             var targetRange = new List<(int BaseHandle, int RegionCount)>();
             var otherRange = new List<(int BaseHandle, int RegionCount)>();
 
-            EvaluateRelevantHandles(firstLayer, firstLevel, other.Info.GetSlices(), other.Info.Levels, (baseHandle, regionCount, split) => targetRange.Add((baseHandle, regionCount)));
-            otherGroup.EvaluateRelevantHandles(other, (baseHandle, regionCount, split) => otherRange.Add((baseHandle, regionCount)));
+            EvaluateRelevantHandles(firstLayer, firstLevel, other.Info.GetSlices(), other.Info.Levels, (baseHandle, regionCount, _) => targetRange.Add((baseHandle, regionCount)));
+            otherGroup.EvaluateRelevantHandles(other, (baseHandle, regionCount, _) => otherRange.Add((baseHandle, regionCount)));
 
             int targetIndex = 0;
             int otherIndex = 0;

@@ -76,7 +76,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl
         {
             AstBlockVisitor visitor = new(block);
 
-            visitor.BlockEntered += (sender, e) =>
+            visitor.BlockEntered += (_, e) =>
             {
                 switch (e.Block.Type)
                 {
@@ -103,7 +103,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl
                 context.EnterScope();
             };
 
-            visitor.BlockLeft += (sender, e) =>
+            visitor.BlockLeft += (_, e) =>
             {
                 context.LeaveScope();
 

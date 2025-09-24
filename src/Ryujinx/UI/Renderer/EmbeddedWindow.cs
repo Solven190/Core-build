@@ -192,7 +192,7 @@ namespace Ryujinx.Ava.UI.Renderer
             metalLayer.SendMessage("setContentsScale:", Program.DesktopScaleFactor);
 
             // Ensure the scale factor is up to date.
-            _updateBoundsCallback = rect =>
+            _updateBoundsCallback = _ =>
             {
                 metalLayer.SendMessage("setContentsScale:", Program.DesktopScaleFactor);
             };

@@ -46,7 +46,7 @@ namespace Ryujinx.Ava.UI.Helpers
                 _ = maybeAsyncWorkQueue.Value;
             };
 
-            host.Closing += (sender, args) =>
+            host.Closing += (_, _) =>
             {
                 if (maybeAsyncWorkQueue.IsValueCreated)
                 {

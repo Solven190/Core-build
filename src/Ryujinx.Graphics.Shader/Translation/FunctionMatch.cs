@@ -746,7 +746,7 @@ namespace Ryujinx.Graphics.Shader.Translation
 
             private static PatternTreeNode<byte> Label()
             {
-                return new(InstName.Invalid, (op) => true, type: TreeNodeType.Label);
+                return new(InstName.Invalid, (_) => true, type: TreeNodeType.Label);
             }
 
             private static PatternTreeNode<InstLopR> Lop(bool negB, LogicOp logicOp)

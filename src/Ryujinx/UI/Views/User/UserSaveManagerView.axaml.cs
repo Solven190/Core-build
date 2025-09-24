@@ -35,7 +35,7 @@ namespace Ryujinx.Ava.UI.Views.User
         public UserSaveManagerView()
         {
             InitializeComponent();
-            AddHandler(Frame.NavigatedToEvent, (s, e) =>
+            AddHandler(Frame.NavigatedToEvent, (_, e) =>
             {
                 NavigatedTo(e);
             }, RoutingStrategies.Direct);

@@ -43,7 +43,7 @@ namespace Ryujinx.Ava.UI.Views.Input
                 Content = content,
             };
 
-            contentDialog.PrimaryButtonClick += (sender, args) =>
+            contentDialog.PrimaryButtonClick += (_, _) =>
             {
                 var config = viewModel.Config;
                 config.StrongRumble = content._viewModel.StrongRumble;

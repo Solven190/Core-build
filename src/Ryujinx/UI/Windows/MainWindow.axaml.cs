@@ -611,7 +611,7 @@ namespace Ryujinx.Ava.UI.Windows
             if (ViewModel.AppHost != null)
             {
                 ViewModel.AppHost.AppExit -= ViewModel.AppHost_AppExit;
-                ViewModel.AppHost.AppExit += (sender, e) =>
+                ViewModel.AppHost.AppExit += (_, _) =>
                 {
                     ViewModel.AppHost = null;
 

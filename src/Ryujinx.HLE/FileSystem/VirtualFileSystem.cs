@@ -63,7 +63,7 @@ namespace Ryujinx.HLE.FileSystem
         {
             var romfsStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
 
-            _romFsByPid.AddOrUpdate(pid, romfsStream, (pid, oldStream) =>
+            _romFsByPid.AddOrUpdate(pid, romfsStream, (_, oldStream) =>
             {
                 oldStream.Close();
 
@@ -73,7 +73,7 @@ namespace Ryujinx.HLE.FileSystem
 
         public void SetRomFs(ulong pid, Stream romfsStream)
         {
-            _romFsByPid.AddOrUpdate(pid, romfsStream, (pid, oldStream) =>
+            _romFsByPid.AddOrUpdate(pid, romfsStream, (_, oldStream) =>
             {
                 oldStream.Close();
 

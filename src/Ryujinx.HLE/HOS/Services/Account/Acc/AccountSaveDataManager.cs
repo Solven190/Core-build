@@ -32,7 +32,7 @@ namespace Ryujinx.HLE.HOS.Services.Account.Acc
                     {
                         UserProfile addedProfile = new(new UserId(profile.UserId), profile.Name, profile.Image, profile.LastModifiedTimestamp);
 
-                        profiles.AddOrUpdate(profile.UserId, addedProfile, (key, old) => addedProfile);
+                        profiles.AddOrUpdate(profile.UserId, addedProfile, (_, _) => addedProfile);
                     }
 
                     LastOpened = new UserId(profilesJson.LastOpened);

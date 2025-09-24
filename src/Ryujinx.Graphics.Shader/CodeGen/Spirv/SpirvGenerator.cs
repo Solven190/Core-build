@@ -311,7 +311,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
 
             context.LoopTargets = loopTargets;
 
-            visitor.BlockEntered += (sender, e) =>
+            visitor.BlockEntered += (_, e) =>
             {
                 AstBlock mergeBlock = e.Block.Parent;
 
@@ -347,7 +347,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
                 context.EnterBlock(e.Block);
             };
 
-            visitor.BlockLeft += (sender, e) =>
+            visitor.BlockLeft += (_, e) =>
             {
                 if (e.Block.Parent != null)
                 {

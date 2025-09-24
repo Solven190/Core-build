@@ -475,7 +475,7 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
                 }
                 else
                 {
-                    item.Fence.RegisterCallback(_device.Gpu, (x) =>
+                    item.Fence.RegisterCallback(_device.Gpu, (_) =>
                     {
                         _device.Gpu.Window.SignalFrameReady();
                         _device.Gpu.GPFifo.Interrupt();

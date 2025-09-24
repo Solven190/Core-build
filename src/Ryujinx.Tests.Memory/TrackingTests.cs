@@ -308,7 +308,7 @@ namespace Ryujinx.Tests.Memory
             void RegisterReadAction()
             {
                 registeredCount++;
-                handle.RegisterAction((address, size) =>
+                handle.RegisterAction((_, _) =>
                 {
                     isRegistered = false;
                     Interlocked.Increment(ref triggeredCount);

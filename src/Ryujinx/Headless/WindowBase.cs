@@ -396,7 +396,7 @@ namespace Ryujinx.Headless
 
                 // TODO: This should be removed when the issue with the GateThread is resolved.
 
-                ThreadPool.QueueUserWorkItem(state => { });
+                ThreadPool.QueueUserWorkItem(_ => { });
                 Thread.Sleep(300);
             }
         }

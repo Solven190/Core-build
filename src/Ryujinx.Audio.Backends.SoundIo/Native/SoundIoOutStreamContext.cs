@@ -99,7 +99,7 @@ namespace Ryujinx.Audio.Backends.SoundIo.Native
                 }
                 else
                 {
-                    _writeCallbackNative = (ctx, frameCountMin, frameCountMax) => _writeCallback(frameCountMin, frameCountMax);
+                    _writeCallbackNative = (_, frameCountMin, frameCountMax) => _writeCallback(frameCountMin, frameCountMax);
                 }
 
                 GetOutContext().WriteCallback = Marshal.GetFunctionPointerForDelegate(_writeCallbackNative);

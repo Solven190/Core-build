@@ -29,7 +29,7 @@ namespace Ryujinx.Ava.UI.Views.User
         {
             InitializeComponent();
 
-            AddHandler(Frame.NavigatedToEvent, (s, e) =>
+            AddHandler(Frame.NavigatedToEvent, (_, e) =>
             {
                 NavigatedTo(e);
             }, RoutingStrategies.Direct);

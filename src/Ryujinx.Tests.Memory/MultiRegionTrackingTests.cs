@@ -54,7 +54,7 @@ namespace Ryujinx.Tests.Memory
             int regionCount = 0;
             ulong lastAddress = startAddress;
 
-            handle.QueryModified(startAddress, size, (address, range) =>
+            handle.QueryModified(startAddress, size, (address, _) =>
             {
                 Assert.IsTrue(addressPredicate(address)); // Written pages must be even.
                 Assert.GreaterOrEqual(address, lastAddress); // Must be signalled in ascending order, regardless of write order.
@@ -70,7 +70,7 @@ namespace Ryujinx.Tests.Memory
             int regionCount = 0;
             ulong lastAddress = startAddress;
 
-            handle.QueryModified(startAddress, size, (address, range) =>
+            handle.QueryModified(startAddress, size, (address, _) =>
             {
                 Assert.IsTrue(addressPredicate(address)); // Written pages must be even.
                 Assert.GreaterOrEqual(address, lastAddress); // Must be signalled in ascending order, regardless of write order.
@@ -89,7 +89,7 @@ namespace Ryujinx.Tests.Memory
             RandomOrder(random, Enumerable.Range(0, pageCount).ToList(), (i) =>
             {
                 ulong resultAddress = ulong.MaxValue;
-                handle.QueryModified((ulong)i * PageSize + address, PageSize, (address, range) =>
+                handle.QueryModified((ulong)i * PageSize + address, PageSize, (address, _) =>
                 {
                     resultAddress = address;
                 });
@@ -166,7 +166,7 @@ namespace Ryujinx.Tests.Memory
 
             foreach (int index in odd)
             {
-                handle.QueryModified((ulong)index * PageSize, PageSize, (address, range) =>
+                handle.QueryModified((ulong)index * PageSize, PageSize, (_, _) =>
                 {
                     oddRegionCount++;
                 }, 1);
@@ -186,7 +186,7 @@ namespace Ryujinx.Tests.Memory
 
             oddRegionCount = 0;
 
-            handle.QueryModified(0, PageSize * PageCount, (address, range) => { oddRegionCount++; }, 1);
+            handle.QueryModified(0, PageSize * PageCount, (_, _) => { oddRegionCount++; }, 1);
 
             Assert.AreEqual(oddRegionCount, 0); // Sequence number has not changed, so found no dirty subregions.
 
@@ -214,7 +214,7 @@ namespace Ryujinx.Tests.Memory
             for (int i = 0; i < regionSizes.Length; i++)
             {
                 int region = regionSizes[i];
-                handle.QueryModified(address, (ulong)(PageSize * region), (address, size) => { });
+                handle.QueryModified(address, (ulong)(PageSize * region), (_, _) => { });
 
                 // There should be a gap between regions,
                 // So that they don't combine and we can see the full effects.
@@ -222,7 +222,7 @@ namespace Ryujinx.Tests.Memory
             }
 
             // Clear modified.
-            handle.QueryModified((address, size) => { });
+            handle.QueryModified((_, _) => { });
 
             // Trigger each region with a 1 byte write.
             address = 0;

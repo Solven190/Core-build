@@ -84,7 +84,7 @@ namespace Ryujinx.Ava.UI.Controls
                 Padding = new Thickness(0),
             };
 
-            contentDialog.Closed += (sender, args) =>
+            contentDialog.Closed += (_, _) =>
             {
                 content.ViewModel.Dispose();
             };

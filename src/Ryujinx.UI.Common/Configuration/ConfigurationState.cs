@@ -219,7 +219,7 @@ namespace Ryujinx.UI.Common.Configuration
                 IsAscendingOrder = new ReactiveObject<bool>();
                 LanguageCode = new ReactiveObject<string>();
                 ShowConsole = new ReactiveObject<bool>();
-                ShowConsole.Event += static (s, e) => { ConsoleHelper.SetConsoleWindowState(e.NewValue); };
+                ShowConsole.Event += static (_, e) => { ConsoleHelper.SetConsoleWindowState(e.NewValue); };
             }
         }
 
@@ -295,7 +295,7 @@ namespace Ryujinx.UI.Common.Configuration
                 EnableFsAccessLog = new ReactiveObject<bool>();
                 FilteredClasses = new ReactiveObject<LogClass[]>();
                 EnableFileLog = new ReactiveObject<bool>();
-                EnableFileLog.Event += static (sender, e) => LogValueChange(e, nameof(EnableFileLog));
+                EnableFileLog.Event += static (_, e) => LogValueChange(e, nameof(EnableFileLog));
                 GraphicsDebugLevel = new ReactiveObject<GraphicsDebugLevel>();
             }
         }
@@ -401,18 +401,18 @@ namespace Ryujinx.UI.Common.Configuration
                 Region = new ReactiveObject<Region>();
                 TimeZone = new ReactiveObject<string>();
                 SystemTimeOffset = new ReactiveObject<long>();
-                SystemTimeOffset.Event += static (sender, e) => LogValueChange(e, nameof(SystemTimeOffset));
+                SystemTimeOffset.Event += static (_, e) => LogValueChange(e, nameof(SystemTimeOffset));
                 MatchSystemTime = new ReactiveObject<bool>();
-                MatchSystemTime.Event += static (sender, e) => LogValueChange(e, nameof(MatchSystemTime));
+                MatchSystemTime.Event += static (_, e) => LogValueChange(e, nameof(MatchSystemTime));
                 EnableDockedMode = new ReactiveObject<bool>();
-                EnableDockedMode.Event += static (sender, e) => LogValueChange(e, nameof(EnableDockedMode));
+                EnableDockedMode.Event += static (_, e) => LogValueChange(e, nameof(EnableDockedMode));
                 EnablePtc = new ReactiveObject<bool>();
-                EnablePtc.Event += static (sender, e) => LogValueChange(e, nameof(EnablePtc));
+                EnablePtc.Event += static (_, e) => LogValueChange(e, nameof(EnablePtc));
                 EnableLowPowerPtc = new ReactiveObject<bool>();
-                EnableLowPowerPtc.Event += static (sender, e) => LogValueChange(e, nameof(EnableLowPowerPtc));
+                EnableLowPowerPtc.Event += static (_, e) => LogValueChange(e, nameof(EnableLowPowerPtc));
                 TickScalar = new ReactiveObject<long>();
-                TickScalar.Event += static (sender, e) => LogValueChange(e, nameof(TickScalar));
-                TickScalar.Event += static (sender, e) => 
+                TickScalar.Event += static (_, e) => LogValueChange(e, nameof(TickScalar));
+                TickScalar.Event += static (_, e) => 
                 {
                     if (Switch.Shared is null)
                         return;
@@ -420,23 +420,23 @@ namespace Ryujinx.UI.Common.Configuration
                     Switch.Shared.Configuration.TickScalar = e.NewValue;
                 };
                 EnableInternetAccess = new ReactiveObject<bool>();
-                EnableInternetAccess.Event += static (sender, e) => LogValueChange(e, nameof(EnableInternetAccess));
+                EnableInternetAccess.Event += static (_, e) => LogValueChange(e, nameof(EnableInternetAccess));
                 EnableFsIntegrityChecks = new ReactiveObject<bool>();
-                EnableFsIntegrityChecks.Event += static (sender, e) => LogValueChange(e, nameof(EnableFsIntegrityChecks));
+                EnableFsIntegrityChecks.Event += static (_, e) => LogValueChange(e, nameof(EnableFsIntegrityChecks));
                 FsGlobalAccessLogMode = new ReactiveObject<int>();
-                FsGlobalAccessLogMode.Event += static (sender, e) => LogValueChange(e, nameof(FsGlobalAccessLogMode));
+                FsGlobalAccessLogMode.Event += static (_, e) => LogValueChange(e, nameof(FsGlobalAccessLogMode));
                 AudioBackend = new ReactiveObject<AudioBackend>();
-                AudioBackend.Event += static (sender, e) => LogValueChange(e, nameof(AudioBackend));
+                AudioBackend.Event += static (_, e) => LogValueChange(e, nameof(AudioBackend));
                 MemoryManagerMode = new ReactiveObject<MemoryManagerMode>();
-                MemoryManagerMode.Event += static (sender, e) => LogValueChange(e, nameof(MemoryManagerMode));
+                MemoryManagerMode.Event += static (_, e) => LogValueChange(e, nameof(MemoryManagerMode));
                 DramSize = new ReactiveObject<MemoryConfiguration>();
-                DramSize.Event += static (sender, e) => LogValueChange(e, nameof(DramSize));
+                DramSize.Event += static (_, e) => LogValueChange(e, nameof(DramSize));
                 IgnoreMissingServices = new ReactiveObject<bool>();
-                IgnoreMissingServices.Event += static (sender, e) => LogValueChange(e, nameof(IgnoreMissingServices));
+                IgnoreMissingServices.Event += static (_, e) => LogValueChange(e, nameof(IgnoreMissingServices));
                 AudioVolume = new ReactiveObject<float>();
-                AudioVolume.Event += static (sender, e) => LogValueChange(e, nameof(AudioVolume));
+                AudioVolume.Event += static (_, e) => LogValueChange(e, nameof(AudioVolume));
                 UseHypervisor = new ReactiveObject<bool>();
-                UseHypervisor.Event += static (sender, e) => LogValueChange(e, nameof(UseHypervisor));
+                UseHypervisor.Event += static (_, e) => LogValueChange(e, nameof(UseHypervisor));
             }
         }
 
@@ -574,40 +574,40 @@ namespace Ryujinx.UI.Common.Configuration
             public GraphicsSection()
             {
                 BackendThreading = new ReactiveObject<BackendThreading>();
-                BackendThreading.Event += static (sender, e) => LogValueChange(e, nameof(BackendThreading));
+                BackendThreading.Event += static (_, e) => LogValueChange(e, nameof(BackendThreading));
                 ResScale = new ReactiveObject<int>();
-                ResScale.Event += static (sender, e) => LogValueChange(e, nameof(ResScale));
+                ResScale.Event += static (_, e) => LogValueChange(e, nameof(ResScale));
                 ResScaleCustom = new ReactiveObject<float>();
-                ResScaleCustom.Event += static (sender, e) => LogValueChange(e, nameof(ResScaleCustom));
+                ResScaleCustom.Event += static (_, e) => LogValueChange(e, nameof(ResScaleCustom));
                 MaxAnisotropy = new ReactiveObject<float>();
-                MaxAnisotropy.Event += static (sender, e) => LogValueChange(e, nameof(MaxAnisotropy));
+                MaxAnisotropy.Event += static (_, e) => LogValueChange(e, nameof(MaxAnisotropy));
                 AspectRatio = new ReactiveObject<AspectRatio>();
-                AspectRatio.Event += static (sender, e) => LogValueChange(e, nameof(AspectRatio));
+                AspectRatio.Event += static (_, e) => LogValueChange(e, nameof(AspectRatio));
                 ShadersDumpPath = new ReactiveObject<string>();
                 VSyncMode = new ReactiveObject<VSyncMode>();
-                VSyncMode.Event += static (sender, e) => LogValueChange(e, nameof(VSyncMode));
+                VSyncMode.Event += static (_, e) => LogValueChange(e, nameof(VSyncMode));
                 EnableCustomVSyncInterval = new ReactiveObject<bool>();
-                EnableCustomVSyncInterval.Event += static (sender, e) => LogValueChange(e, nameof(EnableCustomVSyncInterval));
+                EnableCustomVSyncInterval.Event += static (_, e) => LogValueChange(e, nameof(EnableCustomVSyncInterval));
                 CustomVSyncInterval = new ReactiveObject<int>();
-                CustomVSyncInterval.Event += static (sender, e) => LogValueChange(e, nameof(CustomVSyncInterval));
+                CustomVSyncInterval.Event += static (_, e) => LogValueChange(e, nameof(CustomVSyncInterval));
                 EnableShaderCache = new ReactiveObject<bool>();
-                EnableShaderCache.Event += static (sender, e) => LogValueChange(e, nameof(EnableShaderCache));
+                EnableShaderCache.Event += static (_, e) => LogValueChange(e, nameof(EnableShaderCache));
                 EnableTextureRecompression = new ReactiveObject<bool>();
-                EnableTextureRecompression.Event += static (sender, e) => LogValueChange(e, nameof(EnableTextureRecompression));
+                EnableTextureRecompression.Event += static (_, e) => LogValueChange(e, nameof(EnableTextureRecompression));
                 GraphicsBackend = new ReactiveObject<GraphicsBackend>();
-                GraphicsBackend.Event += static (sender, e) => LogValueChange(e, nameof(GraphicsBackend));
+                GraphicsBackend.Event += static (_, e) => LogValueChange(e, nameof(GraphicsBackend));
                 PreferredGpu = new ReactiveObject<string>();
-                PreferredGpu.Event += static (sender, e) => LogValueChange(e, nameof(PreferredGpu));
+                PreferredGpu.Event += static (_, e) => LogValueChange(e, nameof(PreferredGpu));
                 EnableMacroHLE = new ReactiveObject<bool>();
-                EnableMacroHLE.Event += static (sender, e) => LogValueChange(e, nameof(EnableMacroHLE));
+                EnableMacroHLE.Event += static (_, e) => LogValueChange(e, nameof(EnableMacroHLE));
                 EnableColorSpacePassthrough = new ReactiveObject<bool>();
-                EnableColorSpacePassthrough.Event += static (sender, e) => LogValueChange(e, nameof(EnableColorSpacePassthrough));
+                EnableColorSpacePassthrough.Event += static (_, e) => LogValueChange(e, nameof(EnableColorSpacePassthrough));
                 AntiAliasing = new ReactiveObject<AntiAliasing>();
-                AntiAliasing.Event += static (sender, e) => LogValueChange(e, nameof(AntiAliasing));
+                AntiAliasing.Event += static (_, e) => LogValueChange(e, nameof(AntiAliasing));
                 ScalingFilter = new ReactiveObject<ScalingFilter>();
-                ScalingFilter.Event += static (sender, e) => LogValueChange(e, nameof(ScalingFilter));
+                ScalingFilter.Event += static (_, e) => LogValueChange(e, nameof(ScalingFilter));
                 ScalingFilterLevel = new ReactiveObject<int>();
-                ScalingFilterLevel.Event += static (sender, e) => LogValueChange(e, nameof(ScalingFilterLevel));
+                ScalingFilterLevel.Event += static (_, e) => LogValueChange(e, nameof(ScalingFilterLevel));
             }
         }
 

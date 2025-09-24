@@ -62,7 +62,7 @@ namespace Ryujinx.Ava.UI.Views.Settings
                         var keyboard = (IKeyboard)_avaloniaKeyboardDriver.GetGamepad("0");
                         IButtonAssigner assigner = new KeyboardKeyAssigner(keyboard);
 
-                        _currentAssigner.ButtonAssigned += (sender, e) =>
+                        _currentAssigner.ButtonAssigned += (_, e) =>
                         {
                             if (e.ButtonValue.HasValue)
                             {

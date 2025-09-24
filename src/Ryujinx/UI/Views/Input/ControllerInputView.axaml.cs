@@ -124,7 +124,7 @@ namespace Ryujinx.Ava.UI.Views.Input
                         IKeyboard keyboard = (IKeyboard)viewModel.ParentModel.AvaloniaKeyboardDriver.GetGamepad("0"); // Open Avalonia keyboard for cancel operations.
                         IButtonAssigner assigner = CreateButtonAssigner(isStick);
 
-                        _currentAssigner.ButtonAssigned += (sender, e) =>
+                        _currentAssigner.ButtonAssigned += (_, e) =>
                         {
                             if (e.ButtonValue.HasValue)
                             {

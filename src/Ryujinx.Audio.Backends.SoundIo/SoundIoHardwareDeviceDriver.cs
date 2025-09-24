@@ -64,7 +64,7 @@ namespace Ryujinx.Audio.Backends.SoundIo
             try
             {
                 context = SoundIoContext.Create();
-                context.OnBackendDisconnect = err =>
+                context.OnBackendDisconnect = _ =>
                 {
                     backendDisconnected = true;
                 };

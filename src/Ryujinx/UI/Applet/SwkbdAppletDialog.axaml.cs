@@ -116,7 +116,7 @@ namespace Ryujinx.Ava.UI.Controls
             {
                 Error.IsVisible = false;
 
-                _checkLength = length => true;
+                _checkLength = _ => true;
             }
             else if (_inputMin > 0 && _inputMax == int.MaxValue)
             {

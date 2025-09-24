@@ -43,7 +43,7 @@ namespace Ryujinx.Audio.Backends.SoundIo.Native
                 }
                 else
                 {
-                    _onBackendDisconnectNative = (ctx, err) => _onBackendDisconnect(err);
+                    _onBackendDisconnectNative = (_, err) => _onBackendDisconnect(err);
                 }
 
                 GetContext().OnBackendDisconnected = Marshal.GetFunctionPointerForDelegate(_onBackendDisconnectNative);

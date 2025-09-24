@@ -60,7 +60,7 @@ namespace Ryujinx.Memory.Tracking
             {
                 if (handle != null)
                 {
-                    handle?.RegisterAction((address, size) => action(handle.Address, handle.Size));
+                    handle?.RegisterAction((_, _) => action(handle.Address, handle.Size));
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace Ryujinx.Memory.Tracking
             {
                 if (handle != null)
                 {
-                    handle?.RegisterPreciseAction((address, size, write) => action(handle.Address, handle.Size, write));
+                    handle?.RegisterPreciseAction((_, _, write) => action(handle.Address, handle.Size, write));
                 }
             }
         }

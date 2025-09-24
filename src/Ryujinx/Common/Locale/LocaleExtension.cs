@@ -23,7 +23,7 @@ namespace Ryujinx.Ava.Common.Locale
 
             builder
                 .Property(new ClrPropertyInfo("Item",
-                obj => (LocaleManager.Instance[keyToUse]),
+                _ => (LocaleManager.Instance[keyToUse]),
                 null,
                 typeof(string)), (weakRef, iPropInfo) =>
                 {
