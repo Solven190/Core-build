@@ -48,7 +48,7 @@ namespace Ryujinx.Graphics.Vulkan
                     return false;
                 }
 
-                if (SetDescriptors != null)
+                if (SetDescriptors != null && other.SetDescriptors != null)
                 {
                     if (SetDescriptors.Count != other.SetDescriptors.Count)
                     {

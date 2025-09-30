@@ -231,7 +231,7 @@ namespace Ryujinx.Graphics.Vulkan
         private void FreeCompletedManualDescriptorSets()
         {
             FenceHolder signalledFence = null;
-            while (_pendingManualDsConsumptions.TryPeek(out var pds) && (pds.Fence == signalledFence || pds.Fence.IsSignaled()))
+            while (_pendingManualDsConsumptions.TryPeek(out var pds) && pds.Fence != null && (pds.Fence == signalledFence || pds.Fence.IsSignaled()))
             {
                 signalledFence = pds.Fence; // Already checked - don't need to do it again.
                 var dequeued = _pendingManualDsConsumptions.Dequeue();

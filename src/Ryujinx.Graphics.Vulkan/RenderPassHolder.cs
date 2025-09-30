@@ -134,14 +134,18 @@ namespace Ryujinx.Graphics.Vulkan
 
             // Register this render pass with all render target views.
 
-            var textures = fb.GetAttachmentViews();
-
-            foreach (var texture in textures)
+            if (fb != null)
             {
-                texture.AddRenderPass(key, this);
+                var textures = fb.GetAttachmentViews();
+
+                foreach (var texture in textures)
+                {
+                    texture.AddRenderPass(key, this);
+                }
+
+                _textures = textures;
             }
 
-            _textures = textures;
             _key = key;
 
             _forcedFences = [];

@@ -544,7 +544,7 @@ namespace Ryujinx.Graphics.Vulkan
             pipeline.StagesCount = 1;
             pipeline.PipelineLayout = PipelineLayout;
 
-            pipeline.CreateComputePipeline(_gd, _device, this, (_gd.Pipeline as PipelineBase).PipelineCache);
+            pipeline.CreateComputePipeline(_gd, _device, this, ((PipelineBase)_gd.Pipeline).PipelineCache);
             pipeline.Dispose();
         }
 
@@ -573,7 +573,7 @@ namespace Ryujinx.Graphics.Vulkan
             pipeline.StagesCount = (uint)_shaders.Length;
             pipeline.PipelineLayout = PipelineLayout;
 
-            pipeline.CreateGraphicsPipeline(_gd, _device, this, (_gd.Pipeline as PipelineBase).PipelineCache, renderPass.Value, throwOnError: true);
+            pipeline.CreateGraphicsPipeline(_gd, _device, this, ((PipelineBase)_gd.Pipeline).PipelineCache, renderPass.Value, throwOnError: true);
             pipeline.Dispose();
         }
 

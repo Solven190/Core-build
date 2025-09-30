@@ -1099,7 +1099,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator
                                     }
                                     if (!IPAddress.TryParse(ldnServer, out IPAddress ipAddress))
                                     {
-                                        ipAddress = Dns.GetHostEntry(ldnServer).AddressList[0];
+                                        ipAddress = Dns.GetHostEntry(ldnServer ?? string.Empty).AddressList[0];
                                     }
                                     NetworkClient = new LdnMasterProxyClient(ipAddress.ToString(), LanPlayPort, context.Device.Configuration);
                                 }

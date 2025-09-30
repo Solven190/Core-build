@@ -58,7 +58,7 @@ namespace ARMeilleure.Translation
 
         private static string GetKey(MethodInfo info)
         {
-            return $"{info.DeclaringType.Name}.{info.Name}";
+            return $"{info.DeclaringType?.Name}.{info.Name}";
         }
 
         private static readonly SortedList<string, DelegateInfo> _delegates;

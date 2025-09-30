@@ -267,7 +267,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu.Proxy
             // Attempt to find matching configuration. If we don't find one, wait for a bit and try again.
             // Woken by new tokens coming in from the master server.
 
-            IPAddress address = (session.Socket.RemoteEndPoint as IPEndPoint).Address;
+            IPAddress address = (session.Socket.RemoteEndPoint as IPEndPoint)?.Address;
             byte[] addressBytes = ProxyHelpers.AddressTo16Byte(address);
 
             long time;
@@ -282,7 +282,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu.Proxy
                     // Allow any client that has a private IP to connect. (indicated by the server as all 0 in the token)
 
                     bool isPrivate = waitToken.PhysicalIp.AsSpan().SequenceEqual(new byte[16]);
-                    bool ipEqual = isPrivate || waitToken.AddressFamily == address.AddressFamily && waitToken.PhysicalIp.AsSpan().SequenceEqual(addressBytes);
+                    bool ipEqual = address != null && (isPrivate || waitToken.AddressFamily == address.AddressFamily && waitToken.PhysicalIp.AsSpan().SequenceEqual(addressBytes));
 
                     if (ipEqual && waitToken.Token.AsSpan().SequenceEqual(config.Token.AsSpan()))
                     {

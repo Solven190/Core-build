@@ -240,44 +240,47 @@ namespace Ryujinx.Graphics.Vulkan
             int dstOffset = 0;
             bool activeRange = false;
 
-            for (int i = 0; i < list.Count; i++)
+            if (list != null)
             {
-                var range = list[i];
-
-                int rangeEnd = range.Offset + range.Size;
-
-                if (activeRange)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (range.Offset >= endOffset)
+                    var range = list[i];
+
+                    int rangeEnd = range.Offset + range.Size;
+
+                    if (activeRange)
                     {
-                        break;
+                        if (range.Offset >= endOffset)
+                        {
+                            break;
+                        }
                     }
-                }
-                else
-                {
-                    if (rangeEnd <= offset)
+                    else
                     {
-                        continue;
+                        if (rangeEnd <= offset)
+                        {
+                            continue;
+                        }
+
+                        activeRange = true;
                     }
 
-                    activeRange = true;
-                }
+                    int baseSize = range.Offset - srcOffset;
 
-                int baseSize = range.Offset - srcOffset;
+                    if (baseSize > 0)
+                    {
+                        baseData.Slice(dstOffset, baseSize).CopyTo(result.Slice(dstOffset, baseSize));
+                        srcOffset += baseSize;
+                        dstOffset += baseSize;
+                    }
 
-                if (baseSize > 0)
-                {
-                    baseData.Slice(dstOffset, baseSize).CopyTo(result.Slice(dstOffset, baseSize));
-                    srcOffset += baseSize;
-                    dstOffset += baseSize;
-                }
-
-                int modSize = Math.Min(rangeEnd - srcOffset, endOffset - srcOffset);
-                if (modSize != 0)
-                {
-                    modData.Slice(dstOffset, modSize).CopyTo(result.Slice(dstOffset, modSize));
-                    srcOffset += modSize;
-                    dstOffset += modSize;
+                    int modSize = Math.Min(rangeEnd - srcOffset, endOffset - srcOffset);
+                    if (modSize != 0)
+                    {
+                        modData.Slice(dstOffset, modSize).CopyTo(result.Slice(dstOffset, modSize));
+                        srcOffset += modSize;
+                        dstOffset += modSize;
+                    }
                 }
             }
 

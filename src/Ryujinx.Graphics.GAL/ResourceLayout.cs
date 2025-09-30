@@ -147,7 +147,7 @@ namespace Ryujinx.Graphics.GAL
                 return false;
             }
 
-            if (Descriptors != null)
+            if (Descriptors != null && other.Descriptors != null)
             {
                 if (Descriptors.Count != other.Descriptors.Count)
                 {

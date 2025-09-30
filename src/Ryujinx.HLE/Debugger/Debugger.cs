@@ -58,7 +58,7 @@ namespace Ryujinx.HLE.Debugger
         internal KProcess Process => Device.System?.DebugGetApplicationProcess();
         internal IDebuggableProcess DebugProcess => Device.System?.DebugGetApplicationProcessDebugInterface();
         private KThread[] GetThreads() => DebugProcess.GetThreadUids().Select(x => DebugProcess.GetThread(x)).ToArray();
-        internal bool IsProcessAarch32 => DebugProcess.GetThread(gThread.Value).Context.IsAarch32;
+        internal bool IsProcessAarch32 => gThread != null && DebugProcess.GetThread(gThread.Value).Context.IsAarch32;
         private KernelContext KernelContext => Device.System.KernelContext;
 
         const int GdbRegisterCount64 = 68;
