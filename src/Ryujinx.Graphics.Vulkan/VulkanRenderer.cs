@@ -88,6 +88,7 @@ namespace Ryujinx.Graphics.Vulkan
         internal Vendor Vendor { get; private set; }
         internal bool IsAmdWindows { get; private set; }
         internal bool IsIntelWindows { get; private set; }
+        internal bool IsIntelLinux { get; private set; }
         internal bool IsAmdGcn { get; private set; }
         internal bool IsAmdRdna3 { get; private set; }
         internal bool IsNvidiaPreTuring { get; private set; }
@@ -354,6 +355,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             IsAmdWindows = Vendor == Vendor.Amd && OperatingSystem.IsWindows();
             IsIntelWindows = Vendor == Vendor.Intel && OperatingSystem.IsWindows();
+            IsIntelLinux = Vendor == Vendor.Intel && OperatingSystem.IsLinux();
             IsTBDR =
                 Vendor is Vendor.Apple or Vendor.Qualcomm or Vendor.ARM or Vendor.Broadcom or Vendor.ImgTec;
 
@@ -389,7 +391,7 @@ namespace Ryujinx.Graphics.Vulkan
             }
             else if (Vendor == Vendor.Intel)
             {
-                IsIntelArc = GpuRenderer.StartsWith("Intel(R) Arc(TM)");
+                IsIntelArc = GpuRenderer.StartsWithIgnoreCase("Intel(R) Arc(TM)");
             }
 
             IsQualcommProprietary = hasDriverProperties && driverProperties.DriverID == DriverId.QualcommProprietary;
