@@ -160,7 +160,7 @@ namespace Ryujinx.Graphics.Vulkan
         private static bool HasPushDescriptorsBug(VulkanRenderer gd)
         {
             // Those GPUs/drivers do not work properly with push descriptors, so we must force disable them.
-            return gd.IsNvidiaPreTuring || (gd.IsIntelArc && (gd.IsIntelWindows && gd.IsIntelLinux));
+            return gd.IsNvidiaPreTuring || (gd.IsIntelArc && (gd.IsIntelWindows || gd.IsIntelLinux));
         }
 
         private static bool CanUsePushDescriptors(VulkanRenderer gd, ResourceLayout layout, bool isCompute)
