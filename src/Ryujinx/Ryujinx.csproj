@@ -21,11 +21,8 @@
     <PublishSingleFile>true</PublishSingleFile>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <PublishTrimmed>true</PublishTrimmed>
+    <PublishTrimmed Condition="'$(RuntimeIdentifier)' == 'win-arm64'">false</PublishTrimmed>
     <TrimMode>partial</TrimMode>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
-    <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
 
   <!--
