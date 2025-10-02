@@ -391,7 +391,7 @@ namespace Ryujinx.Graphics.Vulkan
             }
             else if (Vendor == Vendor.Intel)
             {
-                IsIntelArc = GpuRenderer.StartsWithIgnoreCase("Intel(R) Arc(TM)");
+                IsIntelArc = GpuRenderer.StartsWith("Intel(R) Arc(TM)", StringComparison.OrdinalIgnoreCase);
             }
 
             IsQualcommProprietary = hasDriverProperties && driverProperties.DriverID == DriverId.QualcommProprietary;
