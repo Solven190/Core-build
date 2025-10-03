@@ -178,9 +178,11 @@ namespace Ryujinx.UI.Common
             "010049900F546001", // Super Mario 64
             "0100ea80032ea000", // Super Mario Bros. U Deluxe
             "010015100b514000", // Super Mario Bros. Wonder
-            "010049900F546003", // Super Mario Galaxy
+            "010049900F546003", // Super Mario Galaxy (3D All-Stars)
+            "010099c022b96000", // Super Mario Galaxy
+            "0100fd8022daa000", // Super Mario Galaxy 2
             "01009b90006dc000", // Super Mario Maker 2
-            "0100000000010000", // SUPER MARIO ODYSSEY
+            "0100000000010000", // Super Mario Odyssey
             "010036b0034e4000", // Super Mario Party
             "0100965017338000", // Super Mario Party Jamboree
             "0100bc0018138000", // Super Mario RPG
@@ -265,6 +267,8 @@ namespace Ryujinx.UI.Common
             "01009aa000faa000", // Sonic Mania
             "01005ea01c0fc000", // SONIC X SHADOW GENERATIONS
             "01005ea01c0fc001", // ^
+            "01006e001823c000", // Sonic Racing: CrossWorlds
+            "010064b0242be000", // Sonic Racing: CrossWorlds - Demo
             
                           // Xenoblade Franchise
             "0100ff500e34a000", // Xenoblade Chronicles: Definitive Edition
@@ -314,10 +318,12 @@ namespace Ryujinx.UI.Common
             "01008c8012920000", // Dying Light Platinum Edition
             "0100ed9018f3e000", // Eiyuden Chronicle: Hundred Heroes
             "0100da201ebf8000", // Epic Mickey: Rebrushed
+            "010038b015560000", // Final Fantasy Tactics: The Ivalice Chronicles
             "0100eb100ab42000", // Final Fantasy XII: The Zodiac Age
             "01001cc01b2d4000", // Goat Simulator 3
             "0100f300169b6000", // Grime
             "0100535012974000", // Hades
+            "0100a00019de0000", // Hades II
             "01003620068ea000", // Hand of Fate 2
             "0100f7e00c70e000", // Hogwarts Legacy
             "010013c00e930000", // Hollow Knight: Silksong
