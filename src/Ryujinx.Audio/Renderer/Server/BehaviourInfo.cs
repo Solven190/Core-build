@@ -1,3 +1,5 @@
+using Ryujinx.Audio.Renderer.Parameter;
+using Ryujinx.Common.Memory;
 using System;
 using System.Buffers;
 using System.Diagnostics;
@@ -9,7 +11,7 @@ namespace Ryujinx.Audio.Renderer.Server
     /// Behaviour context.
     /// </summary>
     /// <remarks>This handles features based on the audio renderer revision provided by the user.</remarks>
-    public class BehaviourContext
+    public class BehaviourInfo
     {
         /// <summary>
         /// The base magic of the Audio Renderer revision.
@@ -40,7 +42,7 @@ namespace Ryujinx.Audio.Renderer.Server
         public const int Revision4 = 4 << 24;
 
         /// <summary>
-        /// REV5: <see cref="Parameter.VoiceInParameter.DecodingBehaviour"/>, <see cref="Parameter.VoiceInParameter.FlushWaveBufferCount"/> were added to voice.
+        /// REV5: <see cref="VoiceInParameter1.DecodingBehaviour"/>, <see cref="VoiceInParameter1.FlushWaveBufferCount"/> were added to voice.
         /// A new performance frame format (version 2) was added with support for more information about DSP timing.
         /// <see cref="Parameter.RendererInfoOutStatus"/> was added to supply the count of update done sent to the DSP.
         /// A new version of the command estimator was added to address timing changes caused by the voice changes.
@@ -64,7 +66,7 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <summary>
         /// REV8:
         /// Wavebuffer was changed to support more control over loop (you can now specify where to start and end a loop, and how many times to loop).
-        /// <see cref="Parameter.VoiceInParameter.SrcQuality"/> was added (see <see cref="Parameter.VoiceInParameter.SampleRateConversionQuality"/> for more info).
+        /// <see cref="VoiceInParameter1.SrcQuality"/> was added (see <see cref="VoiceInParameter1.SampleRateConversionQuality"/> for more info).
         /// Final leftovers of the codec system were removed.
         /// <see cref="Common.SampleFormat.PcmFloat"/> support was added.
         /// A new version of the command estimator was added to address timing changes caused by the voice and command changes.
@@ -115,16 +117,27 @@ namespace Ryujinx.Audio.Renderer.Server
         /// </summary>
         /// <remarks>This was added in system update 18.0.0</remarks>
         public const int Revision13 = 13 << 24;
+        
+        /// <summary>
+        /// REV14:
+        /// Fixes the Depop Bug.
+        /// 
+        /// </summary>
+        /// <remarks>This was added in system update 19.0.0 </remarks>
+        public const int Revision14 = 14 << 24;
+        
+        /// <summary>
+        /// REV15:
+        /// Support for float coefficients in biquad filters
+        /// 
+        /// </summary>
+        /// <remarks>This was added in system update 19.0.0 </remarks>
+        public const int Revision15 = 15 << 24;
 
         /// <summary>
         /// Last revision supported by the implementation.
         /// </summary>
-        public const int LastRevision = Revision13;
-
-        /// <summary>
-        /// Target revision magic supported by the implementation.
-        /// </summary>
-        public const int ProcessRevision = BaseRevisionMagic + LastRevision;
+        public const int LastRevision = Revision15;
 
         /// <summary>
         /// Get the revision number from the revision magic.
@@ -134,14 +147,24 @@ namespace Ryujinx.Audio.Renderer.Server
         public static int GetRevisionNumber(int revision) => (revision - BaseRevisionMagic) >> 24;
 
         /// <summary>
+        /// Target revision magic supported by the implementation.
+        /// </summary>
+        public const int ProcessRevision = BaseRevisionMagic + LastRevision;
+        
+        /// <summary>
         /// Current active revision.
         /// </summary>
         public int UserRevision { get; private set; }
+        
+        /// <summary>
+        /// Current flags of the <see cref="BehaviourInfo"/>.
+        /// </summary>
+        private ulong _flags;
 
         /// <summary>
         /// Error storage.
         /// </summary>
-        private readonly ErrorInfo[] _errorInfos;
+        private readonly Array10<ErrorInfo> _errorInfos;
 
         /// <summary>
         /// Current position in the <see cref="_errorInfos"/> array.
@@ -149,17 +172,12 @@ namespace Ryujinx.Audio.Renderer.Server
         private uint _errorIndex;
 
         /// <summary>
-        /// Current flags of the <see cref="BehaviourContext"/>.
+        /// Create a new instance of <see cref="BehaviourInfo"/>.
         /// </summary>
-        private ulong _flags;
-
-        /// <summary>
-        /// Create a new instance of <see cref="BehaviourContext"/>.
-        /// </summary>
-        public BehaviourContext()
+        public BehaviourInfo()
         {
             UserRevision = 0;
-            _errorInfos = new ErrorInfo[Constants.MaxErrorInfos];
+            _errorInfos = new Array10<ErrorInfo>();
             _errorIndex = 0;
         }
 
@@ -173,7 +191,7 @@ namespace Ryujinx.Audio.Renderer.Server
         }
 
         /// <summary>
-        /// Update flags of the <see cref="BehaviourContext"/>.
+        /// Update flags of the <see cref="BehaviourInfo"/>.
         /// </summary>
         /// <param name="flags">The new flags.</param>
         public void UpdateFlags(ulong flags)
@@ -321,9 +339,9 @@ namespace Ryujinx.Audio.Renderer.Server
         }
 
         /// <summary>
-        /// Check if the audio renderer should support <see cref="Parameter.VoiceInParameter.DecodingBehaviour"/>.
+        /// Check if the audio renderer should support <see cref="VoiceInParameter1.DecodingBehaviour"/>.
         /// </summary>
-        /// <returns>True if the audio renderer should support <see cref="Parameter.VoiceInParameter.DecodingBehaviour"/>.</returns>
+        /// <returns>True if the audio renderer should support <see cref="VoiceInParameter1.DecodingBehaviour"/>.</returns>
         public bool IsDecodingBehaviourFlagSupported()
         {
             return CheckFeatureSupported(UserRevision, BaseRevisionMagic + Revision5);
@@ -400,6 +418,24 @@ namespace Ryujinx.Audio.Renderer.Server
         {
             return CheckFeatureSupported(UserRevision, BaseRevisionMagic + Revision13);
         }
+        
+        /// <summary>
+        /// Check if the audio renderer should support the depop bug fix.
+        /// </summary>
+        /// <returns>True if the audio renderer supports the depop bug fix</returns>
+        public bool IsSplitterDepopBugFixEnabled()
+        {
+            return CheckFeatureSupported(UserRevision, BaseRevisionMagic + Revision14);
+        }
+        
+        /// <summary>
+        /// Check if the audio renderer should support biquad filter with float coefficients.
+        /// </summary>
+        /// <returns>True if the audio renderer support biquad filter with float coefficients</returns>
+        public bool IsBiquadFilterParameterFloatSupported()
+        {
+            return CheckFeatureSupported(UserRevision, BaseRevisionMagic + Revision15);
+        }
 
         /// <summary>
         /// Get the version of the <see cref="ICommandProcessingTimeEstimator"/>.
@@ -440,7 +476,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
             if (_errorIndex <= Constants.MaxErrorInfos - 1)
             {
-                _errorInfos[_errorIndex++] = errorInfo;
+                _errorInfos[(int)_errorIndex++] = errorInfo;
             }
         }
 
@@ -457,22 +493,8 @@ namespace Ryujinx.Audio.Renderer.Server
             }
 
             errorCount = Math.Min(_errorIndex, Constants.MaxErrorInfos);
-
-            for (int i = 0; i < Constants.MaxErrorInfos; i++)
-            {
-                if (i < errorCount)
-                {
-                    errorInfos[i] = _errorInfos[i];
-                }
-                else
-                {
-                    errorInfos[i] = new ErrorInfo
-                    {
-                        ErrorCode = 0,
-                        ExtraErrorInfo = 0,
-                    };
-                }
-            }
+            
+            _errorInfos.AsSpan().CopyTo(errorInfos);
         }
 
         /// <summary>

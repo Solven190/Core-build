@@ -1,3 +1,4 @@
+using Ryujinx.Audio.Renderer.Server;
 using Ryujinx.Audio.Renderer.Server.Types;
 using System.Runtime.InteropServices;
 
@@ -93,7 +94,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// <summary>
         /// The user audio revision
         /// </summary>
-        /// <seealso cref="Server.BehaviourContext"/>
+        /// <seealso cref="BehaviourInfo"/>
         public int Revision;
     }
 }

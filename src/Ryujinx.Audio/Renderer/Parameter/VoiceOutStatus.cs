@@ -1,3 +1,5 @@
+using Ryujinx.Audio.Renderer.Common;
+using Ryujinx.Audio.Renderer.Server;
 using System.Runtime.InteropServices;
 
 namespace Ryujinx.Audio.Renderer.Parameter
@@ -5,7 +7,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
     /// <summary>
     /// Output information about a voice.
     /// </summary>
-    /// <remarks>See <seealso cref="Server.StateUpdater.UpdateVoices(Server.Voice.VoiceContext, System.Memory{Server.MemoryPool.MemoryPoolState})"/></remarks>
+    /// <remarks>See <seealso cref="StateUpdater.UpdateVoices1"/></remarks>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VoiceOutStatus
     {
@@ -13,7 +15,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// The total amount of samples that was played.
         /// </summary>
         /// <remarks>This is reset to 0 when a <see cref="Common.WaveBuffer"/> finishes playing and <see cref="Common.WaveBuffer.IsEndOfStream"/> is set.</remarks>
-        /// <remarks>This is reset to 0 when looping while <see cref="Parameter.VoiceInParameter.DecodingBehaviour.PlayedSampleCountResetWhenLooping"/> is set.</remarks>
+        /// <remarks>This is reset to 0 when looping while <see cref="DecodingBehaviour.PlayedSampleCountResetWhenLooping"/> is set.</remarks>
         public ulong PlayedSampleCount;
 
         /// <summary>

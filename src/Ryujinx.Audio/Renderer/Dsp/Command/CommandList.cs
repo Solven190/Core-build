@@ -129,7 +129,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
                     {
                         startTime = PerformanceCounter.ElapsedNanoseconds;
                     }
-
+                    
                     command.Process(this);
 
                     if (shouldMeter)

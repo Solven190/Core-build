@@ -17,10 +17,10 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public ushort[] OutputBufferIndices { get; }
 
-        public Memory<VoiceUpdateState> State { get; }
+        public Memory<VoiceState> State { get; }
         public Memory<float> DepopBuffer { get; }
 
-        public DepopPrepareCommand(Memory<VoiceUpdateState> state, Memory<float> depopBuffer, uint mixBufferCount, uint bufferOffset, int nodeId, bool enabled)
+        public DepopPrepareCommand(Memory<VoiceState> state, Memory<float> depopBuffer, uint mixBufferCount, uint bufferOffset, int nodeId, bool enabled)
         {
             Enabled = enabled;
             NodeId = nodeId;
@@ -39,7 +39,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public void Process(CommandList context)
         {
-            ref VoiceUpdateState state = ref State.Span[0];
+            ref VoiceState state = ref State.Span[0];
 
             Span<float> depopBuffer = DepopBuffer.Span;
             Span<float> lastSamplesSpan = state.LastSamples.AsSpan();

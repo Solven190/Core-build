@@ -42,9 +42,9 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
                 InputBufferIndices[i] = (ushort)(bufferOffset + inputSpan[i]);
             }
 
-            if (sink.UpsamplerState != null)
+            if (sink.UpsamplerInfo != null)
             {
-                Buffers = sink.UpsamplerState.OutputBuffer;
+                Buffers = sink.UpsamplerInfo.OutputBuffer;
             }
             else
             {

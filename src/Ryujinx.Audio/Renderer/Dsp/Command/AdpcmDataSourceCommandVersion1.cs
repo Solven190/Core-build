@@ -2,7 +2,7 @@ using Ryujinx.Audio.Common;
 using Ryujinx.Audio.Renderer.Common;
 using Ryujinx.Audio.Renderer.Server.Voice;
 using System;
-using static Ryujinx.Audio.Renderer.Parameter.VoiceInParameter;
+using Ryujinx.Audio.Renderer.Parameter;
 using WaveBuffer = Ryujinx.Audio.Renderer.Common.WaveBuffer;
 
 namespace Ryujinx.Audio.Renderer.Dsp.Command
@@ -24,23 +24,23 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public WaveBuffer[] WaveBuffers { get; }
 
-        public Memory<VoiceUpdateState> State { get; }
+        public Memory<VoiceState> State { get; }
 
         public ulong AdpcmParameter { get; }
         public ulong AdpcmParameterSize { get; }
 
         public DecodingBehaviour DecodingBehaviour { get; }
 
-        public AdpcmDataSourceCommandVersion1(ref VoiceState serverState, Memory<VoiceUpdateState> state, ushort outputBufferIndex, int nodeId)
+        public AdpcmDataSourceCommandVersion1(ref VoiceInfo serverInfo, Memory<VoiceState> state, ushort outputBufferIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
 
             OutputBufferIndex = outputBufferIndex;
-            SampleRate = serverState.SampleRate;
-            Pitch = serverState.Pitch;
+            SampleRate = serverInfo.SampleRate;
+            Pitch = serverInfo.Pitch;
             
-            Span<Server.Voice.WaveBuffer> waveBufferSpan = serverState.WaveBuffers.AsSpan();
+            Span<Server.Voice.WaveBuffer> waveBufferSpan = serverInfo.WaveBuffers.AsSpan();
 
             WaveBuffers = new WaveBuffer[Constants.VoiceWaveBufferCount];
 
@@ -51,10 +51,10 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
                 WaveBuffers[i] = voiceWaveBuffer.ToCommon(1);
             }
 
-            AdpcmParameter = serverState.DataSourceStateAddressInfo.GetReference(true);
-            AdpcmParameterSize = serverState.DataSourceStateAddressInfo.Size;
+            AdpcmParameter = serverInfo.DataSourceStateAddressInfo.GetReference(true);
+            AdpcmParameterSize = serverInfo.DataSourceStateAddressInfo.Size;
             State = state;
-            DecodingBehaviour = serverState.DecodingBehaviour;
+            DecodingBehaviour = serverInfo.DecodingBehaviour;
         }
 
         public void Process(CommandList context)

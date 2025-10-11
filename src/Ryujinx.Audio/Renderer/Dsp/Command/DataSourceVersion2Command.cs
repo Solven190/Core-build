@@ -2,7 +2,7 @@ using Ryujinx.Audio.Common;
 using Ryujinx.Audio.Renderer.Common;
 using Ryujinx.Audio.Renderer.Server.Voice;
 using System;
-using static Ryujinx.Audio.Renderer.Parameter.VoiceInParameter;
+using Ryujinx.Audio.Renderer.Parameter;
 using WaveBuffer = Ryujinx.Audio.Renderer.Common.WaveBuffer;
 
 namespace Ryujinx.Audio.Renderer.Dsp.Command
@@ -24,7 +24,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public WaveBuffer[] WaveBuffers { get; }
 
-        public Memory<VoiceUpdateState> State { get; }
+        public Memory<VoiceState> State { get; }
 
         public ulong ExtraParameter { get; }
         public ulong ExtraParameterSize { get; }
@@ -39,21 +39,21 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public SampleRateConversionQuality SrcQuality { get; }
 
-        public DataSourceVersion2Command(ref VoiceState serverState, Memory<VoiceUpdateState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
+        public DataSourceVersion2Command(ref VoiceInfo serverInfo, Memory<VoiceState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
             ChannelIndex = channelIndex;
-            ChannelCount = serverState.ChannelsCount;
-            SampleFormat = serverState.SampleFormat;
-            SrcQuality = serverState.SrcQuality;
+            ChannelCount = serverInfo.ChannelsCount;
+            SampleFormat = serverInfo.SampleFormat;
+            SrcQuality = serverInfo.SrcQuality;
             CommandType = GetCommandTypeBySampleFormat(SampleFormat);
 
             OutputBufferIndex = (ushort)(channelIndex + outputBufferIndex);
-            SampleRate = serverState.SampleRate;
-            Pitch = serverState.Pitch;
+            SampleRate = serverInfo.SampleRate;
+            Pitch = serverInfo.Pitch;
             
-            Span<Server.Voice.WaveBuffer> waveBufferSpan = serverState.WaveBuffers.AsSpan();
+            Span<Server.Voice.WaveBuffer> waveBufferSpan = serverInfo.WaveBuffers.AsSpan();
 
             WaveBuffers = new WaveBuffer[Constants.VoiceWaveBufferCount];
 
@@ -66,12 +66,12 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             if (SampleFormat == SampleFormat.Adpcm)
             {
-                ExtraParameter = serverState.DataSourceStateAddressInfo.GetReference(true);
-                ExtraParameterSize = serverState.DataSourceStateAddressInfo.Size;
+                ExtraParameter = serverInfo.DataSourceStateAddressInfo.GetReference(true);
+                ExtraParameterSize = serverInfo.DataSourceStateAddressInfo.Size;
             }
 
             State = state;
-            DecodingBehaviour = serverState.DecodingBehaviour;
+            DecodingBehaviour = serverInfo.DecodingBehaviour;
         }
 
         private static CommandType GetCommandTypeBySampleFormat(SampleFormat sampleFormat)

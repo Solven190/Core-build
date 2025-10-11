@@ -55,22 +55,27 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// If set to true, the previous mix volume is explicitly resetted using the input parameter, instead of implicitly on first use.
         /// </summary>
         public bool IsSplitterPrevVolumeResetSupported { get; private set; }
+        
+        /// <summary>
+        /// If set to true, the previous mix volume is explicitly resetted using the input parameter, instead of implicitly on first use.
+        /// </summary>
+        public bool IsBiquadFilterParameterFloatSupported { get; private set; }
 
         /// <summary>
         /// Initialize <see cref="SplitterContext"/>.
         /// </summary>
-        /// <param name="behaviourContext">The behaviour context.</param>
+        /// <param name="behaviourInfo">The behaviour context.</param>
         /// <param name="parameter">The audio renderer configuration.</param>
         /// <param name="workBufferAllocator">The <see cref="WorkBufferAllocator"/>.</param>
         /// <param name="splitterBqfStates">Memory to store the biquad filtering state for splitters during processing.</param>
         /// <returns>Return true if the initialization was successful.</returns>
         public bool Initialize(
-            ref BehaviourContext behaviourContext,
+            ref BehaviourInfo behaviourInfo,
             ref AudioRendererConfiguration parameter,
             WorkBufferAllocator workBufferAllocator,
             Memory<BiquadFilterState> splitterBqfStates)
         {
-            if (!behaviourContext.IsSplitterSupported() || parameter.SplitterCount <= 0 || parameter.SplitterDestinationCount <= 0)
+            if (!behaviourInfo.IsSplitterSupported() || parameter.SplitterCount <= 0 || parameter.SplitterDestinationCount <= 0)
             {
                 Setup(Memory<SplitterState>.Empty, Memory<SplitterDestinationVersion1>.Empty, Memory<SplitterDestinationVersion2>.Empty, false);
 
@@ -94,7 +99,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
             Memory<SplitterDestinationVersion1> splitterDestinationsV1 = Memory<SplitterDestinationVersion1>.Empty;
             Memory<SplitterDestinationVersion2> splitterDestinationsV2 = Memory<SplitterDestinationVersion2>.Empty;
 
-            if (!behaviourContext.IsBiquadFilterParameterForSplitterEnabled())
+            if (!behaviourInfo.IsBiquadFilterParameterForSplitterEnabled())
             {
                 Version = 1;
 
@@ -144,11 +149,12 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                 }
             }
 
-            IsSplitterPrevVolumeResetSupported = behaviourContext.IsSplitterPrevVolumeResetSupported();
+            IsSplitterPrevVolumeResetSupported = behaviourInfo.IsSplitterPrevVolumeResetSupported();
+            IsBiquadFilterParameterFloatSupported = behaviourInfo.IsBiquadFilterParameterFloatSupported();
 
             SplitterState.InitializeSplitters(splitters.Span);
 
-            Setup(splitters, splitterDestinationsV1, splitterDestinationsV2, behaviourContext.IsSplitterBugFixed());
+            Setup(splitters, splitterDestinationsV1, splitterDestinationsV2, behaviourInfo.IsSplitterBugFixed());
 
             return true;
         }
@@ -157,16 +163,16 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// Get the work buffer size while adding the size needed for splitter to operate.
         /// </summary>
         /// <param name="size">The current size.</param>
-        /// <param name="behaviourContext">The behaviour context.</param>
+        /// <param name="behaviourInfo">The behaviour context.</param>
         /// <param name="parameter">The renderer configuration.</param>
         /// <returns>Return the new size taking splitter into account.</returns>
-        public static ulong GetWorkBufferSize(ulong size, ref BehaviourContext behaviourContext, ref AudioRendererConfiguration parameter)
+        public static ulong GetWorkBufferSize(ulong size, ref BehaviourInfo behaviourInfo, ref AudioRendererConfiguration parameter)
         {
-            if (behaviourContext.IsSplitterSupported())
+            if (behaviourInfo.IsSplitterSupported())
             {
                 size = WorkBufferAllocator.GetTargetSize<SplitterState>(size, parameter.SplitterCount, SplitterState.Alignment);
 
-                if (behaviourContext.IsBiquadFilterParameterForSplitterEnabled())
+                if (behaviourInfo.IsBiquadFilterParameterForSplitterEnabled())
                 {
                     size = WorkBufferAllocator.GetTargetSize<SplitterDestinationVersion2>(size, parameter.SplitterDestinationCount, SplitterDestinationVersion2.Alignment);
                 }
@@ -175,12 +181,10 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                     size = WorkBufferAllocator.GetTargetSize<SplitterDestinationVersion1>(size, parameter.SplitterDestinationCount, SplitterDestinationVersion1.Alignment);
                 }
 
-                if (behaviourContext.IsSplitterBugFixed())
+                if (behaviourInfo.IsSplitterBugFixed())
                 {
                     size = WorkBufferAllocator.GetTargetSize<int>(size, parameter.SplitterDestinationCount, 0x10);
                 }
-
-                return size;
             }
 
             return size;
@@ -227,7 +231,16 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                 return 0;
             }
 
-            int length = _splitterDestinationsV2.IsEmpty ? _splitterDestinationsV1.Length : _splitterDestinationsV2.Length;
+            int length;
+
+            if (_splitterDestinationsV2.IsEmpty)
+            {
+                length = _splitterDestinationsV1.Length;
+            }
+            else
+            {
+                length = _splitterDestinationsV2.Length;
+            }
 
             return length / _splitters.Length;
         }
@@ -278,8 +291,17 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
 
             if (parameter.IsMagicValid())
             {
-                int length = _splitterDestinationsV2.IsEmpty ? _splitterDestinationsV1.Length : _splitterDestinationsV2.Length;
+                int length;
 
+                if (_splitterDestinationsV2.IsEmpty)
+                {
+                    length = _splitterDestinationsV1.Length;
+                }
+                else
+                {
+                    length = _splitterDestinationsV2.Length;
+                }
+                
                 if (parameter.Id >= 0 && parameter.Id < length)
                 {
                     SplitterDestination destination = GetDestination(parameter.Id);
@@ -315,9 +337,19 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                 }
                 else if (Version == 2)
                 {
-                    if (!UpdateData<SplitterDestinationInParameterVersion2>(ref input))
+                    if (IsBiquadFilterParameterFloatSupported)
                     {
-                        break;
+                        if (!UpdateData<SplitterDestinationInParameterVersion2b>(ref input))
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (!UpdateData<SplitterDestinationInParameterVersion2a>(ref input))
+                        {
+                            break;
+                        }
                     }
                 }
                 else
@@ -381,10 +413,8 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
             {
                 return new SplitterDestination(ref SpanIOHelper.GetFromMemory(_splitterDestinationsV1, id, (uint)_splitterDestinationsV1.Length));
             }
-            else
-            {
-                return new SplitterDestination(ref SpanIOHelper.GetFromMemory(_splitterDestinationsV2, id, (uint)_splitterDestinationsV2.Length));
-            }
+                
+            return new SplitterDestination(ref SpanIOHelper.GetFromMemory(_splitterDestinationsV2, id, (uint)_splitterDestinationsV2.Length));
         }
 
         /// <summary>

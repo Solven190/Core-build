@@ -7,7 +7,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
     /// Biquad filter parameters.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Size = 0xC, Pack = 1)]
-    public struct BiquadFilterParameter
+    public struct BiquadFilterParameter1
     {
         /// <summary>
         /// Set to true if the biquad filter is active.

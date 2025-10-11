@@ -4,18 +4,18 @@ using System.Runtime.CompilerServices;
 
 namespace Ryujinx.Tests.Audio.Renderer.Server
 {
-    class MemoryPoolStateTests
+    class MemoryPoolInfoTests
     {
         [Test]
         public void EnsureTypeSize()
         {
-            Assert.AreEqual(Unsafe.SizeOf<MemoryPoolState>(), 0x20);
+            Assert.AreEqual(Unsafe.SizeOf<MemoryPoolInfo>(), 0x20);
         }
 
         [Test]
         public void TestContains()
         {
-            MemoryPoolState memoryPool = MemoryPoolState.Create(MemoryPoolState.LocationType.Cpu);
+            MemoryPoolInfo memoryPool = MemoryPoolInfo.Create(MemoryPoolInfo.LocationType.Cpu);
 
             memoryPool.SetCpuAddress(0x1000000, 0x1000);
 
@@ -32,7 +32,7 @@ namespace Ryujinx.Tests.Audio.Renderer.Server
         [Test]
         public void TestTranslate()
         {
-            MemoryPoolState memoryPool = MemoryPoolState.Create(MemoryPoolState.LocationType.Cpu);
+            MemoryPoolInfo memoryPool = MemoryPoolInfo.Create(MemoryPoolInfo.LocationType.Cpu);
 
             memoryPool.SetCpuAddress(0x1000000, 0x1000);
 
@@ -48,7 +48,7 @@ namespace Ryujinx.Tests.Audio.Renderer.Server
         [Test]
         public void TestIsMapped()
         {
-            MemoryPoolState memoryPool = MemoryPoolState.Create(MemoryPoolState.LocationType.Cpu);
+            MemoryPoolInfo memoryPool = MemoryPoolInfo.Create(MemoryPoolInfo.LocationType.Cpu);
 
             memoryPool.SetCpuAddress(0x1000000, 0x1000);
 

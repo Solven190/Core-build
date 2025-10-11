@@ -1,4 +1,5 @@
 using Ryujinx.Audio.Renderer.Dsp.State;
+using Ryujinx.Audio.Renderer.Parameter;
 using Ryujinx.Common.Memory;
 using Ryujinx.Common.Utilities;
 using System;
@@ -11,7 +12,7 @@ namespace Ryujinx.Audio.Renderer.Common
     /// </summary>
     /// <remarks>This is shared between the server and audio processor.</remarks>
     [StructLayout(LayoutKind.Sequential, Pack = Align)]
-    public struct VoiceUpdateState
+    public struct VoiceState
     {
         public const int Align = 0x10;
         public const int BiquadStateOffset = 0x0;
@@ -25,7 +26,7 @@ namespace Ryujinx.Audio.Renderer.Common
         /// The total amount of samples that was played.
         /// </summary>
         /// <remarks>This is reset to 0 when a <see cref="WaveBuffer"/> finishes playing and <see cref="WaveBuffer.IsEndOfStream"/> is set.</remarks>
-        /// <remarks>This is reset to 0 when looping while <see cref="Parameter.VoiceInParameter.DecodingBehaviour.PlayedSampleCountResetWhenLooping"/> is set.</remarks>
+        /// <remarks>This is reset to 0 when looping while <see cref="VoiceInParameter1.DecodingBehaviour.PlayedSampleCountResetWhenLooping"/> is set.</remarks>
         public ulong PlayedSampleCount;
 
         /// <summary>

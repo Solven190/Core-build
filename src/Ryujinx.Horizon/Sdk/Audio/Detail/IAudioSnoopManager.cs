@@ -1,5 +1,6 @@
 using Ryujinx.Horizon.Common;
 using Ryujinx.Horizon.Sdk.Sf;
+using System;
 
 namespace Ryujinx.Horizon.Sdk.Audio.Detail
 {
@@ -8,5 +9,10 @@ namespace Ryujinx.Horizon.Sdk.Audio.Detail
         Result EnableDspUsageMeasurement();
         Result DisableDspUsageMeasurement();
         Result GetDspUsage(out uint usage);
+
+        Result GetDspStatistics(out uint statistics);
+        Result GetAppletStateSummaries(Span<byte> summaries);
+        Result SetDspStatisticsParameter(ReadOnlySpan<byte> parameter);
+        Result GetDspStatisticsParameter(Span<byte> parameter);
     }
 }

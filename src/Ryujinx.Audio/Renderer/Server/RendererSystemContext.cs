@@ -1,3 +1,4 @@
+using Ryujinx.Audio.Renderer.Server.Mix;
 using Ryujinx.Audio.Renderer.Server.Upsampler;
 using System;
 
@@ -19,7 +20,7 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <summary>
         /// The target channel count for sink.
         /// </summary>
-        /// <remarks>See <see cref="CommandGenerator.GenerateDevice(Sink.DeviceSink, ref Mix.MixState)"/> for usage.</remarks>
+        /// <remarks>See <see cref="CommandGenerator.GenerateDevice(Sink.DeviceSink, ref MixInfo)"/> for usage.</remarks>
         public uint ChannelCount;
 
         /// <summary>
@@ -28,12 +29,12 @@ namespace Ryujinx.Audio.Renderer.Server
         public uint MixBufferCount;
 
         /// <summary>
-        /// Instance of the <see cref="BehaviourContext"/> used to derive bug fixes and features of the current audio renderer revision.
+        /// Instance of the <see cref="BehaviourInfo"/> used to derive bug fixes and features of the current audio renderer revision.
         /// </summary>
-        public BehaviourContext BehaviourContext;
+        public BehaviourInfo BehaviourInfo;
 
         /// <summary>
-        /// Instance of the <see cref="UpsamplerManager"/> used for upsampling (see <see cref="UpsamplerState"/>)
+        /// Instance of the <see cref="UpsamplerManager"/> used for upsampling (see <see cref="UpsamplerInfo"/>)
         /// </summary>
         public UpsamplerManager UpsamplerManager;
 

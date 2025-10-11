@@ -31,15 +31,11 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                     {
                         return 0;
                     }
-                    else
-                    {
-                        return _v1.Id;
-                    }
+                    
+                    return _v1.Id;
                 }
-                else
-                {
-                    return _v2.Id;
-                }
+                
+                return _v2.Id;
             }
         }
 
@@ -56,15 +52,11 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                     {
                         return 0;
                     }
-                    else
-                    {
-                        return _v1.DestinationId;
-                    }
+                    
+                    return _v1.DestinationId;
                 }
-                else
-                {
-                    return _v2.DestinationId;
-                }
+                
+                return _v2.DestinationId;
             }
         }
 
@@ -82,15 +74,11 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                     {
                         return Span<float>.Empty;
                     }
-                    else
-                    {
-                        return _v1.MixBufferVolume;
-                    }
+                    
+                    return _v1.MixBufferVolume;
                 }
-                else
-                {
-                    return _v2.MixBufferVolume;
-                }
+                
+                return _v2.MixBufferVolume;
             }
         }
 
@@ -108,15 +96,11 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                     {
                         return Span<float>.Empty;
                     }
-                    else
-                    {
-                        return _v1.PreviousMixBufferVolume;
-                    }
+                    
+                    return _v1.PreviousMixBufferVolume;
                 }
-                else
-                {
-                    return _v2.PreviousMixBufferVolume;
-                }
+                
+                return _v2.PreviousMixBufferVolume;
             }
         }
 
@@ -135,15 +119,11 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
                         {
                             return new SplitterDestination();
                         }
-                        else
-                        {
-                            return new SplitterDestination(ref _v1.Next);
-                        }
+                        
+                        return new SplitterDestination(ref _v1.Next);
                     }
-                    else
-                    {
-                        return new SplitterDestination(ref _v2.Next);
-                    }
+                    
+                    return new SplitterDestination(ref _v2.Next);
                 }
             }
         }
@@ -168,6 +148,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
             _v1 = ref Unsafe.NullRef<SplitterDestinationVersion1>();
             _v2 = ref v2;
         }
+
 
         /// <summary>
         /// Creates a new splitter destination wrapper for the splitter destination data.
@@ -233,7 +214,12 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// <returns>True if the splitter destination is used and has a destination.</returns>
         public readonly bool IsConfigured()
         {
-            return Unsafe.IsNullRef(ref _v2) ? _v1.IsConfigured() : _v2.IsConfigured();
+            if (Unsafe.IsNullRef(ref _v2))
+            {
+                return _v1.IsConfigured();
+            }
+                
+            return _v2.IsConfigured();
         }
 
         /// <summary>
@@ -243,7 +229,12 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// <returns>The volume for the given destination.</returns>
         public float GetMixVolume(int destinationIndex)
         {
-            return Unsafe.IsNullRef(ref _v2) ? _v1.GetMixVolume(destinationIndex) : _v2.GetMixVolume(destinationIndex);
+            if (Unsafe.IsNullRef(ref _v2))
+            {
+                return _v1.GetMixVolume(destinationIndex);
+            }
+                
+            return _v2.GetMixVolume(destinationIndex);
         }
 
         /// <summary>
@@ -253,7 +244,12 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// <returns>The volume for the given destination.</returns>
         public float GetMixVolumePrev(int destinationIndex)
         {
-            return Unsafe.IsNullRef(ref _v2) ? _v1.GetMixVolumePrev(destinationIndex) : _v2.GetMixVolumePrev(destinationIndex);
+            if (Unsafe.IsNullRef(ref _v2))
+            {
+                return _v1.GetMixVolumePrev(destinationIndex);
+            }
+                
+            return _v2.GetMixVolumePrev(destinationIndex);
         }
 
         /// <summary>
@@ -280,13 +276,13 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
             if (Unsafe.IsNullRef(ref _v2))
             {
                 Debug.Assert(!Unsafe.IsNullRef(ref next._v1));
-
+                    
                 _v1.Link(ref next._v1);
             }
             else
             {
                 Debug.Assert(!Unsafe.IsNullRef(ref next._v2));
-
+                    
                 _v2.Link(ref next._v2);
             }
         }
@@ -308,6 +304,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
 
         /// <summary>
         /// Checks if any biquad filter is enabled.
+        /// Virtual function at function table + 0x8.
         /// </summary>
         /// <returns>True if any biquad filter is enabled.</returns>
         public bool IsBiquadFilterEnabled()
@@ -326,13 +323,14 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
 
         /// <summary>
         /// Gets the biquad filter parameters.
+        /// /// Virtual function at function table + 0x10.
         /// </summary>
         /// <param name="index">Biquad filter index (0 or 1).</param>
         /// <returns>Biquad filter parameters.</returns>
-        public ref BiquadFilterParameter GetBiquadFilterParameter(int index)
+        public ref BiquadFilterParameter2 GetBiquadFilterParameter(int index)
         {
             Debug.Assert(!Unsafe.IsNullRef(ref _v2));
-
+                
             return ref _v2.GetBiquadFilterParameter(index);
         }
 

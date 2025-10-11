@@ -18,7 +18,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         const uint CurrentProcessPseudoHandle = 0xFFFF8001;
 
         /// <summary>
-        /// The result of <see cref="Update(ref MemoryPoolState, ref MemoryPoolInParameter, ref MemoryPoolOutStatus)"/>.
+        /// The result of <see cref="Update(ref MemoryPoolInfo, ref MemoryPoolInParameter, ref MemoryPoolOutStatus)"/>.
         /// </summary>
         public enum UpdateResult : uint
         {
@@ -49,9 +49,9 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         private readonly uint _processHandle;
 
         /// <summary>
-        /// The <see cref="Memory{MemoryPoolState}"/> that will be manipulated.
+        /// The <see cref="Memory{MemoryPoolInfo}"/> that will be manipulated.
         /// </summary>
-        private readonly Memory<MemoryPoolState> _memoryPools;
+        private readonly Memory<MemoryPoolInfo> _memoryPools;
 
         /// <summary>
         /// If set to true, this will try to force map memory pool even if their state are considered invalid.
@@ -67,7 +67,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         {
             _processHandle = processHandle;
             _isForceMapEnabled = isForceMapEnabled;
-            _memoryPools = Memory<MemoryPoolState>.Empty;
+            _memoryPools = Memory<MemoryPoolInfo>.Empty;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         /// <param name="processHandle">The handle of the process owning the CPU memory manipulated.</param>
         /// <param name="memoryPool">The user memory pools.</param>
         /// <param name="isForceMapEnabled">If set to true, this will try to force map memory pool even if their state are considered invalid.</param>
-        public PoolMapper(uint processHandle, Memory<MemoryPoolState> memoryPool, bool isForceMapEnabled)
+        public PoolMapper(uint processHandle, Memory<MemoryPoolInfo> memoryPool, bool isForceMapEnabled)
         {
             _processHandle = processHandle;
             _memoryPools = memoryPool;
@@ -84,15 +84,15 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Initialize the <see cref="MemoryPoolState"/> for system use.
+        /// Initialize the <see cref="MemoryPoolInfo"/> for system use.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="MemoryPoolState"/> for system use.</param>
+        /// <param name="memoryPool">The <see cref="MemoryPoolInfo"/> for system use.</param>
         /// <param name="cpuAddress">The <see cref="CpuAddress"/> to assign.</param>
         /// <param name="size">The size to assign.</param>
         /// <returns>Returns true if mapping on the <see cref="Dsp.AudioProcessor"/> succeeded.</returns>
-        public bool InitializeSystemPool(ref MemoryPoolState memoryPool, CpuAddress cpuAddress, ulong size)
+        public bool InitializeSystemPool(ref MemoryPoolInfo memoryPool, CpuAddress cpuAddress, ulong size)
         {
-            if (memoryPool.Location != MemoryPoolState.LocationType.Dsp)
+            if (memoryPool.Location != MemoryPoolInfo.LocationType.Dsp)
             {
                 return false;
             }
@@ -101,13 +101,13 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Initialize the <see cref="MemoryPoolState"/>.
+        /// Initialize the <see cref="MemoryPoolInfo"/>.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="MemoryPoolState"/>.</param>
+        /// <param name="memoryPool">The <see cref="MemoryPoolInfo"/>.</param>
         /// <param name="cpuAddress">The <see cref="CpuAddress"/> to assign.</param>
         /// <param name="size">The size to assign.</param>
         /// <returns>Returns true if mapping on the <see cref="Dsp.AudioProcessor"/> succeeded.</returns>
-        public bool InitializePool(ref MemoryPoolState memoryPool, CpuAddress cpuAddress, ulong size)
+        public bool InitializePool(ref MemoryPoolInfo memoryPool, CpuAddress cpuAddress, ulong size)
         {
             memoryPool.SetCpuAddress(cpuAddress, size);
 
@@ -115,18 +115,18 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Get the process handle associated to the <see cref="MemoryPoolState"/>.
+        /// Get the process handle associated to the <see cref="MemoryPoolInfo"/>.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="MemoryPoolState"/>.</param>
-        /// <returns>Returns the process handle associated to the <see cref="MemoryPoolState"/>.</returns>
-        public uint GetProcessHandle(ref MemoryPoolState memoryPool)
+        /// <param name="memoryPool">The <see cref="MemoryPoolInfo"/>.</param>
+        /// <returns>Returns the process handle associated to the <see cref="MemoryPoolInfo"/>.</returns>
+        public uint GetProcessHandle(ref MemoryPoolInfo memoryPool)
         {
-            if (memoryPool.Location == MemoryPoolState.LocationType.Cpu)
+            if (memoryPool.Location == MemoryPoolInfo.LocationType.Cpu)
             {
                 return CurrentProcessPseudoHandle;
             }
 
-            if (memoryPool.Location == MemoryPoolState.LocationType.Dsp)
+            if (memoryPool.Location == MemoryPoolInfo.LocationType.Dsp)
             {
                 return _processHandle;
             }
@@ -135,11 +135,11 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Map the <see cref="MemoryPoolState"/> on the <see cref="Dsp.AudioProcessor"/>.
+        /// Map the <see cref="MemoryPoolInfo"/> on the <see cref="Dsp.AudioProcessor"/>.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="MemoryPoolState"/> to map.</param>
+        /// <param name="memoryPool">The <see cref="MemoryPoolInfo"/> to map.</param>
         /// <returns>Returns the DSP address mapped.</returns>
-        public DspAddress Map(ref MemoryPoolState memoryPool)
+        public DspAddress Map(ref MemoryPoolInfo memoryPool)
         {
             DspAddress result = AudioProcessorMemoryManager.Map(GetProcessHandle(ref memoryPool), memoryPool.CpuAddress, memoryPool.Size);
 
@@ -152,11 +152,11 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Unmap the <see cref="MemoryPoolState"/> from the <see cref="Dsp.AudioProcessor"/>.
+        /// Unmap the <see cref="MemoryPoolInfo"/> from the <see cref="Dsp.AudioProcessor"/>.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="MemoryPoolState"/> to unmap.</param>
+        /// <param name="memoryPool">The <see cref="MemoryPoolInfo"/> to unmap.</param>
         /// <returns>Returns true if unmapped.</returns>
-        public bool Unmap(ref MemoryPoolState memoryPool)
+        public bool Unmap(ref MemoryPoolInfo memoryPool)
         {
             if (memoryPool.IsUsed)
             {
@@ -172,12 +172,12 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Find a <see cref="MemoryPoolState"/> associated to the region given.
+        /// Find a <see cref="MemoryPoolInfo"/> associated to the region given.
         /// </summary>
         /// <param name="cpuAddress">The region <see cref="CpuAddress"/>.</param>
         /// <param name="size">The region size.</param>
-        /// <returns>Returns the <see cref="MemoryPoolState"/> found or <see cref="Memory{MemoryPoolState}.Empty"/> if not found.</returns>
-        private Span<MemoryPoolState> FindMemoryPool(CpuAddress cpuAddress, ulong size)
+        /// <returns>Returns the <see cref="MemoryPoolInfo"/> found or <see cref="Memory{MemoryPoolInfo}.Empty"/> if not found.</returns>
+        private Span<MemoryPoolInfo> FindMemoryPool(CpuAddress cpuAddress, ulong size)
         {
             if (!_memoryPools.IsEmpty && _memoryPools.Length > 0)
             {
@@ -190,7 +190,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
                 }
             }
 
-            return Span<MemoryPoolState>.Empty;
+            return Span<MemoryPoolInfo>.Empty;
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         {
             if (_isForceMapEnabled)
             {
-                Span<MemoryPoolState> memoryPool = FindMemoryPool(addressInfo.CpuAddress, addressInfo.Size);
+                Span<MemoryPoolInfo> memoryPool = FindMemoryPool(addressInfo.CpuAddress, addressInfo.Size);
 
                 if (!memoryPool.IsEmpty)
                 {
@@ -243,13 +243,13 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Update a <see cref="MemoryPoolState"/> using user parameters.
+        /// Update a <see cref="MemoryPoolInfo"/> using user parameters.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="MemoryPoolState"/> to update.</param>
+        /// <param name="memoryPool">The <see cref="MemoryPoolInfo"/> to update.</param>
         /// <param name="inParameter">Input user parameter.</param>
         /// <param name="outStatus">Output user parameter.</param>
         /// <returns>Returns the <see cref="UpdateResult"/> of the operations performed.</returns>
-        public UpdateResult Update(ref MemoryPoolState memoryPool, in MemoryPoolInParameter inParameter, ref MemoryPoolOutStatus outStatus)
+        public UpdateResult Update(ref MemoryPoolInfo memoryPool, in MemoryPoolInParameter inParameter, ref MemoryPoolOutStatus outStatus)
         {
             MemoryPoolUserState inputState = inParameter.State;
 
@@ -317,7 +317,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
 
             if (_memoryPools.Length > 0)
             {
-                Span<MemoryPoolState> memoryPool = FindMemoryPool(addressInfo.CpuAddress, addressInfo.Size);
+                Span<MemoryPoolInfo> memoryPool = FindMemoryPool(addressInfo.CpuAddress, addressInfo.Size);
 
                 if (!memoryPool.IsEmpty)
                 {
@@ -339,7 +339,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
             {
                 unsafe
                 {
-                    addressInfo.SetupMemoryPool(MemoryPoolState.Null);
+                    addressInfo.SetupMemoryPool(MemoryPoolInfo.Null);
                 }
             }
 
@@ -347,12 +347,12 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Remove the usage flag from all the <see cref="MemoryPoolState"/>.
+        /// Remove the usage flag from all the <see cref="MemoryPoolInfo"/>.
         /// </summary>
-        /// <param name="memoryPool">The <see cref="Memory{MemoryPoolState}"/> to reset.</param>
-        public static void ClearUsageState(Memory<MemoryPoolState> memoryPool)
+        /// <param name="memoryPool">The <see cref="Memory{MemoryPoolInfo}"/> to reset.</param>
+        public static void ClearUsageState(Memory<MemoryPoolInfo> memoryPool)
         {
-            foreach (ref MemoryPoolState info in memoryPool.Span)
+            foreach (ref MemoryPoolInfo info in memoryPool.Span)
             {
                 info.IsUsed = false;
             }

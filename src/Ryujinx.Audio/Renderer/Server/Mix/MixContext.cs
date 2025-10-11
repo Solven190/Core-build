@@ -17,12 +17,12 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         private uint _mixesCount;
 
         /// <summary>
-        /// Storage for <see cref="MixState"/>.
+        /// Storage for <see cref="MixInfo"/>.
         /// </summary>
-        private Memory<MixState> _mixes;
+        private Memory<MixInfo> _mixes;
 
         /// <summary>
-        /// Storage of the sorted indices to <see cref="MixState"/>.
+        /// Storage of the sorted indices to <see cref="MixInfo"/>.
         /// </summary>
         private Memory<int> _sortedMixes;
 
@@ -49,10 +49,10 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         /// Initialize the <see cref="MixContext"/>.
         /// </summary>
         /// <param name="sortedMixes">The storage for sorted indices.</param>
-        /// <param name="mixes">The storage of <see cref="MixState"/>.</param>
+        /// <param name="mixes">The storage of <see cref="MixInfo"/>.</param>
         /// <param name="nodeStatesWorkBuffer">The storage used for the <see cref="NodeStates"/>.</param>
         /// <param name="edgeMatrixWorkBuffer">The storage used for the <see cref="EdgeMatrix"/>.</param>
-        public void Initialize(Memory<int> sortedMixes, Memory<MixState> mixes, Memory<byte> nodeStatesWorkBuffer, Memory<byte> edgeMatrixWorkBuffer)
+        public void Initialize(Memory<int> sortedMixes, Memory<MixInfo> mixes, Memory<byte> nodeStatesWorkBuffer, Memory<byte> edgeMatrixWorkBuffer)
         {
             _mixesCount = (uint)mixes.Length;
             _mixes = mixes;
@@ -82,30 +82,30 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         }
 
         /// <summary>
-        /// Get a reference to the final <see cref="MixState"/>.
+        /// Get a reference to the final <see cref="MixInfo"/>.
         /// </summary>
-        /// <returns>A reference to the final <see cref="MixState"/>.</returns>
-        public ref MixState GetFinalState()
+        /// <returns>A reference to the final <see cref="MixInfo"/>.</returns>
+        public ref MixInfo GetFinalState()
         {
             return ref GetState(Constants.FinalMixId);
         }
 
         /// <summary>
-        /// Get a reference to a <see cref="MixState"/> at the given <paramref name="id"/>.
+        /// Get a reference to a <see cref="MixInfo"/> at the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The index to use.</param>
-        /// <returns>A reference to a <see cref="MixState"/> at the given <paramref name="id"/>.</returns>
-        public ref MixState GetState(int id)
+        /// <returns>A reference to a <see cref="MixInfo"/> at the given <paramref name="id"/>.</returns>
+        public ref MixInfo GetState(int id)
         {
             return ref SpanIOHelper.GetFromMemory(_mixes, id, _mixesCount);
         }
 
         /// <summary>
-        /// Get a reference to a <see cref="MixState"/> at the given <paramref name="id"/> of the sorted mix info.
+        /// Get a reference to a <see cref="MixInfo"/> at the given <paramref name="id"/> of the sorted mix info.
         /// </summary>
         /// <param name="id">The index to use.</param>
-        /// <returns>A reference to a <see cref="MixState"/> at the given <paramref name="id"/>.</returns>
-        public ref MixState GetSortedState(int id)
+        /// <returns>A reference to a <see cref="MixInfo"/> at the given <paramref name="id"/>.</returns>
+        public ref MixInfo GetSortedState(int id)
         {
             Debug.Assert(id >= 0 && id < _mixesCount);
 
@@ -122,18 +122,18 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         }
 
         /// <summary>
-        /// Update the internal distance from the final mix value of every <see cref="MixState"/>.
+        /// Update the internal distance from the final mix value of every <see cref="MixInfo"/>.
         /// </summary>
         private void UpdateDistancesFromFinalMix()
         {
-            foreach (ref MixState mix in _mixes.Span)
+            foreach (ref MixInfo mix in _mixes.Span)
             {
                 mix.ClearDistanceFromFinalMix();
             }
 
             for (int i = 0; i < GetCount(); i++)
             {
-                ref MixState mix = ref GetState(i);
+                ref MixInfo mix = ref GetState(i);
 
                 SetSortedState(i, i);
 
@@ -149,13 +149,13 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
                         {
                             if (mixId == Constants.UnusedMixId)
                             {
-                                distance = MixState.InvalidDistanceFromFinalMix;
+                                distance = MixInfo.InvalidDistanceFromFinalMix;
                                 break;
                             }
 
-                            ref MixState distanceMix = ref GetState(mixId);
+                            ref MixInfo distanceMix = ref GetState(mixId);
 
-                            if (distanceMix.DistanceFromFinalMix != MixState.InvalidDistanceFromFinalMix)
+                            if (distanceMix.DistanceFromFinalMix != MixInfo.InvalidDistanceFromFinalMix)
                             {
                                 distance = distanceMix.DistanceFromFinalMix + 1;
                                 break;
@@ -171,12 +171,12 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
 
                         if (distance > GetCount())
                         {
-                            distance = MixState.InvalidDistanceFromFinalMix;
+                            distance = MixInfo.InvalidDistanceFromFinalMix;
                         }
                     }
                     else
                     {
-                        distance = MixState.InvalidDistanceFromFinalMix;
+                        distance = MixInfo.InvalidDistanceFromFinalMix;
                     }
 
                     mix.DistanceFromFinalMix = distance;
@@ -185,13 +185,13 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         }
 
         /// <summary>
-        /// Update the internal mix buffer offset of all <see cref="MixState"/>.
+        /// Update the internal mix buffer offset of all <see cref="MixInfo"/>.
         /// </summary>
         private void UpdateMixBufferOffset()
         {
             uint offset = 0;
 
-            foreach (ref MixState mix in _mixes.Span)
+            foreach (ref MixInfo mix in _mixes.Span)
             {
                 mix.BufferOffset = offset;
 
@@ -210,10 +210,10 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
 
             Array.Sort(sortedMixesTemp, (a, b) =>
             {
-                ref MixState stateA = ref GetState(a);
-                ref MixState stateB = ref GetState(b);
+                ref MixInfo infoA = ref GetState(a);
+                ref MixInfo infoB = ref GetState(b);
 
-                return stateB.DistanceFromFinalMix.CompareTo(stateA.DistanceFromFinalMix);
+                return infoB.DistanceFromFinalMix.CompareTo(infoA.DistanceFromFinalMix);
             });
 
             sortedMixesTemp.AsSpan().CopyTo(_sortedMixes.Span);

@@ -15,7 +15,7 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
     /// Server state for a mix.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Size = 0x940, Pack = Alignment)]
-    public struct MixState
+    public struct MixInfo
     {
         public const uint InvalidDistanceFromFinalMix = 0x80000000;
 
@@ -136,11 +136,11 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         }
 
         /// <summary>
-        /// Create a new <see cref="MixState"/>
+        /// Create a new <see cref="MixInfo"/>
         /// </summary>
         /// <param name="effectProcessingOrderArray"></param>
-        /// <param name="behaviourContext"></param>
-        public MixState(Memory<int> effectProcessingOrderArray, ref BehaviourContext behaviourContext) : this()
+        /// <param name="behaviourInfo"></param>
+        public MixInfo(Memory<int> effectProcessingOrderArray, ref BehaviourInfo behaviourInfo) : this()
         {
             MixId = UnusedMixId;
 
@@ -158,7 +158,7 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
 
             EffectProcessingOrderArrayMaxCount = (uint)effectProcessingOrderArray.Length;
 
-            IsLongSizePreDelaySupported = behaviourContext.IsLongSizePreDelaySupported();
+            IsLongSizePreDelaySupported = behaviourInfo.IsLongSizePreDelaySupported();
 
             ClearEffectProcessingOrder();
         }
@@ -257,9 +257,9 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
         /// <param name="parameter">The input parameter of the mix.</param>
         /// <param name="effectContext">The effect context.</param>
         /// <param name="splitterContext">The splitter context.</param>
-        /// <param name="behaviourContext">The behaviour context.</param>
+        /// <param name="behaviourInfo">The behaviour context.</param>
         /// <returns>Return true if the mix was changed.</returns>
-        public bool Update(EdgeMatrix edgeMatrix, in MixParameter parameter, EffectContext effectContext, SplitterContext splitterContext, BehaviourContext behaviourContext)
+        public bool Update(EdgeMatrix edgeMatrix, in MixParameter parameter, EffectContext effectContext, SplitterContext splitterContext, BehaviourInfo behaviourInfo)
         {
             bool isDirty;
 
@@ -271,7 +271,7 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
             NodeId = parameter.NodeId;
             parameter.MixBufferVolume.CopyTo(MixBufferVolume);
 
-            if (behaviourContext.IsSplitterSupported())
+            if (behaviourInfo.IsSplitterSupported())
             {
                 isDirty = UpdateConnection(edgeMatrix, in parameter, ref splitterContext);
             }
@@ -279,10 +279,7 @@ namespace Ryujinx.Audio.Renderer.Server.Mix
             {
                 isDirty = DestinationMixId != parameter.DestinationMixId;
 
-                if (DestinationMixId != parameter.DestinationMixId)
-                {
-                    DestinationMixId = parameter.DestinationMixId;
-                }
+                DestinationMixId = parameter.DestinationMixId;
 
                 DestinationSplitterId = UnusedSplitterId;
             }

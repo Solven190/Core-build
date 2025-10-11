@@ -5,7 +5,7 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
     /// <summary>
     /// Server state for a upsampling.
     /// </summary>
-    public class UpsamplerState
+    public class UpsamplerInfo
     {
         /// <summary>
         /// The output buffer containing the target samples.
@@ -18,7 +18,7 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
         public uint SampleCount { get; }
 
         /// <summary>
-        /// The index of the <see cref="UpsamplerState"/>. (used to free it)
+        /// The index of the <see cref="UpsamplerInfo"/>. (used to free it)
         /// </summary>
         private readonly int _index;
 
@@ -43,13 +43,13 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
         public UpsamplerBufferState[] BufferStates;
 
         /// <summary>
-        /// Create a new <see cref="UpsamplerState"/>.
+        /// Create a new <see cref="UpsamplerInfo"/>.
         /// </summary>
         /// <param name="manager">The upsampler manager.</param>
-        /// <param name="index">The index of the <see cref="UpsamplerState"/>. (used to free it)</param>
+        /// <param name="index">The index of the <see cref="UpsamplerInfo"/>. (used to free it)</param>
         /// <param name="outputBuffer">The output buffer used to contain the target samples.</param>
         /// <param name="sampleCount">The target sample count.</param>
-        public UpsamplerState(UpsamplerManager manager, int index, Memory<float> outputBuffer, uint sampleCount)
+        public UpsamplerInfo(UpsamplerManager manager, int index, Memory<float> outputBuffer, uint sampleCount)
         {
             _manager = manager;
             _index = index;
@@ -58,7 +58,7 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
         }
 
         /// <summary>
-        /// Release the <see cref="UpsamplerState"/>.
+        /// Release the <see cref="UpsamplerInfo"/>.
         /// </summary>
         public void Release()
         {

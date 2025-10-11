@@ -27,39 +27,39 @@ namespace Ryujinx.Audio.Renderer.Server
 
         private Memory<byte> _output;
         private readonly uint _processHandle;
-        private BehaviourContext _behaviourContext;
+        private BehaviourInfo _behaviourInfo;
 
         private readonly ref readonly UpdateDataHeader _inputHeader;
         private readonly Memory<UpdateDataHeader> _outputHeader;
 
         private readonly ref UpdateDataHeader OutputHeader => ref _outputHeader.Span[0];
 
-        public StateUpdater(ReadOnlySequence<byte> input, Memory<byte> output, uint processHandle, BehaviourContext behaviourContext)
+        public StateUpdater(ReadOnlySequence<byte> input, Memory<byte> output, uint processHandle, BehaviourInfo behaviourInfo)
         {
             _inputReader = new SequenceReader<byte>(input);
             _output = output;
             _outputOrigin = _output;
             _processHandle = processHandle;
-            _behaviourContext = behaviourContext;
+            _behaviourInfo = behaviourInfo;
 
             _inputHeader = ref _inputReader.GetRefOrRefToCopy<UpdateDataHeader>(out _);
 
             _outputHeader = SpanMemoryManager<UpdateDataHeader>.Cast(_output[..Unsafe.SizeOf<UpdateDataHeader>()]);
-            OutputHeader.Initialize(_behaviourContext.UserRevision);
+            OutputHeader.Initialize(_behaviourInfo.UserRevision);
             _output = _output[Unsafe.SizeOf<UpdateDataHeader>()..];
         }
 
-        public ResultCode UpdateBehaviourContext()
+        public ResultCode UpdateBehaviourInfo()
         {
             ref readonly BehaviourParameter parameter = ref _inputReader.GetRefOrRefToCopy<BehaviourParameter>(out _);
 
-            if (!BehaviourContext.CheckValidRevision(parameter.UserRevision) || parameter.UserRevision != _behaviourContext.UserRevision)
+            if (!BehaviourInfo.CheckValidRevision(parameter.UserRevision) || parameter.UserRevision != _behaviourInfo.UserRevision)
             {
                 return ResultCode.InvalidUpdateInfo;
             }
 
-            _behaviourContext.ClearError();
-            _behaviourContext.UpdateFlags(parameter.Flags);
+            _behaviourInfo.ClearError();
+            _behaviourInfo.UpdateFlags(parameter.Flags);
 
             if (_inputHeader.BehaviourSize != Unsafe.SizeOf<BehaviourParameter>())
             {
@@ -69,16 +69,16 @@ namespace Ryujinx.Audio.Renderer.Server
             return ResultCode.Success;
         }
 
-        public ResultCode UpdateMemoryPools(Span<MemoryPoolState> memoryPools)
+        public ResultCode UpdateMemoryPools(Span<MemoryPoolInfo> memoryPools)
         {
-            PoolMapper mapper = new(_processHandle, _behaviourContext.IsMemoryPoolForceMappingEnabled());
+            PoolMapper mapper = new(_processHandle, _behaviourInfo.IsMemoryPoolForceMappingEnabled());
 
             if (memoryPools.Length * Unsafe.SizeOf<MemoryPoolInParameter>() != _inputHeader.MemoryPoolsSize)
             {
                 return ResultCode.InvalidUpdateInfo;
             }
 
-            foreach (ref MemoryPoolState memoryPool in memoryPools)
+            foreach (ref MemoryPoolInfo memoryPool in memoryPools)
             {
                 ref readonly MemoryPoolInParameter parameter = ref _inputReader.GetRefOrRefToCopy<MemoryPoolInParameter>(out _);
 
@@ -125,10 +125,10 @@ namespace Ryujinx.Audio.Renderer.Server
 
             return ResultCode.Success;
         }
-
-        public ResultCode UpdateVoices(VoiceContext context, PoolMapper mapper)
+        
+        public ResultCode UpdateVoices2(VoiceContext context, PoolMapper mapper)
         {
-            if (context.GetCount() * Unsafe.SizeOf<VoiceInParameter>() != _inputHeader.VoicesSize)
+            if (context.GetCount() * Unsafe.SizeOf<VoiceInParameter2>() != _inputHeader.VoicesSize)
             {
                 return ResultCode.InvalidUpdateInfo;
             }
@@ -140,27 +140,27 @@ namespace Ryujinx.Audio.Renderer.Server
             // First make everything not in use.
             for (int i = 0; i < context.GetCount(); i++)
             {
-                ref VoiceState state = ref context.GetState(i);
+                ref VoiceInfo info = ref context.GetState(i);
 
-                state.InUse = false;
+                info.InUse = false;
             }
 
-            Memory<VoiceUpdateState>[] voiceUpdateStatesArray = ArrayPool<Memory<VoiceUpdateState>>.Shared.Rent(Constants.VoiceChannelCountMax);
+            Memory<VoiceState>[] voiceStatesArray = ArrayPool<Memory<VoiceState>>.Shared.Rent(Constants.VoiceChannelCountMax);
 
-            Span<Memory<VoiceUpdateState>> voiceUpdateStates = voiceUpdateStatesArray.AsSpan(0, Constants.VoiceChannelCountMax);
+            Span<Memory<VoiceState>> voiceStates = voiceStatesArray.AsSpan(0, Constants.VoiceChannelCountMax);
 
             // Start processing
             for (int i = 0; i < context.GetCount(); i++)
             {
-                ref readonly VoiceInParameter parameter = ref _inputReader.GetRefOrRefToCopy<VoiceInParameter>(out _);
+                ref readonly VoiceInParameter2 parameter = ref _inputReader.GetRefOrRefToCopy<VoiceInParameter2>(out _);
 
-                voiceUpdateStates.Fill(Memory<VoiceUpdateState>.Empty);
+                voiceStates.Fill(Memory<VoiceState>.Empty);
 
                 ref VoiceOutStatus outStatus = ref SpanIOHelper.GetWriteRef<VoiceOutStatus>(ref _output)[0];
 
                 if (parameter.InUse)
                 {
-                    ref VoiceState currentVoiceState = ref context.GetState(i);
+                    ref VoiceInfo currentVoiceInfo = ref context.GetState(i);
 
                     Span<int> channelResourceIdsSpan = parameter.ChannelResourceIds.AsSpan();
 
@@ -170,36 +170,123 @@ namespace Ryujinx.Audio.Renderer.Server
 
                         Debug.Assert(channelId >= 0 && channelId < context.GetCount());
 
-                        voiceUpdateStates[channelResourceIndex] = context.GetUpdateStateForCpu(channelId);
+                        voiceStates[channelResourceIndex] = context.GetUpdateStateForCpu(channelId);
                     }
 
                     if (parameter.IsNew)
                     {
-                        currentVoiceState.Initialize();
+                        currentVoiceInfo.Initialize();
                     }
 
-                    currentVoiceState.UpdateParameters(out ErrorInfo updateParameterError, in parameter, mapper, ref _behaviourContext);
+                    currentVoiceInfo.UpdateParameters2(out ErrorInfo updateParameterError, in parameter, mapper, ref _behaviourInfo);
 
                     if (updateParameterError.ErrorCode != ResultCode.Success)
                     {
-                        _behaviourContext.AppendError(ref updateParameterError);
+                        _behaviourInfo.AppendError(ref updateParameterError);
                     }
 
-                    currentVoiceState.UpdateWaveBuffers(out ErrorInfo[] waveBufferUpdateErrorInfos, in parameter, voiceUpdateStates, mapper, ref _behaviourContext);
+                    currentVoiceInfo.UpdateWaveBuffers2(out ErrorInfo[] waveBufferUpdateErrorInfos, in parameter, voiceStates, mapper, ref _behaviourInfo);
 
                     foreach (ref ErrorInfo errorInfo in waveBufferUpdateErrorInfos.AsSpan())
                     {
                         if (errorInfo.ErrorCode != ResultCode.Success)
                         {
-                            _behaviourContext.AppendError(ref errorInfo);
+                            _behaviourInfo.AppendError(ref errorInfo);
                         }
                     }
 
-                    currentVoiceState.WriteOutStatus(ref outStatus, in parameter, voiceUpdateStates);
+                    currentVoiceInfo.WriteOutStatus2(ref outStatus, in parameter, voiceStates);
                 }
             }
 
-            ArrayPool<Memory<VoiceUpdateState>>.Shared.Return(voiceUpdateStatesArray);
+            ArrayPool<Memory<VoiceState>>.Shared.Return(voiceStatesArray);
+
+            int currentOutputSize = _output.Length;
+
+            OutputHeader.VoicesSize = (uint)(Unsafe.SizeOf<VoiceOutStatus>() * context.GetCount());
+            OutputHeader.TotalSize += OutputHeader.VoicesSize;
+
+            Debug.Assert((initialOutputSize - currentOutputSize) == OutputHeader.VoicesSize);
+
+            _inputReader.SetConsumed(initialInputConsumed + _inputHeader.VoicesSize);
+
+            return ResultCode.Success;
+        }
+
+        public ResultCode UpdateVoices1(VoiceContext context, PoolMapper mapper)
+        {
+            if (context.GetCount() * Unsafe.SizeOf<VoiceInParameter1>() != _inputHeader.VoicesSize)
+            {
+                return ResultCode.InvalidUpdateInfo;
+            }
+
+            int initialOutputSize = _output.Length;
+
+            long initialInputConsumed = _inputReader.Consumed;
+
+            // First make everything not in use.
+            for (int i = 0; i < context.GetCount(); i++)
+            {
+                ref VoiceInfo info = ref context.GetState(i);
+
+                info.InUse = false;
+            }
+
+            Memory<VoiceState>[] voiceStatesArray = ArrayPool<Memory<VoiceState>>.Shared.Rent(Constants.VoiceChannelCountMax);
+
+            Span<Memory<VoiceState>> voiceStates = voiceStatesArray.AsSpan(0, Constants.VoiceChannelCountMax);
+
+            // Start processing
+            for (int i = 0; i < context.GetCount(); i++)
+            {
+                ref readonly VoiceInParameter1 parameter = ref _inputReader.GetRefOrRefToCopy<VoiceInParameter1>(out _);
+
+                voiceStates.Fill(Memory<VoiceState>.Empty);
+
+                ref VoiceOutStatus outStatus = ref SpanIOHelper.GetWriteRef<VoiceOutStatus>(ref _output)[0];
+
+                if (parameter.InUse)
+                {
+                    ref VoiceInfo currentVoiceInfo = ref context.GetState(i);
+
+                    Span<int> channelResourceIdsSpan = parameter.ChannelResourceIds.AsSpan();
+
+                    for (int channelResourceIndex = 0; channelResourceIndex < parameter.ChannelCount; channelResourceIndex++)
+                    {
+                        int channelId = channelResourceIdsSpan[channelResourceIndex];
+
+                        Debug.Assert(channelId >= 0 && channelId < context.GetCount());
+
+                        voiceStates[channelResourceIndex] = context.GetUpdateStateForCpu(channelId);
+                    }
+
+                    if (parameter.IsNew)
+                    {
+                        currentVoiceInfo.Initialize();
+                    }
+
+                    currentVoiceInfo.UpdateParameters1(out ErrorInfo updateParameterError, in parameter, mapper, ref _behaviourInfo);
+
+                    if (updateParameterError.ErrorCode != ResultCode.Success)
+                    {
+                        _behaviourInfo.AppendError(ref updateParameterError);
+                    }
+
+                    currentVoiceInfo.UpdateWaveBuffers1(out ErrorInfo[] waveBufferUpdateErrorInfos, in parameter, voiceStates, mapper, ref _behaviourInfo);
+
+                    foreach (ref ErrorInfo errorInfo in waveBufferUpdateErrorInfos.AsSpan())
+                    {
+                        if (errorInfo.ErrorCode != ResultCode.Success)
+                        {
+                            _behaviourInfo.AppendError(ref errorInfo);
+                        }
+                    }
+
+                    currentVoiceInfo.WriteOutStatus1(ref outStatus, in parameter, voiceStates);
+                }
+            }
+
+            ArrayPool<Memory<VoiceState>>.Shared.Return(voiceStatesArray);
 
             int currentOutputSize = _output.Length;
 
@@ -235,7 +322,12 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public ResultCode UpdateEffects(EffectContext context, bool isAudioRendererActive, PoolMapper mapper)
         {
-            if (_behaviourContext.IsEffectInfoVersion2Supported())
+            if (_behaviourInfo.IsBiquadFilterParameterFloatSupported())
+            {
+                return UpdateEffectsVersion3(context, isAudioRendererActive, mapper);
+            }
+            
+            if (_behaviourInfo.IsEffectInfoVersion2Supported())
             {
                 return UpdateEffectsVersion2(context, isAudioRendererActive, mapper);
             }
@@ -243,6 +335,60 @@ namespace Ryujinx.Audio.Renderer.Server
             return UpdateEffectsVersion1(context, isAudioRendererActive, mapper);
         }
 
+        public ResultCode UpdateEffectsVersion3(EffectContext context, bool isAudioRendererActive, PoolMapper mapper)
+        {
+            if (context.GetCount() * Unsafe.SizeOf<EffectInParameterVersion2>() != _inputHeader.EffectsSize)
+            {
+                return ResultCode.InvalidUpdateInfo;
+            }
+
+            int initialOutputSize = _output.Length;
+
+            long initialInputConsumed = _inputReader.Consumed;
+
+            for (int i = 0; i < context.GetCount(); i++)
+            {
+                ref readonly EffectInParameterVersion3 parameter = ref _inputReader.GetRefOrRefToCopy<EffectInParameterVersion3>(out _);
+
+                ref EffectOutStatusVersion2 outStatus = ref SpanIOHelper.GetWriteRef<EffectOutStatusVersion2>(ref _output)[0];
+
+                ref BaseEffect effect = ref context.GetEffect(i);
+
+                if (!effect.IsTypeValid(in parameter))
+                {
+                    ResetEffect(ref effect, in parameter, mapper);
+                }
+
+                effect.Update(out ErrorInfo updateErrorInfo, in parameter, mapper);
+
+                if (updateErrorInfo.ErrorCode != ResultCode.Success)
+                {
+                    _behaviourInfo.AppendError(ref updateErrorInfo);
+                }
+
+                effect.StoreStatus(ref outStatus, isAudioRendererActive);
+
+                if (parameter.IsNew)
+                {
+                    effect.InitializeResultState(ref context.GetDspState(i));
+                    effect.InitializeResultState(ref context.GetState(i));
+                }
+
+                effect.UpdateResultState(ref outStatus.ResultState, ref context.GetState(i));
+            }
+
+            int currentOutputSize = _output.Length;
+
+            OutputHeader.EffectsSize = (uint)(Unsafe.SizeOf<EffectOutStatusVersion2>() * context.GetCount());
+            OutputHeader.TotalSize += OutputHeader.EffectsSize;
+
+            Debug.Assert((initialOutputSize - currentOutputSize) == OutputHeader.EffectsSize);
+
+            _inputReader.SetConsumed(initialInputConsumed + _inputHeader.EffectsSize);
+
+            return ResultCode.Success;
+        }
+        
         public ResultCode UpdateEffectsVersion2(EffectContext context, bool isAudioRendererActive, PoolMapper mapper)
         {
             if (context.GetCount() * Unsafe.SizeOf<EffectInParameterVersion2>() != _inputHeader.EffectsSize)
@@ -271,7 +417,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
                 if (updateErrorInfo.ErrorCode != ResultCode.Success)
                 {
-                    _behaviourContext.AppendError(ref updateErrorInfo);
+                    _behaviourInfo.AppendError(ref updateErrorInfo);
                 }
 
                 effect.StoreStatus(ref outStatus, isAudioRendererActive);
@@ -325,7 +471,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
                 if (updateErrorInfo.ErrorCode != ResultCode.Success)
                 {
-                    _behaviourContext.AppendError(ref updateErrorInfo);
+                    _behaviourInfo.AppendError(ref updateErrorInfo);
                 }
 
                 effect.StoreStatus(ref outStatus, isAudioRendererActive);
@@ -384,7 +530,7 @@ namespace Ryujinx.Audio.Renderer.Server
             uint inputMixSize;
             uint inputSize = 0;
 
-            if (_behaviourContext.IsMixInParameterDirtyOnlyUpdateSupported())
+            if (_behaviourInfo.IsMixInParameterDirtyOnlyUpdateSupported())
             {
                 ref readonly MixInParameterDirtyOnlyUpdate parameter = ref _inputReader.GetRefOrRefToCopy<MixInParameterDirtyOnlyUpdate>(out _);
 
@@ -423,12 +569,12 @@ namespace Ryujinx.Audio.Renderer.Server
 
                 int mixId = i;
 
-                if (_behaviourContext.IsMixInParameterDirtyOnlyUpdateSupported())
+                if (_behaviourInfo.IsMixInParameterDirtyOnlyUpdateSupported())
                 {
                     mixId = parameter.MixId;
                 }
 
-                ref MixState mix = ref mixContext.GetState(mixId);
+                ref MixInfo mix = ref mixContext.GetState(mixId);
 
                 if (parameter.IsUsed != mix.IsUsed)
                 {
@@ -444,13 +590,13 @@ namespace Ryujinx.Audio.Renderer.Server
 
                 if (mix.IsUsed)
                 {
-                    isMixContextDirty |= mix.Update(mixContext.EdgeMatrix, in parameter, effectContext, splitterContext, _behaviourContext);
+                    isMixContextDirty |= mix.Update(mixContext.EdgeMatrix, in parameter, effectContext, splitterContext, _behaviourInfo);
                 }
             }
 
             if (isMixContextDirty)
             {
-                if (_behaviourContext.IsSplitterSupported() && splitterContext.UsingSplitter())
+                if (_behaviourInfo.IsSplitterSupported() && splitterContext.UsingSplitter())
                 {
                     if (!mixContext.Sort(splitterContext))
                     {
@@ -507,7 +653,7 @@ namespace Ryujinx.Audio.Renderer.Server
 
                 if (updateErrorInfo.ErrorCode != ResultCode.Success)
                 {
-                    _behaviourContext.AppendError(ref updateErrorInfo);
+                    _behaviourInfo.AppendError(ref updateErrorInfo);
                 }
             }
 
@@ -555,7 +701,7 @@ namespace Ryujinx.Audio.Renderer.Server
         {
             ref BehaviourErrorInfoOutStatus outStatus = ref SpanIOHelper.GetWriteRef<BehaviourErrorInfoOutStatus>(ref _output)[0];
 
-            _behaviourContext.CopyErrorInfo(outStatus.ErrorInfos.AsSpan(), out outStatus.ErrorInfosCount);
+            _behaviourInfo.CopyErrorInfo(outStatus.ErrorInfos.AsSpan(), out outStatus.ErrorInfosCount);
 
             OutputHeader.BehaviourSize = (uint)Unsafe.SizeOf<BehaviourErrorInfoOutStatus>();
             OutputHeader.TotalSize += OutputHeader.BehaviourSize;

@@ -8,7 +8,7 @@ namespace Ryujinx.Audio.Renderer.Parameter.Effect
     /// <see cref="IEffectInParameter.SpecificData"/> for <see cref="Common.EffectType.BiquadFilter"/>.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct BiquadFilterEffectParameter
+    public struct BiquadFilterEffectParameter2
     {
         /// <summary>
         /// The input channel indices that will be used by the <see cref="Dsp.AudioProcessor"/>.
@@ -23,13 +23,13 @@ namespace Ryujinx.Audio.Renderer.Parameter.Effect
         /// <summary>
         /// Biquad filter numerator (b0, b1, b2).
         /// </summary>
-        public Array3<short> Numerator;
+        public Array3<float> Numerator;
 
         /// <summary>
         /// Biquad filter denominator (a1, a2).
         /// </summary>
         /// <remarks>a0 = 1</remarks>
-        public Array2<short> Denominator;
+        public Array2<float> Denominator;
 
         /// <summary>
         /// The total channel count used.
@@ -40,5 +40,10 @@ namespace Ryujinx.Audio.Renderer.Parameter.Effect
         /// The current usage status of the effect on the client side.
         /// </summary>
         public UsageState Status;
+        
+        /// <summary>
+        /// Reserved/unused.
+        /// </summary>
+        private readonly ushort _reserved;
     }
 }

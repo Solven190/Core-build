@@ -12,7 +12,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
     /// Input information for a voice.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Size = 0x170, Pack = 1)]
-    public struct VoiceInParameter
+    public struct VoiceInParameter1
     {
         /// <summary>
         /// Id of the voice.
@@ -79,7 +79,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// <summary>
         /// Biquad filters to apply to the output of the voice.
         /// </summary>
-        public Array2<BiquadFilterParameter> BiquadFilters;
+        public Array2<BiquadFilterParameter1> BiquadFilters;
 
         /// <summary>
         /// Total count of <see cref="WaveBufferInternal"/> of the voice.
@@ -171,8 +171,9 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// Reserved/unused.
         /// </summary>
         private unsafe fixed uint _reserved3[2];
-
-        /// <summary>
+    }
+    
+    /// <summary>
         /// Input information for a voice wavebuffer.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Size = 0x38, Pack = 1)]
@@ -328,5 +329,4 @@ namespace Ryujinx.Audio.Renderer.Parameter
             /// </summary>
             Low,
         }
-    }
 }

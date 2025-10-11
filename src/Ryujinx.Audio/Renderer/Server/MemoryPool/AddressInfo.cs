@@ -20,14 +20,14 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         /// </summary>
         public ulong Size;
 
-        private unsafe MemoryPoolState* _memoryPools;
+        private unsafe MemoryPoolInfo* _memoryPools;
 
         /// <summary>
         /// The forced DSP address of the region.
         /// </summary>
         public DspAddress ForceMappedDspAddress;
 
-        private readonly unsafe ref MemoryPoolState MemoryPoolState => ref *_memoryPools;
+        private readonly unsafe ref MemoryPoolInfo MemoryPoolInfo => ref *_memoryPools;
 
         public readonly unsafe bool HasMemoryPoolState => (IntPtr)_memoryPools != IntPtr.Zero;
 
@@ -53,7 +53,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
                 return new AddressInfo
                 {
                     CpuAddress = cpuAddress,
-                    _memoryPools = MemoryPoolState.Null,
+                    _memoryPools = MemoryPoolInfo.Null,
                     Size = size,
                     ForceMappedDspAddress = 0,
                 };
@@ -73,19 +73,19 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
 
             unsafe
             {
-                _memoryPools = MemoryPoolState.Null;
+                _memoryPools = MemoryPoolInfo.Null;
             }
         }
 
         /// <summary>
-        /// Set the <see cref="MemoryPoolState"/> associated.
+        /// Set the <see cref="MemoryPoolInfo"/> associated.
         /// </summary>
-        /// <param name="memoryPoolState">The <see cref="MemoryPoolState"/> associated.</param>
-        public void SetupMemoryPool(Span<MemoryPoolState> memoryPoolState)
+        /// <param name="memoryPoolState">The <see cref="MemoryPoolInfo"/> associated.</param>
+        public void SetupMemoryPool(Span<MemoryPoolInfo> memoryPoolState)
         {
             unsafe
             {
-                fixed (MemoryPoolState* ptr = &MemoryMarshal.GetReference(memoryPoolState))
+                fixed (MemoryPoolInfo* ptr = &MemoryMarshal.GetReference(memoryPoolState))
                 {
                     SetupMemoryPool(ptr);
                 }
@@ -93,27 +93,27 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         }
 
         /// <summary>
-        /// Set the <see cref="MemoryPoolState"/> associated.
+        /// Set the <see cref="MemoryPoolInfo"/> associated.
         /// </summary>
-        /// <param name="memoryPoolState">The <see cref="MemoryPoolState"/> associated.</param>
-        public unsafe void SetupMemoryPool(MemoryPoolState* memoryPoolState)
+        /// <param name="memoryPoolState">The <see cref="MemoryPoolInfo"/> associated.</param>
+        public unsafe void SetupMemoryPool(MemoryPoolInfo* memoryPoolState)
         {
             _memoryPools = memoryPoolState;
         }
 
         /// <summary>
-        /// Check if the <see cref="MemoryPoolState"/> is mapped.
+        /// Check if the <see cref="MemoryPoolInfo"/> is mapped.
         /// </summary>
-        /// <returns>Returns true if the <see cref="MemoryPoolState"/> is mapped.</returns>
+        /// <returns>Returns true if the <see cref="MemoryPoolInfo"/> is mapped.</returns>
         public readonly bool HasMappedMemoryPool()
         {
-            return HasMemoryPoolState && MemoryPoolState.IsMapped();
+            return HasMemoryPoolState && MemoryPoolInfo.IsMapped();
         }
 
         /// <summary>
         /// Get the DSP address associated to the <see cref="AddressInfo"/>.
         /// </summary>
-        /// <param name="markUsed">If true, mark the <see cref="MemoryPoolState"/> as used.</param>
+        /// <param name="markUsed">If true, mark the <see cref="MemoryPoolInfo"/> as used.</param>
         /// <returns>Returns the DSP address associated to the <see cref="AddressInfo"/>.</returns>
         public readonly DspAddress GetReference(bool markUsed)
         {
@@ -124,10 +124,10 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
 
             if (markUsed)
             {
-                MemoryPoolState.IsUsed = true;
+                MemoryPoolInfo.IsUsed = true;
             }
 
-            return MemoryPoolState.Translate(CpuAddress, Size);
+            return MemoryPoolInfo.Translate(CpuAddress, Size);
         }
     }
 }

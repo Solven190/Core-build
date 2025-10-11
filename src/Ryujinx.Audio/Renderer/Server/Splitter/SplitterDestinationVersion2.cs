@@ -1,3 +1,4 @@
+using Ryujinx.Audio.Renderer.Dsp;
 using Ryujinx.Audio.Renderer.Parameter;
 using Ryujinx.Common.Memory;
 using Ryujinx.Common.Utilities;
@@ -11,7 +12,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
     /// <summary>
     /// Server state for a splitter destination (version 2).
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Size = 0x110, Pack = Alignment)]
+    [StructLayout(LayoutKind.Sequential, Size = 0x128, Pack = Alignment)]
     public struct SplitterDestinationVersion2
     {
         public const int Alignment = 0x10;
@@ -78,7 +79,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
             }
         }
 
-        private Array2<BiquadFilterParameter> _biquadFilters;
+        private Array2<BiquadFilterParameter2> _biquadFilters;
 
         private Array2<bool> _isPreviousBiquadFilterEnabled;
 
@@ -109,7 +110,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
 
                 parameter.MixBufferVolume.CopyTo(MixBufferVolume);
 
-                _biquadFilters = parameter.BiquadFilters;
+                _biquadFilters = parameter.BiquadFilters2;
 
                 bool resetPrevVolume = isPrevVolumeResetSupported ? parameter.ResetPrevVolume : !IsUsed && parameter.IsUsed;
                 if (resetPrevVolume)
@@ -218,7 +219,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// <returns>True if any biquad filter is enabled.</returns>
         public bool IsBiquadFilterEnabled()
         {
-            Span<BiquadFilterParameter> biquadFiltersSpan = _biquadFilters.AsSpan();
+            Span<BiquadFilterParameter2> biquadFiltersSpan = _biquadFilters.AsSpan();
             return biquadFiltersSpan[0].Enable || biquadFiltersSpan[1].Enable;
         }
 
@@ -236,7 +237,7 @@ namespace Ryujinx.Audio.Renderer.Server.Splitter
         /// </summary>
         /// <param name="index">Biquad filter index (0 or 1).</param>
         /// <returns>Biquad filter parameters.</returns>
-        public ref BiquadFilterParameter GetBiquadFilterParameter(int index)
+        public ref BiquadFilterParameter2 GetBiquadFilterParameter(int index)
         {
             return ref _biquadFilters[index];
         }

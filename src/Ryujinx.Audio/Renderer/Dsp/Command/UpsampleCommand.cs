@@ -18,11 +18,11 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public uint InputSampleCount { get; }
         public uint InputSampleRate { get; }
 
-        public UpsamplerState UpsamplerInfo { get; }
+        public UpsamplerInfo UpsamplerInfo { get; }
 
         public Memory<float> OutBuffer { get; }
 
-        public UpsampleCommand(uint bufferOffset, UpsamplerState info, uint inputCount, Span<byte> inputBufferOffset, uint bufferCount, uint sampleCount, uint sampleRate, int nodeId)
+        public UpsampleCommand(uint bufferOffset, UpsamplerInfo info, uint inputCount, Span<byte> inputBufferOffset, uint bufferCount, uint sampleCount, uint sampleRate, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;

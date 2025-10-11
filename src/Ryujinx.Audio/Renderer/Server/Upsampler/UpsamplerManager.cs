@@ -22,7 +22,7 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
         /// <summary>
         /// The upsamplers instances.
         /// </summary>
-        private readonly UpsamplerState[] _upsamplers;
+        private readonly UpsamplerInfo[] _upsamplers;
 
         /// <summary>
         /// The count of upsamplers.
@@ -39,14 +39,14 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
             _upSamplerWorkBuffer = upSamplerWorkBuffer;
             _count = count;
 
-            _upsamplers = new UpsamplerState[_count];
+            _upsamplers = new UpsamplerInfo[_count];
         }
 
         /// <summary>
-        /// Allocate a new <see cref="UpsamplerState"/>.
+        /// Allocate a new <see cref="UpsamplerInfo"/>.
         /// </summary>
-        /// <returns>A new <see cref="UpsamplerState"/> or null if out of memory.</returns>
-        public UpsamplerState Allocate()
+        /// <returns>A new <see cref="UpsamplerInfo"/> or null if out of memory.</returns>
+        public UpsamplerInfo Allocate()
         {
             int workBufferOffset = 0;
 
@@ -56,7 +56,7 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
                 {
                     if (_upsamplers[i] == null)
                     {
-                        _upsamplers[i] = new UpsamplerState(this, i, _upSamplerWorkBuffer.Slice(workBufferOffset, Constants.UpSampleEntrySize), Constants.TargetSampleCount);
+                        _upsamplers[i] = new UpsamplerInfo(this, i, _upSamplerWorkBuffer.Slice(workBufferOffset, Constants.UpSampleEntrySize), Constants.TargetSampleCount);
 
                         return _upsamplers[i];
                     }
@@ -69,9 +69,9 @@ namespace Ryujinx.Audio.Renderer.Server.Upsampler
         }
 
         /// <summary>
-        /// Free a <see cref="UpsamplerState"/> at the given index.
+        /// Free a <see cref="UpsamplerInfo"/> at the given index.
         /// </summary>
-        /// <param name="index">The index of the <see cref="UpsamplerState"/> to free.</param>
+        /// <param name="index">The index of the <see cref="UpsamplerInfo"/> to free.</param>
         public void Free(int index)
         {
             lock (_lock)

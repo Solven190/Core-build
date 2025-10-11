@@ -16,8 +16,8 @@ namespace Ryujinx.Tests.Audio.Renderer.Server
         [Test]
         public void TestGetReference()
         {
-            MemoryPoolState[] memoryPoolState = new MemoryPoolState[1];
-            memoryPoolState[0] = MemoryPoolState.Create(MemoryPoolState.LocationType.Cpu);
+            MemoryPoolInfo[] memoryPoolState = new MemoryPoolInfo[1];
+            memoryPoolState[0] = MemoryPoolInfo.Create(MemoryPoolInfo.LocationType.Cpu);
             memoryPoolState[0].SetCpuAddress(0x1000000, 0x10000);
             memoryPoolState[0].DspAddress = 0x4000000;
 

@@ -3,7 +3,7 @@ using Ryujinx.Audio.Renderer.Dsp.Command;
 using Ryujinx.Audio.Renderer.Parameter.Effect;
 using System;
 using System.Diagnostics;
-using static Ryujinx.Audio.Renderer.Parameter.VoiceInParameter;
+using Ryujinx.Audio.Renderer.Parameter;
 
 namespace Ryujinx.Audio.Renderer.Server
 {
@@ -647,6 +647,11 @@ namespace Ryujinx.Audio.Renderer.Server
         }
 
         public virtual uint Estimate(MultiTapBiquadFilterAndMixCommand command)
+        {
+            return 0;
+        }
+
+        public virtual uint Estimate(FillBufferCommand command)
         {
             return 0;
         }

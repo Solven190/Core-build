@@ -22,7 +22,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public float[] Volume0 { get; }
         public float[] Volume1 { get; }
 
-        public Memory<VoiceUpdateState> State { get; }
+        public Memory<VoiceState> State { get; }
 
         public MixRampGroupedCommand(
             uint mixBufferCount,
@@ -30,7 +30,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             uint outputBufferIndex,
             ReadOnlySpan<float> volume0,
             ReadOnlySpan<float> volume1,
-            Memory<VoiceUpdateState> state,
+            Memory<VoiceState> state,
             int nodeId)
         {
             Enabled = true;
@@ -79,7 +79,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public void Process(CommandList context)
         {
-            ref VoiceUpdateState state = ref State.Span[0];
+            ref VoiceState state = ref State.Span[0];
             
             Span<float> lastSamplesSpan = state.LastSamples.AsSpan();
             

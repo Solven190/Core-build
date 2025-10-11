@@ -5,9 +5,11 @@ using Ryujinx.Audio.Renderer.Parameter;
 using Ryujinx.Audio.Renderer.Parameter.Effect;
 using Ryujinx.Audio.Renderer.Server.Performance;
 using Ryujinx.Audio.Renderer.Server.Sink;
+using Ryujinx.Audio.Renderer.Server.Splitter;
 using Ryujinx.Audio.Renderer.Server.Upsampler;
 using Ryujinx.Audio.Renderer.Server.Voice;
 using System;
+using System.Runtime.CompilerServices;
 using CpuAddress = System.UInt64;
 
 namespace Ryujinx.Audio.Renderer.Server
@@ -77,7 +79,7 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="bufferOffset">The target buffer offset.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
         /// <param name="wasPlaying">Set to true if the voice was playing previously.</param>
-        public void GenerateDepopPrepare(Memory<VoiceUpdateState> state, Memory<float> depopBuffer, uint bufferCount, uint bufferOffset, int nodeId, bool wasPlaying)
+        public void GenerateDepopPrepare(Memory<VoiceState> state, Memory<float> depopBuffer, uint bufferCount, uint bufferOffset, int nodeId, bool wasPlaying)
         {
             DepopPrepareCommand command = new(state, depopBuffer, bufferCount, bufferOffset, nodeId, wasPlaying);
 
@@ -120,14 +122,14 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <summary>
         /// Create a new <see cref="DataSourceVersion2Command"/>.
         /// </summary>
-        /// <param name="voiceState">The <see cref="VoiceState"/> to generate the command from.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="voiceInfo">The <see cref="VoiceInfo"/> to generate the command from.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="outputBufferIndex">The output buffer index to use.</param>
         /// <param name="channelIndex">The target channel index.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateDataSourceVersion2(ref VoiceState voiceState, Memory<VoiceUpdateState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
+        public void GenerateDataSourceVersion2(ref VoiceInfo voiceInfo, Memory<VoiceState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
         {
-            DataSourceVersion2Command command = new(ref voiceState, state, outputBufferIndex, channelIndex, nodeId);
+            DataSourceVersion2Command command = new(ref voiceInfo, state, outputBufferIndex, channelIndex, nodeId);
 
             command.EstimatedProcessingTime = _commandProcessingTimeEstimator.Estimate(command);
 
@@ -137,14 +139,14 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <summary>
         /// Create a new <see cref="PcmInt16DataSourceCommandVersion1"/>.
         /// </summary>
-        /// <param name="voiceState">The <see cref="VoiceState"/> to generate the command from.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="voiceInfo">The <see cref="VoiceInfo"/> to generate the command from.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="outputBufferIndex">The output buffer index to use.</param>
         /// <param name="channelIndex">The target channel index.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GeneratePcmInt16DataSourceVersion1(ref VoiceState voiceState, Memory<VoiceUpdateState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
+        public void GeneratePcmInt16DataSourceVersion1(ref VoiceInfo voiceInfo, Memory<VoiceState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
         {
-            PcmInt16DataSourceCommandVersion1 command = new(ref voiceState, state, outputBufferIndex, channelIndex, nodeId);
+            PcmInt16DataSourceCommandVersion1 command = new(ref voiceInfo, state, outputBufferIndex, channelIndex, nodeId);
 
             command.EstimatedProcessingTime = _commandProcessingTimeEstimator.Estimate(command);
 
@@ -154,14 +156,14 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <summary>
         /// Create a new <see cref="PcmFloatDataSourceCommandVersion1"/>.
         /// </summary>
-        /// <param name="voiceState">The <see cref="VoiceState"/> to generate the command from.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="voiceInfo">The <see cref="VoiceInfo"/> to generate the command from.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="outputBufferIndex">The output buffer index to use.</param>
         /// <param name="channelIndex">The target channel index.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GeneratePcmFloatDataSourceVersion1(ref VoiceState voiceState, Memory<VoiceUpdateState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
+        public void GeneratePcmFloatDataSourceVersion1(ref VoiceInfo voiceInfo, Memory<VoiceState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
         {
-            PcmFloatDataSourceCommandVersion1 command = new(ref voiceState, state, outputBufferIndex, channelIndex, nodeId);
+            PcmFloatDataSourceCommandVersion1 command = new(ref voiceInfo, state, outputBufferIndex, channelIndex, nodeId);
 
             command.EstimatedProcessingTime = _commandProcessingTimeEstimator.Estimate(command);
 
@@ -171,13 +173,13 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <summary>
         /// Create a new <see cref="AdpcmDataSourceCommandVersion1"/>.
         /// </summary>
-        /// <param name="voiceState">The <see cref="VoiceState"/> to generate the command from.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="voiceInfo">The <see cref="VoiceInfo"/> to generate the command from.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="outputBufferIndex">The output buffer index to use.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateAdpcmDataSourceVersion1(ref VoiceState voiceState, Memory<VoiceUpdateState> state, ushort outputBufferIndex, int nodeId)
+        public void GenerateAdpcmDataSourceVersion1(ref VoiceInfo voiceInfo, Memory<VoiceState> state, ushort outputBufferIndex, int nodeId)
         {
-            AdpcmDataSourceCommandVersion1 command = new(ref voiceState, state, outputBufferIndex, nodeId);
+            AdpcmDataSourceCommandVersion1 command = new(ref voiceInfo, state, outputBufferIndex, nodeId);
 
             command.EstimatedProcessingTime = _commandProcessingTimeEstimator.Estimate(command);
 
@@ -194,7 +196,7 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="outputBufferOffset">The output buffer offset.</param>
         /// <param name="needInitialization">Set to true if the biquad filter state needs to be initialized.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateBiquadFilter(int baseIndex, ref BiquadFilterParameter filter, Memory<BiquadFilterState> biquadFilterStateMemory, int inputBufferOffset, int outputBufferOffset, bool needInitialization, int nodeId)
+        public void GenerateBiquadFilter(int baseIndex, ref BiquadFilterParameter2 filter, Memory<BiquadFilterState> biquadFilterStateMemory, int inputBufferOffset, int outputBufferOffset, bool needInitialization, int nodeId)
         {
             BiquadFilterCommand command = new(baseIndex, ref filter, biquadFilterStateMemory, inputBufferOffset, outputBufferOffset, needInitialization, nodeId);
 
@@ -213,7 +215,7 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="outputBufferOffset">The output buffer offset.</param>
         /// <param name="isInitialized">Set to true if the biquad filter state is initialized.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateMultiTapBiquadFilter(int baseIndex, ReadOnlySpan<BiquadFilterParameter> filters, Memory<BiquadFilterState> biquadFilterStatesMemory, int inputBufferOffset, int outputBufferOffset, ReadOnlySpan<bool> isInitialized, int nodeId)
+        public void GenerateMultiTapBiquadFilter(int baseIndex, ReadOnlySpan<BiquadFilterParameter2> filters, Memory<BiquadFilterState> biquadFilterStatesMemory, int inputBufferOffset, int outputBufferOffset, ReadOnlySpan<bool> isInitialized, int nodeId)
         {
             MultiTapBiquadFilterCommand command = new(baseIndex, filters, biquadFilterStatesMemory, inputBufferOffset, outputBufferOffset, isInitialized, nodeId);
 
@@ -230,9 +232,9 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="outputBufferIndex">The base output index.</param>
         /// <param name="previousVolume">The previous volume.</param>
         /// <param name="volume">The new volume.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateMixRampGrouped(uint mixBufferCount, uint inputBufferIndex, uint outputBufferIndex, ReadOnlySpan<float> previousVolume, ReadOnlySpan<float> volume, Memory<VoiceUpdateState> state, int nodeId)
+        public void GenerateMixRampGrouped(uint mixBufferCount, uint inputBufferIndex, uint outputBufferIndex, ReadOnlySpan<float> previousVolume, ReadOnlySpan<float> volume, Memory<VoiceState> state, int nodeId)
         {
             MixRampGroupedCommand command = new(mixBufferCount, inputBufferIndex, outputBufferIndex, previousVolume, volume, state, nodeId);
 
@@ -248,10 +250,10 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="volume">The new volume.</param>
         /// <param name="inputBufferIndex">The input buffer index.</param>
         /// <param name="outputBufferIndex">The output buffer index.</param>
-        /// <param name="lastSampleIndex">The index in the <see cref="VoiceUpdateState.LastSamples"/> array to store the ramped sample.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="lastSampleIndex">The index in the <see cref="VoiceState.LastSamples"/> array to store the ramped sample.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateMixRamp(float previousVolume, float volume, uint inputBufferIndex, uint outputBufferIndex, int lastSampleIndex, Memory<VoiceUpdateState> state, int nodeId)
+        public void GenerateMixRamp(float previousVolume, float volume, uint inputBufferIndex, uint outputBufferIndex, int lastSampleIndex, Memory<VoiceState> state, int nodeId)
         {
             MixRampCommand command = new(previousVolume, volume, inputBufferIndex, outputBufferIndex, lastSampleIndex, state, nodeId);
 
@@ -267,8 +269,8 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="volume">The new volume.</param>
         /// <param name="inputBufferIndex">The input buffer index.</param>
         /// <param name="outputBufferIndex">The output buffer index.</param>
-        /// <param name="lastSampleIndex">The index in the <see cref="VoiceUpdateState.LastSamples"/> array to store the ramped sample.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="lastSampleIndex">The index in the <see cref="VoiceState.LastSamples"/> array to store the ramped sample.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="filter">The biquad filter parameter.</param>
         /// <param name="biquadFilterState">The biquad state.</param>
         /// <param name="previousBiquadFilterState">The previous biquad state.</param>
@@ -282,8 +284,8 @@ namespace Ryujinx.Audio.Renderer.Server
             uint inputBufferIndex,
             uint outputBufferIndex,
             int lastSampleIndex,
-            Memory<VoiceUpdateState> state,
-            ref BiquadFilterParameter filter,
+            Memory<VoiceState> state,
+            ref BiquadFilterParameter2 filter,
             Memory<BiquadFilterState> biquadFilterState,
             Memory<BiquadFilterState> previousBiquadFilterState,
             bool needInitialization,
@@ -318,8 +320,8 @@ namespace Ryujinx.Audio.Renderer.Server
         /// <param name="volume">The new volume.</param>
         /// <param name="inputBufferIndex">The input buffer index.</param>
         /// <param name="outputBufferIndex">The output buffer index.</param>
-        /// <param name="lastSampleIndex">The index in the <see cref="VoiceUpdateState.LastSamples"/> array to store the ramped sample.</param>
-        /// <param name="state">The <see cref="VoiceUpdateState"/> to generate the command from.</param>
+        /// <param name="lastSampleIndex">The index in the <see cref="VoiceState.LastSamples"/> array to store the ramped sample.</param>
+        /// <param name="state">The <see cref="VoiceState"/> to generate the command from.</param>
         /// <param name="filter0">First biquad filter parameter.</param>
         /// <param name="filter1">Second biquad filter parameter.</param>
         /// <param name="biquadFilterState0">First biquad state.</param>
@@ -337,9 +339,9 @@ namespace Ryujinx.Audio.Renderer.Server
             uint inputBufferIndex,
             uint outputBufferIndex,
             int lastSampleIndex,
-            Memory<VoiceUpdateState> state,
-            ref BiquadFilterParameter filter0,
-            ref BiquadFilterParameter filter1,
+            Memory<VoiceState> state,
+            ref BiquadFilterParameter2 filter0,
+            ref BiquadFilterParameter2 filter1,
             Memory<BiquadFilterState> biquadFilterState0,
             Memory<BiquadFilterState> biquadFilterState1,
             Memory<BiquadFilterState> previousBiquadFilterState0,
@@ -655,14 +657,14 @@ namespace Ryujinx.Audio.Renderer.Server
         /// Create a new <see cref="UpsampleCommand"/>.
         /// </summary>
         /// <param name="bufferOffset">The offset of the mix buffer.</param>
-        /// <param name="upsampler">The <see cref="UpsamplerState"/> associated.</param>
+        /// <param name="upsampler">The <see cref="UpsamplerInfo"/> associated.</param>
         /// <param name="inputCount">The total input count.</param>
         /// <param name="inputBufferOffset">The input buffer mix offset.</param>
         /// <param name="bufferCountPerSample">The buffer count per sample.</param>
         /// <param name="sampleCount">The source sample count.</param>
         /// <param name="sampleRate">The source sample rate.</param>
         /// <param name="nodeId">The node id associated to this command.</param>
-        public void GenerateUpsample(uint bufferOffset, UpsamplerState upsampler, uint inputCount, Span<byte> inputBufferOffset, uint bufferCountPerSample, uint sampleCount, uint sampleRate, int nodeId)
+        public void GenerateUpsample(uint bufferOffset, UpsamplerInfo upsampler, uint inputCount, Span<byte> inputBufferOffset, uint bufferCountPerSample, uint sampleCount, uint sampleRate, int nodeId)
         {
             UpsampleCommand command = new(bufferOffset, upsampler, inputCount, inputBufferOffset, bufferCountPerSample, sampleCount, sampleRate, nodeId);
 
@@ -685,6 +687,24 @@ namespace Ryujinx.Audio.Renderer.Server
 
             command.EstimatedProcessingTime = _commandProcessingTimeEstimator.Estimate(command);
 
+            AddCommand(command);
+        }
+
+        public void GenerateFillBuffer(SplitterDestination destination, float value, int length, int nodeId)
+        {
+            FillBufferCommand command;
+
+            if (Unsafe.IsNullRef(ref destination.GetV2RefOrNull()))
+            {
+                command = new(destination.GetV1RefOrNull(), length, value, nodeId);
+            }
+            else
+            {
+                command = new(destination.GetV2RefOrNull(), length, value, nodeId);
+            }
+            
+            command.EstimatedProcessingTime = _commandProcessingTimeEstimator.Estimate(command);
+            
             AddCommand(command);
         }
     }

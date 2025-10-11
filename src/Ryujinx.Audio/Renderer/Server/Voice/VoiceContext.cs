@@ -11,14 +11,14 @@ namespace Ryujinx.Audio.Renderer.Server.Voice
     public class VoiceContext
     {
         /// <summary>
-        /// Storage of the sorted indices to <see cref="VoiceState"/>.
+        /// Storage of the sorted indices to <see cref="VoiceInfo"/>.
         /// </summary>
         private Memory<int> _sortedVoices;
 
         /// <summary>
-        /// Storage for <see cref="VoiceState"/>.
+        /// Storage for <see cref="VoiceInfo"/>.
         /// </summary>
-        private Memory<VoiceState> _voices;
+        private Memory<VoiceInfo> _voices;
 
         /// <summary>
         /// Storage for <see cref="VoiceChannelResource"/>.
@@ -26,27 +26,27 @@ namespace Ryujinx.Audio.Renderer.Server.Voice
         private Memory<VoiceChannelResource> _voiceChannelResources;
 
         /// <summary>
-        /// Storage for <see cref="VoiceUpdateState"/> that are used during audio renderer server updates.
+        /// Storage for <see cref="VoiceState"/> that are used during audio renderer server updates.
         /// </summary>
-        private Memory<VoiceUpdateState> _voiceUpdateStatesCpu;
+        private Memory<VoiceState> _voiceStatesCpu;
 
         /// <summary>
-        /// Storage for <see cref="VoiceUpdateState"/> for the <see cref="Dsp.AudioProcessor"/>.
+        /// Storage for <see cref="VoiceState"/> for the <see cref="Dsp.AudioProcessor"/>.
         /// </summary>
-        private Memory<VoiceUpdateState> _voiceUpdateStatesDsp;
+        private Memory<VoiceState> _voiceStatesDsp;
 
         /// <summary>
         /// The total voice count.
         /// </summary>
         private uint _voiceCount;
 
-        public void Initialize(Memory<int> sortedVoices, Memory<VoiceState> voices, Memory<VoiceChannelResource> voiceChannelResources, Memory<VoiceUpdateState> voiceUpdateStatesCpu, Memory<VoiceUpdateState> voiceUpdateStatesDsp, uint voiceCount)
+        public void Initialize(Memory<int> sortedVoices, Memory<VoiceInfo> voices, Memory<VoiceChannelResource> voiceChannelResources, Memory<VoiceState> voiceStatesCpu, Memory<VoiceState> voiceStatesDsp, uint voiceCount)
         {
             _sortedVoices = sortedVoices;
             _voices = voices;
             _voiceChannelResources = voiceChannelResources;
-            _voiceUpdateStatesCpu = voiceUpdateStatesCpu;
-            _voiceUpdateStatesDsp = voiceUpdateStatesDsp;
+            _voiceStatesCpu = voiceStatesCpu;
+            _voiceStatesDsp = voiceStatesDsp;
             _voiceCount = voiceCount;
         }
 
@@ -70,38 +70,38 @@ namespace Ryujinx.Audio.Renderer.Server.Voice
         }
 
         /// <summary>
-        /// Get a <see cref="Memory{VoiceUpdateState}"/> at the given <paramref name="id"/>.
+        /// Get a <see cref="Memory{VoiceState}"/> at the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The index to use.</param>
-        /// <returns>A <see cref="Memory{VoiceUpdateState}"/> at the given <paramref name="id"/>.</returns>
-        /// <remarks>The returned <see cref="Memory{VoiceUpdateState}"/> should only be used when updating the server state.</remarks>
-        public Memory<VoiceUpdateState> GetUpdateStateForCpu(int id)
+        /// <returns>A <see cref="Memory{VoiceState}"/> at the given <paramref name="id"/>.</returns>
+        /// <remarks>The returned <see cref="Memory{VoiceState}"/> should only be used when updating the server state.</remarks>
+        public Memory<VoiceState> GetUpdateStateForCpu(int id)
         {
-            return SpanIOHelper.GetMemory(_voiceUpdateStatesCpu, id, _voiceCount);
+            return SpanIOHelper.GetMemory(_voiceStatesCpu, id, _voiceCount);
         }
 
         /// <summary>
-        /// Get a <see cref="Memory{VoiceUpdateState}"/> at the given <paramref name="id"/>.
+        /// Get a <see cref="Memory{VoiceState}"/> at the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The index to use.</param>
-        /// <returns>A <see cref="Memory{VoiceUpdateState}"/> at the given <paramref name="id"/>.</returns>
-        /// <remarks>The returned <see cref="Memory{VoiceUpdateState}"/> should only be used in the context of processing on the <see cref="Dsp.AudioProcessor"/>.</remarks>
-        public Memory<VoiceUpdateState> GetUpdateStateForDsp(int id)
+        /// <returns>A <see cref="Memory{VoiceState}"/> at the given <paramref name="id"/>.</returns>
+        /// <remarks>The returned <see cref="Memory{VoiceState}"/> should only be used in the context of processing on the <see cref="Dsp.AudioProcessor"/>.</remarks>
+        public Memory<VoiceState> GetUpdateStateForDsp(int id)
         {
-            return SpanIOHelper.GetMemory(_voiceUpdateStatesDsp, id, _voiceCount);
+            return SpanIOHelper.GetMemory(_voiceStatesDsp, id, _voiceCount);
         }
 
         /// <summary>
-        /// Get a reference to a <see cref="VoiceState"/> at the given <paramref name="id"/>.
+        /// Get a reference to a <see cref="VoiceInfo"/> at the given <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The index to use.</param>
-        /// <returns>A reference to a <see cref="VoiceState"/> at the given <paramref name="id"/>.</returns>
-        public ref VoiceState GetState(int id)
+        /// <returns>A reference to a <see cref="VoiceInfo"/> at the given <paramref name="id"/>.</returns>
+        public ref VoiceInfo GetState(int id)
         {
             return ref SpanIOHelper.GetFromMemory(_voices, id, _voiceCount);
         }
 
-        public ref VoiceState GetSortedState(int id)
+        public ref VoiceInfo GetSortedState(int id)
         {
             Debug.Assert(id >= 0 && id < _voiceCount);
 
@@ -113,7 +113,7 @@ namespace Ryujinx.Audio.Renderer.Server.Voice
         /// </summary>
         public void UpdateForCommandGeneration()
         {
-            _voiceUpdateStatesDsp.CopyTo(_voiceUpdateStatesCpu);
+            _voiceStatesDsp.CopyTo(_voiceStatesCpu);
         }
 
         /// <summary>
@@ -130,14 +130,14 @@ namespace Ryujinx.Audio.Renderer.Server.Voice
 
             sortedVoicesTemp.Sort((a, b) =>
             {
-                ref VoiceState aState = ref GetState(a);
-                ref VoiceState bState = ref GetState(b);
+                ref VoiceInfo aInfo = ref GetState(a);
+                ref VoiceInfo bInfo = ref GetState(b);
 
-                int result = aState.Priority.CompareTo(bState.Priority);
+                int result = aInfo.Priority.CompareTo(bInfo.Priority);
 
                 if (result == 0)
                 {
-                    return aState.SortingOrder.CompareTo(bState.SortingOrder);
+                    return aInfo.SortingOrder.CompareTo(bInfo.SortingOrder);
                 }
 
                 return result;

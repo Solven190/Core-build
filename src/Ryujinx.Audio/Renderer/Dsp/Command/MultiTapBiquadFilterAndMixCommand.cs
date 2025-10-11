@@ -18,15 +18,15 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public ushort InputBufferIndex { get; }
         public ushort OutputBufferIndex { get; }
 
-        private BiquadFilterParameter _parameter0;
-        private BiquadFilterParameter _parameter1;
+        private BiquadFilterParameter2 _parameter0;
+        private BiquadFilterParameter2 _parameter1;
 
         public Memory<BiquadFilterState> BiquadFilterState0 { get; }
         public Memory<BiquadFilterState> BiquadFilterState1 { get; }
         public Memory<BiquadFilterState> PreviousBiquadFilterState0 { get; }
         public Memory<BiquadFilterState> PreviousBiquadFilterState1 { get; }
 
-        public Memory<VoiceUpdateState> State { get; }
+        public Memory<VoiceState> State { get; }
 
         public int LastSampleIndex { get; }
 
@@ -44,9 +44,9 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             uint inputBufferIndex,
             uint outputBufferIndex,
             int lastSampleIndex,
-            Memory<VoiceUpdateState> state,
-            ref BiquadFilterParameter filter0,
-            ref BiquadFilterParameter filter1,
+            Memory<VoiceState> state,
+            ref BiquadFilterParameter2 filter0,
+            ref BiquadFilterParameter2 filter1,
             Memory<BiquadFilterState> biquadFilterState0,
             Memory<BiquadFilterState> biquadFilterState1,
             Memory<BiquadFilterState> previousBiquadFilterState0,

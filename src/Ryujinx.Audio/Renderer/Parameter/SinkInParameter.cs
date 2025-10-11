@@ -25,7 +25,7 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// <summary>
         /// Reserved/padding.
         /// </summary>
-        private readonly ushort _reserved1;
+        private readonly ushort _magic; // 0xCAFE
 
         /// <summary>
         /// The node id of the sink.

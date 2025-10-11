@@ -1,7 +1,9 @@
+using Ryujinx.Audio.Renderer.Server.Voice;
+
 namespace Ryujinx.Audio.Renderer.Server.Types
 {
     /// <summary>
-    /// The internal play state of a <see cref="Voice.VoiceState"/>
+    /// The internal play state of a <see cref="VoiceInfo"/>
     /// </summary>
     public enum PlayState
     {
@@ -24,7 +26,7 @@ namespace Ryujinx.Audio.Renderer.Server.Types
         /// </summary>
         /// <remarks>
         /// This is changed to the <see cref="Stopped"/> state after command generation.
-        /// <seealso cref="Voice.VoiceState.UpdateForCommandGeneration(Voice.VoiceContext)"/>
+        /// <seealso cref="VoiceInfo.UpdateForCommandGeneration(Voice.VoiceContext)"/>
         /// </remarks>
         Stopping,
 

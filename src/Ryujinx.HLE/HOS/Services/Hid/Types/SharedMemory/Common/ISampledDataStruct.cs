@@ -50,7 +50,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid.Types.SharedMemory.Common
 
             ulong value = BinaryPrimitives.ReadUInt64LittleEndian(byteSpan);
 
-            return value;
+            return value << 1;
         }
 
         private static int GetSamplingNumberFieldOffset<T>(ref T sampledDataStruct) where T : unmanaged, ISampledDataStruct

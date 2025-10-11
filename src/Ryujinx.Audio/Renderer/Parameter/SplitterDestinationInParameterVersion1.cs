@@ -60,8 +60,8 @@ namespace Ryujinx.Audio.Renderer.Parameter
         readonly int ISplitterDestinationInParameter.Id => Id;
 
         readonly int ISplitterDestinationInParameter.DestinationId => DestinationId;
-
-        readonly Array2<BiquadFilterParameter> ISplitterDestinationInParameter.BiquadFilters => default;
+        
+        readonly Array2<BiquadFilterParameter2> ISplitterDestinationInParameter.BiquadFilters2 => default;
 
         readonly bool ISplitterDestinationInParameter.IsUsed => IsUsed;
         readonly bool ISplitterDestinationInParameter.ResetPrevVolume => ResetPrevVolume;

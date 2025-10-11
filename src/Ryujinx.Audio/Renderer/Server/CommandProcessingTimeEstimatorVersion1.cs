@@ -194,5 +194,10 @@ namespace Ryujinx.Audio.Renderer.Server
         {
             return 0;
         }
+
+        public uint Estimate(FillBufferCommand command)
+        {
+            return 0;
+        }
     }
 }

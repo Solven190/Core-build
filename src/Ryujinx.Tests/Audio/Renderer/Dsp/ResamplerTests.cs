@@ -8,19 +8,19 @@ namespace Ryujinx.Tests.Audio.Renderer.Dsp
     class ResamplerTests
     {
         [Test]
-        [TestCase(VoiceInParameter.SampleRateConversionQuality.Low)]
-        [TestCase(VoiceInParameter.SampleRateConversionQuality.Default)]
-        [TestCase(VoiceInParameter.SampleRateConversionQuality.High)]
-        public void TestResamplerConsistencyUpsampling(VoiceInParameter.SampleRateConversionQuality quality)
+        [TestCase(SampleRateConversionQuality.Low)]
+        [TestCase(SampleRateConversionQuality.Default)]
+        [TestCase(SampleRateConversionQuality.High)]
+        public void TestResamplerConsistencyUpsampling(SampleRateConversionQuality quality)
         {
             DoResamplingTest(44100, 48000, quality);
         }
 
         [Test]
-        [TestCase(VoiceInParameter.SampleRateConversionQuality.Low)]
-        [TestCase(VoiceInParameter.SampleRateConversionQuality.Default)]
-        [TestCase(VoiceInParameter.SampleRateConversionQuality.High)]
-        public void TestResamplerConsistencyDownsampling(VoiceInParameter.SampleRateConversionQuality quality)
+        [TestCase(SampleRateConversionQuality.Low)]
+        [TestCase(SampleRateConversionQuality.Default)]
+        [TestCase(SampleRateConversionQuality.High)]
+        public void TestResamplerConsistencyDownsampling(SampleRateConversionQuality quality)
         {
             DoResamplingTest(48000, 44100, quality);
         }
@@ -32,7 +32,7 @@ namespace Ryujinx.Tests.Audio.Renderer.Dsp
         /// <param name="inputRate">The input sample rate to test</param>
         /// <param name="outputRate">The output sample rate to test</param>
         /// <param name="quality">The resampler quality to use</param>
-        private static void DoResamplingTest(int inputRate, int outputRate, VoiceInParameter.SampleRateConversionQuality quality)
+        private static void DoResamplingTest(int inputRate, int outputRate, SampleRateConversionQuality quality)
         {
             float inputSampleRate = inputRate;
             float outputSampleRate = outputRate;
@@ -61,8 +61,8 @@ namespace Ryujinx.Tests.Audio.Renderer.Dsp
             float sumDifference = 0;
             int delay = quality switch
             {
-                VoiceInParameter.SampleRateConversionQuality.High => 3,
-                VoiceInParameter.SampleRateConversionQuality.Default => 1,
+                SampleRateConversionQuality.High => 3,
+                SampleRateConversionQuality.Default => 1,
                 _ => 0,
             };
 

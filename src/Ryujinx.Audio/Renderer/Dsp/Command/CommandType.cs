@@ -12,6 +12,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         Volume,
         VolumeRamp,
         BiquadFilter,
+        BiquadFilterFloatCoeff, // new
         Mix,
         MixRamp,
         MixRampGrouped,
@@ -31,9 +32,17 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         LimiterVersion1,
         LimiterVersion2,
         MultiTapBiquadFilter,
+        MultiTapBiquadFilterFloatCoeff, // new
         CaptureBuffer,
         Compressor,
         BiquadFilterAndMix,
+        BiquadFilterAndMixFloatCoeff, // new
         MultiTapBiquadFilterAndMix,
+        MultiTapBiquadFilterAndMixFloatCoef, // new
+        AuxiliaryBufferGrouped, // new
+        FillMixBuffer, // new
+        BiquadFilterCrossFade, // new
+        MultiTapBiquadFilterCrossFade, // new
+        FillBuffer, // new
     }
 }

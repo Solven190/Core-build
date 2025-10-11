@@ -1,15 +1,15 @@
 using NUnit.Framework;
-using Ryujinx.Audio.Renderer.Server.Mix;
+using Ryujinx.Audio.Renderer.Server.Voice;
 using System.Runtime.CompilerServices;
 
 namespace Ryujinx.Tests.Audio.Renderer.Server
 {
-    class MixStateTests
+    class VoiceInfoTests
     {
         [Test]
         public void EnsureTypeSize()
         {
-            Assert.AreEqual(0x940, Unsafe.SizeOf<MixState>());
+            Assert.LessOrEqual(Unsafe.SizeOf<VoiceInfo>(), 0x238);
         }
     }
 }

@@ -17,11 +17,11 @@ namespace Ryujinx.Audio.Renderer.Parameter
         /// The mix to output the result of the splitter.
         /// </summary>
         int DestinationId { get; }
-
+        
         /// <summary>
         /// Biquad filter parameters.
         /// </summary>
-        Array2<BiquadFilterParameter> BiquadFilters { get; }
+        Array2<BiquadFilterParameter2> BiquadFilters2 { get; }
 
         /// <summary>
         /// Set to true if in use.

@@ -10,11 +10,11 @@ namespace Ryujinx.Audio.Renderer.Server.Performance
         /// Get the required size for a single performance frame.
         /// </summary>
         /// <param name="parameter">The audio renderer configuration.</param>
-        /// <param name="behaviourContext">The behaviour context.</param>
+        /// <param name="behaviourInfo">The behaviour context.</param>
         /// <returns>The required size for a single performance frame.</returns>
-        public static ulong GetRequiredBufferSizeForPerformanceMetricsPerFrame(ref AudioRendererConfiguration parameter, ref BehaviourContext behaviourContext)
+        public static ulong GetRequiredBufferSizeForPerformanceMetricsPerFrame(ref AudioRendererConfiguration parameter, ref BehaviourInfo behaviourInfo)
         {
-            uint version = behaviourContext.GetPerformanceMetricsDataFormat();
+            uint version = behaviourInfo.GetPerformanceMetricsDataFormat();
 
             if (version == 2)
             {
@@ -81,11 +81,11 @@ namespace Ryujinx.Audio.Renderer.Server.Performance
         /// </summary>
         /// <param name="performanceBuffer">The backing memory available for use by the manager.</param>
         /// <param name="parameter">The audio renderer configuration.</param>
-        /// <param name="behaviourContext">The behaviour context;</param>
+        /// <param name="behaviourInfo">The behaviour context;</param>
         /// <returns>A new <see cref="PerformanceManager"/>.</returns>
-        public static PerformanceManager Create(Memory<byte> performanceBuffer, ref AudioRendererConfiguration parameter, BehaviourContext behaviourContext)
+        public static PerformanceManager Create(Memory<byte> performanceBuffer, ref AudioRendererConfiguration parameter, BehaviourInfo behaviourInfo)
         {
-            uint version = behaviourContext.GetPerformanceMetricsDataFormat();
+            uint version = behaviourInfo.GetPerformanceMetricsDataFormat();
 
             return version switch
             {

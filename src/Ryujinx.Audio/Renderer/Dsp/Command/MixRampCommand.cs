@@ -20,11 +20,11 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public float Volume0 { get; }
         public float Volume1 { get; }
 
-        public Memory<VoiceUpdateState> State { get; }
+        public Memory<VoiceState> State { get; }
 
         public int LastSampleIndex { get; }
 
-        public MixRampCommand(float volume0, float volume1, uint inputBufferIndex, uint outputBufferIndex, int lastSampleIndex, Memory<VoiceUpdateState> state, int nodeId)
+        public MixRampCommand(float volume0, float volume1, uint inputBufferIndex, uint outputBufferIndex, int lastSampleIndex, Memory<VoiceState> state, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;

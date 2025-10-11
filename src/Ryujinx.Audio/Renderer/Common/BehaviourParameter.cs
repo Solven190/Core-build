@@ -1,9 +1,11 @@
+using Ryujinx.Audio.Renderer.Server;
+using Ryujinx.Audio.Renderer.Server.MemoryPool;
 using System.Runtime.InteropServices;
 
 namespace Ryujinx.Audio.Renderer.Common
 {
     /// <summary>
-    /// Represents the input parameter for <see cref="Server.BehaviourContext"/>.
+    /// Represents the input parameter for <see cref="BehaviourInfo"/>.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BehaviourParameter
@@ -21,7 +23,7 @@ namespace Ryujinx.Audio.Renderer.Common
         /// <summary>
         /// The flags given controlling behaviour of the audio renderer
         /// </summary>
-        /// <remarks>See <see cref="Server.BehaviourContext.UpdateFlags(ulong)"/> and <see cref="Server.BehaviourContext.IsMemoryPoolForceMappingEnabled"/>.</remarks>
+        /// <remarks>See <see cref="BehaviourInfo.UpdateFlags(ulong)"/> and <see cref="BehaviourInfo.IsMemoryPoolForceMappingEnabled"/>.</remarks>
         public ulong Flags;
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace Ryujinx.Audio.Renderer.Common
             /// <summary>
             /// Extra information given with the <see cref="ResultCode"/>
             /// </summary>
-            /// <remarks>This is usually used to report a faulting cpu address when a <see cref="Server.MemoryPool.MemoryPoolState"/> mapping fail.</remarks>
+            /// <remarks>This is usually used to report a faulting cpu address when a <see cref="MemoryPoolInfo"/> mapping fail.</remarks>
             public ulong ExtraErrorInfo;
         }
     }
