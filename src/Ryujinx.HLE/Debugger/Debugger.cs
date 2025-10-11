@@ -1037,12 +1037,13 @@ namespace Ryujinx.HLE.Debugger
 
                 string response = command.Trim().ToLowerInvariant() switch
                 {
-                    "help" => "backtrace\nbt\nregisters\nreg\nget info\n",
+                    "help" => "backtrace\nbt\nregisters\nreg\nget info\nminidump",
                     "get info" => GetProcessInfo(),
                     "backtrace" => GetStackTrace(),
                     "bt" => GetStackTrace(),
                     "registers" => GetRegisters(),
                     "reg" => GetRegisters(),
+                    "minidump" => GetMinidump(),
                     _ => $"Unknown command: {command}\n"
                 };
 
@@ -1075,6 +1076,42 @@ namespace Ryujinx.HLE.Debugger
                 return "No application process found\n";
 
             return Process.Debugger.GetCpuRegisterPrintout(DebugProcess.GetThread(gThread.Value));
+        }
+
+        private string GetMinidump()
+        {
+            var response = new StringBuilder();
+            response.AppendLine("=== Begin Minidump ===\n");
+            response.AppendLine(GetProcessInfo());
+
+            foreach (var thread in GetThreads())
+            {
+                response.AppendLine($"=== Thread {thread.ThreadUid} ===");
+                try
+                {
+                    string stackTrace = Process.Debugger.GetGuestStackTrace(thread);
+                    response.AppendLine(stackTrace);
+                }
+                catch (Exception e)
+                {
+                    response.AppendLine($"[Error getting stack trace: {e.Message}]");
+                }
+
+                try
+                {
+                    string registers = Process.Debugger.GetCpuRegisterPrintout(thread);
+                    response.AppendLine(registers);
+                }
+                catch (Exception e)
+                {
+                    response.AppendLine($"[Error getting registers: {e.Message}]");
+                }
+            }
+
+            response.AppendLine("=== End Minidump ===");
+
+            Logger.Info?.Print(LogClass.GdbStub, response.ToString());
+            return response.ToString();
         }
 
         private string GetProcessInfo()
