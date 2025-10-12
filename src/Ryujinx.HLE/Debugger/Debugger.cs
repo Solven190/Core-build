@@ -859,7 +859,13 @@ namespace Ryujinx.HLE.Debugger
         {
             if (threadId is 0 or null)
             {
-                threadId = GetThreads().First().ThreadUid;
+                var threads = GetThreads();
+                if (threads.Length == 0)
+                {
+                    ReplyError();
+                    return;
+                }
+                threadId = threads.First().ThreadUid;
             }
 
             if (DebugProcess.GetThread(threadId.Value) == null)
@@ -1037,7 +1043,7 @@ namespace Ryujinx.HLE.Debugger
 
                 string response = command.Trim().ToLowerInvariant() switch
                 {
-                    "help" => "backtrace\nbt\nregisters\nreg\nget info\nminidump",
+                    "help" => "backtrace\nbt\nregisters\nreg\nget info\nminidump\n",
                     "get info" => GetProcessInfo(),
                     "backtrace" => GetStackTrace(),
                     "bt" => GetStackTrace(),
@@ -1192,11 +1198,11 @@ namespace Ryujinx.HLE.Debugger
 
                 // If the user connects before the application is running, wait for the application to start.
                 int retries = 10;
-                while (DebugProcess == null && retries-- > 0)
+                while ((DebugProcess == null || GetThreads().Length == 0) && retries-- > 0)
                 {
                     Thread.Sleep(200);
                 }
-                if (DebugProcess == null)
+                if (DebugProcess == null || GetThreads().Length == 0)
                 {
                     Logger.Warning?.Print(LogClass.GdbStub, "Application is not running, cannot accept GDB client connection");
                     ClientSocket.Close();
