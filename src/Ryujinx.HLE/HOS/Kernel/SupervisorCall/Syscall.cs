@@ -1885,6 +1885,9 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
                     return;
                 }
 
+                Logger.Error?.Print(LogClass.KernelSvc, "The guest program broke execution!");
+                Logger.Flush();
+
                 // TODO: Debug events.
                 currentThread.Owner.TerminateCurrentProcess();
 

@@ -187,6 +187,17 @@ namespace Ryujinx.Common.Logging
             }
         }
 
+        public static void Flush()
+        {
+            foreach (ILogTarget target in _logTargets)
+            {
+                if (target is AsyncLogTargetWrapper asyncTarget)
+                {
+                    asyncTarget.Flush();
+                }
+            }
+        }
+
         public static void Shutdown()
         {
             Updated = null;

@@ -27,6 +27,17 @@ namespace Ryujinx.Common.Logging.Targets
 
         private readonly int _overflowTimeout;
 
+        private sealed class FlushEventArgs : LogEventArgs
+        {
+            public readonly ManualResetEventSlim SignalEvent;
+
+            public FlushEventArgs(ManualResetEventSlim signalEvent)
+                : base(LogLevel.Notice, TimeSpan.Zero, string.Empty, string.Empty)
+            {
+                SignalEvent = signalEvent;
+            }
+        }
+
         string ILogTarget.Name => _target.Name;
 
         public AsyncLogTargetWrapper(ILogTarget target, int queueLimit = -1, AsyncLogTargetOverflowAction overflowAction = AsyncLogTargetOverflowAction.Block)
@@ -41,7 +52,15 @@ namespace Ryujinx.Common.Logging.Targets
                 {
                     try
                     {
-                        _target.Log(this, _messageQueue.Take());
+                        LogEventArgs item = _messageQueue.Take();
+
+                        if (item is FlushEventArgs flush)
+                        {
+                            flush.SignalEvent.Set();
+                            continue;
+                        }
+
+                        _target.Log(this, item);
                     }
                     catch (InvalidOperationException)
                     {
@@ -66,6 +85,26 @@ namespace Ryujinx.Common.Logging.Targets
             {
                 _messageQueue.TryAdd(e, _overflowTimeout);
             }
+        }
+
+        public void Flush()
+        {
+            if (_messageQueue.Count == 0 || _messageQueue.IsAddingCompleted)
+            {
+                return;
+            }
+
+            using var signal = new ManualResetEventSlim(false);
+            try
+            {
+                _messageQueue.Add(new FlushEventArgs(signal));
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
+
+            signal.Wait();
         }
 
         public void Dispose()

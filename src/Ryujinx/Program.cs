@@ -272,6 +272,7 @@ namespace Ryujinx.Ava
 
             if (isTerminating)
             {
+                Logger.Flush();
                 Exit();
             }
         }
