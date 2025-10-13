@@ -585,7 +585,6 @@ namespace Ryujinx.Ava.UI.ViewModels
             EnableDiscordIntegration = config.EnableDiscordIntegration;
             CheckUpdatesOnStart = config.CheckUpdatesOnStart;
             ShowConfirmExit = config.ShowConfirmExit;
-            IgnoreApplet = config.IgnoreControllerApplet;
             RememberWindowState = config.RememberWindowState;
             HideCursor = (int)config.HideCursor.Value;
 
@@ -630,6 +629,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             EnableFsIntegrityChecks = config.System.EnableFsIntegrityChecks;
             DramSize = config.System.DramSize;
             IgnoreMissingServices = config.System.IgnoreMissingServices;
+            IgnoreApplet = config.System.IgnoreControllerApplet;
             SkipUserProfiles = config.System.SkipUserProfilesManager;
 
             // CPU
@@ -697,7 +697,6 @@ namespace Ryujinx.Ava.UI.ViewModels
             config.EnableDiscordIntegration.Value = EnableDiscordIntegration;
             config.CheckUpdatesOnStart.Value = CheckUpdatesOnStart;
             config.ShowConfirmExit.Value = ShowConfirmExit;
-            config.IgnoreControllerApplet.Value = IgnoreApplet;
             config.RememberWindowState.Value = RememberWindowState;
             config.HideCursor.Value = (HideCursorMode)HideCursor;
 
@@ -746,6 +745,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             config.System.EnableFsIntegrityChecks.Value = EnableFsIntegrityChecks;
             config.System.DramSize.Value = DramSize;
             config.System.IgnoreMissingServices.Value = IgnoreMissingServices;
+            config.System.IgnoreControllerApplet.Value = IgnoreApplet;
             config.System.SkipUserProfilesManager.Value = SkipUserProfiles;
 
             // CPU

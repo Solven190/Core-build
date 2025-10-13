@@ -391,6 +391,11 @@ namespace Ryujinx.UI.Common.Configuration
             public ReactiveObject<bool> IgnoreMissingServices { get; private set; }
 
             /// <summary>
+            /// Ignore Controller Applet
+            /// </summary>
+            public ReactiveObject<bool> IgnoreControllerApplet { get; private set; }
+
+            /// <summary>
             ///  Skip User Profiles Manager
             /// </summary>
             public ReactiveObject<bool> SkipUserProfilesManager { get; private set; }
@@ -438,6 +443,8 @@ namespace Ryujinx.UI.Common.Configuration
                 DramSize.Event += static (_, e) => LogValueChange(e, nameof(DramSize));
                 IgnoreMissingServices = new ReactiveObject<bool>();
                 IgnoreMissingServices.Event += static (_, e) => LogValueChange(e, nameof(IgnoreMissingServices));
+                IgnoreControllerApplet = new ReactiveObject<bool>();
+                IgnoreControllerApplet.Event += static (_, e) => LogValueChange(e, nameof(IgnoreControllerApplet));
                 SkipUserProfilesManager = new ReactiveObject<bool>();
                 SkipUserProfilesManager.Event += static (_, e) => LogValueChange(e, nameof(SkipUserProfilesManager));
                 AudioVolume = new ReactiveObject<float>();
@@ -749,11 +756,6 @@ namespace Ryujinx.UI.Common.Configuration
         public ReactiveObject<bool> ShowConfirmExit { get; private set; }
 
         /// <summary>
-        /// Ignore Controller Applet
-        /// </summary>
-        public ReactiveObject<bool> IgnoreControllerApplet { get; private set; }
-
-        /// <summary>
         /// Enables or disables save window size, position and state on close.
         /// </summary>
         public ReactiveObject<bool> RememberWindowState { get; private set; }
@@ -780,7 +782,6 @@ namespace Ryujinx.UI.Common.Configuration
             EnableDiscordIntegration = new ReactiveObject<bool>();
             CheckUpdatesOnStart = new ReactiveObject<bool>();
             ShowConfirmExit = new ReactiveObject<bool>();
-            IgnoreControllerApplet = new ReactiveObject<bool>();
             RememberWindowState = new ReactiveObject<bool>();
             EnableHardwareAcceleration = new ReactiveObject<bool>();
             HideCursor = new ReactiveObject<HideCursorMode>();
@@ -820,7 +821,6 @@ namespace Ryujinx.UI.Common.Configuration
                 EnableDiscordIntegration = EnableDiscordIntegration,
                 CheckUpdatesOnStart = CheckUpdatesOnStart,
                 ShowConfirmExit = ShowConfirmExit,
-                IgnoreApplet = IgnoreControllerApplet,
                 RememberWindowState = RememberWindowState,
                 EnableHardwareAcceleration = EnableHardwareAcceleration,
                 HideCursor = HideCursor,
@@ -842,6 +842,7 @@ namespace Ryujinx.UI.Common.Configuration
                 MemoryManagerMode = System.MemoryManagerMode,
                 DramSize = System.DramSize,
                 IgnoreMissingServices = System.IgnoreMissingServices,
+                IgnoreApplet = System.IgnoreControllerApplet,
                 SkipUserProfiles = System.SkipUserProfilesManager,
                 UseHypervisor = System.UseHypervisor,
                 GuiColumns = new GuiColumns
@@ -944,7 +945,6 @@ namespace Ryujinx.UI.Common.Configuration
             EnableDiscordIntegration.Value = true;
             CheckUpdatesOnStart.Value = true;
             ShowConfirmExit.Value = true;
-            IgnoreControllerApplet.Value = false;
             RememberWindowState.Value = true;
             EnableHardwareAcceleration.Value = true;
             HideCursor.Value = HideCursorMode.OnIdle;
@@ -967,6 +967,7 @@ namespace Ryujinx.UI.Common.Configuration
             System.MemoryManagerMode.Value = MemoryManagerMode.HostMappedUnsafe;
             System.DramSize.Value = MemoryConfiguration.MemoryConfiguration4GiB;
             System.IgnoreMissingServices.Value = false;
+            System.IgnoreControllerApplet.Value = false;
             System.SkipUserProfilesManager.Value = false;
             System.UseHypervisor.Value = true;
             Multiplayer.LanInterfaceId.Value = "0";
@@ -1785,7 +1786,6 @@ namespace Ryujinx.UI.Common.Configuration
             EnableDiscordIntegration.Value = configurationFileFormat.EnableDiscordIntegration;
             CheckUpdatesOnStart.Value = configurationFileFormat.CheckUpdatesOnStart;
             ShowConfirmExit.Value = configurationFileFormat.ShowConfirmExit;
-            IgnoreControllerApplet.Value = configurationFileFormat.IgnoreApplet;
             RememberWindowState.Value = configurationFileFormat.RememberWindowState;
             EnableHardwareAcceleration.Value = configurationFileFormat.EnableHardwareAcceleration;
             HideCursor.Value = configurationFileFormat.HideCursor;
@@ -1807,6 +1807,7 @@ namespace Ryujinx.UI.Common.Configuration
             System.MemoryManagerMode.Value = configurationFileFormat.MemoryManagerMode;
             System.DramSize.Value = configurationFileFormat.DramSize;
             System.IgnoreMissingServices.Value = configurationFileFormat.IgnoreMissingServices;
+            System.IgnoreControllerApplet.Value = configurationFileFormat.IgnoreApplet;
             System.SkipUserProfilesManager.Value = configurationFileFormat.SkipUserProfiles;
             System.UseHypervisor.Value = configurationFileFormat.UseHypervisor;
             UI.GuiColumns.FavColumn.Value = configurationFileFormat.GuiColumns.FavColumn;

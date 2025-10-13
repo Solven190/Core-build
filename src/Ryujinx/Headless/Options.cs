@@ -145,7 +145,7 @@ namespace Ryujinx.Headless
                 IgnoreMissingServices = configurationState.System.IgnoreMissingServices;
             
             if (NeedsOverride(nameof(IgnoreControllerApplet)))
-                IgnoreControllerApplet = configurationState.IgnoreControllerApplet;
+                IgnoreControllerApplet = configurationState.System.IgnoreControllerApplet;
 
             if (NeedsOverride(nameof(SkipUserProfilesManager)))
                 SkipUserProfilesManager = configurationState.System.SkipUserProfilesManager;
