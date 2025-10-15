@@ -29,6 +29,7 @@ namespace Ryujinx.HLE.HOS.Kernel
                 capabilities,
                 context.ResourceLimit,
                 MemoryRegion.Service,
+                context.Device.Configuration.MemoryConfiguration,
                 null,
                 customThreadStart);
 
