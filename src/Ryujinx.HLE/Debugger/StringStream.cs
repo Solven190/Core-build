@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Ryujinx.HLE.Debugger
 {
-    class StringStream
+    internal class StringStream
     {
         private readonly string Data;
         private int Position;
