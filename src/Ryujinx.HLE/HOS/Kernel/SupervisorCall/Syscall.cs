@@ -881,7 +881,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
         [Svc(1)]
         public Result SetHeapSize([PointerSized] out ulong address, [PointerSized] ulong size)
         {
-            if ((size & 0xfffffffd001fffff) != 0)
+            if ((size & 0xfffffffe001fffff) != 0)
             {
                 address = 0;
 
