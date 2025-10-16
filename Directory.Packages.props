@@ -36,7 +36,7 @@
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.macOS" Version="5.0.3-build14" />
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.Windows" Version="6.1.3-build5" />
     <PackageVersion Include="Ryujinx.Graphics.Vulkan.Dependencies.MoltenVK" Version="1.2.0" />
-    <PackageVersion Include="Ryujinx.LibHac" Version="0.21.0-alpha.116" />
+    <PackageVersion Include="Ryujinx.LibHac" Version="0.21.0-alpha.117" />
     <PackageVersion Include="Ryujinx.SDL2-CS-Redux" Version="2.32.10" />
     <PackageVersion Include="securifybv.ShellLink" Version="0.1.0" />
     <PackageVersion Include="shaderc.net" Version="0.1.0" />
