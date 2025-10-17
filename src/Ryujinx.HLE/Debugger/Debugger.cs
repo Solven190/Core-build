@@ -103,6 +103,10 @@ namespace Ryujinx.HLE.Debugger
                 {
                     Logger.Error?.Print(LogClass.GdbStub, "Error while processing GDB messages", e);
                 }
+                catch (ObjectDisposedException e)
+                {
+                    Logger.Error?.Print(LogClass.GdbStub, "Error while processing GDB messages", e);
+                }
             }
         }
 
@@ -304,6 +308,7 @@ namespace Ryujinx.HLE.Debugger
                 WriteStream = null;
                 ClientSocket.Close();
                 ClientSocket = null;
+                CommandProcessor = null;
 
                 BreakpointManager.ClearAll();
             }

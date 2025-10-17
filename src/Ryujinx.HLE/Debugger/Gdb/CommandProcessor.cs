@@ -310,7 +310,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                         switch (type)
                         {
                             case "0": // Software breakpoint
-                                if (!Commands.Debugger.BreakpointManager.SetBreakPoint(addr, len, false))
+                                if (!Commands.Debugger.BreakpointManager.SetBreakPoint(addr, len))
                                 {
                                     Commands.ReplyError();
                                     return;
@@ -325,7 +325,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                                 Commands.ReplyError();
                                 return;
                             default:
-                                Commands. ReplyError();
+                                Commands.ReplyError();
                                 return;
                         }
                     }

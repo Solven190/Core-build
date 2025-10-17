@@ -9,12 +9,9 @@ namespace Ryujinx.HLE.Debugger
     {
         public byte[] OriginalData { get; }
 
-        public bool IsStep { get; }
-
-        public Breakpoint(byte[] originalData, bool isStep)
+        public Breakpoint(byte[] originalData)
         {
             OriginalData = originalData;
-            IsStep = isStep;
         }
     }
 
@@ -42,7 +39,7 @@ namespace Ryujinx.HLE.Debugger
         /// <param name="length">The length of the instruction to replace.</param>
         /// <param name="isStep">Indicates if this is a single-step breakpoint.</param>
         /// <returns>True if the breakpoint was set successfully; otherwise, false.</returns>
-        public bool SetBreakPoint(ulong address, ulong length, bool isStep = false)
+        public bool SetBreakPoint(ulong address, ulong length)
         {
             if (_breakpoints.ContainsKey(address))
             {
@@ -69,7 +66,7 @@ namespace Ryujinx.HLE.Debugger
                 return false;
             }
 
-            var breakpoint = new Breakpoint(originalInstruction, isStep);
+            var breakpoint = new Breakpoint(originalInstruction);
             if (_breakpoints.TryAdd(address, breakpoint))
             {
                 Logger.Debug?.Print(LogClass.GdbStub, $"Breakpoint set at 0x{address:X16}");
@@ -122,30 +119,6 @@ namespace Ryujinx.HLE.Debugger
             Logger.Debug?.Print(LogClass.GdbStub, "All breakpoints cleared.");
         }
 
-        /// <summary>
-        /// Clears all currently set single-step software breakpoints.
-        /// </summary>
-        public void ClearAllStepBreakpoints()
-        {
-            var stepBreakpoints = _breakpoints.Where(p => p.Value.IsStep).ToList();
-
-            if (stepBreakpoints.Count == 0)
-            {
-                return;
-            }
-
-            foreach (var bp in stepBreakpoints)
-            {
-                if (_breakpoints.TryRemove(bp.Key, out Breakpoint removedBreakpoint))
-                {
-                    WriteMemory(bp.Key, removedBreakpoint.OriginalData);
-                }
-            }
-
-            Logger.Debug?.Print(LogClass.GdbStub, "All step breakpoints cleared.");
-        }
-
-        
         private byte[] GetBreakInstruction(ulong length)
         {
             if (_debugger.IsProcessAarch32)
