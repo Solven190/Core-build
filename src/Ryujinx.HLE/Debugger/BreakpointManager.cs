@@ -23,9 +23,9 @@ namespace Ryujinx.HLE.Debugger
         private readonly Debugger _debugger;
         private readonly ConcurrentDictionary<ulong, Breakpoint> _breakpoints = new();
 
-        private static readonly byte[] _aarch64BreakInstruction = { 0x00, 0x00, 0x20, 0xD4 }; // BRK #0
-        private static readonly byte[] _aarch32BreakInstruction = { 0xFE, 0xDE, 0xFF, 0xE7 }; // TRAP
-        private static readonly byte[] _aarch32ThumbBreakInstruction = { 0x80, 0xB6 };
+        private static readonly byte[] _aarch64BreakInstruction = [0x00, 0x00, 0x20, 0xD4]; // BRK #0
+        private static readonly byte[] _aarch32BreakInstruction = [0xFE, 0xDE, 0xFF, 0xE7]; // TRAP
+        private static readonly byte[] _aarch32ThumbBreakInstruction = [0x80, 0xB6];
 
         public BreakpointManager(Debugger debugger)
         {
@@ -121,7 +121,7 @@ namespace Ryujinx.HLE.Debugger
 
         private byte[] GetBreakInstruction(ulong length)
         {
-            if (_debugger.IsProcessAarch32)
+            if (_debugger.IsProcess32Bit)
             {
                 if (length == 2)
                 {

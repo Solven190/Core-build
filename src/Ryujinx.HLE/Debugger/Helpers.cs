@@ -43,7 +43,7 @@ namespace Ryujinx.HLE.Debugger
                     (byte)'$' => "}\x04",
                     (byte)'*' => "}\x0a",
                     (byte)'}' => "}\x5d",
-                    _ => Convert.ToChar(x).ToString(),
+                    _ => Convert.ToChar(x).ToString()
                 }
             ).JoinToString(string.Empty);
     }

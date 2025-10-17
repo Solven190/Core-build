@@ -9,10 +9,10 @@ namespace Ryujinx.HLE.Debugger.Gdb
         /*
         FPCR = FPSR & ~FpcrMask
         All of FPCR's bits are reserved in FPCR and vice versa,
-        see ARM's documentation. 
+        see ARM's documentation.
         */
         private const uint FpcrMask = 0xfc1fffff;
-        
+
         public static string Read64(IExecutionContext state, int gdbRegId)
         {
             switch (gdbRegId)
