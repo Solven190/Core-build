@@ -105,14 +105,14 @@ namespace Ryujinx.HLE.Debugger.Gdb
             {
                 for (int i = 0; i < GdbRegisterCount32; i++)
                 {
-                    registers += GdbRegisters.Read32(ctx, i);
+                    registers += ctx.ReadRegister32(i);
                 }
             }
             else
             {
                 for (int i = 0; i < GdbRegisterCount64; i++)
                 {
-                    registers += GdbRegisters.Read64(ctx, i);
+                    registers += ctx.ReadRegister64(i);
                 }
             }
 
@@ -132,7 +132,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             {
                 for (int i = 0; i < GdbRegisterCount32; i++)
                 {
-                    if (!GdbRegisters.Write32(ctx, i, ss))
+                    if (!ctx.WriteRegister32(i, ss))
                     {
                         Processor.ReplyError();
                         return;
@@ -143,7 +143,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             {
                 for (int i = 0; i < GdbRegisterCount64; i++)
                 {
-                    if (!GdbRegisters.Write64(ctx, i, ss))
+                    if (!ctx.WriteRegister64(i, ss))
                     {
                         Processor.ReplyError();
                         return;
@@ -236,9 +236,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
 
             IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
-            string result = Debugger.IsProcess32Bit
-                ? GdbRegisters.Read32(ctx, gdbRegId)
-                : GdbRegisters.Read64(ctx, gdbRegId);
+            string result = Debugger.ReadRegister(ctx, gdbRegId);
 
             Processor.Reply(result != null, result);
         }
@@ -252,14 +250,8 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
 
             IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
-            if (Debugger.IsProcess32Bit)
-            {
-                Processor.Reply(GdbRegisters.Write32(ctx, gdbRegId, ss) && ss.IsEmpty());
-            }
-            else
-            {
-                Processor.Reply(GdbRegisters.Write64(ctx, gdbRegId, ss) && ss.IsEmpty());
-            }
+            
+            Processor.Reply(Debugger.WriteRegister(ctx, gdbRegId, ss) && ss.IsEmpty());
         }
 
         internal void Step(ulong? newPc)

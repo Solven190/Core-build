@@ -112,15 +112,22 @@ namespace Ryujinx.HLE.Debugger
             }
         }
 
+        internal bool WriteRegister(IExecutionContext ctx, int gdbRegId, StringStream ss) =>
+            IsProcess32Bit
+                ? ctx.WriteRegister32(gdbRegId, ss)
+                : ctx.WriteRegister64(gdbRegId, ss);
+
+        internal string ReadRegister(IExecutionContext ctx, int gdbRegId) =>
+            IsProcess32Bit
+                ? ctx.ReadRegister32(gdbRegId)
+                : ctx.ReadRegister64(gdbRegId);
+
         public string GetStackTrace()
         {
             if (GThread == null)
                 return "No thread selected\n";
 
-            if (Process == null)
-                return "No application process found\n";
-
-            return Process.Debugger.GetGuestStackTrace(DebugProcess.GetThread(GThread.Value));
+            return Process?.Debugger?.GetGuestStackTrace(DebugProcess.GetThread(GThread.Value)) ?? "No application process found\n"; 
         }
 
         public string GetRegisters()
@@ -128,10 +135,7 @@ namespace Ryujinx.HLE.Debugger
             if (GThread == null)
                 return "No thread selected\n";
 
-            if (Process == null)
-                return "No application process found\n";
-
-            return Process.Debugger.GetCpuRegisterPrintout(DebugProcess.GetThread(GThread.Value));
+            return Process?.Debugger?.GetCpuRegisterPrintout(DebugProcess.GetThread(GThread.Value)) ?? "No application process found\n";
         }
 
         public string GetMinidump()

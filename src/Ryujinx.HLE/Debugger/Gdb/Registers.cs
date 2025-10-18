@@ -13,7 +13,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
         */
         private const uint FpcrMask = 0xfc1fffff;
 
-        public static string Read64(IExecutionContext state, int gdbRegId)
+        public static string ReadRegister64(this IExecutionContext state, int gdbRegId)
         {
             switch (gdbRegId)
             {
@@ -34,7 +34,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
         }
 
-        public static bool Write64(IExecutionContext state, int gdbRegId, StringStream ss)
+        public static bool WriteRegister64(this IExecutionContext state, int gdbRegId, StringStream ss)
         {
             switch (gdbRegId)
             {
@@ -80,7 +80,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
         }
 
-        public static string Read32(IExecutionContext state, int gdbRegId)
+        public static string ReadRegister32(this IExecutionContext state, int gdbRegId)
         {
             switch (gdbRegId)
             {
@@ -106,7 +106,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
         }
 
-        public static bool Write32(IExecutionContext state, int gdbRegId, StringStream ss)
+        public static bool WriteRegister32(this IExecutionContext state, int gdbRegId, StringStream ss)
         {
             switch (gdbRegId)
             {
