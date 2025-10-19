@@ -70,8 +70,8 @@ namespace Ryujinx.Ava.Input
         {
             _size = new Size((int)rect.Width, (int)rect.Height);
         }
-        
-        private void HandleScrollStopped() 
+
+        private void HandleScrollStopped()
         {
             Scroll = new Vector2(0, 0);
         }
@@ -103,11 +103,17 @@ namespace Ryujinx.Ava.Input
         }
         private void Parent_PointerPressedEvent(object o, PointerPressedEventArgs args)
         {
-            uint button = (uint)args.GetCurrentPoint(_widget).Properties.PointerUpdateKind;
+            PointerPoint currentPoint = args.GetCurrentPoint(_widget);
+            uint button = (uint)currentPoint.Properties.PointerUpdateKind;
 
             if ((uint)PressedButtons.Length > button)
             {
                 PressedButtons[button] = true;
+            }
+
+            if (args.Pointer.Type == PointerType.Touch) // mouse position is unchanged for touch events, set touch position
+            {
+                CurrentPosition = new Vector2((float)currentPoint.Position.X, (float)currentPoint.Position.Y);
             }
         }
 
