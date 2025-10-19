@@ -1,7 +1,6 @@
 using Ryujinx.Common.Logging;
 using Ryujinx.Memory;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace Ryujinx.HLE.Debugger
 {

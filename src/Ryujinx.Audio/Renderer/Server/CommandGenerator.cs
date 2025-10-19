@@ -1,6 +1,5 @@
 using Ryujinx.Audio.Common;
 using Ryujinx.Audio.Renderer.Common;
-using Ryujinx.Audio.Renderer.Dsp;
 using Ryujinx.Audio.Renderer.Dsp.Command;
 using Ryujinx.Audio.Renderer.Dsp.State;
 using Ryujinx.Audio.Renderer.Parameter;

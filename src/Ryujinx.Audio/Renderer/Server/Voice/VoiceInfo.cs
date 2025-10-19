@@ -10,7 +10,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Ryujinx.Audio.Renderer.Common.BehaviourParameter;
-using static Ryujinx.Audio.Renderer.Parameter.VoiceInParameter1;
 using PlayState = Ryujinx.Audio.Renderer.Server.Types.PlayState;
 
 namespace Ryujinx.Audio.Renderer.Server.Voice

@@ -1,9 +1,6 @@
 using Ryujinx.Audio.Common;
 using Ryujinx.Audio.Renderer.Common;
-using Ryujinx.Audio.Renderer.Dsp;
 using Ryujinx.Common.Memory;
-using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Ryujinx.Audio.Renderer.Parameter

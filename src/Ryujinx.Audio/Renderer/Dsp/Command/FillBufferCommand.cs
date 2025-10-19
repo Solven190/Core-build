@@ -1,5 +1,4 @@
 using Ryujinx.Audio.Renderer.Server.Splitter;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Ryujinx.Audio.Renderer.Dsp.Command
