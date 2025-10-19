@@ -53,7 +53,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
         {
             // GDB is performing initial contact. Stop everything.
             Debugger.DebugProcess.DebugStop();
-            Debugger.GThread = Debugger.CThread = Debugger.DebugProcess.GetThreadUids().First();
+            Debugger.GThread = Debugger.CThread = Debugger.DebugProcess.ThreadUids.First();
             Processor.Reply($"T05thread:{Debugger.CThread:x};");
         }
 
@@ -63,7 +63,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             Debugger.DebugProcess.DebugStop();
             if (Debugger.GThread == null || Debugger.GetThreads().All(x => x.ThreadUid != Debugger.GThread.Value))
             {
-                Debugger.GThread = Debugger.CThread = Debugger.DebugProcess.GetThreadUids().First();
+                Debugger.GThread = Debugger.CThread = Debugger.DebugProcess.ThreadUids.First();
             }
 
             Processor.Reply($"T02thread:{Debugger.GThread:x};");
@@ -151,7 +151,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                 }
             }
 
-            Processor.Reply(ss.IsEmpty());
+            Processor.Reply(ss.IsEmpty);
         }
 
         internal void SetThread(char op, ulong? threadId)
@@ -251,7 +251,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
             IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
             
-            Processor.Reply(Debugger.WriteRegister(ctx, gdbRegId, ss) && ss.IsEmpty());
+            Processor.Reply(Debugger.WriteRegister(ctx, gdbRegId, ss) && ss.IsEmpty);
         }
 
         internal void Step(ulong? newPc)

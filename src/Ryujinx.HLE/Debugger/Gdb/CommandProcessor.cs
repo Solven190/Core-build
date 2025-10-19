@@ -53,7 +53,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             switch (ss.ReadChar())
             {
                 case '!':
-                    if (!ss.IsEmpty())
+                    if (!ss.IsEmpty)
                     {
                         goto unknownCommand;
                     }
@@ -62,7 +62,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     ReplyOK();
                     break;
                 case '?':
-                    if (!ss.IsEmpty())
+                    if (!ss.IsEmpty)
                     {
                         goto unknownCommand;
                     }
@@ -70,10 +70,10 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     Commands.Query();
                     break;
                 case 'c':
-                    Commands.Continue(ss.IsEmpty() ? null : ss.ReadRemainingAsHex());
+                    Commands.Continue(ss.IsEmpty ? null : ss.ReadRemainingAsHex());
                     break;
                 case 'D':
-                    if (!ss.IsEmpty())
+                    if (!ss.IsEmpty)
                     {
                         goto unknownCommand;
                     }
@@ -81,7 +81,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     Commands.Detach();
                     break;
                 case 'g':
-                    if (!ss.IsEmpty())
+                    if (!ss.IsEmpty)
                     {
                         goto unknownCommand;
                     }
@@ -172,7 +172,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     if (ss.ConsumeRemaining("fThreadInfo"))
                     {
                         Reply(
-                            $"m{Debugger.DebugProcess.GetThreadUids().Select(x => $"{x:x}").JoinToString(",")}");
+                            $"m{Debugger.DebugProcess.ThreadUids.Select(x => $"{x:x}").JoinToString(",")}");
                         break;
                     }
 
@@ -225,7 +225,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
                         if (len >= (ulong)data.Length - offset)
                         {
-                            Reply("l" + Helpers.ToBinaryFormat(data.Substring((int)offset)));
+                            Reply("l" + Helpers.ToBinaryFormat(data[(int)offset..]));
                         }
                         else
                         {
@@ -274,7 +274,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                 case 'Q':
                     goto unknownCommand;
                 case 's':
-                    Commands.Step(ss.IsEmpty() ? null : ss.ReadRemainingAsHex());
+                    Commands.Step(ss.IsEmpty ? null : ss.ReadRemainingAsHex());
                     break;
                 case 'T':
                     {

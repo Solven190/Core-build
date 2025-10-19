@@ -11,11 +11,11 @@ namespace Ryujinx.HLE.Debugger
         void DebugContinue(KThread thread);
         bool DebugStep(KThread thread);
         KThread GetThread(ulong threadUid);
-        DebugState GetDebugState();
         bool IsThreadPaused(KThread thread);
-        ulong[] GetThreadUids();
         public void DebugInterruptHandler(IExecutionContext ctx);
         IVirtualMemoryManager CpuMemory { get; }
+        ulong[] ThreadUids { get; }
+        DebugState DebugState { get; }
         void InvalidateCacheRegion(ulong address, ulong size);
     }
 }

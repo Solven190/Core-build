@@ -43,8 +43,8 @@ namespace Ryujinx.HLE.Debugger
                 }
 
                 _clientSocket.NoDelay = true;
-                _readStream = new NetworkStream(_clientSocket, System.IO.FileAccess.Read);
-                _writeStream = new NetworkStream(_clientSocket, System.IO.FileAccess.Write);
+                _readStream = new NetworkStream(_clientSocket, FileAccess.Read);
+                _writeStream = new NetworkStream(_clientSocket, FileAccess.Write);
                 _commands = new GdbCommands(_listenerSocket, _clientSocket, _readStream, _writeStream, this);
                 _commandProcessor = _commands.CreateProcessor();
 
@@ -64,10 +64,10 @@ namespace Ryujinx.HLE.Debugger
                                 Logger.Notice.Print(LogClass.GdbStub, "NACK received!");
                                 continue;
                             case '\x03':
-                                _messages.Add(new BreakInMessage());
+                                _messages.Add(StatelessMessage.BreakIn);
                                 break;
                             case '$':
-                                string cmd = "";
+                                string cmd = string.Empty;
                                 while (true)
                                 {
                                     int x = _readStream.ReadByte();
@@ -85,7 +85,7 @@ namespace Ryujinx.HLE.Debugger
                                 }
                                 else
                                 {
-                                    _messages.Add(new SendNackMessage());
+                                    _messages.Add(StatelessMessage.SendNack);
                                 }
 
                                 break;

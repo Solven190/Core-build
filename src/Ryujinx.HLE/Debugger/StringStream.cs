@@ -5,63 +5,56 @@ namespace Ryujinx.HLE.Debugger
 {
     internal class StringStream
     {
-        private readonly string Data;
-        private int Position;
+        private readonly string _data;
+        private int _position;
 
         public StringStream(string s)
         {
-            Data = s;
+            _data = s;
         }
+        
+        public bool IsEmpty => _position >= _data.Length;
 
-        public char ReadChar()
-        {
-            return Data[Position++];
-        }
+        public char ReadChar() => _data[_position++];
 
         public string ReadUntil(char needle)
         {
-            int needlePos = Data.IndexOf(needle, Position);
+            int needlePos = _data.IndexOf(needle, _position);
 
             if (needlePos == -1)
             {
-                needlePos = Data.Length;
+                needlePos = _data.Length;
             }
 
-            string result = Data.Substring(Position, needlePos - Position);
-            Position = needlePos + 1;
+            string result = _data.Substring(_position, needlePos - _position);
+            _position = needlePos + 1;
             return result;
         }
 
         public string ReadLength(int len)
         {
-            string result = Data.Substring(Position, len);
-            Position += len;
+            string result = _data.Substring(_position, len);
+            _position += len;
             return result;
         }
 
         public string ReadRemaining()
         {
-            string result = Data.Substring(Position);
-            Position = Data.Length;
+            string result = _data[_position..];
+            _position = _data.Length;
             return result;
         }
 
-        public ulong ReadRemainingAsHex()
-        {
-            return ulong.Parse(ReadRemaining(), NumberStyles.HexNumber);
-        }
+        public ulong ReadRemainingAsHex() 
+            => ulong.Parse(ReadRemaining(), NumberStyles.HexNumber);
 
-        public ulong ReadUntilAsHex(char needle)
-        {
-            return ulong.Parse(ReadUntil(needle), NumberStyles.HexNumber);
-        }
+        public ulong ReadUntilAsHex(char needle) 
+            => ulong.Parse(ReadUntil(needle), NumberStyles.HexNumber);
 
-        public ulong ReadLengthAsHex(int len)
-        {
-            return ulong.Parse(ReadLength(len), NumberStyles.HexNumber);
-        }
+        public ulong ReadLengthAsHex(int len) 
+            => ulong.Parse(ReadLength(len), NumberStyles.HexNumber);
 
-        public ulong ReadLengthAsLEHex(int len)
+        public ulong ReadLengthAsLittleEndianHex(int len)
         {
             Debug.Assert(len % 2 == 0);
 
@@ -83,9 +76,9 @@ namespace Ryujinx.HLE.Debugger
 
         public bool ConsumePrefix(string prefix)
         {
-            if (Data.Substring(Position).StartsWith(prefix))
+            if (_data[_position..].StartsWith(prefix))
             {
-                Position += prefix.Length;
+                _position += prefix.Length;
                 return true;
             }
             return false;
@@ -93,17 +86,12 @@ namespace Ryujinx.HLE.Debugger
 
         public bool ConsumeRemaining(string match)
         {
-            if (Data.Substring(Position) == match)
+            if (_data[_position..] == match)
             {
-                Position += match.Length;
+                _position += match.Length;
                 return true;
             }
             return false;
-        }
-
-        public bool IsEmpty()
-        {
-            return Position >= Data.Length;
         }
     }
 }
