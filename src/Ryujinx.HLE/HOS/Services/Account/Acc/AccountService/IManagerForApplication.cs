@@ -38,6 +38,13 @@ namespace Ryujinx.HLE.HOS.Services.Account.Acc.AccountService
         }
 
         [CommandCmif(3)]
+        // LoadIdTokenCacheDeprecated() -> (u32 id_token_cache_size, buffer<bytes, 6>)
+        public ResultCode LoadIdTokenCacheDeprecated(ServiceCtx context)
+        {
+            return _managerServer.LoadIdTokenCache(context);
+        }
+
+        [CommandCmif(4)] // 19.0.0+
         // LoadIdTokenCache() -> (u32 id_token_cache_size, buffer<bytes, 6>)
         public ResultCode LoadIdTokenCache(ServiceCtx context)
         {
