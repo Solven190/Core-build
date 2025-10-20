@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.Audio.Renderer.Parameter;
 using System.Runtime.CompilerServices;
 
@@ -9,8 +10,8 @@ namespace Ryujinx.Tests.Audio.Renderer
         [Test]
         public void EnsureTypeSize()
         {
-            Assert.AreEqual(0xC, Unsafe.SizeOf<BiquadFilterParameter1>());
-            Assert.AreEqual(0x18, Unsafe.SizeOf<BiquadFilterParameter2>());
+            ClassicAssert.AreEqual(0xC, Unsafe.SizeOf<BiquadFilterParameter1>());
+            ClassicAssert.AreEqual(0x18, Unsafe.SizeOf<BiquadFilterParameter2>());
         }
     }
 }

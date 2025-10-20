@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.HLE.HOS.Services.Time.TimeZone;
 using System.Runtime.CompilerServices;
 
@@ -11,7 +12,7 @@ namespace Ryujinx.Tests.Time
             [Test]
             public void EnsureTypeSize()
             {
-                Assert.AreEqual(0x4000, Unsafe.SizeOf<TimeZoneRule>());
+                ClassicAssert.AreEqual(0x4000, Unsafe.SizeOf<TimeZoneRule>());
             }
         }
     }

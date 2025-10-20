@@ -3,6 +3,7 @@ using ARMeilleure.Memory;
 using ARMeilleure.Signal;
 using ARMeilleure.Translation;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.Common.Memory.PartialUnmaps;
 using Ryujinx.Cpu;
 using Ryujinx.Cpu.Jit;
@@ -159,13 +160,13 @@ namespace Ryujinx.Tests.Memory
                 if (OperatingSystem.IsWindows())
                 {
                     // One thread should be present on the thread local map. Trimming should remove it.
-                    Assert.AreEqual(1, CountThreads(ref state));
+                    ClassicAssert.AreEqual(1, CountThreads(ref state));
                 }
 
                 shouldAccess = false;
                 testThread.Join();
 
-                Assert.False(error);
+                ClassicAssert.False(error);
 
                 string test = null;
 
@@ -182,7 +183,7 @@ namespace Ryujinx.Tests.Memory
                 {
                     state.TrimThreads();
 
-                    Assert.AreEqual(0, CountThreads(ref state));
+                    ClassicAssert.AreEqual(0, CountThreads(ref state));
                 }
 
                 /*
@@ -272,7 +273,7 @@ namespace Ryujinx.Tests.Memory
                 writeLoopState.Running = 0;
                 testThread.Join();
 
-                Assert.False(writeLoopState.Error != 0);
+                ClassicAssert.False(writeLoopState.Error != 0);
             }
             finally
             {
@@ -307,11 +308,11 @@ namespace Ryujinx.Tests.Memory
             testThread.Start();
             Thread.Sleep(200);
 
-            Assert.AreEqual(1, CountThreads(ref state));
+            ClassicAssert.AreEqual(1, CountThreads(ref state));
 
             // Trimming should not remove the thread as it's still active.
             state.TrimThreads();
-            Assert.AreEqual(1, CountThreads(ref state));
+            ClassicAssert.AreEqual(1, CountThreads(ref state));
 
             running = false;
 
@@ -319,7 +320,7 @@ namespace Ryujinx.Tests.Memory
 
             // Should trim now that it's inactive.
             state.TrimThreads();
-            Assert.AreEqual(0, CountThreads(ref state));
+            ClassicAssert.AreEqual(0, CountThreads(ref state));
         }
 
         [Test]
@@ -340,35 +341,35 @@ namespace Ryujinx.Tests.Memory
                 for (int i = 0; i < ThreadLocalMap<int>.MapSize; i++)
                 {
                     // Should obtain the index matching the call #.
-                    Assert.AreEqual(i, getOrReserve(i + 1, i));
+                    ClassicAssert.AreEqual(i, getOrReserve(i + 1, i));
 
                     // Check that this and all previously reserved thread IDs and struct contents are intact.
                     for (int j = 0; j <= i; j++)
                     {
-                        Assert.AreEqual(j + 1, state.LocalCounts.ThreadIds[j]);
-                        Assert.AreEqual(j, state.LocalCounts.Structs[j]);
+                        ClassicAssert.AreEqual(j + 1, state.LocalCounts.ThreadIds[j]);
+                        ClassicAssert.AreEqual(j, state.LocalCounts.Structs[j]);
                     }
                 }
 
                 // Trying to reserve again when the map is full should return -1.
-                Assert.AreEqual(-1, getOrReserve(200, 0));
+                ClassicAssert.AreEqual(-1, getOrReserve(200, 0));
 
                 for (int i = 0; i < ThreadLocalMap<int>.MapSize; i++)
                 {
                     // Should obtain the index matching the call #, as it already exists.
-                    Assert.AreEqual(i, getOrReserve(i + 1, -1));
+                    ClassicAssert.AreEqual(i, getOrReserve(i + 1, -1));
 
                     // The struct should not be reset to -1.
-                    Assert.AreEqual(i, state.LocalCounts.Structs[i]);
+                    ClassicAssert.AreEqual(i, state.LocalCounts.Structs[i]);
                 }
 
                 // Clear one of the ids as if it were freed.
                 state.LocalCounts.ThreadIds[13] = 0;
 
                 // GetOrReserve should now obtain and return 13.
-                Assert.AreEqual(13, getOrReserve(300, 301));
-                Assert.AreEqual(300, state.LocalCounts.ThreadIds[13]);
-                Assert.AreEqual(301, state.LocalCounts.Structs[13]);
+                ClassicAssert.AreEqual(13, getOrReserve(300, 301));
+                ClassicAssert.AreEqual(300, state.LocalCounts.ThreadIds[13]);
+                ClassicAssert.AreEqual(301, state.LocalCounts.Structs[13]);
             }
         }
 
@@ -467,7 +468,7 @@ namespace Ryujinx.Tests.Memory
                 thread.Join();
             }
 
-            Assert.False(error);
+            ClassicAssert.False(error);
         }
     }
 }

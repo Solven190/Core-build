@@ -2,6 +2,7 @@ using ARMeilleure.Common;
 using ARMeilleure.Memory;
 using ARMeilleure.Translation;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.Cpu.Jit;
 using Ryujinx.Tests.Memory;
 using System;
@@ -48,7 +49,7 @@ namespace Ryujinx.Tests.Cpu
 
             // Subnormal results are not flushed to zero by default.
             // This operation should not be allowed to do constant propagation, hence the methods that explicitly disallow inlining.
-            Assert.AreNotEqual(GetDenormal() + GetZero(), 0f);
+            ClassicAssert.AreNotEqual(GetDenormal() + GetZero(), 0f);
 
             bool methodCalled = false;
             bool isFz = false;
@@ -61,11 +62,11 @@ namespace Ryujinx.Tests.Cpu
             int result = method(Marshal.GetFunctionPointerForDelegate(ManagedMethod));
 
             // Subnormal results are not flushed to zero by default, which we should have returned to exiting the method.
-            Assert.AreNotEqual(GetDenormal() + GetZero(), 0f);
+            ClassicAssert.AreNotEqual(GetDenormal() + GetZero(), 0f);
 
-            Assert.True(result == 0);
-            Assert.True(methodCalled);
-            Assert.True(isFz);
+            ClassicAssert.True(result == 0);
+            ClassicAssert.True(methodCalled);
+            ClassicAssert.True(isFz);
             return;
 
             void ManagedMethod()

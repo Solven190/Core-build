@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.Common.Extensions;
 using Ryujinx.Memory;
 using System;
@@ -31,7 +32,7 @@ namespace Ryujinx.Tests.Common.Extensions
                 ref readonly MyUnmanagedStruct read = ref sequenceReader.GetRefOrRefToCopy<MyUnmanagedStruct>(out _);
 
                 // Assert
-                MyUnmanagedStruct.Assert(Assert.AreEqual, original, read);
+                MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, original, read);
             }
         }
 
@@ -51,8 +52,8 @@ namespace Ryujinx.Tests.Common.Extensions
                 ref readonly MyUnmanagedStruct read = ref sequenceReader.GetRefOrRefToCopy<MyUnmanagedStruct>(out var copy);
 
                 // Assert
-                MyUnmanagedStruct.Assert(Assert.AreEqual, original, read);
-                MyUnmanagedStruct.Assert(Assert.AreEqual, read, copy);
+                MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, original, read);
+                MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, read, copy);
             }
         }
 
@@ -72,8 +73,8 @@ namespace Ryujinx.Tests.Common.Extensions
                 ref readonly MyUnmanagedStruct read = ref sequenceReader.GetRefOrRefToCopy<MyUnmanagedStruct>(out var copy);
 
                 // Assert
-                MyUnmanagedStruct.Assert(Assert.AreEqual, original, read);
-                MyUnmanagedStruct.Assert(Assert.AreNotEqual, read, copy);
+                MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, original, read);
+                MyUnmanagedStruct.Assert(ClassicAssert.AreNotEqual, read, copy);
             }
         }
 
@@ -86,7 +87,7 @@ namespace Ryujinx.Tests.Common.Extensions
             ReadOnlySequence<byte> sequence = CreateSegmentedByteSequence(originalStructs, int.MaxValue);
 
             // Act/Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ClassicAssert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 var sequenceReader = new SequenceReader<byte>(sequence);
 
@@ -112,7 +113,7 @@ namespace Ryujinx.Tests.Common.Extensions
             sequenceReader.ReadLittleEndian(out int roundTrippedValue);
 
             // Assert
-            Assert.AreEqual(TestValue, roundTrippedValue);
+            ClassicAssert.AreEqual(TestValue, roundTrippedValue);
         }
 
         [Test]
@@ -131,7 +132,7 @@ namespace Ryujinx.Tests.Common.Extensions
             sequenceReader.ReadLittleEndian(out int roundTrippedValue);
 
             // Assert
-            Assert.AreNotEqual(TestValue, roundTrippedValue);
+            ClassicAssert.AreNotEqual(TestValue, roundTrippedValue);
         }
 
         [Test]
@@ -145,7 +146,7 @@ namespace Ryujinx.Tests.Common.Extensions
             BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(), TestValue);
 
             // Act/Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ClassicAssert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 var sequenceReader = new SequenceReader<byte>(new ReadOnlySequence<byte>(buffer));
                 sequenceReader.Advance(1);
@@ -171,7 +172,7 @@ namespace Ryujinx.Tests.Common.Extensions
             ReadOnlySequence<byte> sequence = CreateSegmentedByteSequence(originalStructs, int.MaxValue);
 
             // Act/Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ClassicAssert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 var sequenceReader = new SequenceReader<byte>(sequence);
 
@@ -198,7 +199,7 @@ namespace Ryujinx.Tests.Common.Extensions
 
             ReadOnlySequence<byte> sequence = CreateSegmentedByteSequence(originalStructs, MyUnmanagedStruct.SizeOf);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ClassicAssert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 var sequenceReader = new SequenceReader<byte>(sequence);
 
@@ -221,7 +222,7 @@ namespace Ryujinx.Tests.Common.Extensions
                 sequenceReader.ReadUnmanaged(out MyUnmanagedStruct read);
 
                 // Assert
-                MyUnmanagedStruct.Assert(Assert.AreEqual, original, read);
+                MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, original, read);
             }
         }
 
@@ -237,19 +238,19 @@ namespace Ryujinx.Tests.Common.Extensions
             static void SetConsumedAndAssert(scoped ref SequenceReader<byte> sequenceReader, long consumed)
             {
                 sequenceReader.SetConsumed(consumed);
-                Assert.AreEqual(consumed, sequenceReader.Consumed);
+                ClassicAssert.AreEqual(consumed, sequenceReader.Consumed);
             }
 
             // Act/Assert
             ref readonly MyUnmanagedStruct struct0A = ref sequenceReader.GetRefOrRefToCopy<MyUnmanagedStruct>(out _);
 
-            Assert.AreEqual(sequenceReader.Consumed, MyUnmanagedStruct.SizeOf);
+            ClassicAssert.AreEqual(sequenceReader.Consumed, MyUnmanagedStruct.SizeOf);
 
             SetConsumedAndAssert(ref sequenceReader, 0);
 
             ref readonly MyUnmanagedStruct struct0B = ref sequenceReader.GetRefOrRefToCopy<MyUnmanagedStruct>(out _);
 
-            MyUnmanagedStruct.Assert(Assert.AreEqual, struct0A, struct0B);
+            MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, struct0A, struct0B);
 
             SetConsumedAndAssert(ref sequenceReader, 1);
 
@@ -261,7 +262,7 @@ namespace Ryujinx.Tests.Common.Extensions
 
             ref readonly MyUnmanagedStruct struct1B = ref sequenceReader.GetRefOrRefToCopy<MyUnmanagedStruct>(out _);
 
-            MyUnmanagedStruct.Assert(Assert.AreEqual, struct1A, struct1B);
+            MyUnmanagedStruct.Assert(ClassicAssert.AreEqual, struct1A, struct1B);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

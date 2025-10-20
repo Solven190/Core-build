@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.Audio.Renderer.Server.MemoryPool;
 using System;
 using System.Runtime.CompilerServices;
@@ -10,7 +11,7 @@ namespace Ryujinx.Tests.Audio.Renderer.Server
         [Test]
         public void EnsureTypeSize()
         {
-            Assert.AreEqual(0x20, Unsafe.SizeOf<AddressInfo>());
+            ClassicAssert.AreEqual(0x20, Unsafe.SizeOf<AddressInfo>());
         }
 
         [Test]
@@ -25,11 +26,11 @@ namespace Ryujinx.Tests.Audio.Renderer.Server
 
             addressInfo.ForceMappedDspAddress = 0x2000000;
 
-            Assert.AreEqual(0x2000000, addressInfo.GetReference(true));
+            ClassicAssert.AreEqual(0x2000000, addressInfo.GetReference(true));
 
             addressInfo.SetupMemoryPool(memoryPoolState.AsSpan());
 
-            Assert.AreEqual(0x4000000, addressInfo.GetReference(true));
+            ClassicAssert.AreEqual(0x4000000, addressInfo.GetReference(true));
         }
     }
 }

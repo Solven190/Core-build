@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.HLE.HOS.Applets;
 using System.Text;
 
@@ -9,13 +10,13 @@ namespace Ryujinx.Tests.HLE
         [Test]
         public void StripUnicodeControlCodes_NullInput()
         {
-            Assert.IsNull(SoftwareKeyboardApplet.StripUnicodeControlCodes(null));
+            ClassicAssert.IsNull(SoftwareKeyboardApplet.StripUnicodeControlCodes(null));
         }
 
         [Test]
         public void StripUnicodeControlCodes_EmptyInput()
         {
-            Assert.AreEqual(string.Empty, SoftwareKeyboardApplet.StripUnicodeControlCodes(string.Empty));
+            ClassicAssert.AreEqual(string.Empty, SoftwareKeyboardApplet.StripUnicodeControlCodes(string.Empty));
         }
 
         [Test]
@@ -35,14 +36,14 @@ namespace Ryujinx.Tests.HLE
 
             foreach (string prompt in prompts)
             {
-                Assert.AreEqual(prompt, SoftwareKeyboardApplet.StripUnicodeControlCodes(prompt));
+                ClassicAssert.AreEqual(prompt, SoftwareKeyboardApplet.StripUnicodeControlCodes(prompt));
             }
         }
 
         [Test]
         public void StripUnicodeControlCodes_StripsNewlines()
         {
-            Assert.AreEqual("I am very tall", SoftwareKeyboardApplet.StripUnicodeControlCodes("I \r\nam \r\nvery \r\ntall"));
+            ClassicAssert.AreEqual("I am very tall", SoftwareKeyboardApplet.StripUnicodeControlCodes("I \r\nam \r\nvery \r\ntall"));
         }
 
         [Test]
@@ -50,14 +51,14 @@ namespace Ryujinx.Tests.HLE
         {
             // 0x13 is control code DC3 used by some games
             string specialInput = Encoding.UTF8.GetString(new byte[] { 0x13, 0x53, 0x68, 0x69, 0x6E, 0x65, 0x13 });
-            Assert.AreEqual("Shine", SoftwareKeyboardApplet.StripUnicodeControlCodes(specialInput));
+            ClassicAssert.AreEqual("Shine", SoftwareKeyboardApplet.StripUnicodeControlCodes(specialInput));
         }
 
         [Test]
         public void StripUnicodeControlCodes_StripsToEmptyString()
         {
             string specialInput = Encoding.UTF8.GetString(new byte[] { 17, 18, 19, 20 }); // DC1 - DC4 special codes
-            Assert.AreEqual(string.Empty, SoftwareKeyboardApplet.StripUnicodeControlCodes(specialInput));
+            ClassicAssert.AreEqual(string.Empty, SoftwareKeyboardApplet.StripUnicodeControlCodes(specialInput));
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace Ryujinx.Tests.HLE
         {
             // Turtles are a good example of multi-codepoint Unicode chars
             string specialInput = "♀ 🐢 🐢 ♂ ";
-            Assert.AreEqual(specialInput, SoftwareKeyboardApplet.StripUnicodeControlCodes(specialInput));
+            ClassicAssert.AreEqual(specialInput, SoftwareKeyboardApplet.StripUnicodeControlCodes(specialInput));
         }
     }
 }

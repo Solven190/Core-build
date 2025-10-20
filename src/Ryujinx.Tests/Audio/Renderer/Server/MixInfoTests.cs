@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Ryujinx.Audio.Renderer.Server.Mix;
 using System.Runtime.CompilerServices;
 
@@ -9,7 +10,7 @@ namespace Ryujinx.Tests.Audio.Renderer.Server
         [Test]
         public void EnsureTypeSize()
         {
-            Assert.AreEqual(0x940, Unsafe.SizeOf<MixInfo>());
+            ClassicAssert.AreEqual(0x940, Unsafe.SizeOf<MixInfo>());
         }
     }
 }
