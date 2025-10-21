@@ -58,18 +58,18 @@ namespace Ryujinx.HLE.UI.Input
             }
         }
 
-        public void Update(bool supressEvents = false)
+        public void Update(bool suppressEvents = false)
         {
             int npadsCount = _device.Hid.SharedMemory.Npads.Length;
 
             // Process each input individually.
             for (int npadIndex = 0; npadIndex < npadsCount; npadIndex++)
             {
-                UpdateNpad(npadIndex, supressEvents);
+                UpdateNpad(npadIndex, suppressEvents);
             }
         }
 
-        private void UpdateNpad(int npadIndex, bool supressEvents)
+        private void UpdateNpad(int npadIndex, bool suppressEvents)
         {
             const int MaxEntries = 1024;
 
@@ -102,7 +102,7 @@ namespace Ryujinx.HLE.UI.Input
                     break;
                 }
 
-                if (!supressEvents)
+                if (!suppressEvents)
                 {
                     ProcessNpadButtons(npadIndex, entry.Object.Buttons);
                 }
