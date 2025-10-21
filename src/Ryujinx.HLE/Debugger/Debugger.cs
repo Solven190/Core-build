@@ -57,8 +57,8 @@ namespace Ryujinx.HLE.Debugger
 
         internal KThread[] GetThreads() => DebugProcess.ThreadUids.Select(DebugProcess.GetThread).ToArray();
 
-        internal bool IsProcess32Bit => GThread != null && DebugProcess.GetThread(GThread.Value).Context.IsAarch32;
-        
+        internal bool IsProcess32Bit => DebugProcess.GetThread(GThread ?? DebugProcess.ThreadUids.First()).Context.IsAarch32;
+
         internal bool WriteRegister(IExecutionContext ctx, int registerId, StringStream ss) =>
             IsProcess32Bit
                 ? ctx.WriteRegister32(registerId, ss)
