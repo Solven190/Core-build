@@ -18,7 +18,7 @@ namespace Ryujinx.HLE.Debugger
 
         public ushort GdbStubPort { get; private set; }
 
-        private readonly BlockingCollection<IMessage> _messages = new(1);
+        private readonly BlockingCollection<Message.IMarker> _messages = new(1);
         private readonly Thread _debuggerThread;
         private readonly Thread _messageHandlerThread;
 
@@ -87,7 +87,7 @@ namespace Ryujinx.HLE.Debugger
                 _readStream?.Close();
                 _writeStream?.Close();
                 _debuggerThread.Join();
-                _messages.Add(StatelessMessage.Kill);
+                _messages.Add(Message.Kill);
                 _messageHandlerThread.Join();
                 _messages.Dispose();
                 _breakHandlerEvent.Dispose();

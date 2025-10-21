@@ -14,16 +14,16 @@ namespace Ryujinx.HLE.Debugger
                 {
                     switch (_messages.Take())
                     {
-                        case StatelessMessage { Type: MessageType.BreakIn }:
+                        case Message { Type: MessageType.BreakIn }:
                             Logger.Notice.Print(LogClass.GdbStub, "Break-in requested");
                             _commands.Interrupt();
                             break;
 
-                        case StatelessMessage { Type: MessageType.SendNack }:
+                        case Message { Type: MessageType.SendNack }:
                             _writeStream.WriteByte((byte)'-');
                             break;
 
-                        case StatelessMessage { Type: MessageType.Kill }:
+                        case Message { Type: MessageType.Kill }:
                             return;
 
                         case CommandMessage { Command: { } cmd }:

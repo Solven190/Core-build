@@ -197,7 +197,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             {
                 var data = new byte[len];
                 Debugger.DebugProcess.CpuMemory.Read(addr, data);
-                Processor.Reply(Helpers.ToHex(data));
+                Processor.ReplyHex(data);
             }
             catch (InvalidMemoryRegionException)
             {
@@ -422,17 +422,9 @@ namespace Ryujinx.HLE.Debugger.Gdb
                 string command = Helpers.FromHex(hexCommand);
                 Logger.Debug?.Print(LogClass.GdbStub, $"Received Rcmd: {command}");
 
-                string response = command.Trim().ToLowerInvariant() switch
-                {
-                    "help" => "backtrace\nbt\nregisters\nreg\nget info\nminidump\n",
-                    "get info" => Debugger.GetProcessInfo(),
-                    "backtrace" or "bt" => Debugger.GetStackTrace(),
-                    "registers" or "reg" => Debugger.GetRegisters(),
-                    "minidump" => Debugger.GetMinidump(),
-                    _ => $"Unknown command: {command}\n"
-                };
+                Func<Debugger, string> rcmd = Debugger.FindRcmdDelegate(command);
 
-                Processor.Reply(Helpers.ToHex(response));
+                Processor.ReplyHex(rcmd(Debugger));
             }
             catch (Exception e)
             {

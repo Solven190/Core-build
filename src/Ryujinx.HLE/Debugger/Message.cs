@@ -2,11 +2,6 @@ using Ryujinx.Cpu;
 
 namespace Ryujinx.HLE.Debugger
 {
-    /// <summary>
-    ///     Marker interface for debugger messages.
-    /// </summary>
-    interface IMessage;
-
     public enum MessageType
     {
         Kill,
@@ -14,14 +9,19 @@ namespace Ryujinx.HLE.Debugger
         SendNack
     }
 
-    record struct StatelessMessage(MessageType Type) : IMessage
+    record struct Message(MessageType Type) : Message.IMarker
     {
-        public static StatelessMessage Kill => new(MessageType.Kill);
-        public static StatelessMessage BreakIn => new(MessageType.BreakIn);
-        public static StatelessMessage SendNack => new(MessageType.SendNack);
+        /// <summary>
+        ///     Marker interface for debugger messages.
+        /// </summary>
+        internal interface IMarker;
+
+        public static Message Kill => new(MessageType.Kill);
+        public static Message BreakIn => new(MessageType.BreakIn);
+        public static Message SendNack => new(MessageType.SendNack);
     }
 
-    struct CommandMessage : IMessage
+    struct CommandMessage : Message.IMarker
     {
         public readonly string Command;
 
@@ -31,7 +31,7 @@ namespace Ryujinx.HLE.Debugger
         }
     }
     
-    public class ThreadBreakMessage : IMessage
+    public class ThreadBreakMessage : Message.IMarker
     {
         public IExecutionContext Context { get; }
         public ulong Address { get; }
