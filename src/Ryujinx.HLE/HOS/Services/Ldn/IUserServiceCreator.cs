@@ -15,5 +15,14 @@ namespace Ryujinx.HLE.HOS.Services.Ldn
 
             return ResultCode.Success;
         }
+
+        [CommandCmif(1)] // 18.0.0+
+        // CreateClientProcessMonitor() -> object<nn::ldn::detail::IClientProcessMonitor>
+        public ResultCode CreateClientProcessMonitor(ServiceCtx context)
+        {
+            MakeObject(context, new IClientProcessMonitor(context));
+
+            return ResultCode.Success;
+        }
     }
 }
