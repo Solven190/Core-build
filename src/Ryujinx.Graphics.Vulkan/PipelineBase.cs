@@ -1691,11 +1691,6 @@ namespace Ryujinx.Graphics.Vulkan
                     return false;
                 }
 
-                if (_renderPass == null)
-                {
-                    return true;
-                }
-
                 var pipeline = pbp == PipelineBindPoint.Compute
                     ? _newState.CreateComputePipeline(Gd, Device, _program, PipelineCache)
                     : _newState.CreateGraphicsPipeline(Gd, Device, _program, PipelineCache, _renderPass.Get(Cbs).Value);
