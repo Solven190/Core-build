@@ -83,12 +83,13 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
 
             Debugger.DebugProcess.DebugContinue();
+            Processor.ReplyOK();
         }
 
         internal void Detach()
         {
             Debugger.BreakpointManager.ClearAll();
-            Continue(null);
+            Continue(null); // Continue() will call ReplyError/ReplyOK for us.
         }
 
         internal void ReadRegisters()

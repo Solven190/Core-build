@@ -146,6 +146,12 @@ namespace Ryujinx.HLE.Debugger.Gdb
                         break;
                     }
 
+                    if (ss.ConsumeRemaining("Attached"))
+                    {
+                        Reply("1");
+                        break;
+                    }
+
                     if (ss.ConsumeRemaining("ProcessInfo"))
                     {
                         Reply(
