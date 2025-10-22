@@ -21,8 +21,9 @@ namespace Ryujinx.HLE.Debugger
             }
             catch (SocketException se)
             {
-                Logger.Notice.Print(LogClass.GdbStub, $"Failed to create TCP client for GDB client: {Enum.GetName(se.SocketErrorCode)}");
-                return;
+                Logger.Error?.Print(LogClass.GdbStub,
+                    $"Failed to create TCP server on {endpoint} for GDB client: {Enum.GetName(se.SocketErrorCode)}");
+                throw;
             }
 
             Logger.Notice.Print(LogClass.GdbStub, $"Currently waiting on {endpoint} for GDB client");
@@ -33,8 +34,10 @@ namespace Ryujinx.HLE.Debugger
                 {
                     _clientSocket = _listenerSocket.AcceptSocket();
                 }
-                catch (SocketException)
+                catch (SocketException se)
                 {
+                    Logger.Error?.Print(LogClass.GdbStub, 
+                        $"Failed to accept incoming GDB client connection: {Enum.GetName(se.SocketErrorCode)}");
                     return;
                 }
 
