@@ -45,7 +45,7 @@ namespace Ryujinx.HLE.Debugger
 
             ARMeilleure.Optimizations.EnableDebugging = true;
 
-            _debuggerThread = new Thread(DebuggerThreadMain);
+            _debuggerThread = new Thread(MainLoop);
             _debuggerThread.Start();
             _messageHandlerThread = new Thread(MessageHandlerMain);
             _messageHandlerThread.Start();
