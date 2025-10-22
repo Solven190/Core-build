@@ -45,7 +45,7 @@ namespace Ryujinx.HLE.Debugger
                 int retries = 10;
                 while ((DebugProcess == null || GetThreads().Length == 0) && retries-- > 0)
                 {
-                    Thread.Sleep(200);
+                    Thread.Sleep(500);
                 }
 
                 if (DebugProcess == null || GetThreads().Length == 0)
