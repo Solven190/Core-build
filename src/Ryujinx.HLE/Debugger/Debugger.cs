@@ -26,8 +26,7 @@ namespace Ryujinx.HLE.Debugger
         private Socket _clientSocket;
         private NetworkStream _readStream;
         private NetworkStream _writeStream;
-
-        private GdbCommandProcessor _commandProcessor;
+        
         private GdbCommands _commands;
 
         private bool _shuttingDown;

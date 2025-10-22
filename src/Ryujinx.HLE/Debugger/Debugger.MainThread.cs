@@ -60,7 +60,6 @@ namespace Ryujinx.HLE.Debugger
                 _readStream = new NetworkStream(_clientSocket, FileAccess.Read);
                 _writeStream = new NetworkStream(_clientSocket, FileAccess.Write);
                 _commands = new GdbCommands(_listenerSocket, _clientSocket, _readStream, _writeStream, this);
-                _commandProcessor = _commands.CreateProcessor();
 
                 Logger.Notice.Print(LogClass.GdbStub, "GDB client connected");
 
@@ -119,7 +118,6 @@ namespace Ryujinx.HLE.Debugger
                 _writeStream = null;
                 _clientSocket.Close();
                 _clientSocket = null;
-                _commandProcessor = null;
                 _commands = null;
 
                 BreakpointManager.ClearAll();

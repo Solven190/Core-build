@@ -11,18 +11,17 @@ namespace Ryujinx.HLE.Debugger.Gdb
 {
     class GdbCommands
     {
-        const int GdbRegisterCount64 = 68;
-        const int GdbRegisterCount32 = 66;
-
         public readonly Debugger Debugger;
 
-        public GdbCommandProcessor Processor { get; private set; }
+        private GdbCommandProcessor _processor;
+
+        public GdbCommandProcessor Processor 
+            => _processor ??= new GdbCommandProcessor(this);
 
         internal readonly TcpListener ListenerSocket;
         internal readonly Socket ClientSocket;
         internal readonly NetworkStream ReadStream;
         internal readonly NetworkStream WriteStream;
-
 
         public GdbCommands(TcpListener listenerSocket, Socket clientSocket, NetworkStream readStream,
             NetworkStream writeStream, Debugger debugger)
@@ -32,21 +31,6 @@ namespace Ryujinx.HLE.Debugger.Gdb
             ReadStream = readStream;
             WriteStream = writeStream;
             Debugger = debugger;
-        }
-
-        public void SetProcessor(GdbCommandProcessor commandProcessor)
-        {
-            if (Processor != null) return;
-
-            Processor = commandProcessor;
-        }
-        
-        public GdbCommandProcessor CreateProcessor()
-        {
-            if (Processor != null) 
-                return Processor;
-
-            return Processor = new GdbCommandProcessor(this);
         }
 
         internal void Query()
@@ -104,14 +88,14 @@ namespace Ryujinx.HLE.Debugger.Gdb
             string registers = string.Empty;
             if (Debugger.IsProcess32Bit)
             {
-                for (int i = 0; i < GdbRegisterCount32; i++)
+                for (int i = 0; i < GdbRegisters.Count32; i++)
                 {
                     registers += ctx.ReadRegister32(i);
                 }
             }
             else
             {
-                for (int i = 0; i < GdbRegisterCount64; i++)
+                for (int i = 0; i < GdbRegisters.Count64; i++)
                 {
                     registers += ctx.ReadRegister64(i);
                 }
@@ -131,7 +115,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
             if (Debugger.IsProcess32Bit)
             {
-                for (int i = 0; i < GdbRegisterCount32; i++)
+                for (int i = 0; i < GdbRegisters.Count32; i++)
                 {
                     if (!ctx.WriteRegister32(i, ss))
                     {
@@ -142,7 +126,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
             else
             {
-                for (int i = 0; i < GdbRegisterCount64; i++)
+                for (int i = 0; i < GdbRegisters.Count64; i++)
                 {
                     if (!ctx.WriteRegister64(i, ss))
                     {

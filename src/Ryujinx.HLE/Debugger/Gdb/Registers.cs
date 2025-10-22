@@ -6,6 +6,9 @@ namespace Ryujinx.HLE.Debugger.Gdb
 {
     static class GdbRegisters
     {
+        public const int Count64 = 68;
+        public const int Count32 = 66;
+        
         /*
         FPCR = FPSR & ~FpcrMask
         All of FPCR's bits are reserved in FPCR and vice versa,

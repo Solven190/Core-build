@@ -29,14 +29,14 @@ namespace Ryujinx.HLE.Debugger
                         case CommandMessage { Command: { } cmd }:
                             Logger.Debug?.Print(LogClass.GdbStub, $"Received Command: {cmd}");
                             _writeStream.WriteByte((byte)'+');
-                            _commandProcessor.Process(cmd);
+                            _commands.Processor.Process(cmd);
                             break;
 
                         case ThreadBreakMessage { Context: { } ctx }:
                             DebugProcess.DebugStop();
                             GThread = CThread = ctx.ThreadUid;
                             _breakHandlerEvent.Set();
-                            _commandProcessor.Reply($"T05thread:{ctx.ThreadUid:x};");
+                            _commands.Processor.Reply($"T05thread:{ctx.ThreadUid:x};");
                             break;
                     }
                 }
