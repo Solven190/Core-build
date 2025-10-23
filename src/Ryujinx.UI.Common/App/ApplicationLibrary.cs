@@ -275,9 +275,9 @@ namespace Ryujinx.UI.App.Common
                 }
                 catch (HorizonResultException)
                 {
-                    foreach (DirectoryEntryEx entry in controlFs.EnumerateEntries("/", "*"))
+                    foreach (DirectoryEntryEx entry in controlFs.EnumerateEntries("/", "*", SearchOptions.Default))
                     {
-                        if (entry.Name == "control.nacp")
+                        if (entry.Name == "control.nacp" || entry.Type == DirectoryEntryType.Directory)
                         {
                             continue;
                         }
