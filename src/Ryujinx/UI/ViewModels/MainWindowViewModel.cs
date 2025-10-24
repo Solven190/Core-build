@@ -169,7 +169,8 @@ namespace Ryujinx.Ava.UI.ViewModels
             Applications.ToObservableChangeSet()
                 .Filter(Filter)
                 .Sort(GetComparer())
-                .Bind(out _appsObservableList).AsObservableList();
+                .Bind(out _appsObservableList)
+                .Subscribe();
 
             _rendererWaitEvent = new AutoResetEvent(false);
 
