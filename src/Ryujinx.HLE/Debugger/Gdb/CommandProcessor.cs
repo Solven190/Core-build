@@ -181,7 +181,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     if (ss.ConsumeRemaining("fThreadInfo"))
                     {
                         Reply(
-                            $"m{Debugger.DebugProcess.ThreadUids.Select(x => $"{x:x}").JoinToString(",")}");
+                            $"m{DebugProcess.ThreadUids.Select(x => $"{x:x}").JoinToString(",")}");
                         break;
                     }
 

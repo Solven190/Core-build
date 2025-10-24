@@ -8,13 +8,15 @@ namespace Ryujinx.HLE.Debugger.Gdb
     {
         public const int Count64 = 68;
         public const int Count32 = 66;
-        
+
         /*
         FPCR = FPSR & ~FpcrMask
         All of FPCR's bits are reserved in FPCR and vice versa,
         see ARM's documentation.
         */
         private const uint FpcrMask = 0xfc1fffff;
+
+        #region 64-bit
 
         public static string ReadRegister64(this IExecutionContext state, int registerId) =>
             registerId switch
@@ -73,6 +75,10 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     return false;
             }
         }
+
+        #endregion
+
+        #region 32-bit
 
         public static string ReadRegister32(this IExecutionContext state, int registerId)
         {
@@ -149,5 +155,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     return false;
             }
         }
+
+        #endregion
     }
 }

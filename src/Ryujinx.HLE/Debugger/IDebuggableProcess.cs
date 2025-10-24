@@ -9,7 +9,7 @@ namespace Ryujinx.HLE.Debugger
         IVirtualMemoryManager CpuMemory { get; }
         ulong[] ThreadUids { get; }
         DebugState DebugState { get; }
-        
+
         void DebugStop();
         void DebugContinue();
         void DebugContinue(KThread thread);

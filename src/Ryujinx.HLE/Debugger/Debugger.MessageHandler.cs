@@ -34,7 +34,7 @@ namespace Ryujinx.HLE.Debugger
 
                         case ThreadBreakMessage { Context: { } ctx }:
                             DebugProcess.DebugStop();
-                            GThread = CThread = ctx.ThreadUid;
+                            GThreadId = CThreadId = ctx.ThreadUid;
                             _breakHandlerEvent.Set();
                             _commands.Processor.Reply($"T05thread:{ctx.ThreadUid:x};");
                             break;

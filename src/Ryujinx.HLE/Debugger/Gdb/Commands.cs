@@ -15,7 +15,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
         private GdbCommandProcessor _processor;
 
-        public GdbCommandProcessor Processor 
+        public GdbCommandProcessor Processor
             => _processor ??= new GdbCommandProcessor(this);
 
         internal readonly TcpListener ListenerSocket;
@@ -37,33 +37,33 @@ namespace Ryujinx.HLE.Debugger.Gdb
         {
             // GDB is performing initial contact. Stop everything.
             Debugger.DebugProcess.DebugStop();
-            Debugger.GThread = Debugger.CThread = Debugger.DebugProcess.ThreadUids.First();
-            Processor.Reply($"T05thread:{Debugger.CThread:x};");
+            Debugger.GThreadId = Debugger.CThreadId = Debugger.DebugProcess.ThreadUids.First();
+            Processor.Reply($"T05thread:{Debugger.CThreadId:x};");
         }
 
         internal void Interrupt()
         {
             // GDB is requesting an interrupt. Stop everything.
             Debugger.DebugProcess.DebugStop();
-            if (Debugger.GThread == null || Debugger.GetThreads().All(x => x.ThreadUid != Debugger.GThread.Value))
+            if (Debugger.GThreadId == null || Debugger.GetThreads().All(x => x.ThreadUid != Debugger.GThreadId.Value))
             {
-                Debugger.GThread = Debugger.CThread = Debugger.DebugProcess.ThreadUids.First();
+                Debugger.GThreadId = Debugger.CThreadId = Debugger.DebugProcess.ThreadUids.First();
             }
 
-            Processor.Reply($"T02thread:{Debugger.GThread:x};");
+            Processor.Reply($"T02thread:{Debugger.GThreadId:x};");
         }
 
         internal void Continue(ulong? newPc)
         {
             if (newPc.HasValue)
             {
-                if (Debugger.CThread == null)
+                if (Debugger.CThreadId == null)
                 {
                     Processor.ReplyError();
                     return;
                 }
 
-                Debugger.DebugProcess.GetThread(Debugger.CThread.Value).Context.DebugPc = newPc.Value;
+                Debugger.CThread.Context.DebugPc = newPc.Value;
             }
 
             Debugger.DebugProcess.DebugContinue();
@@ -78,13 +78,13 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
         internal void ReadRegisters()
         {
-            if (Debugger.GThread == null)
+            if (Debugger.GThreadId == null)
             {
                 Processor.ReplyError();
                 return;
             }
 
-            IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
+            IExecutionContext ctx = Debugger.GThread.Context;
             string registers = string.Empty;
             if (Debugger.IsProcess32Bit)
             {
@@ -106,13 +106,13 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
         internal void WriteRegisters(StringStream ss)
         {
-            if (Debugger.GThread == null)
+            if (Debugger.GThreadId == null)
             {
                 Processor.ReplyError();
                 return;
             }
 
-            IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
+            IExecutionContext ctx = Debugger.GThread.Context;
             if (Debugger.IsProcess32Bit)
             {
                 for (int i = 0; i < GdbRegisters.Count32; i++)
@@ -162,11 +162,11 @@ namespace Ryujinx.HLE.Debugger.Gdb
             switch (op)
             {
                 case 'c':
-                    Debugger.CThread = threadId;
+                    Debugger.CThreadId = threadId;
                     Processor.ReplyOK();
                     return;
                 case 'g':
-                    Debugger.GThread = threadId;
+                    Debugger.GThreadId = threadId;
                     Processor.ReplyOK();
                     return;
                 default:
@@ -214,13 +214,13 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
         internal void ReadRegister(int gdbRegId)
         {
-            if (Debugger.GThread == null)
+            if (Debugger.GThreadId == null)
             {
                 Processor.ReplyError();
                 return;
             }
 
-            IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
+            IExecutionContext ctx = Debugger.GThread.Context;
             string result = Debugger.ReadRegister(ctx, gdbRegId);
 
             Processor.Reply(result != null, result);
@@ -228,26 +228,26 @@ namespace Ryujinx.HLE.Debugger.Gdb
 
         internal void WriteRegister(int gdbRegId, StringStream ss)
         {
-            if (Debugger.GThread == null)
+            if (Debugger.GThreadId == null)
             {
                 Processor.ReplyError();
                 return;
             }
 
-            IExecutionContext ctx = Debugger.DebugProcess.GetThread(Debugger.GThread.Value).Context;
-            
-            Processor.Reply(Debugger.WriteRegister(ctx, gdbRegId, ss) && ss.IsEmpty);
+            Processor.Reply(
+                success: Debugger.WriteRegister(Debugger.GThread.Context, gdbRegId, ss) && ss.IsEmpty
+            );
         }
 
         internal void Step(ulong? newPc)
         {
-            if (Debugger.CThread == null)
+            if (Debugger.CThreadId == null)
             {
                 Processor.ReplyError();
                 return;
             }
 
-            KThread thread = Debugger.DebugProcess.GetThread(Debugger.CThread.Value);
+            KThread thread = Debugger.CThread;
 
             if (newPc.HasValue)
             {
@@ -260,7 +260,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             }
             else
             {
-                Debugger.GThread = Debugger.CThread = thread.ThreadUid;
+                Debugger.GThreadId = Debugger.CThreadId = thread.ThreadUid;
                 Processor.Reply($"T05thread:{thread.ThreadUid:x};");
             }
         }
@@ -314,7 +314,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     _ => VContAction.None
                 };
 
-                // Note: We don't support signals yet.
+                // TODO: Note: We don't support signals yet.
                 //ushort? signal = null;
                 if (cmd is 'C' or 'S')
                 {
@@ -323,24 +323,22 @@ namespace Ryujinx.HLE.Debugger.Gdb
                     // since that method advances the underlying string position
                 }
 
-                ulong? threadId = null;
-                if (stream.ConsumePrefix(":"))
-                {
-                    threadId = stream.ReadRemainingAsThreadUid();
-                }
+                ulong? threadId = stream.ConsumePrefix(":") 
+                    ? stream.ReadRemainingAsThreadUid()
+                    : null;
 
                 if (threadId.HasValue)
                 {
                     if (threadActionMap.ContainsKey(threadId.Value))
                     {
-                        threadActionMap[threadId.Value] = new VContPendingAction(action/*, signal*/);
+                        threadActionMap[threadId.Value] = new VContPendingAction(action /*, signal*/);
                     }
                 }
                 else
                 {
                     foreach (ulong thread in threadActionMap.Keys)
                     {
-                        threadActionMap[thread] = new VContPendingAction(action/*, signal*/);
+                        threadActionMap[thread] = new VContPendingAction(action /*, signal*/);
                     }
 
                     if (action == VContAction.Continue)
@@ -393,7 +391,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
             {
                 if (action.Action == VContAction.Step)
                 {
-                    Debugger.GThread = Debugger.CThread = threadUid;
+                    Debugger.GThreadId = Debugger.CThreadId = threadUid;
                     Processor.Reply($"T05thread:{threadUid:x};");
                 }
             }

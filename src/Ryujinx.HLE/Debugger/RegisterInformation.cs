@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Ryujinx.HLE.Debugger
 {
-    class RegisterInformation
+    static class RegisterInformation
     {
         public static readonly Dictionary<string, string> Features = new()
         {

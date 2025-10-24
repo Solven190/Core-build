@@ -1,9 +1,11 @@
+using Gommon;
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.Debugger.Gdb;
 using Ryujinx.HLE.HOS.Kernel.Process;
 using Ryujinx.HLE.HOS.Kernel.Threading;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
@@ -32,8 +34,12 @@ namespace Ryujinx.HLE.Debugger
         private bool _shuttingDown;
         private readonly ManualResetEventSlim _breakHandlerEvent = new(false);
 
-        internal ulong? CThread;
-        internal ulong? GThread;
+        internal ulong? CThreadId;
+        internal ulong? GThreadId;
+
+        internal KThread CThread => CThreadId?.Into(DebugProcess.GetThread);
+        
+        internal KThread GThread => GThreadId?.Into(DebugProcess.GetThread);
 
         public readonly BreakpointManager BreakpointManager;
 
@@ -56,7 +62,7 @@ namespace Ryujinx.HLE.Debugger
 
         internal KThread[] GetThreads() => DebugProcess.ThreadUids.Select(DebugProcess.GetThread).ToArray();
 
-        internal bool IsProcess32Bit => DebugProcess.GetThread(GThread ?? DebugProcess.ThreadUids.First()).Context.IsAarch32;
+        internal bool IsProcess32Bit => DebugProcess.GetThread(GThreadId ?? DebugProcess.ThreadUids.First()).Context.IsAarch32;
 
         internal bool WriteRegister(IExecutionContext ctx, int registerId, StringStream ss) =>
             IsProcess32Bit

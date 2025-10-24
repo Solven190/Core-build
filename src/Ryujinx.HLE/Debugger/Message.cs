@@ -26,11 +26,9 @@ namespace Ryujinx.HLE.Debugger
         public readonly string Command;
 
         public CommandMessage(string cmd)
-        {
-            Command = cmd;
-        }
+            => Command = cmd;
     }
-    
+
     public class ThreadBreakMessage : Message.IMarker
     {
         public IExecutionContext Context { get; }
