@@ -296,7 +296,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
             KThread currentThread = KernelStatic.GetCurrentThread();
             KThread selectedThread = _state.SelectedThread;
 
-            if (!currentThread.IsThreadNamed && string.IsNullOrEmpty(currentThread.GetThreadName()))
+            if (!currentThread.IsThreadNamed && currentThread.GetThreadName() != "")
             {
                 currentThread.HostThread.Name = $"<{currentThread.GetThreadName()}>";
                 currentThread.IsThreadNamed = true;
