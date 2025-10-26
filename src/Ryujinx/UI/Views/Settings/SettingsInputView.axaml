@@ -35,13 +35,6 @@
                             Orientation="Horizontal"
                             Spacing="10">
                             <CheckBox
-                                ToolTip.Tip="{locale:Locale DockModeToggleTooltip}"
-                                MinWidth="0"
-                                IsChecked="{Binding EnableDockedMode}">
-                                <TextBlock
-                                    Text="{locale:Locale SettingsTabInputEnableDockedMode}" />
-                            </CheckBox>
-                            <CheckBox
                                 ToolTip.Tip="{locale:Locale DirectKeyboardTooltip}"
                                 IsChecked="{Binding EnableKeyboard}">
                                 <TextBlock

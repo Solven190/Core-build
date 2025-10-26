@@ -36,7 +36,7 @@
                         <ComboBox Width="350"
                                 HorizontalContentAlignment="Left"
                                 ToolTip.Tip="{locale:Locale SettingsTabGraphicsBackendTooltip}"
-                                SelectedIndex="{Binding GraphicsBackendIndex}">
+                                SelectedIndex="{Binding GraphicsBackend}">
                             <ComboBoxItem
                                 IsVisible="{Binding IsVulkanAvailable}"
                                 Content="Vulkan" />
@@ -45,7 +45,7 @@
                                 Content="OpenGL" />
                         </ComboBox>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVulkanSelected}">
+                    <StackPanel Orientation="Horizontal">
                         <TextBlock VerticalAlignment="Center"
                                 ToolTip.Tip="{locale:Locale SettingsTabGraphicsPreferredGpuTooltip}"
                                 Text="{locale:Locale SettingsTabGraphicsPreferredGpu}"
@@ -83,33 +83,23 @@
                                    ToolTip.Tip="{locale:Locale ResolutionScaleTooltip}"
                                    Text="{locale:Locale SettingsTabGraphicsResolutionScale}"
                                    Width="250" />
-                        <ComboBox SelectedIndex="{Binding ResolutionScale}"
+                        <ComboBox SelectedIndex="{Binding ResScaleIndex}"
                                   Width="350"
                                   HorizontalContentAlignment="Left"
                                   ToolTip.Tip="{locale:Locale ResolutionScaleTooltip}">
                             <ComboBoxItem
-                                Content="{locale:Locale SettingsTabGraphicsResolutionScaleNative}" />
+                                Content="{locale:Locale SettingsTabGraphicsResolutionScale05x}" />
                             <ComboBoxItem
-                                Content="{locale:Locale SettingsTabGraphicsResolutionScale2x}" />
+                                Content="{locale:Locale SettingsTabGraphicsResolutionScale075x}" />
                             <ComboBoxItem
-                                Content="{locale:Locale SettingsTabGraphicsResolutionScale3x}" />
+                                Content="{locale:Locale SettingsTabGraphicsResolutionScale10x}" />
                             <ComboBoxItem
-                                Content="{locale:Locale SettingsTabGraphicsResolutionScale4x}" />
+                                Content="{locale:Locale SettingsTabGraphicsResolutionScale20x}" />
                             <ComboBoxItem
-                                Content="{locale:Locale SettingsTabGraphicsResolutionScaleCustom}" />
+                                Content="{locale:Locale SettingsTabGraphicsResolutionScale30x}" />
+                            <ComboBoxItem
+                                Content="{locale:Locale SettingsTabGraphicsResolutionScale40x}" />
                         </ComboBox>
-                        <ui:FANumberBox
-                            Margin="10,0,0,0"
-                            ToolTip.Tip="{locale:Locale ResolutionScaleEntryTooltip}"
-                            MinWidth="150"
-                            SmallChange="0.1"
-                            LargeChange="1"
-                            SimpleNumberFormat="F2"
-                            SpinButtonPlacementMode="Inline"
-                            IsVisible="{Binding IsCustomResolutionScaleActive}"
-                            Maximum="10"
-                            Minimum="0.1"
-                            Value="{Binding CustomResolutionScale}" />
                     </StackPanel>
                     <StackPanel
                         HorizontalAlignment="Stretch"
@@ -186,7 +176,7 @@
                                    ToolTip.Tip="{locale:Locale AnisotropyTooltip}"
                                    Text="{locale:Locale SettingsTabGraphicsAnisotropicFiltering}"
                                    Width="250" />
-                        <ComboBox SelectedIndex="{Binding MaxAnisotropy}"
+                        <ComboBox SelectedIndex="{Binding MaxAnisotropyIndex}"
                                   Width="350"
                                   HorizontalContentAlignment="Left"
                                   ToolTip.Tip="{locale:Locale AnisotropyTooltip}">
@@ -241,7 +231,7 @@
                         <ComboBox Width="350"
                                   HorizontalContentAlignment="Left"
                                   ToolTip.Tip="{locale:Locale GalThreadingTooltip}"
-                                  SelectedIndex="{Binding GraphicsBackendMultithreadingIndex}">
+                                  SelectedIndex="{Binding BackendThreading}">
                             <ComboBoxItem
                                 Content="{locale:Locale CommonAuto}" />
                             <ComboBoxItem

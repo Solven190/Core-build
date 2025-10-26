@@ -43,6 +43,7 @@ using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common;
 using Ryujinx.UI.Common.Configuration;
 using Ryujinx.UI.Common.Helper;
+using Ryujinx.UI.Common.Models;
 using Silk.NET.Vulkan;
 using SkiaSharp;
 using SPB.Graphics.Exceptions;
@@ -84,6 +85,7 @@ namespace Ryujinx.Ava
 
         private readonly AccountManager _accountManager;
         private readonly UserChannelPersistence _userChannelPersistence;
+        private readonly CustomSettingsModel _customSettingsModel;
         private readonly InputManager _inputManager;
 
         private readonly MainWindowViewModel _viewModel;
@@ -180,6 +182,12 @@ namespace Ryujinx.Ava
 
             _chrono = new Stopwatch();
             _ticksPerFrame = Stopwatch.Frequency / TargetFps;
+
+            if (CustomSettingsHelper.HasCustomSettings(CustomSettingsHelper.PathToGameSettingsJson(applicationId)))
+            {
+                CustomSettingsModel customSettings = CustomSettingsHelper.LoadCustomSettingsJson(CustomSettingsHelper.PathToGameSettingsJson(applicationId));
+                CustomSettingsHelper.OverrideSettings(customSettings);
+            }
 
             if (ApplicationPath.StartsWith("@SystemContent"))
             {
@@ -476,7 +484,7 @@ namespace Ryujinx.Ava
 
         public void Start()
         {
-            ARMeilleure.Optimizations.EcoFriendly = ConfigurationState.Instance.System.EnableLowPowerPtc;
+            ARMeilleure.Optimizations.EcoFriendly = ConfigurationState.Instance.System.EnableLowPowerPptc;
 
             if (OperatingSystem.IsWindows())
             {
@@ -959,45 +967,45 @@ namespace Ryujinx.Ava
 
             Logger.Info?.PrintMsg(LogClass.Gpu, $"Backend Threading ({threadingMode}): {isGALThreaded}");
 
-            // Initialize Configuration.
-            MemoryConfiguration memoryConfiguration = ConfigurationState.Instance.System.DramSize.Value;
+            CustomSettingsModel customSettingsModel = CustomSettingsHelper.LoadCustomSettingsJson(CustomSettingsHelper.PathToGameSettingsJson(ApplicationId));
 
-            HLEConfiguration configuration = new(VirtualFileSystem,
-                                                     _viewModel.LibHacHorizonManager,
-                                                     ContentManager,
-                                                     _accountManager,
-                                                     _userChannelPersistence,
-                                                     renderer,
-                                                     InitializeAudio(),
-                                                     memoryConfiguration,
-                                                     _viewModel.UiHandler,
-                                                     (SystemLanguage)ConfigurationState.Instance.System.Language.Value,
-                                                     (RegionCode)ConfigurationState.Instance.System.Region.Value,
-                                                     ConfigurationState.Instance.Graphics.VSyncMode,
-                                                     ConfigurationState.Instance.System.EnableDockedMode,
-                                                     ConfigurationState.Instance.System.EnablePtc,
-                                                     ConfigurationState.Instance.System.TickScalar,
-                                                     ConfigurationState.Instance.System.EnableInternetAccess,
-                                                     ConfigurationState.Instance.System.EnableFsIntegrityChecks ? IntegrityCheckLevel.ErrorOnInvalid : IntegrityCheckLevel.None,
-                                                     ConfigurationState.Instance.System.FsGlobalAccessLogMode,
-                                                     ConfigurationState.Instance.System.MatchSystemTime 
-                                                         ? 0 
-                                                         : ConfigurationState.Instance.System.SystemTimeOffset,
-                                                     ConfigurationState.Instance.System.TimeZone,
-                                                     ConfigurationState.Instance.System.MemoryManagerMode,
-                                                     ConfigurationState.Instance.System.IgnoreMissingServices,
-                                                     ConfigurationState.Instance.Graphics.AspectRatio,
-                                                     ConfigurationState.Instance.System.AudioVolume,
-                                                     ConfigurationState.Instance.System.UseHypervisor,
-                                                     ConfigurationState.Instance.Multiplayer.LanInterfaceId.Value,
-                                                     ConfigurationState.Instance.Multiplayer.Mode,
-                                                     ConfigurationState.Instance.Multiplayer.DisableP2p,
-                                                     ConfigurationState.Instance.Multiplayer.LdnPassphrase,
-                                                     ConfigurationState.Instance.Multiplayer.LdnServer,
-                                                     ConfigurationState.Instance.Debug.EnableGdbStub,
-                                                     ConfigurationState.Instance.Debug.GdbStubPort,
-                                                     ConfigurationState.Instance.Debug.DebuggerSuspendOnStart,
-                                                     ConfigurationState.Instance.Graphics.CustomVSyncInterval.Value);
+            HLEConfiguration configuration = new(
+                VirtualFileSystem, 
+                _viewModel.LibHacHorizonManager,
+                ContentManager,
+                _accountManager,
+                _userChannelPersistence,
+                renderer,
+                InitializeAudio(),
+                customSettingsModel.HasCustomSettings ? (MemoryConfiguration)customSettingsModel.DramSize : ConfigurationState.Instance.System.DramSize.Value,
+                _viewModel.UiHandler,
+                (SystemLanguage)ConfigurationState.Instance.System.Language.Value,
+                (RegionCode)ConfigurationState.Instance.System.Region.Value,
+                ConfigurationState.Instance.Graphics.VSyncMode,
+                ConfigurationState.Instance.System.EnableDockedMode,
+                ConfigurationState.Instance.System.EnablePptc,
+                ConfigurationState.Instance.System.TickScalar,
+                ConfigurationState.Instance.System.EnableInternetAccess,
+                ConfigurationState.Instance.System.EnableFsIntegrityChecks ? IntegrityCheckLevel.ErrorOnInvalid : IntegrityCheckLevel.None,
+                ConfigurationState.Instance.System.FsGlobalAccessLogMode,
+                ConfigurationState.Instance.System.MatchSystemTime 
+                    ? 0 
+                    : ConfigurationState.Instance.System.SystemTimeOffset,
+                ConfigurationState.Instance.System.TimeZone,
+                ConfigurationState.Instance.System.MemoryManagerMode,
+                ConfigurationState.Instance.System.IgnoreMissingServices,
+                ConfigurationState.Instance.Graphics.AspectRatio,
+                ConfigurationState.Instance.System.AudioVolume,
+                ConfigurationState.Instance.System.UseHypervisor,
+                ConfigurationState.Instance.Multiplayer.LanInterfaceId.Value,
+                ConfigurationState.Instance.Multiplayer.Mode,
+                ConfigurationState.Instance.Multiplayer.DisableP2p,
+                ConfigurationState.Instance.Multiplayer.LdnPassphrase,
+                ConfigurationState.Instance.Multiplayer.LdnServer,
+                ConfigurationState.Instance.Debug.EnableGdbStub,
+                ConfigurationState.Instance.Debug.GdbStubPort,
+                ConfigurationState.Instance.Debug.DebuggerSuspendOnStart,
+                ConfigurationState.Instance.Graphics.CustomVSyncInterval.Value);
 
             Device = new Switch(configuration);
         }

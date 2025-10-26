@@ -158,18 +158,21 @@
                             Width="350"
                             ToolTip.Tip="{locale:Locale TimeTooltip}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding MatchSystemTime}">
                         <TextBlock
-                            VerticalAlignment="Center"
                             Text="{locale:Locale SettingsTabSystemSystemTimeMatch}"
-                            ToolTip.Tip="{locale:Locale MatchTimeTooltip}"
-                            Width="250"/>
-                        <CheckBox
-                            VerticalAlignment="Center"
-                            IsChecked="{Binding MatchSystemTime}"
-                            ToolTip.Tip="{locale:Locale MatchTimeTooltip}"/>
-                    </StackPanel>
-                    <Separator />
+                            ToolTip.Tip="{locale:Locale MatchTimeTooltip}" />
+                    </CheckBox>
+                    <CheckBox IsChecked="{Binding EnableFsIntegrityChecks}">
+                        <TextBlock
+                            Text="{locale:Locale SettingsTabSystemEnableFsIntegrityChecks}"
+                            ToolTip.Tip="{locale:Locale FsIntegrityToggleTooltip}" />
+                    </CheckBox>
+                    <CheckBox IsChecked="{Binding EnableDockedMode}">
+                        <TextBlock
+                            Text="{locale:Locale SettingsTabSystemEnableDockedMode}"
+                            ToolTip.Tip="{locale:Locale DockModeToggleTooltip}" />
+                    </CheckBox>
                     <StackPanel Margin="0,10,0,10"
                                 Orientation="Horizontal">
                         <TextBlock
@@ -227,11 +230,6 @@
                                    Width="40"
                                    Text="{Binding CustomVSyncIntervalPercentageText}"/>
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding EnableFsIntegrityChecks}">
-                        <TextBlock
-                            Text="{locale:Locale SettingsTabSystemEnableFsIntegrityChecks}"
-                            ToolTip.Tip="{locale:Locale FsIntegrityToggleTooltip}" />
-                    </CheckBox>
                 </StackPanel>
                 <Separator Height="1" />
                 <StackPanel

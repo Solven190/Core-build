@@ -31,13 +31,13 @@ namespace Ryujinx.UI.Common.Helper
 
             try
             {
-                List<DownloadableContentContainer> downloadableContentContainerList = JsonHelper.DeserializeFromFile(downloadableContentJsonPath,
-                    _serializerContext.ListDownloadableContentContainer);
+                Logger.Info?.Print(LogClass.Configuration, $"Found downloadable content data for {applicationIdBase:x16} at {downloadableContentJsonPath}");
+                List<DownloadableContentContainer> downloadableContentContainerList = JsonHelper.DeserializeFromFile(downloadableContentJsonPath,_serializerContext.ListDownloadableContentContainer);
                 return LoadDownloadableContents(vfs, downloadableContentContainerList);
             }
             catch
             {
-                Logger.Error?.Print(LogClass.Configuration, "Downloadable Content JSON failed to deserialize.");
+                Logger.Error?.Print(LogClass.Configuration, $"Failed to deserialize downloadable content data for {applicationIdBase:x16} at {downloadableContentJsonPath}");
                 return [];
             }
         }

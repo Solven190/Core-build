@@ -103,6 +103,23 @@ namespace Ryujinx.Ava.UI.Controls
             }
         }
 
+        public async void OpenCustomSettingsManager_Click(object sender, RoutedEventArgs args)
+        {
+            var viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
+
+            if (viewModel?.SelectedApplication != null)
+            {
+                await new CustomSettingsWindow(
+                    viewModel.VirtualFileSystem,
+                    viewModel.SelectedApplication.IdString,
+                    viewModel.SelectedApplication.Name,
+                    viewModel.SelectedApplication.Icon,
+                    viewModel.SelectedApplication.Path).ShowDialog(viewModel.TopLevel as Window);
+
+                viewModel.RefreshView();
+            }
+        }
+
         public async void OpenCheatManager_Click(object sender, RoutedEventArgs args)
         {
             MainWindowViewModel viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
@@ -154,6 +171,54 @@ namespace Ryujinx.Ava.UI.Controls
                     viewModel.SelectedApplication.IdBase, 
                     viewModel.ApplicationLibrary,
                     viewModel.SelectedApplication.Name);
+            }
+        }
+
+        public async void ManageCustomSettings_Click(object sender, RoutedEventArgs args)
+        {
+            var viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
+
+            if (viewModel?.SelectedApplication != null)
+            {
+                await new CustomSettingsWindow(
+                    viewModel.VirtualFileSystem,
+                    viewModel.SelectedApplication.IdString,
+                    viewModel.SelectedApplication.Name,
+                    viewModel.SelectedApplication.Icon,
+                    viewModel.SelectedApplication.Path).ShowDialog(viewModel.TopLevel as Window);
+            }
+        }
+
+        public async void DeleteCustomSettings_Click(object sender, RoutedEventArgs args)
+        {
+            if (sender is not MenuItem { DataContext: MainWindowViewModel { SelectedApplication: not null } viewModel })
+                return;
+
+            UserResult result = await ContentDialogHelper.CreateLocalizedConfirmationDialog(
+                LocaleManager.Instance[LocaleKeys.DialogWarning],
+                LocaleManager.Instance.UpdateAndGetDynamicValue(LocaleKeys.DialogCustomSettingsDeleteMessage, viewModel.SelectedApplication.Name)
+            );
+
+            if (result == UserResult.Yes)
+            {
+                CustomSettingsHelper.DeleteCustomSettings(CustomSettingsHelper.PathToGameSettingsJson(viewModel.SelectedApplication.Id));
+            }
+        }
+
+        public void OpenCustomSettings_Click(object sender, RoutedEventArgs args)
+        {
+            var viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
+
+            if (viewModel?.SelectedApplication != null)
+            {
+                string customConfigDir = Path.Combine(AppDataManager.GamesDirPath, viewModel.SelectedApplication.IdString);
+
+                if (!Directory.Exists(customConfigDir))
+                {
+                    Directory.CreateDirectory(customConfigDir);
+                }
+
+                OpenHelper.OpenFolder(customConfigDir);
             }
         }
 

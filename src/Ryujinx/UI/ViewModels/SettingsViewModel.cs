@@ -20,6 +20,7 @@ using Ryujinx.Graphics.Vulkan;
 using Ryujinx.HLE;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS.Services.Time.TimeZone;
+using Ryujinx.HLE.HOS.SystemState;
 using Ryujinx.UI.Common.Configuration;
 using Ryujinx.UI.Common.Configuration.System;
 using System;
@@ -47,8 +48,6 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         private readonly Dictionary<string, string> _networkInterfaces;
 
-        private int _resolutionScale;
-
         [ObservableProperty]
         private bool _isVulkanAvailable = true;
 
@@ -69,50 +68,78 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         private bool _enableGDBStub;
 
-        public int ResolutionScale
+        private int ComputePreferredGpuIndex(string PreferredGpu)
         {
-            get => _resolutionScale;
-            set
-            {
-                _resolutionScale = value;
+            return _gpuIds.Contains(PreferredGpu) ? _gpuIds.IndexOf(PreferredGpu) : 0;
+        }
 
-                OnPropertyChanged(nameof(CustomResolutionScale));
-                OnPropertyChanged(nameof(IsCustomResolutionScaleActive));
+        private string ComputePreferredGpu(int PreferredGpuIndex)
+        {
+            return _gpuIds.ElementAtOrDefault((int)PreferredGpuIndex);
+        }
+
+        private int ComputeResScaleIndex(float ResScale)
+        {
+            if (ResScale <= 0.5f)
+            {
+                return 0;
+            }
+            else if (ResScale <= 0.75f)
+            {
+                return 1;
+            }
+            else
+            {
+                return (int)Math.Ceiling(ResScale) + 1;
             }
         }
 
-        public int GraphicsBackendMultithreadingIndex
+        private float ComputeResScale(int ResScaleIndex)
         {
-            get;
-            set
+            switch (ResScaleIndex)
             {
-                field = value;
-
-                if (field != (int)ConfigurationState.Instance.Graphics.BackendThreading.Value)
-                {
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                        ContentDialogHelper.CreateInfoDialog(LocaleManager.Instance[LocaleKeys.DialogSettingsBackendThreadingWarningMessage],
-                            "",
-                            "",
-                            LocaleManager.Instance[LocaleKeys.InputDialogOk],
-                            LocaleManager.Instance[LocaleKeys.DialogSettingsBackendThreadingWarningTitle])
-                    );
-                }
-
-                OnPropertyChanged();
+                case 0:
+                    return 0.5f;
+                case 1:
+                    return 0.75f;
+                case 2:
+                    return 1.0f;
+                case 3:
+                    return 2.0f;
+                case 4:
+                    return 3.0f;
+                case 5:
+                    return 4.0f;
+                default:
+                    return 1.0f;
             }
         }
 
-        public float CustomResolutionScale
+        private int ComputeMaxAnisotropyIndex(float MaxAnisotropy)
         {
-            get;
-            set
-            {
-                field = value;
+            return MaxAnisotropy == -1.0f ? 0 : (int)(MathF.Log2(MaxAnisotropy));
+        }
 
-                OnPropertyChanged();
+        private float ComputeMaxAnisotropy(int MaxAnisotropyIndex)
+        {
+            switch (MaxAnisotropyIndex)
+            {
+                case 0:
+                    return -1.0f;
+                case 1:
+                    return 2.0f;
+                case 2:
+                    return 4.0f;
+                case 3:
+                    return 8.0f;
+                case 4:
+                    return 16.0f;
+                default:
+                    return 2.0f;
             }
         }
+
+        public bool IsMacOS => OperatingSystem.IsMacOS();
 
         public bool IsOpenGLAvailable => !OperatingSystem.IsMacOS();
 
@@ -139,8 +166,6 @@ namespace Ryujinx.Ava.UI.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        public bool IsMacOS => OperatingSystem.IsMacOS();
 
         public bool EnableDiscordIntegration { get; set; }
         public bool CheckUpdatesOnStart { get; set; }
@@ -260,10 +285,9 @@ namespace Ryujinx.Ava.UI.ViewModels
         public bool IsSoundIoEnabled { get; set; }
         public bool IsSDL3Enabled { get; set; }
         public bool IsAudioToolboxEnabled { get; set; }
-        public bool IsCustomResolutionScaleActive => _resolutionScale == 4;
         public bool IsScalingFilterActive => _scalingFilter == (int)Ryujinx.Common.Configuration.ScalingFilter.Fsr;
 
-        public bool IsVulkanSelected => GraphicsBackendIndex == 0;
+        public bool IsVulkanSelected => GraphicsBackend == 0;
         public bool UseHypervisor { get; set; }
         public bool DisableP2P { get; set; }
 
@@ -292,8 +316,10 @@ namespace Ryujinx.Ava.UI.ViewModels
         public int Region { get; set; }
         public int FsGlobalAccessLogMode { get; set; }
         public int AudioBackend { get; set; }
-        public int MaxAnisotropy { get; set; }
+        public int ResScaleIndex { get; set; }
+        public int MaxAnisotropyIndex { get; set; }
         public int AspectRatio { get; set; }
+        public int BackendThreading { get; set; }
         public int AntiAliasingEffect { get; set; }
         public string ScalingFilterLevelText => ScalingFilterLevel.ToString("0");
 
@@ -312,7 +338,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         public int MemoryMode { get; set; }
         public int BaseStyleIndex { get; set; }
 
-        public int GraphicsBackendIndex
+        public int GraphicsBackend
         {
             get;
             set
@@ -484,7 +510,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             if (devices.Length == 0)
             {
                 IsVulkanAvailable = false;
-                GraphicsBackendIndex = 1;
+                GraphicsBackend = 1;
             }
             else
             {
@@ -500,8 +526,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
 
             // GPU configuration needs to be loaded during the async method or it will always return 0.
-            PreferredGpuIndex = _gpuIds.Contains(ConfigurationState.Instance.Graphics.PreferredGpu) ?
-                                _gpuIds.IndexOf(ConfigurationState.Instance.Graphics.PreferredGpu) : 0;
+            PreferredGpuIndex = ComputePreferredGpuIndex(ConfigurationState.Instance.Graphics.PreferredGpu.Value);
 
             Dispatcher.UIThread.Post(() => OnPropertyChanged(nameof(PreferredGpuIndex)));
         }
@@ -618,24 +643,23 @@ namespace Ryujinx.Ava.UI.ViewModels
             SkipUserProfiles = config.System.SkipUserProfilesManager;
 
             // CPU
-            EnablePptc = config.System.EnablePtc;
-            EnableLowPowerPptc = config.System.EnableLowPowerPtc;
+            EnablePptc = config.System.EnablePptc;
+            EnableLowPowerPptc = config.System.EnableLowPowerPptc;
             MemoryMode = (int)config.System.MemoryManagerMode.Value;
             UseHypervisor = config.System.UseHypervisor;
             TurboMultiplier = config.System.TickScalar;
 
             // Graphics
-            GraphicsBackendIndex = (int)config.Graphics.GraphicsBackend.Value;
+            GraphicsBackend = (int)config.Graphics.GraphicsBackend.Value;
             // Physical devices are queried asynchronously hence the preferred index config value is loaded in LoadAvailableGpus().
             EnableShaderCache = config.Graphics.EnableShaderCache;
             EnableTextureRecompression = config.Graphics.EnableTextureRecompression;
             EnableMacroHLE = config.Graphics.EnableMacroHLE;
             EnableColorSpacePassthrough = config.Graphics.EnableColorSpacePassthrough;
-            ResolutionScale = config.Graphics.ResScale == -1 ? 4 : config.Graphics.ResScale - 1;
-            CustomResolutionScale = config.Graphics.ResScaleCustom;
-            MaxAnisotropy = config.Graphics.MaxAnisotropy == -1 ? 0 : (int)(MathF.Log2(config.Graphics.MaxAnisotropy));
+            ResScaleIndex = ComputeResScaleIndex(config.Graphics.ResScale);
+            MaxAnisotropyIndex = ComputeMaxAnisotropyIndex(config.Graphics.MaxAnisotropy);
             AspectRatio = (int)config.Graphics.AspectRatio.Value;
-            GraphicsBackendMultithreadingIndex = (int)config.Graphics.BackendThreading.Value;
+            BackendThreading = (int)config.Graphics.BackendThreading.Value;
             ShaderDumpPath = config.Graphics.ShadersDumpPath;
             TextureDumpPath = config.Graphics.TexturesDumpPath.Value;
             TextureDumpFormatIndex = (int)config.Graphics.TexturesDumpFileFormat.Value;
@@ -738,33 +762,31 @@ namespace Ryujinx.Ava.UI.ViewModels
             config.System.SkipUserProfilesManager.Value = SkipUserProfiles;
 
             // CPU
-            config.System.EnablePtc.Value = EnablePptc;
-            config.System.EnableLowPowerPtc.Value = EnableLowPowerPptc;
+            config.System.EnablePptc.Value = EnablePptc;
+            config.System.EnableLowPowerPptc.Value = EnableLowPowerPptc;
             config.System.MemoryManagerMode.Value = (MemoryManagerMode)MemoryMode;
             config.System.UseHypervisor.Value = UseHypervisor;
-            config.System.TickScalar.Value = TurboMultiplier;
 
             // Graphics
-            config.Graphics.GraphicsBackend.Value = (GraphicsBackend)GraphicsBackendIndex;
+            config.Graphics.GraphicsBackend.Value = (GraphicsBackend)GraphicsBackend;
             config.Graphics.PreferredGpu.Value = _gpuIds.ElementAtOrDefault(PreferredGpuIndex);
             config.Graphics.EnableShaderCache.Value = EnableShaderCache;
             config.Graphics.EnableTextureRecompression.Value = EnableTextureRecompression;
             config.Graphics.EnableMacroHLE.Value = EnableMacroHLE;
             config.Graphics.EnableColorSpacePassthrough.Value = EnableColorSpacePassthrough;
-            config.Graphics.ResScale.Value = ResolutionScale == 4 ? -1 : ResolutionScale + 1;
-            config.Graphics.ResScaleCustom.Value = CustomResolutionScale;
-            config.Graphics.MaxAnisotropy.Value = MaxAnisotropy == 0 ? -1 : MathF.Pow(2, MaxAnisotropy);
+            config.Graphics.ResScale.Value = ComputeResScale(ResScaleIndex);
+            config.Graphics.MaxAnisotropy.Value = ComputeMaxAnisotropy(MaxAnisotropyIndex);
             config.Graphics.AspectRatio.Value = (AspectRatio)AspectRatio;
             config.Graphics.AntiAliasing.Value = (AntiAliasing)AntiAliasingEffect;
             config.Graphics.ScalingFilter.Value = (ScalingFilter)ScalingFilter;
             config.Graphics.ScalingFilterLevel.Value = ScalingFilterLevel;
 
-            if (ConfigurationState.Instance.Graphics.BackendThreading != (BackendThreading)GraphicsBackendMultithreadingIndex)
+            if (ConfigurationState.Instance.Graphics.BackendThreading != (BackendThreading)BackendThreading)
             {
-                DriverUtilities.ToggleOGLThreading(GraphicsBackendMultithreadingIndex == (int)BackendThreading.Off);
+                DriverUtilities.ToggleOGLThreading(BackendThreading == (int)Ryujinx.Common.Configuration.BackendThreading.Off);
             }
 
-            config.Graphics.BackendThreading.Value = (BackendThreading)GraphicsBackendMultithreadingIndex;
+            config.Graphics.BackendThreading.Value = (BackendThreading)BackendThreading;
             config.Graphics.ShadersDumpPath.Value = ShaderDumpPath;
             config.Graphics.TexturesDumpPath.Value = TextureDumpPath;
             config.Graphics.TexturesDumpFileFormat.Value = (TextureFileFormat)TextureDumpFormatIndex;

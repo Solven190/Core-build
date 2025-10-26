@@ -6,15 +6,19 @@ using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS;
 using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Ryujinx.Ava.UI.Windows
 {
     public partial class CheatWindow : StyleableWindow
     {
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
+
         private readonly string _enabledCheatsPath;
         public bool NoCheatsFound { get; }
 
@@ -28,6 +32,7 @@ namespace Ryujinx.Ava.UI.Windows
             DataContext = this;
 
             InitializeComponent();
+            ApplyDarkTitleBar();
 
             Title = $"Ryujinx {Program.Version} - " + LocaleManager.Instance[LocaleKeys.CheatWindowTitle];
         }
@@ -46,6 +51,7 @@ namespace Ryujinx.Ava.UI.Windows
             BuildId = ApplicationData.GetBuildId(virtualFileSystem, checkLevel, titlePath);
 
             InitializeComponent();
+            ApplyDarkTitleBar();
 
             string modsBasePath = ModLoader.GetModsBasePath();
             string titleModsPath = ModLoader.GetApplicationDir(modsBasePath, titleId);
@@ -98,6 +104,50 @@ namespace Ryujinx.Ava.UI.Windows
             DataContext = this;
 
             Title = $"Ryujinx {Program.Version} - " + LocaleManager.Instance[LocaleKeys.CheatWindowTitle];
+        }
+
+        private void ApplyDarkTitleBar()
+        {
+            if (!OperatingSystem.IsWindows())
+                return;
+
+            // Apply immediately if possible
+            if (PlatformImpl != null)
+            {
+                ForceDarkTitleBar();
+            }
+            else
+            {
+                // Wait until PlatformImpl is available
+                this.PropertyChanged += (_, e) =>
+                {
+                    if (e.Property.Name == nameof(PlatformImpl) && PlatformImpl != null)
+                    {
+                        ForceDarkTitleBar();
+                    }
+                };
+            }
+
+            // Backup: Try it even when the window is active
+            this.Activated += (_, _) => ForceDarkTitleBar();
+        }
+
+        private void ForceDarkTitleBar()
+        {
+            try
+            {
+                var handleField = PlatformImpl?.GetType().GetProperty("Handle")?.GetValue(PlatformImpl);
+                if (handleField?.GetType().GetProperty("Handle")?.GetValue(handleField) is IntPtr hwnd && hwnd != IntPtr.Zero)
+                {
+                    int dark = 1;
+                    DwmSetWindowAttribute(hwnd, 20, ref dark, sizeof(int)); // Modern Windows
+                    DwmSetWindowAttribute(hwnd, 19, ref dark, sizeof(int)); // Older Windows 10
+                }
+            }
+            catch
+            {
+                // Silent fail
+            }
         }
 
         public void Save()

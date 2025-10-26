@@ -34,14 +34,9 @@ namespace Ryujinx.UI.Common.Configuration
         public BackendThreading BackendThreading { get; set; }
 
         /// <summary>
-        /// Resolution Scale. An integer scale applied to applicable render targets. Values 1-4, or -1 to use a custom floating point scale instead.
+        /// Resolution Scale. A float value containing the resolution scale.
         /// </summary>
-        public int ResScale { get; set; }
-
-        /// <summary>
-        /// Custom Resolution Scale. A custom floating point scale applied to applicable render targets. Only active when Resolution Scale is -1.
-        /// </summary>
-        public float ResScaleCustom { get; set; }
+        public float ResScale { get; set; }
 
         /// <summary>
         /// Max Anisotropy. Values range from 0 - 16. Set to -1 to let the game decide.
@@ -264,7 +259,7 @@ namespace Ryujinx.UI.Common.Configuration
         /// Enables or disables low-power profiled translation cache persistency loading
         /// </summary>
         public bool EnableLowPowerPtc { get; set; }
-        
+
         /// <summary>
         /// Clock tick scalar, in percent points (100 = 1.0).
         /// </summary>
@@ -473,7 +468,7 @@ namespace Ryujinx.UI.Common.Configuration
         /// Uses Hypervisor over JIT if available
         /// </summary>
         public bool UseHypervisor { get; set; }
-
+        
         /// <summary>
         /// Enables or disables the GDB stub
         /// </summary>

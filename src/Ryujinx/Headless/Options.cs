@@ -28,7 +28,7 @@ namespace Ryujinx.Headless
                 HideCursorMode = configurationState.HideCursor;
 
             if (NeedsOverride(nameof(DisablePTC)))
-                DisablePTC = !configurationState.System.EnablePtc;
+                DisablePTC = !configurationState.System.EnablePptc;
 
             if (NeedsOverride(nameof(EnableInternetAccess)))
                 EnableInternetAccess = configurationState.System.EnableInternetAccess;
