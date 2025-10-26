@@ -38,11 +38,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public bool HasVolumeRamp { get; private set; }
         public bool IsFirstMixBuffer { get; private set; }
 
-        public MultiTapBiquadFilterAndMixCommand()
-        {
-            
-        }
-
         public MultiTapBiquadFilterAndMixCommand Initialize(
             float volume0,
             float volume1,

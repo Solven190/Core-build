@@ -23,11 +23,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public Type PerformanceType { get; set; }
 
-        public PerformanceCommand()
-        {
-            
-        }
-
         public PerformanceCommand Initialize(ref PerformanceEntryAddresses performanceEntryAddresses, Type performanceType, int nodeId)
         {
             if (PerformanceEntryAddresses is not null)

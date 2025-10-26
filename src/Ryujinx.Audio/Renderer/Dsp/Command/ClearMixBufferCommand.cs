@@ -10,11 +10,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ClearMixBufferCommand()
-        {
-            
-        }
-
         public ClearMixBufferCommand Initialize(int nodeId)
         {
             Enabled = true;

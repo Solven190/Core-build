@@ -24,11 +24,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public Memory<VoiceState> State { get; private set; }
 
-        public MixRampGroupedCommand()
-        {
-            
-        }
-
         public MixRampGroupedCommand Initialize(
             uint mixBufferCount,
             uint inputBufferIndex,

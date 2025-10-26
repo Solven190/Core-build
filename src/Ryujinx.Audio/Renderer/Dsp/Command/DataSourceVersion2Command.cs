@@ -3,7 +3,6 @@ using Ryujinx.Audio.Renderer.Common;
 using Ryujinx.Audio.Renderer.Server.Voice;
 using System;
 using Ryujinx.Audio.Renderer.Parameter;
-using Ryujinx.Memory;
 using WaveBuffer = Ryujinx.Audio.Renderer.Common.WaveBuffer;
 
 namespace Ryujinx.Audio.Renderer.Dsp.Command

@@ -20,11 +20,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public int OutputBufferIndex { get; private set; }
         public bool[] IsInitialized { get; private set; }
 
-        public MultiTapBiquadFilterCommand()
-        {
-            
-        }
-
         public MultiTapBiquadFilterCommand Initialize(int baseIndex, ReadOnlySpan<BiquadFilterParameter2> filters, Memory<BiquadFilterState> biquadFilterStateMemory, int inputBufferOffset, int outputBufferOffset, ReadOnlySpan<bool> isInitialized, int nodeId)
         {
             Parameters = filters.ToArray();

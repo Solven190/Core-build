@@ -31,11 +31,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public bool IsEffectEnabled { get; private set; }
 
-        public AuxiliaryBufferCommand()
-        {
-            
-        }
-        
         public AuxiliaryBufferCommand Initialize(
             uint bufferOffset,
             byte inputBufferOffset,

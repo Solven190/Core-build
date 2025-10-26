@@ -13,11 +13,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public ushort InputBufferIndex { get; private set; }
         public ushort OutputBufferIndex { get; private set; }
 
-        public CopyMixBufferCommand()
-        {
-            
-        }
-
         public CopyMixBufferCommand Initialize(uint inputBufferIndex, uint outputBufferIndex, int nodeId)
         {
             Enabled = true;

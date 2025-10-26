@@ -22,11 +22,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public float Volume { get; private set; }
 
-        public VolumeCommand()
-        {
-            
-        }
-
         public VolumeCommand Initialize(float volume, uint bufferIndex, int nodeId)
         {
             Enabled = true;

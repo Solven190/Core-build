@@ -19,11 +19,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public int Length { get; private set; }
         public float Value { get; private set; }
 
-        public FillBufferCommand()
-        {
-            
-        }
-        
         public FillBufferCommand Initialize(SplitterDestination destination, int length, float value, int nodeId)
         {
             Enabled = true;

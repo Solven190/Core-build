@@ -22,11 +22,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public float Volume { get; private set; }
 
-        public MixCommand()
-        {
-            
-        }
-        
         public MixCommand Initialize(uint inputBufferIndex, uint outputBufferIndex, int nodeId, float volume)
         {
             Enabled = true;

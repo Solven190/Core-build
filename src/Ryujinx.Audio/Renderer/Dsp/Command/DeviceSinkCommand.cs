@@ -25,11 +25,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public Memory<float> Buffers { get; private set; }
 
-        public DeviceSinkCommand()
-        {
-            
-        }
-
         public DeviceSinkCommand Initialize(uint bufferOffset, DeviceSink sink, int sessionId, Memory<float> buffers, int nodeId)
         {
             Enabled = true;
