@@ -159,6 +159,13 @@ namespace Ryujinx.Memory
 
             AssertValidAddressAndSize(va, data.Length);
 
+            if (IsContiguousAndMapped(va, data.Length))
+            {
+                nuint pa = TranslateVirtualAddressChecked(va);
+            
+                GetPhysicalAddressSpan(pa, data.Length).CopyTo(data);
+            }
+
             int offset = 0, size;
 
             if ((va & PageMask) != 0)
@@ -180,6 +187,28 @@ namespace Ryujinx.Memory
 
                 GetPhysicalAddressSpan(pa, size).CopyTo(data.Slice(offset, size));
             }
+        }
+
+        public virtual bool TryReadUnsafe(ulong va, int length, out Span<byte> data)
+        {
+            if (!IsContiguousAndMapped(va, length))
+            {
+                data = default;
+                return false;
+            }
+
+            if (length == 0)
+            {
+                data = Span<byte>.Empty;
+                return true;
+            }
+
+            AssertValidAddressAndSize(va, length);
+
+            nuint pa = TranslateVirtualAddressChecked(va);
+
+            data = GetPhysicalAddressSpan(pa, length);
+            return true;
         }
 
         public virtual T ReadTracked<T>(ulong va) where T : unmanaged

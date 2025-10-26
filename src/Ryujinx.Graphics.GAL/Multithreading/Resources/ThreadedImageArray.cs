@@ -21,15 +21,15 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             return new TableRef<T>(_renderer, reference);
         }
 
-        public void Dispose()
+        public unsafe void Dispose()
         {
-            _renderer.New<ImageArrayDisposeCommand>().Set(Ref(this));
+            _renderer.New<ImageArrayDisposeCommand>()->Set(Ref(this));
             _renderer.QueueCommand();
         }
 
-        public void SetImages(int index, ITexture[] images)
+        public unsafe void SetImages(int index, ITexture[] images)
         {
-            _renderer.New<ImageArraySetImagesCommand>().Set(Ref(this), index, Ref(images));
+            _renderer.New<ImageArraySetImagesCommand>()->Set(Ref(this), index, Ref(images));
             _renderer.QueueCommand();
         }
     }

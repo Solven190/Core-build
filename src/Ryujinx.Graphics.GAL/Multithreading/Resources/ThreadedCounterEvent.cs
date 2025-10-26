@@ -29,9 +29,9 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             return new TableRef<T>(_renderer, reference);
         }
 
-        public void Dispose()
+        public unsafe void Dispose()
         {
-            _renderer.New<CounterEventDisposeCommand>().Set(Ref(this));
+            _renderer.New<CounterEventDisposeCommand>()->Set(Ref(this));
             _renderer.QueueCommand();
         }
 

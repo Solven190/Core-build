@@ -28,25 +28,25 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             return new TableRef<T>(_renderer, reference);
         }
 
-        public void CopyTo(ITexture destination, int firstLayer, int firstLevel)
+        public unsafe void CopyTo(ITexture destination, int firstLayer, int firstLevel)
         {
-            _renderer.New<TextureCopyToCommand>().Set(Ref(this), Ref((ThreadedTexture)destination), firstLayer, firstLevel);
+            _renderer.New<TextureCopyToCommand>()->Set(Ref(this), Ref((ThreadedTexture)destination), firstLayer, firstLevel);
             _renderer.QueueCommand();
         }
 
-        public void CopyTo(ITexture destination, int srcLayer, int dstLayer, int srcLevel, int dstLevel)
+        public unsafe void CopyTo(ITexture destination, int srcLayer, int dstLayer, int srcLevel, int dstLevel)
         {
-            _renderer.New<TextureCopyToSliceCommand>().Set(Ref(this), Ref((ThreadedTexture)destination), srcLayer, dstLayer, srcLevel, dstLevel);
+            _renderer.New<TextureCopyToSliceCommand>()->Set(Ref(this), Ref((ThreadedTexture)destination), srcLayer, dstLayer, srcLevel, dstLevel);
             _renderer.QueueCommand();
         }
 
-        public void CopyTo(ITexture destination, Extents2D srcRegion, Extents2D dstRegion, bool linearFilter)
+        public unsafe void CopyTo(ITexture destination, Extents2D srcRegion, Extents2D dstRegion, bool linearFilter)
         {
             ThreadedTexture dest = (ThreadedTexture)destination;
 
             if (_renderer.IsGpuThread())
             {
-                _renderer.New<TextureCopyToScaledCommand>().Set(Ref(this), Ref(dest), srcRegion, dstRegion, linearFilter);
+                _renderer.New<TextureCopyToScaledCommand>()->Set(Ref(this), Ref(dest), srcRegion, dstRegion, linearFilter);
                 _renderer.QueueCommand();
             }
             else
@@ -59,21 +59,21 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             }
         }
 
-        public ITexture CreateView(TextureCreateInfo info, int firstLayer, int firstLevel)
+        public unsafe ITexture CreateView(TextureCreateInfo info, int firstLayer, int firstLevel)
         {
             ThreadedTexture newTex = new(_renderer, info);
-            _renderer.New<TextureCreateViewCommand>().Set(Ref(this), Ref(newTex), info, firstLayer, firstLevel);
+            _renderer.New<TextureCreateViewCommand>()->Set(Ref(this), Ref(newTex), info, firstLayer, firstLevel);
             _renderer.QueueCommand();
 
             return newTex;
         }
 
-        public PinnedSpan<byte> GetData()
+        public unsafe PinnedSpan<byte> GetData()
         {
             if (_renderer.IsGpuThread())
             {
                 ResultBox<PinnedSpan<byte>> box = new();
-                _renderer.New<TextureGetDataCommand>().Set(Ref(this), Ref(box));
+                _renderer.New<TextureGetDataCommand>()->Set(Ref(this), Ref(box));
                 _renderer.InvokeCommand();
 
                 return box.Result;
@@ -86,12 +86,12 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             }
         }
 
-        public PinnedSpan<byte> GetData(int layer, int level)
+        public unsafe PinnedSpan<byte> GetData(int layer, int level)
         {
             if (_renderer.IsGpuThread())
             {
                 ResultBox<PinnedSpan<byte>> box = new();
-                _renderer.New<TextureGetDataSliceCommand>().Set(Ref(this), Ref(box), layer, level);
+                _renderer.New<TextureGetDataSliceCommand>()->Set(Ref(this), Ref(box), layer, level);
                 _renderer.InvokeCommand();
 
                 return box.Result;
@@ -104,42 +104,42 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             }
         }
 
-        public void CopyTo(BufferRange range, int layer, int level, int stride)
+        public unsafe void CopyTo(BufferRange range, int layer, int level, int stride)
         {
-            _renderer.New<TextureCopyToBufferCommand>().Set(Ref(this), range, layer, level, stride);
+            _renderer.New<TextureCopyToBufferCommand>()->Set(Ref(this), range, layer, level, stride);
             _renderer.QueueCommand();
         }
 
         /// <inheritdoc/>
-        public void SetData(MemoryOwner<byte> data)
+        public unsafe void SetData(MemoryOwner<byte> data)
         {
-            _renderer.New<TextureSetDataCommand>().Set(Ref(this), Ref(data));
+            _renderer.New<TextureSetDataCommand>()->Set(Ref(this), Ref(data));
             _renderer.QueueCommand();
         }
 
         /// <inheritdoc/>
-        public void SetData(MemoryOwner<byte> data, int layer, int level)
+        public unsafe void SetData(MemoryOwner<byte> data, int layer, int level)
         {
-            _renderer.New<TextureSetDataSliceCommand>().Set(Ref(this), Ref(data), layer, level);
+            _renderer.New<TextureSetDataSliceCommand>()->Set(Ref(this), Ref(data), layer, level);
             _renderer.QueueCommand();
         }
 
         /// <inheritdoc/>
-        public void SetData(MemoryOwner<byte> data, int layer, int level, Rectangle<int> region)
+        public unsafe void SetData(MemoryOwner<byte> data, int layer, int level, Rectangle<int> region)
         {
-            _renderer.New<TextureSetDataSliceRegionCommand>().Set(Ref(this), Ref(data), layer, level, region);
+            _renderer.New<TextureSetDataSliceRegionCommand>()->Set(Ref(this), Ref(data), layer, level, region);
             _renderer.QueueCommand();
         }
 
-        public void SetStorage(BufferRange buffer)
+        public unsafe void SetStorage(BufferRange buffer)
         {
-            _renderer.New<TextureSetStorageCommand>().Set(Ref(this), buffer);
+            _renderer.New<TextureSetStorageCommand>()->Set(Ref(this), buffer);
             _renderer.QueueCommand();
         }
 
-        public void Release()
+        public unsafe void Release()
         {
-            _renderer.New<TextureReleaseCommand>().Set(Ref(this));
+            _renderer.New<TextureReleaseCommand>()->Set(Ref(this));
             _renderer.QueueCommand();
         }
     }

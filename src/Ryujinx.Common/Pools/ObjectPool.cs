@@ -8,11 +8,11 @@ namespace Ryujinx.Common
         where T : class
     {
         private int _size = size;
-        private readonly ConcurrentStack<T> _items = new();
+        private readonly ConcurrentBag<T> _items = new();
 
         public T Allocate()
         {
-            bool success = _items.TryPop(out T instance);
+            bool success = _items.TryTake(out T instance);
 
             if (!success)
             {
@@ -26,7 +26,7 @@ namespace Ryujinx.Common
         {
             if (_size < 0 || _items.Count < _size)
             {
-                _items.Push(obj);
+                _items.Add(obj);
             }
         }
         

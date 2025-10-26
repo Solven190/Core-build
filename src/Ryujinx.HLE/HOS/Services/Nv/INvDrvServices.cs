@@ -123,15 +123,15 @@ namespace Ryujinx.HLE.HOS.Services.Nv
                     return NvResult.InvalidSize;
                 }
 
-                byte[] outputData = new byte[outputDataSize];
-
-                byte[] temp = new byte[inputDataSize];
-
-                context.Memory.Read(inputDataPosition, temp);
-
-                Buffer.BlockCopy(temp, 0, outputData, 0, temp.Length);
-
-                arguments = new Span<byte>(outputData);
+                if (!context.Memory.TryReadUnsafe(inputDataPosition, (int)inputDataSize, out arguments))
+                {
+                    arguments = new byte[inputDataSize];
+                    context.Memory.Read(inputDataPosition, arguments);
+                }
+                else
+                {
+                    arguments = arguments.ToArray();
+                }
             }
             else if (isWrite)
             {
@@ -471,11 +471,11 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                 errorCode = GetIoctlArgument(context, ioctlCommand, out Span<byte> arguments);
 
-                byte[] temp = new byte[inlineInBufferSize];
-
-                context.Memory.Read(inlineInBufferPosition, temp);
-
-                Span<byte> inlineInBuffer = new(temp);
+                if (!context.Memory.TryReadUnsafe(inlineInBufferPosition, (int)inlineInBufferSize, out Span<byte> inlineInBuffer))
+                {
+                    inlineInBuffer = new byte[inlineInBufferSize];
+                    context.Memory.Read(inlineInBufferPosition, inlineInBuffer);
+                }
 
                 if (errorCode == NvResult.Success)
                 {
@@ -520,11 +520,11 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                 errorCode = GetIoctlArgument(context, ioctlCommand, out Span<byte> arguments);
 
-                byte[] temp = new byte[inlineOutBufferSize];
-
-                context.Memory.Read(inlineOutBufferPosition, temp);
-
-                Span<byte> inlineOutBuffer = new(temp);
+                if (!context.Memory.TryReadUnsafe(inlineOutBufferPosition, (int)inlineOutBufferSize, out Span<byte> inlineOutBuffer))
+                {
+                    inlineOutBuffer = new byte[inlineOutBufferSize];
+                    context.Memory.Read(inlineOutBufferPosition, inlineOutBuffer);
+                }
 
                 if (errorCode == NvResult.Success)
                 {

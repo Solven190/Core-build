@@ -13,9 +13,9 @@ namespace Ryujinx.Graphics.GAL.Multithreading.Resources
             _renderer = renderer;
         }
 
-        public void Dispose()
+        public unsafe void Dispose()
         {
-            _renderer.New<SamplerDisposeCommand>().Set(new TableRef<ThreadedSampler>(_renderer, this));
+            _renderer.New<SamplerDisposeCommand>()->Set(new TableRef<ThreadedSampler>(_renderer, this));
             _renderer.QueueCommand();
         }
     }

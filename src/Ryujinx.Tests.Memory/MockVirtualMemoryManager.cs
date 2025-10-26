@@ -43,6 +43,11 @@ namespace Ryujinx.Tests.Memory
             throw new NotImplementedException();
         }
 
+        public bool TryReadUnsafe(ulong va, int lenfth, out Span<byte> data)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Write<T>(ulong va, T value) where T : unmanaged
         {
             throw new NotImplementedException();

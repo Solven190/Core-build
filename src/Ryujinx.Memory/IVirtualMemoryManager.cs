@@ -62,6 +62,15 @@ namespace Ryujinx.Memory
         void Read(ulong va, Span<byte> data);
 
         /// <summary>
+        /// Gets a span of CPU mapped memory.
+        /// </summary>
+        /// <param name="va">Virtual address of the data in memory</param>
+        /// <param name="length">Length of the data in memory</param>
+        /// <param name="data">Span that references the data being read</param>
+        /// <exception cref="InvalidMemoryRegionException">Throw for unhandled invalid or unmapped memory accesses</exception>
+        bool TryReadUnsafe(ulong va, int length, out Span<byte> data);
+
+        /// <summary>
         /// Writes data to CPU mapped memory.
         /// </summary>
         /// <typeparam name="T">Type of the data being written</typeparam>
