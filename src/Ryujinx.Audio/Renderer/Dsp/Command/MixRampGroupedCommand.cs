@@ -8,23 +8,28 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.MixRampGrouped;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public uint MixBufferCount { get; }
+        public uint MixBufferCount { get; private set; }
 
-        public ushort[] InputBufferIndices { get; }
-        public ushort[] OutputBufferIndices { get; }
+        public ushort[] InputBufferIndices { get; private set; }
+        public ushort[] OutputBufferIndices { get; private set; }
 
-        public float[] Volume0 { get; }
-        public float[] Volume1 { get; }
+        public float[] Volume0 { get; private set; }
+        public float[] Volume1 { get; private set; }
 
-        public Memory<VoiceState> State { get; }
+        public Memory<VoiceState> State { get; private set; }
 
-        public MixRampGroupedCommand(
+        public MixRampGroupedCommand()
+        {
+            
+        }
+
+        public MixRampGroupedCommand Initialize(
             uint mixBufferCount,
             uint inputBufferIndex,
             uint outputBufferIndex,
@@ -52,6 +57,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             }
 
             State = state;
+            
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

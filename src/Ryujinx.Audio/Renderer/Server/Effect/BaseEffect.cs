@@ -174,19 +174,6 @@ namespace Ryujinx.Audio.Renderer.Server.Effect
 
             updateErrorInfo = new ErrorInfo();
         }
-        
-        /// <summary>
-        /// Update the internal state from a user version 3 parameter.
-        /// </summary>
-        /// <param name="updateErrorInfo">The possible <see cref="ErrorInfo"/> that was generated.</param>
-        /// <param name="parameter">The user parameter.</param>
-        /// <param name="mapper">The mapper to use.</param>
-        public virtual void Update(out ErrorInfo updateErrorInfo, in EffectInParameterVersion3 parameter, PoolMapper mapper)
-        {
-            Debug.Assert(IsTypeValid(in parameter));
-
-            updateErrorInfo = new ErrorInfo();
-        }
 
         /// <summary>
         /// Get the work buffer DSP address at the given index.

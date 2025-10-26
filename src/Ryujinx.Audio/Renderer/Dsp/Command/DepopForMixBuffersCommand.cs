@@ -7,21 +7,26 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.DepopForMixBuffers;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public uint MixBufferOffset { get; }
+        public uint MixBufferOffset { get; private set; }
 
-        public uint MixBufferCount { get; }
+        public uint MixBufferCount { get; private set; }
 
-        public float Decay { get; }
+        public float Decay { get; private set; }
 
-        public Memory<float> DepopBuffer { get; }
+        public Memory<float> DepopBuffer { get; private set; }
 
-        public DepopForMixBuffersCommand(Memory<float> depopBuffer, uint bufferOffset, uint mixBufferCount, int nodeId, uint sampleRate)
+        public DepopForMixBuffersCommand()
+        {
+            
+        }
+
+        public DepopForMixBuffersCommand Initialize(Memory<float> depopBuffer, uint bufferOffset, uint mixBufferCount, int nodeId, uint sampleRate)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -37,6 +42,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             {
                 Decay = 0.943695f;
             }
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

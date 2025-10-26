@@ -7,38 +7,43 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.FillBuffer;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public SplitterDestinationVersion1 Destination1 { get; }
-        public SplitterDestinationVersion2 Destination2 { get; }
-        public bool IsV2 { get; }
-        public int Length { get; }
-        public float Value { get; }
+        public SplitterDestinationVersion1 Destination1 { get; private set; }
+        public SplitterDestinationVersion2 Destination2 { get; private set; }
+        public bool IsV2 { get; private set; }
+        public int Length { get; private set; }
+        public float Value { get; private set; }
 
-        public FillBufferCommand(SplitterDestinationVersion1 destination, int length, float value, int nodeId)
+        public FillBufferCommand()
         {
-            Enabled = true;
-            NodeId = nodeId;
-
-            Destination1 = destination;
-            IsV2 = false;
-            Length = length;
-            Value = value;
+            
         }
         
-        public FillBufferCommand(SplitterDestinationVersion2 destination, int length, float value, int nodeId)
+        public FillBufferCommand Initialize(SplitterDestination destination, int length, float value, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
+
+            if (Unsafe.IsNullRef(ref destination.GetV2RefOrNull()))
+            {
+                Destination1 = destination.GetV1RefOrNull();
+                IsV2 = false;
+            }
+            else
+            {
+                Destination2 = destination.GetV2RefOrNull();
+                IsV2 = true;
+            }
             
-            Destination2 = destination;
-            IsV2 = true;
             Length = length;
             Value = value;
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

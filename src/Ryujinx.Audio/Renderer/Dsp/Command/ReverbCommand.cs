@@ -33,26 +33,32 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.Reverb;
 
         public uint EstimatedProcessingTime { get; set; }
 
         public ReverbParameter Parameter => _parameter;
-        public Memory<ReverbState> State { get; }
-        public ulong WorkBuffer { get; }
+        public Memory<ReverbState> State { get; private set; }
+        public ulong WorkBuffer { get; private set; }
         public ushort[] OutputBufferIndices { get; }
         public ushort[] InputBufferIndices { get; }
-        public bool IsLongSizePreDelaySupported { get; }
+        public bool IsLongSizePreDelaySupported { get; private set; }
 
-        public bool IsEffectEnabled { get; }
+        public bool IsEffectEnabled { get; private set; }
 
         private ReverbParameter _parameter;
 
         private const int FixedPointPrecision = 14;
 
-        public ReverbCommand(uint bufferOffset, ReverbParameter parameter, Memory<ReverbState> state, bool isEnabled, ulong workBuffer, int nodeId, bool isLongSizePreDelaySupported, bool newEffectChannelMappingSupported)
+        public ReverbCommand()
+        {
+            InputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
+            OutputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
+        }
+
+        public ReverbCommand Initialize(uint bufferOffset, ReverbParameter parameter, Memory<ReverbState> state, bool isEnabled, ulong workBuffer, int nodeId, bool isLongSizePreDelaySupported, bool newEffectChannelMappingSupported)
         {
             Enabled = true;
             IsEffectEnabled = isEnabled;
@@ -60,9 +66,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             _parameter = parameter;
             State = state;
             WorkBuffer = workBuffer;
-
-            InputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
-            OutputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
             
             Span<byte> inputSpan = Parameter.Input.AsSpan();
             Span<byte> outputSpan = Parameter.Output.AsSpan();
@@ -79,6 +82,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             // TODO: Update reverb processing and remove this to use RemapLegacyChannelEffectMappingToChannelResourceMapping.
             DataSourceHelper.RemapChannelResourceMappingToLegacy(newEffectChannelMappingSupported, InputBufferIndices, Parameter.ChannelCount);
             DataSourceHelper.RemapChannelResourceMappingToLegacy(newEffectChannelMappingSupported, OutputBufferIndices, Parameter.ChannelCount);
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

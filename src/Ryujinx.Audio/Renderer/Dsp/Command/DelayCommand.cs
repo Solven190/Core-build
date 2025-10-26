@@ -13,24 +13,30 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.Delay;
 
         public uint EstimatedProcessingTime { get; set; }
 
         public DelayParameter Parameter => _parameter;
-        public Memory<DelayState> State { get; }
-        public ulong WorkBuffer { get; }
+        public Memory<DelayState> State { get; private set; }
+        public ulong WorkBuffer { get; private set; }
         public ushort[] OutputBufferIndices { get; }
         public ushort[] InputBufferIndices { get; }
-        public bool IsEffectEnabled { get; }
+        public bool IsEffectEnabled { get; private set; }
 
         private DelayParameter _parameter;
 
         private const int FixedPointPrecision = 14;
 
-        public DelayCommand(uint bufferOffset, DelayParameter parameter, Memory<DelayState> state, bool isEnabled, ulong workBuffer, int nodeId, bool newEffectChannelMappingSupported)
+        public DelayCommand()
+        {
+            InputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
+            OutputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
+        }
+
+        public DelayCommand Initialize(uint bufferOffset, DelayParameter parameter, Memory<DelayState> state, bool isEnabled, ulong workBuffer, int nodeId, bool newEffectChannelMappingSupported)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -39,9 +45,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             WorkBuffer = workBuffer;
 
             IsEffectEnabled = isEnabled;
-
-            InputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
-            OutputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
             
             Span<byte> inputSpan = Parameter.Input.AsSpan();
             Span<byte> outputSpan = Parameter.Output.AsSpan();
@@ -54,6 +57,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             DataSourceHelper.RemapLegacyChannelEffectMappingToChannelResourceMapping(newEffectChannelMappingSupported, InputBufferIndices, Parameter.ChannelCount);
             DataSourceHelper.RemapLegacyChannelEffectMappingToChannelResourceMapping(newEffectChannelMappingSupported, OutputBufferIndices, Parameter.ChannelCount);
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]

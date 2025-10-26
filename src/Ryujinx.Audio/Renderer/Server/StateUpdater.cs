@@ -300,7 +300,7 @@ namespace Ryujinx.Audio.Renderer.Server
             return ResultCode.Success;
         }
 
-        private static void ResetEffect<T>(ref BaseEffect effect, in T parameter, PoolMapper mapper) where T : unmanaged, IEffectInParameter
+        private void ResetEffect<T>(ref BaseEffect effect, in T parameter, PoolMapper mapper) where T : unmanaged, IEffectInParameter
         {
             effect.ForceUnmapBuffers(mapper);
 
@@ -312,7 +312,8 @@ namespace Ryujinx.Audio.Renderer.Server
                 EffectType.Delay => new DelayEffect(),
                 EffectType.Reverb => new ReverbEffect(),
                 EffectType.Reverb3d => new Reverb3dEffect(),
-                EffectType.BiquadFilter => new BiquadFilterEffect(),
+                EffectType.BiquadFilter when _behaviourInfo.IsBiquadFilterParameterFloatSupported() => new BiquadFilterEffect(2),
+                EffectType.BiquadFilter => new BiquadFilterEffect(1),
                 EffectType.Limiter => new LimiterEffect(),
                 EffectType.CaptureBuffer => new CaptureBufferEffect(),
                 EffectType.Compressor => new CompressorEffect(),
@@ -322,71 +323,12 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public ResultCode UpdateEffects(EffectContext context, bool isAudioRendererActive, PoolMapper mapper)
         {
-            if (_behaviourInfo.IsBiquadFilterParameterFloatSupported())
-            {
-                return UpdateEffectsVersion3(context, isAudioRendererActive, mapper);
-            }
-            
             if (_behaviourInfo.IsEffectInfoVersion2Supported())
             {
                 return UpdateEffectsVersion2(context, isAudioRendererActive, mapper);
             }
 
             return UpdateEffectsVersion1(context, isAudioRendererActive, mapper);
-        }
-
-        public ResultCode UpdateEffectsVersion3(EffectContext context, bool isAudioRendererActive, PoolMapper mapper)
-        {
-            if (context.GetCount() * Unsafe.SizeOf<EffectInParameterVersion2>() != _inputHeader.EffectsSize)
-            {
-                return ResultCode.InvalidUpdateInfo;
-            }
-
-            int initialOutputSize = _output.Length;
-
-            long initialInputConsumed = _inputReader.Consumed;
-
-            for (int i = 0; i < context.GetCount(); i++)
-            {
-                ref readonly EffectInParameterVersion3 parameter = ref _inputReader.GetRefOrRefToCopy<EffectInParameterVersion3>(out _);
-
-                ref EffectOutStatusVersion2 outStatus = ref SpanIOHelper.GetWriteRef<EffectOutStatusVersion2>(ref _output)[0];
-
-                ref BaseEffect effect = ref context.GetEffect(i);
-
-                if (!effect.IsTypeValid(in parameter))
-                {
-                    ResetEffect(ref effect, in parameter, mapper);
-                }
-
-                effect.Update(out ErrorInfo updateErrorInfo, in parameter, mapper);
-
-                if (updateErrorInfo.ErrorCode != ResultCode.Success)
-                {
-                    _behaviourInfo.AppendError(ref updateErrorInfo);
-                }
-
-                effect.StoreStatus(ref outStatus, isAudioRendererActive);
-
-                if (parameter.IsNew)
-                {
-                    effect.InitializeResultState(ref context.GetDspState(i));
-                    effect.InitializeResultState(ref context.GetState(i));
-                }
-
-                effect.UpdateResultState(ref outStatus.ResultState, ref context.GetState(i));
-            }
-
-            int currentOutputSize = _output.Length;
-
-            OutputHeader.EffectsSize = (uint)(Unsafe.SizeOf<EffectOutStatusVersion2>() * context.GetCount());
-            OutputHeader.TotalSize += OutputHeader.EffectsSize;
-
-            Debug.Assert((initialOutputSize - currentOutputSize) == OutputHeader.EffectsSize);
-
-            _inputReader.SetConsumed(initialInputConsumed + _inputHeader.EffectsSize);
-
-            return ResultCode.Success;
         }
         
         public ResultCode UpdateEffectsVersion2(EffectContext context, bool isAudioRendererActive, PoolMapper mapper)

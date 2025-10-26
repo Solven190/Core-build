@@ -11,27 +11,32 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.AdpcmDataSourceVersion1;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort OutputBufferIndex { get; }
-        public uint SampleRate { get; }
+        public ushort OutputBufferIndex { get; private set; }
+        public uint SampleRate { get; private set; }
 
-        public float Pitch { get; }
+        public float Pitch { get; private set; }
 
         public WaveBuffer[] WaveBuffers { get; }
 
-        public Memory<VoiceState> State { get; }
+        public Memory<VoiceState> State { get; private set; }
 
-        public ulong AdpcmParameter { get; }
-        public ulong AdpcmParameterSize { get; }
+        public ulong AdpcmParameter { get; private set; }
+        public ulong AdpcmParameterSize { get; private set; }
 
-        public DecodingBehaviour DecodingBehaviour { get; }
+        public DecodingBehaviour DecodingBehaviour { get; private set; }
 
-        public AdpcmDataSourceCommandVersion1(ref VoiceInfo serverInfo, Memory<VoiceState> state, ushort outputBufferIndex, int nodeId)
+        public AdpcmDataSourceCommandVersion1()
+        {
+            WaveBuffers = new WaveBuffer[Constants.VoiceWaveBufferCount];
+        }
+
+        public AdpcmDataSourceCommandVersion1 Initialize(ref VoiceInfo serverInfo, Memory<VoiceState> state, ushort outputBufferIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -41,8 +46,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             Pitch = serverInfo.Pitch;
             
             Span<Server.Voice.WaveBuffer> waveBufferSpan = serverInfo.WaveBuffers.AsSpan();
-
-            WaveBuffers = new WaveBuffer[Constants.VoiceWaveBufferCount];
 
             for (int i = 0; i < WaveBuffers.Length; i++)
             {
@@ -55,6 +58,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             AdpcmParameterSize = serverInfo.DataSourceStateAddressInfo.Size;
             State = state;
             DecodingBehaviour = serverInfo.DecodingBehaviour;
+
+            return this;
         }
 
         public void Process(CommandList context)

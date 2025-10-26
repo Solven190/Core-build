@@ -13,22 +13,34 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.Performance;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public PerformanceEntryAddresses PerformanceEntryAddresses { get; }
+        public PerformanceEntryAddresses PerformanceEntryAddresses { get; private set; }
 
         public Type PerformanceType { get; set; }
 
-        public PerformanceCommand(ref PerformanceEntryAddresses performanceEntryAddresses, Type performanceType, int nodeId)
+        public PerformanceCommand()
         {
+            
+        }
+
+        public PerformanceCommand Initialize(ref PerformanceEntryAddresses performanceEntryAddresses, Type performanceType, int nodeId)
+        {
+            if (PerformanceEntryAddresses is not null)
+            {
+                PerformanceEntryAddresses.PerformanceEntryAddressesPool.Release(PerformanceEntryAddresses);
+            }
+            
             Enabled = true;
             PerformanceEntryAddresses = performanceEntryAddresses;
             PerformanceType = performanceType;
             NodeId = nodeId;
+
+            return this;
         }
 
         public void Process(CommandList context)

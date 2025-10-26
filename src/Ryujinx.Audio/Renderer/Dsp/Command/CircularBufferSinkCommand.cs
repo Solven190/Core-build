@@ -9,25 +9,29 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.CircularBufferSink;
 
         public uint EstimatedProcessingTime { get; set; }
 
         public ushort[] Input { get; }
-        public uint InputCount { get; }
+        public uint InputCount { get; private set; }
 
-        public ulong CircularBuffer { get; }
-        public ulong CircularBufferSize { get; }
-        public ulong CurrentOffset { get; }
+        public ulong CircularBuffer { get; private set; }
+        public ulong CircularBufferSize { get; private set; }
+        public ulong CurrentOffset { get; private set; }
 
-        public CircularBufferSinkCommand(uint bufferOffset, ref CircularBufferParameter parameter, ref AddressInfo circularBufferAddressInfo, uint currentOffset, int nodeId)
+        public CircularBufferSinkCommand()
+        {
+            Input = new ushort[Constants.ChannelCountMax];
+        }
+        
+        public CircularBufferSinkCommand Initialize(uint bufferOffset, ref CircularBufferParameter parameter, ref AddressInfo circularBufferAddressInfo, uint currentOffset, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
 
-            Input = new ushort[Constants.ChannelCountMax];
             InputCount = parameter.InputCount;
             
             Span<byte> inputSpan = parameter.Input.AsSpan();
@@ -42,6 +46,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             CurrentOffset = currentOffset;
 
             Debug.Assert(CircularBuffer != 0);
+
+            return this;
         }
 
         public void Process(CommandList context)

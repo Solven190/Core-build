@@ -12,26 +12,31 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.AuxiliaryBuffer;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public uint InputBufferIndex { get; }
-        public uint OutputBufferIndex { get; }
+        public uint InputBufferIndex { get; private set; }
+        public uint OutputBufferIndex { get; private set; }
 
-        public AuxiliaryBufferAddresses BufferInfo { get; }
+        public AuxiliaryBufferAddresses BufferInfo { get; private set; }
 
-        public CpuAddress InputBuffer { get; }
-        public CpuAddress OutputBuffer { get; }
-        public uint CountMax { get; }
-        public uint UpdateCount { get; }
-        public uint WriteOffset { get; }
+        public CpuAddress InputBuffer { get; private set; }
+        public CpuAddress OutputBuffer { get; private set; }
+        public uint CountMax { get; private set; }
+        public uint UpdateCount { get; private set; }
+        public uint WriteOffset { get; private set; }
 
-        public bool IsEffectEnabled { get; }
+        public bool IsEffectEnabled { get; private set; }
 
-        public AuxiliaryBufferCommand(
+        public AuxiliaryBufferCommand()
+        {
+            
+        }
+        
+        public AuxiliaryBufferCommand Initialize(
             uint bufferOffset,
             byte inputBufferOffset,
             byte outputBufferOffset,
@@ -55,6 +60,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             UpdateCount = updateCount;
             WriteOffset = writeOffset;
             IsEffectEnabled = isEnabled;
+            
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -7,22 +7,27 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.Upsample;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public uint BufferCount { get; }
-        public uint InputBufferIndex { get; }
-        public uint InputSampleCount { get; }
-        public uint InputSampleRate { get; }
+        public uint BufferCount { get; private set; }
+        public uint InputBufferIndex { get; private set; }
+        public uint InputSampleCount { get; private set; }
+        public uint InputSampleRate { get; private set; }
 
-        public UpsamplerInfo UpsamplerInfo { get; }
+        public UpsamplerInfo UpsamplerInfo { get; private set; }
 
-        public Memory<float> OutBuffer { get; }
+        public Memory<float> OutBuffer { get; private set; }
 
-        public UpsampleCommand(uint bufferOffset, UpsamplerInfo info, uint inputCount, Span<byte> inputBufferOffset, uint bufferCount, uint sampleCount, uint sampleRate, int nodeId)
+        public UpsampleCommand()
+        {
+            
+        }
+
+        public UpsampleCommand Initialize(uint bufferOffset, UpsamplerInfo info, uint inputCount, Span<byte> inputBufferOffset, uint bufferCount, uint sampleCount, uint sampleRate, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -47,6 +52,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             }
 
             UpsamplerInfo = info;
+
+            return this;
         }
 
         private Span<float> GetBuffer(int index, int sampleCount)

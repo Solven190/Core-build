@@ -7,19 +7,24 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.VolumeRamp;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort InputBufferIndex { get; }
-        public ushort OutputBufferIndex { get; }
+        public ushort InputBufferIndex { get; private set; }
+        public ushort OutputBufferIndex { get; private set; }
 
-        public float Volume0 { get; }
-        public float Volume1 { get; }
+        public float Volume0 { get; private set; }
+        public float Volume1 { get; private set; }
 
-        public VolumeRampCommand(float volume0, float volume1, uint bufferIndex, int nodeId)
+        public VolumeRampCommand()
+        {
+            
+        }
+        
+        public VolumeRampCommand Initialize(float volume0, float volume1, uint bufferIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -29,6 +34,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             Volume0 = volume0;
             Volume1 = volume1;
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

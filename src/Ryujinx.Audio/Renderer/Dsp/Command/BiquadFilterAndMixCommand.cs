@@ -9,32 +9,37 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.BiquadFilterAndMix;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort InputBufferIndex { get; }
-        public ushort OutputBufferIndex { get; }
+        public ushort InputBufferIndex { get; private set; }
+        public ushort OutputBufferIndex { get; private set; }
 
         private BiquadFilterParameter2 _parameter;
 
-        public Memory<BiquadFilterState> BiquadFilterState { get; }
-        public Memory<BiquadFilterState> PreviousBiquadFilterState { get; }
+        public Memory<BiquadFilterState> BiquadFilterState { get; private set; }
+        public Memory<BiquadFilterState> PreviousBiquadFilterState { get; private set; }
 
-        public Memory<VoiceState> State { get; }
+        public Memory<VoiceState> State { get; private set; }
 
-        public int LastSampleIndex { get; }
+        public int LastSampleIndex { get; private set; }
 
-        public float Volume0 { get; }
-        public float Volume1 { get; }
+        public float Volume0 { get; private set; }
+        public float Volume1 { get; private set; }
 
-        public bool NeedInitialization { get; }
-        public bool HasVolumeRamp { get; }
-        public bool IsFirstMixBuffer { get; }
+        public bool NeedInitialization { get; private set; }
+        public bool HasVolumeRamp { get; private set; }
+        public bool IsFirstMixBuffer { get; private set; }
 
-        public BiquadFilterAndMixCommand(
+        public BiquadFilterAndMixCommand()
+        {
+            
+        }
+
+        public BiquadFilterAndMixCommand Initialize(
             float volume0,
             float volume1,
             uint inputBufferIndex,
@@ -68,6 +73,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             NeedInitialization = needInitialization;
             HasVolumeRamp = hasVolumeRamp;
             IsFirstMixBuffer = isFirstMixBuffer;
+
+            return this;
         }
 
         public void Process(CommandList context)

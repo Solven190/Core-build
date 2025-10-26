@@ -7,26 +7,29 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.DepopPrepare;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public uint MixBufferCount { get; }
+        public uint MixBufferCount { get; private set; }
 
         public ushort[] OutputBufferIndices { get; }
 
-        public Memory<VoiceState> State { get; }
-        public Memory<float> DepopBuffer { get; }
+        public Memory<VoiceState> State { get; private set; }
+        public Memory<float> DepopBuffer { get; private set; }
 
-        public DepopPrepareCommand(Memory<VoiceState> state, Memory<float> depopBuffer, uint mixBufferCount, uint bufferOffset, int nodeId, bool enabled)
+        public DepopPrepareCommand()
+        {
+            OutputBufferIndices = new ushort[Constants.MixBufferCountMax];
+        }
+
+        public DepopPrepareCommand Initialize(Memory<VoiceState> state, Memory<float> depopBuffer, uint mixBufferCount, uint bufferOffset, int nodeId, bool enabled)
         {
             Enabled = enabled;
             NodeId = nodeId;
             MixBufferCount = mixBufferCount;
-
-            OutputBufferIndices = new ushort[Constants.MixBufferCountMax];
 
             for (int i = 0; i < Constants.MixBufferCountMax; i++)
             {
@@ -35,6 +38,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             State = state;
             DepopBuffer = depopBuffer;
+
+            return this;
         }
 
         public void Process(CommandList context)

@@ -8,40 +8,47 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.MultiTapBiquadFilter;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        private readonly BiquadFilterParameter2[] _parameters;
-        private readonly Memory<BiquadFilterState> _biquadFilterStates;
-        private readonly int _inputBufferIndex;
-        private readonly int _outputBufferIndex;
-        private readonly bool[] _isInitialized;
+        public BiquadFilterParameter2[] Parameters { get; private set; }
+        public Memory<BiquadFilterState> BiquadFilterStates { get; private set; }
+        public int InputBufferIndex { get; private set; }
+        public int OutputBufferIndex { get; private set; }
+        public bool[] IsInitialized { get; private set; }
 
-        public MultiTapBiquadFilterCommand(int baseIndex, ReadOnlySpan<BiquadFilterParameter2> filters, Memory<BiquadFilterState> biquadFilterStateMemory, int inputBufferOffset, int outputBufferOffset, ReadOnlySpan<bool> isInitialized, int nodeId)
+        public MultiTapBiquadFilterCommand()
         {
-            _parameters = filters.ToArray();
-            _biquadFilterStates = biquadFilterStateMemory;
-            _inputBufferIndex = baseIndex + inputBufferOffset;
-            _outputBufferIndex = baseIndex + outputBufferOffset;
-            _isInitialized = isInitialized.ToArray();
+            
+        }
+
+        public MultiTapBiquadFilterCommand Initialize(int baseIndex, ReadOnlySpan<BiquadFilterParameter2> filters, Memory<BiquadFilterState> biquadFilterStateMemory, int inputBufferOffset, int outputBufferOffset, ReadOnlySpan<bool> isInitialized, int nodeId)
+        {
+            Parameters = filters.ToArray();
+            BiquadFilterStates = biquadFilterStateMemory;
+            InputBufferIndex = baseIndex + inputBufferOffset;
+            OutputBufferIndex = baseIndex + outputBufferOffset;
+            IsInitialized = isInitialized.ToArray();
 
             Enabled = true;
             NodeId = nodeId;
+            
+            return this;
         }
 
         public void Process(CommandList context)
         {
-            Span<BiquadFilterState> states = _biquadFilterStates.Span;
+            Span<BiquadFilterState> states = BiquadFilterStates.Span;
 
-            ReadOnlySpan<float> inputBuffer = context.GetBuffer(_inputBufferIndex);
-            Span<float> outputBuffer = context.GetBuffer(_outputBufferIndex);
+            ReadOnlySpan<float> inputBuffer = context.GetBuffer(InputBufferIndex);
+            Span<float> outputBuffer = context.GetBuffer(OutputBufferIndex);
 
-            for (int i = 0; i < _parameters.Length; i++)
+            for (int i = 0; i < Parameters.Length; i++)
             {
-                if (!_isInitialized[i])
+                if (!IsInitialized[i])
                 {
                     states[i] = new BiquadFilterState();
                 }
@@ -49,13 +56,13 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             // NOTE: Nintendo only implement single and double biquad filters but no generic path when the command definition suggests it could be done.
             // As such we currently only implement a generic path for simplicity for double biquad.
-            if (_parameters.Length == 1)
+            if (Parameters.Length == 1)
             {
-                BiquadFilterHelper.ProcessBiquadFilter(ref _parameters[0], ref states[0], outputBuffer, inputBuffer, context.SampleCount);
+                BiquadFilterHelper.ProcessBiquadFilter(ref Parameters[0], ref states[0], outputBuffer, inputBuffer, context.SampleCount);
             }
             else
             {
-                BiquadFilterHelper.ProcessBiquadFilter(_parameters, states, outputBuffer, inputBuffer, context.SampleCount);
+                BiquadFilterHelper.ProcessBiquadFilter(Parameters, states, outputBuffer, inputBuffer, context.SampleCount);
             }
         }
     }

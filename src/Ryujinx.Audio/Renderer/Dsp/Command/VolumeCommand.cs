@@ -11,18 +11,23 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.Volume;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort InputBufferIndex { get; }
-        public ushort OutputBufferIndex { get; }
+        public ushort InputBufferIndex { get; private set; }
+        public ushort OutputBufferIndex { get; private set; }
 
-        public float Volume { get; }
+        public float Volume { get; private set; }
 
-        public VolumeCommand(float volume, uint bufferIndex, int nodeId)
+        public VolumeCommand()
+        {
+            
+        }
+
+        public VolumeCommand Initialize(float volume, uint bufferIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -31,6 +36,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             OutputBufferIndex = (ushort)bufferIndex;
 
             Volume = volume;
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,3 +1,4 @@
+using Ryujinx.Common;
 using System;
 
 namespace Ryujinx.Audio.Renderer.Server.Performance
@@ -7,6 +8,8 @@ namespace Ryujinx.Audio.Renderer.Server.Performance
     /// </summary>
     public class PerformanceEntryAddresses
     {
+        public static readonly ObjectPool<PerformanceEntryAddresses> PerformanceEntryAddressesPool = new(() => new PerformanceEntryAddresses());
+        
         /// <summary>
         /// The memory storing the performance entry.
         /// </summary>
@@ -51,6 +54,11 @@ namespace Ryujinx.Audio.Renderer.Server.Performance
         public void SetProcessingTime(ulong endTimeNano)
         {
             BaseMemory.Span[(int)ProcessingTimeOffset / 4] = (int)(endTimeNano / 1000) - BaseMemory.Span[(int)StartTimeOffset / 4];
+        }
+
+        public void Clear()
+        {
+            
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public Memory<float> Buffers { get; }
         public uint BufferCount { get; }
 
+        private readonly static ObjectPool<List<ICommand>> CommandsListPool = new(() => new List<ICommand>(256));
         public List<ICommand> Commands { get; }
 
         public IVirtualMemoryManager MemoryManager { get; }
@@ -46,7 +47,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             SampleRate = sampleRate;
             BufferCount = mixBufferCount + voiceChannelCountMax;
             Buffers = mixBuffer;
-            Commands = [];
+            Commands = CommandsListPool.Allocate();
             MemoryManager = memoryManager;
 
             _buffersEntryCount = Buffers.Length;
@@ -142,6 +143,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
                         }
                     }
                 }
+                
+                CommandBuffer.ReleaseCommand(command);
             }
 
             EndTime = (ulong)PerformanceCounter.ElapsedNanoseconds;
@@ -149,6 +152,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
         public void Dispose()
         {
+            Commands.Clear();
+            CommandsListPool.Release(Commands);
             GC.SuppressFinalize(this);
             _buffersMemoryHandle.Dispose();
         }

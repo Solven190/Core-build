@@ -3,6 +3,7 @@ using Ryujinx.Audio.Renderer.Common;
 using Ryujinx.Audio.Renderer.Server.Voice;
 using System;
 using Ryujinx.Audio.Renderer.Parameter;
+using Ryujinx.Memory;
 using WaveBuffer = Ryujinx.Audio.Renderer.Common.WaveBuffer;
 
 namespace Ryujinx.Audio.Renderer.Dsp.Command
@@ -11,35 +12,40 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
-        public CommandType CommandType { get; }
+        public CommandType CommandType { get; private set; }
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort OutputBufferIndex { get; }
-        public uint SampleRate { get; }
+        public ushort OutputBufferIndex { get; private set; }
+        public uint SampleRate { get; private set; }
 
-        public float Pitch { get; }
+        public float Pitch { get; private set; }
 
         public WaveBuffer[] WaveBuffers { get; }
 
-        public Memory<VoiceState> State { get; }
+        public Memory<VoiceState> State { get; private set; }
 
-        public ulong ExtraParameter { get; }
-        public ulong ExtraParameterSize { get; }
+        public ulong ExtraParameter { get; private set; }
+        public ulong ExtraParameterSize { get; private set; }
 
-        public uint ChannelIndex { get; }
+        public uint ChannelIndex { get; private set; }
 
-        public uint ChannelCount { get; }
+        public uint ChannelCount { get; private set; }
 
-        public DecodingBehaviour DecodingBehaviour { get; }
+        public DecodingBehaviour DecodingBehaviour { get; private set; }
 
-        public SampleFormat SampleFormat { get; }
+        public SampleFormat SampleFormat { get; private set; }
 
-        public SampleRateConversionQuality SrcQuality { get; }
+        public SampleRateConversionQuality SrcQuality { get; private set; }
 
-        public DataSourceVersion2Command(ref VoiceInfo serverInfo, Memory<VoiceState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
+        public DataSourceVersion2Command()
+        {
+            WaveBuffers = new WaveBuffer[Constants.VoiceWaveBufferCount];
+        }
+
+        public DataSourceVersion2Command Initialize(ref VoiceInfo serverInfo, Memory<VoiceState> state, ushort outputBufferIndex, ushort channelIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
@@ -54,8 +60,6 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             Pitch = serverInfo.Pitch;
             
             Span<Server.Voice.WaveBuffer> waveBufferSpan = serverInfo.WaveBuffers.AsSpan();
-
-            WaveBuffers = new WaveBuffer[Constants.VoiceWaveBufferCount];
 
             for (int i = 0; i < WaveBuffers.Length; i++)
             {
@@ -72,6 +76,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             State = state;
             DecodingBehaviour = serverInfo.DecodingBehaviour;
+
+            return this;
         }
 
         private static CommandType GetCommandTypeBySampleFormat(SampleFormat sampleFormat)

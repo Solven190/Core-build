@@ -9,36 +9,41 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.MultiTapBiquadFilterAndMix;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort InputBufferIndex { get; }
-        public ushort OutputBufferIndex { get; }
+        public ushort InputBufferIndex { get; private set; }
+        public ushort OutputBufferIndex { get; private set; }
 
         private BiquadFilterParameter2 _parameter0;
         private BiquadFilterParameter2 _parameter1;
 
-        public Memory<BiquadFilterState> BiquadFilterState0 { get; }
-        public Memory<BiquadFilterState> BiquadFilterState1 { get; }
-        public Memory<BiquadFilterState> PreviousBiquadFilterState0 { get; }
-        public Memory<BiquadFilterState> PreviousBiquadFilterState1 { get; }
+        public Memory<BiquadFilterState> BiquadFilterState0 { get; private set; }
+        public Memory<BiquadFilterState> BiquadFilterState1 { get; private set; }
+        public Memory<BiquadFilterState> PreviousBiquadFilterState0 { get; private set; }
+        public Memory<BiquadFilterState> PreviousBiquadFilterState1 { get; private set; }
 
-        public Memory<VoiceState> State { get; }
+        public Memory<VoiceState> State { get; private set; }
 
-        public int LastSampleIndex { get; }
+        public int LastSampleIndex { get; private set; }
 
-        public float Volume0 { get; }
-        public float Volume1 { get; }
+        public float Volume0 { get; private set; }
+        public float Volume1 { get; private set; }
 
-        public bool NeedInitialization0 { get; }
-        public bool NeedInitialization1 { get; }
-        public bool HasVolumeRamp { get; }
-        public bool IsFirstMixBuffer { get; }
+        public bool NeedInitialization0 { get; private set; }
+        public bool NeedInitialization1 { get; private set; }
+        public bool HasVolumeRamp { get; private set; }
+        public bool IsFirstMixBuffer { get; private set; }
 
-        public MultiTapBiquadFilterAndMixCommand(
+        public MultiTapBiquadFilterAndMixCommand()
+        {
+            
+        }
+
+        public MultiTapBiquadFilterAndMixCommand Initialize(
             float volume0,
             float volume1,
             uint inputBufferIndex,
@@ -80,6 +85,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             NeedInitialization1 = needInitialization1;
             HasVolumeRamp = hasVolumeRamp;
             IsFirstMixBuffer = isFirstMixBuffer;
+
+            return this;
         }
 
         private void UpdateState(Memory<BiquadFilterState> state, Memory<BiquadFilterState> previousState, bool needInitialization)

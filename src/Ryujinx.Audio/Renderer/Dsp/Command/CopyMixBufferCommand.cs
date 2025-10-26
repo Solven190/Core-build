@@ -4,22 +4,29 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.CopyMixBuffer;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public ushort InputBufferIndex { get; }
-        public ushort OutputBufferIndex { get; }
+        public ushort InputBufferIndex { get; private set; }
+        public ushort OutputBufferIndex { get; private set; }
 
-        public CopyMixBufferCommand(uint inputBufferIndex, uint outputBufferIndex, int nodeId)
+        public CopyMixBufferCommand()
+        {
+            
+        }
+
+        public CopyMixBufferCommand Initialize(uint inputBufferIndex, uint outputBufferIndex, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
 
             InputBufferIndex = (ushort)inputBufferIndex;
             OutputBufferIndex = (ushort)outputBufferIndex;
+
+            return this;
         }
 
         public void Process(CommandList context)

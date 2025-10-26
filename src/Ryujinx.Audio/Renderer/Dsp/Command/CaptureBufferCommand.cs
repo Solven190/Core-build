@@ -12,25 +12,30 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.CaptureBuffer;
 
         public uint EstimatedProcessingTime { get; set; }
 
-        public uint InputBufferIndex { get; }
+        public uint InputBufferIndex { get; private set; }
 
-        public ulong CpuBufferInfoAddress { get; }
-        public ulong DspBufferInfoAddress { get; }
+        public ulong CpuBufferInfoAddress { get; private set; }
+        public ulong DspBufferInfoAddress { get; private set; }
 
-        public CpuAddress OutputBuffer { get; }
-        public uint CountMax { get; }
-        public uint UpdateCount { get; }
-        public uint WriteOffset { get; }
+        public CpuAddress OutputBuffer { get; private set; }
+        public uint CountMax { get; private set; }
+        public uint UpdateCount { get; private set; }
+        public uint WriteOffset { get; private set; }
 
-        public bool IsEffectEnabled { get; }
+        public bool IsEffectEnabled { get; private set; }
 
-        public CaptureBufferCommand(uint bufferOffset, byte inputBufferOffset, ulong sendBufferInfo, bool isEnabled,
+        public CaptureBufferCommand()
+        {
+            
+        }
+        
+        public CaptureBufferCommand Initialize(uint bufferOffset, byte inputBufferOffset, ulong sendBufferInfo, bool isEnabled,
                                     uint countMax, CpuAddress outputBuffer, uint updateCount, uint writeOffset, int nodeId)
         {
             Enabled = true;
@@ -43,6 +48,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             UpdateCount = updateCount;
             WriteOffset = writeOffset;
             IsEffectEnabled = isEnabled;
+
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

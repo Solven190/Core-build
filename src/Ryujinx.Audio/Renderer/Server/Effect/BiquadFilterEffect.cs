@@ -26,12 +26,18 @@ namespace Ryujinx.Audio.Renderer.Server.Effect
         public Memory<BiquadFilterState> State { get; }
 
         /// <summary>
+        /// The biquad filter effect version.
+        /// </summary>
+        public int BiquadFilterEffectVersion;
+
+        /// <summary>
         /// Create a new <see cref="BiquadFilterEffect"/>.
         /// </summary>
-        public BiquadFilterEffect()
+        public BiquadFilterEffect(int version)
         {
             Parameter = new BiquadFilterEffectParameter2();
             State = new BiquadFilterState[Constants.ChannelCountMax];
+            BiquadFilterEffectVersion = version;
         }
 
         public override EffectType TargetEffectType => EffectType.BiquadFilter;
@@ -45,11 +51,6 @@ namespace Ryujinx.Audio.Renderer.Server.Effect
         {
             Update(out updateErrorInfo, in parameter, mapper);
         }
-        
-        public override void Update(out BehaviourParameter.ErrorInfo updateErrorInfo, in EffectInParameterVersion3 parameter, PoolMapper mapper)
-        {
-            Update(out updateErrorInfo, in parameter, mapper);
-        }
 
         public void Update<T>(out BehaviourParameter.ErrorInfo updateErrorInfo, in T parameter, PoolMapper mapper) where T : unmanaged, IEffectInParameter
         {
@@ -57,7 +58,7 @@ namespace Ryujinx.Audio.Renderer.Server.Effect
 
             UpdateParameterBase(in parameter);
 
-            if (typeof(T) == typeof(EffectInParameterVersion3))
+            if (BiquadFilterEffectVersion == 2)
             {
                 Parameter = MemoryMarshal.Cast<byte, BiquadFilterEffectParameter2>(parameter.SpecificData)[0];
             }

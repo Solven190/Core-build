@@ -1,3 +1,4 @@
+using Ryujinx.Common;
 using Ryujinx.Common.Collections;
 using Ryujinx.Common.Memory.PartialUnmaps;
 using System;
@@ -9,24 +10,6 @@ using System.Threading;
 
 namespace Ryujinx.Memory.WindowsShared
 {
-    public class ObjectPool<T>
-    {
-        private readonly Stack<T> _objects;
-        private readonly Func<T> _objectGenerator;
-
-        public ObjectPool(Func<T> objectGenerator)
-        {
-            _objectGenerator = objectGenerator ?? throw new ArgumentNullException(nameof(objectGenerator));
-            _objects = new Stack<T>();
-        }
-
-        public T Get() => _objects.Count > 0 ? _objects.Pop() : _objectGenerator();
-
-        public void Return(T item) => _objects.Push(item);
-        
-        public void Clear() => _objects.Clear();
-    } 
-    
     /// <summary>
     /// Windows memory placeholder manager.
     /// </summary>
@@ -97,7 +80,7 @@ namespace Ryujinx.Memory.WindowsShared
 
             lock (_protections)
             {
-                _protections.Add(_protectionObjectPool.Get().Init(address, address + size, MemoryPermission.None));
+                _protections.Add(_protectionObjectPool.Allocate().Init(address, address + size, MemoryPermission.None));
             }
         }
 
@@ -650,16 +633,16 @@ namespace Ryujinx.Memory.WindowsShared
                     {
                         if (startAddress > protAddress)
                         {
-                            _protections.Add(_protectionObjectPool.Get().Init(protAddress, startAddress, protPermission));
+                            _protections.Add(_protectionObjectPool.Allocate().Init(protAddress, startAddress, protPermission));
                         }
 
                         if (endAddress < protEndAddress)
                         {
-                            _protections.Add(_protectionObjectPool.Get().Init(endAddress, protEndAddress, protPermission));
+                            _protections.Add(_protectionObjectPool.Allocate().Init(endAddress, protEndAddress, protPermission));
                         }
                     }
                     
-                    _protectionObjectPool.Return(protection);
+                    _protectionObjectPool.Release(protection);
 
                     if (node.End >= endAddress)
                     {
@@ -667,7 +650,7 @@ namespace Ryujinx.Memory.WindowsShared
                     }
                 }
 
-                _protections.Add(_protectionObjectPool.Get().Init(startAddress, endAddress, permission));
+                _protections.Add(_protectionObjectPool.Allocate().Init(startAddress, endAddress, permission));
             }
         }
 
@@ -698,15 +681,15 @@ namespace Ryujinx.Memory.WindowsShared
 
                     if (address > protAddress)
                     {
-                        _protections.Add(_protectionObjectPool.Get().Init(protAddress, address, protPermission));
+                        _protections.Add(_protectionObjectPool.Allocate().Init(protAddress, address, protPermission));
                     }
 
                     if (endAddress < protEndAddress)
                     {
-                        _protections.Add(_protectionObjectPool.Get().Init(endAddress, protEndAddress, protPermission));
+                        _protections.Add(_protectionObjectPool.Allocate().Init(endAddress, protEndAddress, protPermission));
                     }
 
-                    _protectionObjectPool.Return(protection);
+                    _protectionObjectPool.Release(protection);
                     
                     if (node.End >= endAddress)
                     {

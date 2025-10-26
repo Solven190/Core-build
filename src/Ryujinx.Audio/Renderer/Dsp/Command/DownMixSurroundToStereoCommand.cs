@@ -7,7 +7,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
     {
         public bool Enabled { get; set; }
 
-        public int NodeId { get; }
+        public int NodeId { get; private set; }
 
         public CommandType CommandType => CommandType.DownMixSurroundToStereo;
 
@@ -16,15 +16,18 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         public ushort[] InputBufferIndices { get; }
         public ushort[] OutputBufferIndices { get; }
 
-        public float[] Coefficients { get; }
+        public float[] Coefficients { get; private set; }
 
-        public DownMixSurroundToStereoCommand(uint bufferOffset, Span<byte> inputBufferOffset, Span<byte> outputBufferOffset, float[] downMixParameter, int nodeId)
+        public DownMixSurroundToStereoCommand()
+        {
+            InputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
+            OutputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
+        }
+
+        public DownMixSurroundToStereoCommand Initialize(uint bufferOffset, Span<byte> inputBufferOffset, Span<byte> outputBufferOffset, float[] downMixParameter, int nodeId)
         {
             Enabled = true;
             NodeId = nodeId;
-
-            InputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
-            OutputBufferIndices = new ushort[Constants.VoiceChannelCountMax];
 
             for (int i = 0; i < Constants.VoiceChannelCountMax; i++)
             {
@@ -33,6 +36,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
             }
 
             Coefficients = downMixParameter;
+            
+            return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
