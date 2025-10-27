@@ -117,6 +117,17 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletAE.AllSystemAppletProxiesService.Lib
 
             return ResultCode.Success;
         }
+        
+        [CommandCmif(90)]
+        // ILibraryAppletAccessor:90
+        public ResultCode Unknown90(ServiceCtx context)
+        {
+            // NOTE: This call is performed on SDK 20+ when applet is called.
+            //       Since we don't support applets for now, it's fine to stub it.
+            
+            Logger.Stub?.PrintStub(LogClass.ServiceAm);
+            return ResultCode.Success;
+        }
 
         [CommandCmif(100)]
         // PushInData(object<nn::am::service::IStorage>)
