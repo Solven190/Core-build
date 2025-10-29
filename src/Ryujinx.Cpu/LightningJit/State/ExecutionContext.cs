@@ -11,7 +11,7 @@ namespace Ryujinx.Cpu.LightningJit.State
 
         private readonly NativeContext _nativeContext;
 
-        internal IntPtr NativeContextPtr => _nativeContext.BasePtr;
+        internal nint NativeContextPtr => _nativeContext.BasePtr;
 
         private bool _interrupted;
         private readonly ICounter _counter;

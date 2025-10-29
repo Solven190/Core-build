@@ -45,9 +45,9 @@ namespace Ryujinx.UI.Common.Helper
             const int SW_HIDE = 0;
             const int SW_SHOW = 5;
 
-            IntPtr hWnd = GetConsoleWindow();
+            nint hWnd = GetConsoleWindow();
 
-            if (hWnd == IntPtr.Zero)
+            if (hWnd == nint.Zero)
             {
                 Logger.Warning?.Print(LogClass.Application, "Attempted to show/hide console window but console window does not exist");
                 return;

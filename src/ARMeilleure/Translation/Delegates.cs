@@ -7,7 +7,7 @@ namespace ARMeilleure.Translation
 {
     static class Delegates
     {
-        public static bool TryGetDelegateFuncPtrByIndex(int index, out IntPtr funcPtr)
+        public static bool TryGetDelegateFuncPtrByIndex(int index, out nint funcPtr)
         {
             if (index >= 0 && index < _delegates.Count)
             {
@@ -23,7 +23,7 @@ namespace ARMeilleure.Translation
             }
         }
 
-        public static IntPtr GetDelegateFuncPtrByIndex(int index)
+        public static nint GetDelegateFuncPtrByIndex(int index)
         {
             if (index < 0 || index >= _delegates.Count)
             {

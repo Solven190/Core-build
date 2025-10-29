@@ -69,11 +69,11 @@ namespace Ryujinx.Input.SDL2
 
         public GamepadFeaturesFlag Features { get; }
 
-        private IntPtr _gamepadHandle;
+        private nint _gamepadHandle;
 
         private float _triggerThreshold;
 
-        public SDL2Gamepad(IntPtr gamepadHandle, string driverId)
+        public SDL2Gamepad(nint gamepadHandle, string driverId)
         {
             _gamepadHandle = gamepadHandle;
             _buttonsUserMapping = new List<ButtonMappingEntry>(20);
@@ -125,11 +125,11 @@ namespace Ryujinx.Input.SDL2
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && _gamepadHandle != IntPtr.Zero)
+            if (disposing && _gamepadHandle != nint.Zero)
             {
                 SDL_GameControllerClose(_gamepadHandle);
 
-                _gamepadHandle = IntPtr.Zero;
+                _gamepadHandle = nint.Zero;
             }
         }
 
@@ -192,7 +192,7 @@ namespace Ryujinx.Input.SDL2
                 {
                     float* values = stackalloc float[ElementCount];
 
-                    int result = SDL_GameControllerGetSensorData(_gamepadHandle, sensorType, (IntPtr)values, ElementCount);
+                    int result = SDL_GameControllerGetSensorData(_gamepadHandle, sensorType, (nint)values, ElementCount);
 
                     if (result == 0)
                     {

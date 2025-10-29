@@ -14,7 +14,7 @@ namespace ARMeilleure.Translation
     /// </summary>
     class TranslatorStubs : IDisposable
     {
-        private readonly Lazy<IntPtr> _slowDispatchStub;
+        private readonly Lazy<nint> _slowDispatchStub;
 
         private bool _disposed;
 
@@ -27,7 +27,7 @@ namespace ARMeilleure.Translation
         /// Gets the dispatch stub.
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="TranslatorStubs"/> instance was disposed</exception>
-        public IntPtr DispatchStub
+        public nint DispatchStub
         {
             get
             {
@@ -41,7 +41,7 @@ namespace ARMeilleure.Translation
         /// Gets the slow dispatch stub.
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="TranslatorStubs"/> instance was disposed</exception>
-        public IntPtr SlowDispatchStub
+        public nint SlowDispatchStub
         {
             get
             {
@@ -139,7 +139,7 @@ namespace ARMeilleure.Translation
         /// Generates a <see cref="DispatchStub"/>.
         /// </summary>
         /// <returns>Generated <see cref="DispatchStub"/></returns>
-        private IntPtr GenerateDispatchStub()
+        private nint GenerateDispatchStub()
         {
             var context = new EmitterContext();
 
@@ -197,7 +197,7 @@ namespace ARMeilleure.Translation
         /// Generates a <see cref="SlowDispatchStub"/>.
         /// </summary>
         /// <returns>Generated <see cref="SlowDispatchStub"/></returns>
-        private IntPtr GenerateSlowDispatchStub()
+        private nint GenerateSlowDispatchStub()
         {
             var context = new EmitterContext();
 

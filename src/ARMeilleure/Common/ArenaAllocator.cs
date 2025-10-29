@@ -20,7 +20,7 @@ namespace ARMeilleure.Common
         private List<PageInfo> _pages;
         private readonly ulong _pageSize;
         private readonly uint _pageCount;
-        private readonly List<IntPtr> _extras;
+        private readonly List<nint> _extras;
 
         public ArenaAllocator(uint pageSize, uint pageCount)
         {
@@ -64,7 +64,7 @@ namespace ARMeilleure.Common
             {
                 void* extra = NativeAllocator.Instance.Allocate(size);
 
-                _extras.Add((IntPtr)extra);
+                _extras.Add((nint)extra);
 
                 return extra;
             }
@@ -114,7 +114,7 @@ namespace ARMeilleure.Common
             }
 
             // Free extra blocks that are not page-sized
-            foreach (IntPtr ptr in _extras)
+            foreach (nint ptr in _extras)
             {
                 NativeAllocator.Instance.Free((void*)ptr);
             }
@@ -173,7 +173,7 @@ namespace ARMeilleure.Common
                     NativeAllocator.Instance.Free(info.Pointer);
                 }
 
-                foreach (IntPtr ptr in _extras)
+                foreach (nint ptr in _extras)
                 {
                     NativeAllocator.Instance.Free((void*)ptr);
                 }

@@ -55,7 +55,7 @@ namespace Ryujinx.Audio.Renderer.Server.MemoryPool
         [MarshalAs(UnmanagedType.I1)]
         public bool IsUsed;
 
-        public static unsafe MemoryPoolInfo* Null => (MemoryPoolInfo*)IntPtr.Zero.ToPointer();
+        public static unsafe MemoryPoolInfo* Null => (MemoryPoolInfo*)nint.Zero.ToPointer();
 
         /// <summary>
         /// Create a new <see cref="MemoryPoolInfo"/> with the given <see cref="LocationType"/>.

@@ -9,7 +9,7 @@ namespace ARMeilleure.Memory
         public IJitMemoryBlock Block { get; }
         public IJitMemoryAllocator Allocator { get; }
 
-        public IntPtr Pointer => Block.Pointer;
+        public nint Pointer => Block.Pointer;
 
         private readonly ulong _maxSize;
         private readonly ulong _sizeGranularity;

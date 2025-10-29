@@ -21,7 +21,7 @@ namespace Ryujinx.UI.Common.Helper
         private const int SHCNF_FLUSH = 0x1000;
 
         [LibraryImport("shell32.dll", SetLastError = true)]
-        public static partial void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+        public static partial void SHChangeNotify(uint wEventId, uint uFlags, nint dwItem1, nint dwItem2);
 
         public static bool IsTypeAssociationSupported => (OperatingSystem.IsLinux() || OperatingSystem.IsWindows()) && !ReleaseInformation.IsFlatHubBuild;
         

@@ -23,7 +23,7 @@ namespace Ryujinx.Cpu.AppleHv
             {
                 if (++_addressSpaces == 1)
                 {
-                    HvApi.hv_vm_create(IntPtr.Zero).ThrowOnError();
+                    HvApi.hv_vm_create(nint.Zero).ThrowOnError();
                     _ipaAllocator = ipaAllocator = new HvIpaAllocator();
                 }
                 else

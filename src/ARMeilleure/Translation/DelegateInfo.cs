@@ -4,9 +4,9 @@ namespace ARMeilleure.Translation
 {
     class DelegateInfo
     {
-        public IntPtr FuncPtr { get; }
+        public nint FuncPtr { get; }
 
-        public DelegateInfo(IntPtr funcPtr)
+        public DelegateInfo(nint funcPtr)
         {
             FuncPtr = funcPtr;
         }

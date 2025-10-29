@@ -305,7 +305,7 @@ namespace ARMeilleure.Translation
                 _ptc.WriteCompiledFunction(address, funcSize, hash, highCq, compiledFunc);
             }
 
-            GuestFunction func = compiledFunc.MapWithPointer<GuestFunction>(out IntPtr funcPointer);
+            GuestFunction func = compiledFunc.MapWithPointer<GuestFunction>(out nint funcPointer);
 
             Allocators.ResetAll();
 

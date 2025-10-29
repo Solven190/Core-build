@@ -21,7 +21,7 @@ namespace Ryujinx.Memory.WindowsShared
         private readonly MappingTree<ulong> _mappings;
         private readonly MappingTree<MemoryPermission> _protections;
         private readonly ObjectPool<RangeNode<MemoryPermission>> _protectionObjectPool;
-        private readonly IntPtr _partialUnmapStatePtr;
+        private readonly nint _partialUnmapStatePtr;
         private readonly Thread _partialUnmapTrimThread;
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Ryujinx.Memory.WindowsShared
 
                     if (IsMapped(node.Value))
                     {
-                        if (!WindowsApi.UnmapViewOfFile2(WindowsApi.CurrentProcessHandle, (IntPtr)node.Start, 2))
+                        if (!WindowsApi.UnmapViewOfFile2(WindowsApi.CurrentProcessHandle, (nint)node.Start, 2))
                         {
                             throw new WindowsApiException("UnmapViewOfFile2");
                         }
@@ -131,7 +131,7 @@ namespace Ryujinx.Memory.WindowsShared
         /// <param name="location">Address to map the view into</param>
         /// <param name="size">Size of the view in bytes</param>
         /// <param name="owner">Memory block that owns the mapping</param>
-        public void MapView(IntPtr sharedMemory, ulong srcOffset, IntPtr location, IntPtr size, MemoryBlock owner)
+        public void MapView(nint sharedMemory, ulong srcOffset, nint location, nint size, MemoryBlock owner)
         {
             ref var partialUnmapLock = ref GetPartialUnmapState().PartialUnmapLock;
             partialUnmapLock.AcquireReaderLock();
@@ -156,7 +156,7 @@ namespace Ryujinx.Memory.WindowsShared
         /// <param name="size">Size of the view in bytes</param>
         /// <param name="updateProtection">Indicates if the memory protections should be updated after the map</param>
         /// <exception cref="WindowsApiException">Thrown when the Windows API returns an error mapping the memory</exception>
-        private void MapViewInternal(IntPtr sharedMemory, ulong srcOffset, IntPtr location, IntPtr size, bool updateProtection)
+        private void MapViewInternal(nint sharedMemory, ulong srcOffset, nint location, nint size, bool updateProtection)
         {
             SplitForMap((ulong)location, (ulong)size, srcOffset);
 
@@ -168,10 +168,10 @@ namespace Ryujinx.Memory.WindowsShared
                 size,
                 0x4000,
                 MemoryProtection.ReadWrite,
-                IntPtr.Zero,
+                nint.Zero,
                 0);
 
-            if (ptr == IntPtr.Zero)
+            if (ptr == nint.Zero)
             {
                 throw new WindowsApiException("MapViewOfFile3");
             }
@@ -215,8 +215,8 @@ namespace Ryujinx.Memory.WindowsShared
                 if (overlapStartsBefore && overlapEndsAfter)
                 {
                     CheckFreeResult(WindowsApi.VirtualFree(
-                        (IntPtr)address,
-                        (IntPtr)size,
+                        (nint)address,
+                        (nint)size,
                         AllocationType.Release | AllocationType.PreservePlaceholder));
 
                     _mappings.Add(new RangeNode<ulong>().Init(overlapStart, address, overlapValue));
@@ -227,8 +227,8 @@ namespace Ryujinx.Memory.WindowsShared
                     ulong overlappedSize = overlapEnd - address;
 
                     CheckFreeResult(WindowsApi.VirtualFree(
-                        (IntPtr)address,
-                        (IntPtr)overlappedSize,
+                        (nint)address,
+                        (nint)overlappedSize,
                         AllocationType.Release | AllocationType.PreservePlaceholder));
 
                     _mappings.Add(new RangeNode<ulong>().Init(overlapStart, address, overlapValue));
@@ -238,8 +238,8 @@ namespace Ryujinx.Memory.WindowsShared
                     ulong overlappedSize = endAddress - overlapStart;
 
                     CheckFreeResult(WindowsApi.VirtualFree(
-                        (IntPtr)overlapStart,
-                        (IntPtr)overlappedSize,
+                        (nint)overlapStart,
+                        (nint)overlappedSize,
                         AllocationType.Release | AllocationType.PreservePlaceholder));
 
                     _mappings.Add(new RangeNode<ulong>().Init(endAddress, overlapEnd, AddBackingOffset(overlapValue, overlappedSize)));
@@ -260,7 +260,7 @@ namespace Ryujinx.Memory.WindowsShared
         /// <param name="location">Address to unmap</param>
         /// <param name="size">Size of the region to unmap in bytes</param>
         /// <param name="owner">Memory block that owns the mapping</param>
-        public void UnmapView(IntPtr sharedMemory, IntPtr location, IntPtr size, MemoryBlock owner)
+        public void UnmapView(nint sharedMemory, nint location, nint size, MemoryBlock owner)
         {
             ref var partialUnmapLock = ref GetPartialUnmapState().PartialUnmapLock;
             partialUnmapLock.AcquireReaderLock();
@@ -288,7 +288,7 @@ namespace Ryujinx.Memory.WindowsShared
         /// <param name="owner">Memory block that owns the mapping</param>
         /// <param name="updateProtection">Indicates if the memory protections should be updated after the unmap</param>
         /// <exception cref="WindowsApiException">Thrown when the Windows API returns an error unmapping or remapping the memory</exception>
-        private void UnmapViewInternal(IntPtr sharedMemory, IntPtr location, IntPtr size, MemoryBlock owner, bool updateProtection)
+        private void UnmapViewInternal(nint sharedMemory, nint location, nint size, MemoryBlock owner, bool updateProtection)
         {
             ulong startAddress = (ulong)location;
             ulong unmapSize = (ulong)size;
@@ -332,7 +332,7 @@ namespace Ryujinx.Memory.WindowsShared
                         {
                             partialUnmapState.PartialUnmapsCount++;
 
-                            if (!WindowsApi.UnmapViewOfFile2(WindowsApi.CurrentProcessHandle, (IntPtr)overlap.Start, 2))
+                            if (!WindowsApi.UnmapViewOfFile2(WindowsApi.CurrentProcessHandle, (nint)overlap.Start, 2))
                             {
                                 throw new WindowsApiException("UnmapViewOfFile2");
                             }
@@ -341,7 +341,7 @@ namespace Ryujinx.Memory.WindowsShared
                             {
                                 ulong remapSize = startAddress - overlap.Start;
 
-                                MapViewInternal(sharedMemory, overlap.Value, (IntPtr)overlap.Start, (IntPtr)remapSize, updateProtection: false);
+                                MapViewInternal(sharedMemory, overlap.Value, (nint)overlap.Start, (nint)remapSize, updateProtection: false);
                                 RestoreRangeProtection(overlap.Start, remapSize);
                             }
 
@@ -352,7 +352,7 @@ namespace Ryujinx.Memory.WindowsShared
                                 ulong remapAddress = overlap.Start + overlappedSize;
                                 ulong remapSize = overlap.End - endAddress;
 
-                                MapViewInternal(sharedMemory, remapBackingOffset, (IntPtr)remapAddress, (IntPtr)remapSize, updateProtection: false);
+                                MapViewInternal(sharedMemory, remapBackingOffset, (nint)remapAddress, (nint)remapSize, updateProtection: false);
                                 RestoreRangeProtection(remapAddress, remapSize);
                             }
                         }
@@ -361,7 +361,7 @@ namespace Ryujinx.Memory.WindowsShared
                             partialUnmapLock.DowngradeFromWriterLock();
                         }
                     }
-                    else if (!WindowsApi.UnmapViewOfFile2(WindowsApi.CurrentProcessHandle, (IntPtr)overlap.Start, 2))
+                    else if (!WindowsApi.UnmapViewOfFile2(WindowsApi.CurrentProcessHandle, (nint)overlap.Start, 2))
                     {
                         throw new WindowsApiException("UnmapViewOfFile2");
                     }
@@ -446,8 +446,8 @@ namespace Ryujinx.Memory.WindowsShared
                 size = endAddress - address;
 
                 CheckFreeResult(WindowsApi.VirtualFree(
-                    (IntPtr)address,
-                    (IntPtr)size,
+                    (nint)address,
+                    (nint)size,
                     AllocationType.Release | AllocationType.CoalescePlaceholders));
             }
         }
@@ -459,7 +459,7 @@ namespace Ryujinx.Memory.WindowsShared
         /// <param name="size">Size of the region to reprotect in bytes</param>
         /// <param name="permission">New permissions</param>
         /// <returns>True if the reprotection was successful, false otherwise</returns>
-        public bool ReprotectView(IntPtr address, IntPtr size, MemoryPermission permission)
+        public bool ReprotectView(nint address, nint size, MemoryPermission permission)
         {
             ref var partialUnmapLock = ref GetPartialUnmapState().PartialUnmapLock;
             partialUnmapLock.AcquireReaderLock();
@@ -483,7 +483,7 @@ namespace Ryujinx.Memory.WindowsShared
         /// <param name="throwOnError">Throw an exception instead of returning an error if the operation fails</param>
         /// <returns>True if the reprotection was successful or if <paramref name="throwOnError"/> is true, false otherwise</returns>
         /// <exception cref="WindowsApiException">If <paramref name="throwOnError"/> is true, it is thrown when the Windows API returns an error reprotecting the memory</exception>
-        private bool ReprotectViewInternal(IntPtr address, IntPtr size, MemoryPermission permission, bool throwOnError)
+        private bool ReprotectViewInternal(nint address, nint size, MemoryPermission permission, bool throwOnError)
         {
             ulong reprotectAddress = (ulong)address;
             ulong reprotectSize = (ulong)size;
@@ -519,7 +519,7 @@ namespace Ryujinx.Memory.WindowsShared
                         mappedSize -= delta;
                     }
 
-                    if (!WindowsApi.VirtualProtect((IntPtr)mappedAddress, (IntPtr)mappedSize, WindowsApi.GetProtection(permission), out _))
+                    if (!WindowsApi.VirtualProtect((nint)mappedAddress, (nint)mappedSize, WindowsApi.GetProtection(permission), out _))
                     {
                         if (throwOnError)
                         {
@@ -738,7 +738,7 @@ namespace Ryujinx.Memory.WindowsShared
                     protEndAddress = endAddress;
                 }
 
-                ReprotectViewInternal((IntPtr)protAddress, (IntPtr)(protEndAddress - protAddress), protection.Value, true);
+                ReprotectViewInternal((nint)protAddress, (nint)(protEndAddress - protAddress), protection.Value, true);
             }
         }
     }

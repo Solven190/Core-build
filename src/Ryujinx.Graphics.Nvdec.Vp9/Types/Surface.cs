@@ -23,9 +23,9 @@ namespace Ryujinx.Graphics.Nvdec.Vp9.Types
         public ArrayPtr<byte> UBuffer;
         public ArrayPtr<byte> VBuffer;
 
-        public unsafe Plane YPlane => new((IntPtr)YBuffer.ToPointer(), YBuffer.Length);
-        public unsafe Plane UPlane => new((IntPtr)UBuffer.ToPointer(), UBuffer.Length);
-        public unsafe Plane VPlane => new((IntPtr)VBuffer.ToPointer(), VBuffer.Length);
+        public unsafe Plane YPlane => new((nint)YBuffer.ToPointer(), YBuffer.Length);
+        public unsafe Plane UPlane => new((nint)UBuffer.ToPointer(), UBuffer.Length);
+        public unsafe Plane VPlane => new((nint)VBuffer.ToPointer(), VBuffer.Length);
 
         public FrameField Field => FrameField.Progressive;
 
@@ -62,7 +62,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9.Types
         public int Corrupted;
         public int Flags;
 
-        private readonly IntPtr _pointer;
+        private readonly nint _pointer;
 
         public Surface(int width, int height)
         {
@@ -84,7 +84,7 @@ namespace Ryujinx.Graphics.Nvdec.Vp9.Types
 
             int frameSize = (highbd ? 2 : 1) * (yplaneSize + (2 * uvplaneSize));
 
-            IntPtr pointer = Marshal.AllocHGlobal(frameSize);
+            nint pointer = Marshal.AllocHGlobal(frameSize);
             _pointer = pointer;
             Width = width;
             Height = height;

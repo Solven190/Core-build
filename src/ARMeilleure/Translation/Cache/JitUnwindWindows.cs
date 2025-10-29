@@ -40,7 +40,7 @@ namespace ARMeilleure.Translation.Cache
             PushMachframe = 10,
         }
 
-        private unsafe delegate RuntimeFunction* GetRuntimeFunctionCallback(ulong controlPc, IntPtr context);
+        private unsafe delegate RuntimeFunction* GetRuntimeFunctionCallback(ulong controlPc, nint context);
 
         [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -49,7 +49,7 @@ namespace ARMeilleure.Translation.Cache
             ulong baseAddress,
             uint length,
             GetRuntimeFunctionCallback callback,
-            IntPtr context,
+            nint context,
             [MarshalAs(UnmanagedType.LPWStr)] string outOfProcessCallbackDll);
 
         [LibraryImport("kernel32.dll")]
@@ -65,7 +65,7 @@ namespace ARMeilleure.Translation.Cache
 
         private unsafe static UnwindInfo* _unwindInfo;
 
-        public static void InstallFunctionTableHandler(IntPtr codeCachePointer, uint codeCacheLength, IntPtr workBufferPtr)
+        public static void InstallFunctionTableHandler(nint codeCachePointer, uint codeCacheLength, nint workBufferPtr)
         {
             ulong codeCachePtr = (ulong)codeCachePointer.ToInt64();
 
@@ -96,7 +96,7 @@ namespace ARMeilleure.Translation.Cache
             }
         }
 
-        public static void RemoveFunctionTableHandler(IntPtr codeCachePointer)
+        public static void RemoveFunctionTableHandler(nint codeCachePointer)
         {
             ulong codeCachePtr = (ulong)codeCachePointer.ToInt64();
 
@@ -113,7 +113,7 @@ namespace ARMeilleure.Translation.Cache
             }
         }
 
-        private static unsafe RuntimeFunction* FunctionTableHandler(ulong controlPc, IntPtr context)
+        private static unsafe RuntimeFunction* FunctionTableHandler(ulong controlPc, nint context)
         {
             int offset = (int)((long)controlPc - context.ToInt64());
 

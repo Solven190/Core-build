@@ -87,7 +87,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ProcessReverbMono(ref ReverbState state, ReadOnlySpan<IntPtr> outputBuffers, ReadOnlySpan<IntPtr> inputBuffers, uint sampleCount)
+        private void ProcessReverbMono(ref ReverbState state, ReadOnlySpan<nint> outputBuffers, ReadOnlySpan<nint> inputBuffers, uint sampleCount)
         {
             ProcessReverbGeneric(
                 ref state,
@@ -101,7 +101,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ProcessReverbStereo(ref ReverbState state, ReadOnlySpan<IntPtr> outputBuffers, ReadOnlySpan<IntPtr> inputBuffers, uint sampleCount)
+        private void ProcessReverbStereo(ref ReverbState state, ReadOnlySpan<nint> outputBuffers, ReadOnlySpan<nint> inputBuffers, uint sampleCount)
         {
             ProcessReverbGeneric(
                 ref state,
@@ -115,7 +115,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ProcessReverbQuadraphonic(ref ReverbState state, ReadOnlySpan<IntPtr> outputBuffers, ReadOnlySpan<IntPtr> inputBuffers, uint sampleCount)
+        private void ProcessReverbQuadraphonic(ref ReverbState state, ReadOnlySpan<nint> outputBuffers, ReadOnlySpan<nint> inputBuffers, uint sampleCount)
         {
             ProcessReverbGeneric(
                 ref state,
@@ -129,7 +129,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ProcessReverbSurround(ref ReverbState state, ReadOnlySpan<IntPtr> outputBuffers, ReadOnlySpan<IntPtr> inputBuffers, uint sampleCount)
+        private void ProcessReverbSurround(ref ReverbState state, ReadOnlySpan<nint> outputBuffers, ReadOnlySpan<nint> inputBuffers, uint sampleCount)
         {
             ProcessReverbGeneric(
                 ref state,
@@ -142,7 +142,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
                 _outputIndicesTableSurround);
         }
 
-        private unsafe void ProcessReverbGeneric(ref ReverbState state, ReadOnlySpan<IntPtr> outputBuffers, ReadOnlySpan<IntPtr> inputBuffers, uint sampleCount, ReadOnlySpan<int> outputEarlyIndicesTable, ReadOnlySpan<int> targetEarlyDelayLineIndicesTable, ReadOnlySpan<int> targetOutputFeedbackIndicesTable, ReadOnlySpan<int> outputIndicesTable)
+        private unsafe void ProcessReverbGeneric(ref ReverbState state, ReadOnlySpan<nint> outputBuffers, ReadOnlySpan<nint> inputBuffers, uint sampleCount, ReadOnlySpan<int> outputEarlyIndicesTable, ReadOnlySpan<int> targetEarlyDelayLineIndicesTable, ReadOnlySpan<int> targetOutputFeedbackIndicesTable, ReadOnlySpan<int> outputIndicesTable)
         {
             bool isSurround = Parameter.ChannelCount == 6;
 
@@ -233,8 +233,8 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
 
             if (IsEffectEnabled && Parameter.IsChannelCountValid())
             {
-                Span<IntPtr> inputBuffers = stackalloc IntPtr[Parameter.ChannelCount];
-                Span<IntPtr> outputBuffers = stackalloc IntPtr[Parameter.ChannelCount];
+                Span<nint> inputBuffers = stackalloc nint[Parameter.ChannelCount];
+                Span<nint> outputBuffers = stackalloc nint[Parameter.ChannelCount];
 
                 for (int i = 0; i < Parameter.ChannelCount; i++)
                 {

@@ -143,13 +143,13 @@ namespace Ryujinx.Graphics.Device
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ref T GetRefUnchecked<T>(uint offset) where T : unmanaged
         {
-            return ref Unsafe.As<TState, T>(ref Unsafe.AddByteOffset(ref State, (IntPtr)offset));
+            return ref Unsafe.As<TState, T>(ref Unsafe.AddByteOffset(ref State, (nint)offset));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ref int GetRefIntAlignedUncheck(ulong index)
         {
-            return ref Unsafe.Add(ref Unsafe.As<TState, int>(ref State), (IntPtr)index);
+            return ref Unsafe.Add(ref Unsafe.As<TState, int>(ref State), (nint)index);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
