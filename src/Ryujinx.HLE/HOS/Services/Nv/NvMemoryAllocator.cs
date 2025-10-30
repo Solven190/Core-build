@@ -164,8 +164,11 @@ namespace Ryujinx.HLE.HOS.Services.Nv
                     Logger.Debug?.Print(LogClass.ServiceNv, $"Deallocation resulted in new free range from 0x{expandedStart:X} to 0x{expandedEnd:X}.");
 
                     _tree.Add(expandedStart, expandedEnd);
-                    LinkedListNode<ulong> nodePtr = _list.AddAfter(node, expandedStart);
-                    _dictionary[expandedStart] = nodePtr;
+                    if (node != null)
+                    {
+                        LinkedListNode<ulong> nodePtr = _list.AddAfter(node, expandedStart);
+                        _dictionary[expandedStart] = nodePtr;
+                    }
                 }
             }
         }
@@ -196,11 +199,14 @@ namespace Ryujinx.HLE.HOS.Services.Nv
                 if (address < AddressSpaceSize)
                 {
                     bool reachedEndOfAddresses = false;
-                    ulong targetAddress;
+                    ulong targetAddress = 0;
                     if (start == DefaultStart)
                     {
-                        Logger.Debug?.Print(LogClass.ServiceNv, $"Target address set to start of the last available range: 0x{_list.Last.Value:X}.");
-                        targetAddress = _list.Last.Value;
+                        if (_list.Last != null)
+                        {
+                            Logger.Debug?.Print(LogClass.ServiceNv, $"Target address set to start of the last available range: 0x{_list.Last.Value:X}.");
+                            targetAddress = _list.Last.Value;
+                        }
                     }
                     else
                     {

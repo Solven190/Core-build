@@ -516,12 +516,16 @@ namespace Ryujinx.Ava.UI.Windows
 
             ApplicationLibrary.ApplicationCountUpdated += ApplicationLibrary_ApplicationCountUpdated;
             _appLibraryAppsSubscription?.Dispose();
-            _appLibraryAppsSubscription = ApplicationLibrary.Applications
+            if (SynchronizationContext.Current != null)
+            {
+                _appLibraryAppsSubscription = ApplicationLibrary.Applications
                     .Connect()
                     .ObserveOn(SynchronizationContext.Current)
                     .Bind(ViewModel.Applications)
                     .OnItemAdded(UpdateApplicationWithLdnData)
                     .Subscribe();
+            }
+
             ApplicationLibrary.LdnGameDataReceived += ApplicationLibrary_LdnGameDataReceived;
 
             ConfigurationState.Instance.Multiplayer.Mode.Event += (sender, evt) =>
@@ -581,7 +585,7 @@ namespace Ryujinx.Ava.UI.Windows
             var volumeSplitButton = sender as ToggleSplitButton;
             if (ViewModel.IsGameRunning)
             {
-                if (volumeSplitButton is not { IsChecked: true })
+                if (volumeSplitButton is { IsChecked: false })
                 {
                     ViewModel.AppHost.Device.SetVolume(ViewModel.VolumeBeforeMute);
                 }

@@ -327,16 +327,13 @@ namespace Ryujinx.Common.Collections
             {
                 Root = newNode;
             }
-            else if (parent != null && start.CompareTo(parent.Start) < 0)
+            else if (start.CompareTo(parent!.Start) < 0)
             {
                 parent.Left = newNode;
             }
             else
             {
-                if (parent != null)
-                {
-                    parent.Right = newNode;
-                }
+                parent.Right = newNode;
             }
 
             PropagateIncrease(newNode);

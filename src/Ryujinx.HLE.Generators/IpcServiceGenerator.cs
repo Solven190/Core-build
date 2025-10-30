@@ -19,38 +19,51 @@ namespace Ryujinx.HLE.Generators
             generator.EnterScope($"partial class IUserInterface");
 
             generator.EnterScope($"public IpcService? GetServiceInstance(Type type, ServiceCtx context, object? parameter = null)");
-            foreach (var className in syntaxReceiver.Types)
+            if (syntaxReceiver != null)
             {
-                if (className.Modifiers.Any(SyntaxKind.AbstractKeyword) || className.Modifiers.Any(SyntaxKind.PrivateKeyword) || !className.AttributeLists.Any(x => x.Attributes.Any(y => y.ToString().StartsWith("Service"))))
-                    continue;
-                var name = GetFullName(className, context).Replace("global::", "");
-                if (!name.StartsWith("Ryujinx.HLE.HOS.Services"))
-                    continue;
-                var constructors = className.ChildNodes().Where(x => x.IsKind(SyntaxKind.ConstructorDeclaration)).Select(y => y as ConstructorDeclarationSyntax);
-
-                if (!constructors.Any(x => x != null && x.ParameterList.Parameters.Count >= 1))
-                    continue;
-
-                if (constructors.FirstOrDefault(x => x != null && x.ParameterList.Parameters.Count >= 1).ParameterList.Parameters[0].Type.ToString() == "ServiceCtx")
+                foreach (var className in syntaxReceiver.Types)
                 {
-                    generator.EnterScope($"if (type == typeof({GetFullName(className, context)}))");
-                    if (constructors.Any(x => x != null && x.ParameterList.Parameters.Count == 2))
+                    if (className.Modifiers.Any(SyntaxKind.AbstractKeyword) ||
+                        className.Modifiers.Any(SyntaxKind.PrivateKeyword) ||
+                        !className.AttributeLists.Any(x => x.Attributes.Any(y => y.ToString().StartsWith("Service"))))
+                        continue;
+                    var name = GetFullName(className, context).Replace("global::", "");
+                    if (!name.StartsWith("Ryujinx.HLE.HOS.Services"))
+                        continue;
+                    var constructors = className.ChildNodes().Where(x => x.IsKind(SyntaxKind.ConstructorDeclaration))
+                        .Select(y => y as ConstructorDeclarationSyntax);
+
+                    if (!constructors.Any(x => x?.ParameterList.Parameters.Count >= 1))
+                        continue;
+
+                    if (constructors.FirstOrDefault(x => x?.ParameterList.Parameters.Count >= 1)
+                            .ParameterList.Parameters[0].Type.ToString() == "ServiceCtx")
                     {
-                        var type = constructors.FirstOrDefault(x => x != null && x.ParameterList.Parameters.Count == 2).ParameterList.Parameters[1].Type;
-                        var model = context.Compilation.GetSemanticModel(type.SyntaxTree);
-                        var typeSymbol = model.GetSymbolInfo(type).Symbol as INamedTypeSymbol;
-                        var fullName = typeSymbol?.ToString();
-                        generator.EnterScope("if (parameter != null)");
-                        generator.AppendLine($"return new {GetFullName(className, context)}(context, ({fullName})parameter);");
+                        generator.EnterScope($"if (type == typeof({GetFullName(className, context)}))");
+                        if (constructors.Any(x => x?.ParameterList.Parameters.Count == 2))
+                        {
+                            var type = constructors
+                                .FirstOrDefault(x => x?.ParameterList.Parameters.Count == 2).ParameterList
+                                .Parameters[1].Type;
+                            if (type?.SyntaxTree != null)
+                            {
+                                var model = context.Compilation.GetSemanticModel(type.SyntaxTree);
+                                var typeSymbol = model.GetSymbolInfo(type).Symbol as INamedTypeSymbol;
+                                var fullName = typeSymbol?.ToString();
+                                generator.EnterScope("if (parameter != null)");
+                                generator.AppendLine($"return new {GetFullName(className, context)}(context, ({fullName})parameter);");
+                            }
+
+                            generator.LeaveScope();
+                        }
+
+                        if (constructors.Any(x => x != null && x.ParameterList.Parameters.Count == 1))
+                        {
+                            generator.AppendLine($"return new {GetFullName(className, context)}(context);");
+                        }
+
                         generator.LeaveScope();
                     }
-
-                    if (constructors.Any(x => x != null && x.ParameterList.Parameters.Count == 1))
-                    {
-                        generator.AppendLine($"return new {GetFullName(className, context)}(context);");
-                    }
-
-                    generator.LeaveScope();
                 }
             }
 

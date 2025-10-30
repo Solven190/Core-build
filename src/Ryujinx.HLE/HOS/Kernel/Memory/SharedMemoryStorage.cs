@@ -32,13 +32,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
 
         public ref T GetRef<T>(ulong offset) where T : unmanaged
         {
-            if (_pageList.Nodes.Count == 1)
+            if (_pageList.Nodes.Count == 1 && _pageList.Nodes.First != null)
             {
-                if (_pageList.Nodes.First != null)
-                {
-                    ulong address = _pageList.Nodes.First.Value.Address - DramMemoryMap.DramBase;
-                    return ref _context.Memory.GetRef<T>(address + offset);
-                }
+                ulong address = _pageList.Nodes.First.Value.Address - DramMemoryMap.DramBase;
+                return ref _context.Memory.GetRef<T>(address + offset);
             }
 
             throw new NotImplementedException("Non-contiguous shared memory is not yet supported.");

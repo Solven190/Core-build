@@ -61,7 +61,7 @@ namespace Ryujinx.Horizon.Generators.Hipc
         {
             HipcSyntaxReceiver syntaxReceiver = (HipcSyntaxReceiver)context.SyntaxReceiver;
 
-            if (syntaxReceiver?.CommandInterfaces != null)
+            if (syntaxReceiver != null)
             {
                 foreach (var commandInterface in syntaxReceiver.CommandInterfaces)
                 {
@@ -98,7 +98,8 @@ namespace Ryujinx.Horizon.Generators.Hipc
                     generator.LeaveScope();
                     generator.LeaveScope();
 
-                    context.AddSource($"{GetNamespaceName(commandInterface.ClassDeclarationSyntax)}.{className}.g.cs", generator.ToString());
+                    context.AddSource($"{GetNamespaceName(commandInterface.ClassDeclarationSyntax)}.{className}.g.cs",
+                        generator.ToString());
                 }
             }
         }
@@ -244,7 +245,7 @@ namespace Ryujinx.Horizon.Generators.Hipc
                 "ReadOnlySpan<byte> inRawData, " +
                 "ref Span<CmifOutHeader> outHeader)");
 
-            bool returnsResult = method.ReturnType != null && GetCanonicalTypeName(compilation, method.ReturnType) == TypeResult;
+            bool returnsResult = GetCanonicalTypeName(compilation, method.ReturnType) == TypeResult;
 
             if (returnsResult || buffersCount != 0 || inObjectsCount != 0)
             {
@@ -567,16 +568,11 @@ namespace Ryujinx.Horizon.Generators.Hipc
 
             if (symbol != null)
             {
-                foreach (var attribute in symbol.GetAttributes())
-                {
-                    if (attribute.AttributeClass?.ToDisplayString() == attributeName)
-                    {
-                        foreach (var kv in attribute.NamedArguments.Where(kv => kv.Key == argName))
-                        {
-                            return kv.Value.ToCSharpString();
-                        }
-                    }
-                }
+                return (from attribute in symbol.GetAttributes()
+                    where attribute.AttributeClass?.ToDisplayString() == attributeName
+                    from kv in attribute.NamedArguments
+                    where kv.Key == argName
+                    select kv.Value.ToCSharpString()).FirstOrDefault();
             }
 
             return null;
@@ -717,11 +713,16 @@ namespace Ryujinx.Horizon.Generators.Hipc
         private static bool IsObject(Compilation compilation, ParameterSyntax parameter)
         {
             SyntaxNode syntaxNode = parameter.Type;
-            TypeInfo typeInfo = compilation.GetSemanticModel(syntaxNode!.SyntaxTree).GetTypeInfo(syntaxNode);
+            if (syntaxNode != null)
+            {
+                TypeInfo typeInfo = compilation.GetSemanticModel(syntaxNode.SyntaxTree).GetTypeInfo(syntaxNode);
 
-            return typeInfo.Type != null &&
-                   (typeInfo.Type.ToDisplayString() == TypeIServiceObject ||
-                    typeInfo.Type.AllInterfaces.Any(x => x.ToDisplayString() == TypeIServiceObject));
+                return typeInfo.Type != null &&
+                       (typeInfo.Type.ToDisplayString() == TypeIServiceObject ||
+                        typeInfo.Type.AllInterfaces.Any(x => x.ToDisplayString() == TypeIServiceObject));
+            }
+
+            return false;
         }
 
         private static bool IsProcessId(Compilation compilation, ParameterSyntax parameter)

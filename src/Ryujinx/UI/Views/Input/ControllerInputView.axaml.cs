@@ -9,6 +9,7 @@ using Ryujinx.Ava.UI.ViewModels.Input;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Input;
 using Ryujinx.Input.Assigner;
+using System;
 using StickInputId = Ryujinx.Common.Configuration.Hid.Controller.StickInputId;
 
 namespace Ryujinx.Ava.UI.Views.Input
@@ -68,14 +69,12 @@ namespace Ryujinx.Ava.UI.Views.Input
 
                 if (_changeSlider != -1.0f && _changeSlider != (float)check.Value)
                 {
+                    if (DataContext is ControllerInputViewModel viewModel)
+                    {
+                        viewModel.ParentModel.IsModified = true;
+                    }
 
-                     var viewModel = (DataContext as ControllerInputViewModel);
-                     if (viewModel != null)
-                     {
-                         viewModel.ParentModel.IsModified = true;
-                     }
-
-                     _changeSlider = (float)check.Value;
+                    _changeSlider = (float)check.Value;
                 }
             }
         }
@@ -119,7 +118,10 @@ namespace Ryujinx.Ava.UI.Views.Input
 
                         PointerPressed += MouseClick;
 
-                        var viewModel = (DataContext as ControllerInputViewModel);
+                        if (DataContext is not ControllerInputViewModel viewModel)
+                        {
+                            return;
+                        }
 
                         IKeyboard keyboard = (IKeyboard)viewModel.ParentModel.AvaloniaKeyboardDriver.GetGamepad("0"); // Open Avalonia keyboard for cancel operations.
                         IButtonAssigner assigner = CreateButtonAssigner(isStick);
@@ -234,13 +236,14 @@ namespace Ryujinx.Ava.UI.Views.Input
 
         private IButtonAssigner CreateButtonAssigner(bool forStick)
         {
-            IButtonAssigner assigner;
+            if (DataContext is not ControllerInputViewModel controllerInputViewModel)
+            {
+                return null;
+            }
 
-            var controllerInputViewModel = DataContext as ControllerInputViewModel;
-
-            assigner = new GamepadButtonAssigner(
-                controllerInputViewModel?.ParentModel.SelectedGamepad,
-                (controllerInputViewModel.ParentModel.Config as StandardControllerInputConfig).TriggerThreshold,
+            IButtonAssigner assigner = new GamepadButtonAssigner(
+                controllerInputViewModel.ParentModel.SelectedGamepad,
+                ((StandardControllerInputConfig)controllerInputViewModel.ParentModel.Config).TriggerThreshold,
                 forStick);
 
             return assigner;

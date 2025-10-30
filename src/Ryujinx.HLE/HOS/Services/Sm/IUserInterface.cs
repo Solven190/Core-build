@@ -97,8 +97,8 @@ namespace Ryujinx.HLE.HOS.Services.Sm
 
                     IpcService service = GetServiceInstance(type, context, serviceAttribute.Parameter);
 
-                    service.TrySetServer(_commonServer);
-                    service.Server.AddSessionObj(session.ServerSession, service);
+                    service?.TrySetServer(_commonServer);
+                    service?.Server.AddSessionObj(session.ServerSession, service);
                 }
                 else
                 {

@@ -278,16 +278,13 @@ namespace Ryujinx.Common.Collections
             {
                 Root = newNode;
             }
-            else if (parent != null && key.CompareTo(parent.Key) < 0)
+            else if (key.CompareTo(parent.Key) < 0)
             {
                 parent.Left = newNode;
             }
             else
             {
-                if (parent != null)
-                {
-                    parent.Right = newNode;
-                }
+                parent.Right = newNode;
             }
             Count++;
             return newNode;

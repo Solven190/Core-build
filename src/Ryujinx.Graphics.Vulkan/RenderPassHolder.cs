@@ -134,7 +134,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             // Register this render pass with all render target views.
 
-            if (fb != null)
+            if (hasFramebuffer)
             {
                 var textures = fb.GetAttachmentViews();
 

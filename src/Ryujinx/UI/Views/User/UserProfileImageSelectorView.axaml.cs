@@ -63,25 +63,27 @@ namespace Ryujinx.Ava.UI.Views.User
 
         private async void Import_OnClick(object sender, RoutedEventArgs e)
         {
-            var window = this.GetVisualRoot() as Window;
-            var result = await window?.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            if (this.GetVisualRoot() is Window window)
             {
-                AllowMultiple = false,
-                FileTypeFilter = new List<FilePickerFileType>
+                var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
-                    new(LocaleManager.Instance[LocaleKeys.AllSupportedFormats])
+                    AllowMultiple = false,
+                    FileTypeFilter = new List<FilePickerFileType>
                     {
-                        Patterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp"],
-                        AppleUniformTypeIdentifiers = ["public.jpeg", "public.png", "com.microsoft.bmp"],
-                        MimeTypes = ["image/jpeg", "image/png", "image/bmp"],
+                        new(LocaleManager.Instance[LocaleKeys.AllSupportedFormats])
+                        {
+                            Patterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp"],
+                            AppleUniformTypeIdentifiers = ["public.jpeg", "public.png", "com.microsoft.bmp"],
+                            MimeTypes = ["image/jpeg", "image/png", "image/bmp"],
+                        },
                     },
-                },
-            });
+                });
 
-            if (result.Count > 0)
-            {
-                _profile.Image = ProcessProfileImage(File.ReadAllBytes(result[0].Path.LocalPath));
-                _parent.GoBack();
+                if (result.Count > 0)
+                {
+                    _profile.Image = ProcessProfileImage(File.ReadAllBytes(result[0].Path.LocalPath));
+                    _parent.GoBack();
+                }
             }
         }
 

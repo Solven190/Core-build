@@ -60,12 +60,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
 
             KernelContext.CriticalSection.Enter();
 
-            if (list.Count != 0)
+            if (list.Count != 0 && list.First != null)
             {
-                if (list.First != null)
-                {
-                    session = list.First.Value;
-                }
+                session = list.First.Value;
 
                 list.RemoveFirst();
             }

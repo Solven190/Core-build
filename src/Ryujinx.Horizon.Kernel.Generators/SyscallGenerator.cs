@@ -164,7 +164,9 @@ namespace Ryujinx.Horizon.Kernel.Generators
                                 where attributeArg.Expression.Kind() == SyntaxKind.NumericLiteralExpression
                                 select (LiteralExpressionSyntax)attributeArg.Expression
                                 into numericLiteral
-                                select new SyscallIdAndName((int)numericLiteral.Token.Value, method.Identifier.Text));
+                                let tokenValue = numericLiteral.Token.Value
+                                where tokenValue != null
+                                select new SyscallIdAndName((int)tokenValue, method.Identifier.Text));
                         }
                     }
                 }

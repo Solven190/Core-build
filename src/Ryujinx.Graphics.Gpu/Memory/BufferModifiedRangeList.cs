@@ -391,7 +391,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
             // Range list must be consistent for this operation
             if (_migrationTarget != null)
             {
-                _migrationTarget!.WaitForAndFlushRanges(address, size);
+                _migrationTarget.WaitForAndFlushRanges(address, size);
 
                 return;
             }

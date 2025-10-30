@@ -525,16 +525,16 @@ namespace Ryujinx.Ava.UI.ViewModels.Input
         {
             ProfilesList.Clear();
 
-            string basePath = GetProfileBasePath() ?? string.Empty;
+            string basePath = GetProfileBasePath();
 
             if (!Directory.Exists(basePath))
             {
-                Directory.CreateDirectory(basePath);
+                Directory.CreateDirectory(basePath ?? string.Empty);
             }
 
             ProfilesList.Add((LocaleManager.Instance[LocaleKeys.ControllerSettingsProfileDefault]));
 
-            foreach (string profile in Directory.GetFiles(basePath, "*.json", SearchOption.AllDirectories))
+            foreach (string profile in Directory.GetFiles(basePath ?? string.Empty, "*.json", SearchOption.AllDirectories))
             {
                 ProfilesList.Add(Path.GetFileNameWithoutExtension(profile));
             }
