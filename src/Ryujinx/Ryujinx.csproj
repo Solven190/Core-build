@@ -173,11 +173,10 @@
   </ItemGroup>
   <PropertyGroup Condition="$(Configuration.EndsWith('AOT'))">
     <PublishAot>true</PublishAot>
-    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsAotCompatible>true</IsAotCompatible>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <InvariantGlobalization>false</InvariantGlobalization>
     <OptimizationPreference>Speed</OptimizationPreference>
-    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
     <PublishSingleFile>false</PublishSingleFile>
     <TrimMode>full</TrimMode>
   </PropertyGroup>
