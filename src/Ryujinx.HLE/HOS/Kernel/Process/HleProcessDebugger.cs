@@ -383,6 +383,8 @@ namespace Ryujinx.HLE.HOS.Kernel.Process
             }
 
             var rwdataStart = roInfo.Address + roInfo.Size;
+            
+            KMemoryInfo.Pool.Release(roInfo);
 
             try
             {

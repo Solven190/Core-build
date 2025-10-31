@@ -645,7 +645,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
                     int width = scissor.X2 - x;
                     int height = scissor.Y2 - y;
 
-                    if (_state.State.YControl.HasFlag(YControl.NegateY))
+                    if ((_state.State.YControl & YControl.NegateY) != 0)
                     {
                         ref var screenScissor = ref _state.State.ScreenScissorState;
                         y = screenScissor.Height - height - y;
@@ -729,7 +729,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             var face = _state.State.FaceState;
 
             bool disableTransform = _state.State.ViewportTransformEnable == 0;
-            bool yNegate = yControl.HasFlag(YControl.NegateY);
+            bool yNegate = (yControl & YControl.NegateY) != 0;
 
             UpdateFrontFace(yControl, face.FrontFace);
             UpdateDepthMode();
@@ -1229,7 +1229,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="frontFace">Front face</param>
         private void UpdateFrontFace(YControl yControl, FrontFace frontFace)
         {
-            bool isUpperLeftOrigin = !yControl.HasFlag(YControl.TriangleRastFlip);
+            bool isUpperLeftOrigin = (yControl & YControl.TriangleRastFlip) == 0;
 
             if (isUpperLeftOrigin)
             {
@@ -1520,7 +1520,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             {
                 // Make sure we update the viewport size on the support buffer if it will be consumed on the new shader.
 
-                if (!_fsReadsFragCoord && _state.State.YControl.HasFlag(YControl.NegateY))
+                if (!_fsReadsFragCoord && (_state.State.YControl & YControl.NegateY) != 0)
                 {
                     UpdateSupportBufferViewportSize();
                 }

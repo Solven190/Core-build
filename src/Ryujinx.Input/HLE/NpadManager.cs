@@ -1,8 +1,10 @@
+using Ryujinx.Common;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Common.Configuration.Hid.Keyboard;
 using Ryujinx.HLE.HOS.Services.Hid;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace Ryujinx.Input.HLE
 {
     public class NpadManager : IDisposable
     {
+        private static readonly ObjectPool<List<SixAxisInput>> _hleMotionStatesPool = new (() => new List<SixAxisInput>(NpadDevices.MaxControllers));
         private readonly CemuHookClient _cemuHookClient;
 
         private readonly Lock _lock = new();
@@ -204,8 +207,8 @@ namespace Ryujinx.Input.HLE
         {
             lock (_lock)
             {
-                List<GamepadInput> hleInputStates = new();
-                List<SixAxisInput> hleMotionStates = new(NpadDevices.MaxControllers);
+                List<GamepadInput> hleInputStates = [];
+                List<SixAxisInput> hleMotionStates = _hleMotionStatesPool.Allocate();
 
                 KeyboardInput? hleKeyboardInput = null;
 
@@ -309,6 +312,8 @@ namespace Ryujinx.Input.HLE
                         var position = IMouse.GetScreenPosition(mouseInput.Position, mouse.ClientSize, aspectRatio);
 
                         _device.Hid.Mouse.Update((int)position.X, (int)position.Y, buttons, (int)mouseInput.Scroll.X, (int)mouseInput.Scroll.Y, true);
+
+                        ArrayPool<bool>.Shared.Return(mouseInput.ButtonState);
                     }
                 }
                 else
@@ -317,6 +322,8 @@ namespace Ryujinx.Input.HLE
                 }
 
                 _device.TamperMachine.UpdateInput(hleInputStates);
+                
+                _hleMotionStatesPool.Release(hleMotionStates);
             }
         }
 

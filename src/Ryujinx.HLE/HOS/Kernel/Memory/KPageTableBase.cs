@@ -1005,7 +1005,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
             }
             else
             {
-                return new KMemoryInfo(
+                return KMemoryInfo.Pool.Allocate().Set(
                     AddrSpaceEnd,
                     ~AddrSpaceEnd + 1,
                     MemoryState.Reserved,
@@ -2557,10 +2557,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
             KMemoryPermission firstPermission = info.Permission;
             MemoryAttribute firstAttribute = info.Attribute;
 
-            do
+            info = currBlock.GetInfo(info);
+            
+            while (info.Address + info.Size - 1 < endAddr - 1 && (currBlock = currBlock.Successor) != null)
             {
-                info = currBlock.GetInfo();
-
                 // Check if the block state matches what we expect.
                 if (firstState != info.State ||
                      firstPermission != info.Permission ||
@@ -2572,11 +2572,16 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                     outState = MemoryState.Unmapped;
                     outPermission = KMemoryPermission.None;
                     outAttribute = MemoryAttribute.None;
+                    
+                    KMemoryInfo.Pool.Release(info);
 
                     return false;
                 }
+                
+                info = currBlock.GetInfo(info);
             }
-            while (info.Address + info.Size - 1 < endAddr - 1 && (currBlock = currBlock.Successor) != null);
+            
+            KMemoryInfo.Pool.Release(info);
 
             outState = firstState;
             outPermission = firstPermission;
@@ -2595,16 +2600,26 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
             MemoryAttribute attributeMask,
             MemoryAttribute attributeExpected)
         {
-            foreach (KMemoryInfo info in IterateOverRange(address, address + size))
+            KMemoryBlock currBlock = _blockManager.FindBlock(address);
+
+            KMemoryInfo info = currBlock.GetInfo();
+
+            while (info.Address + info.Size - 1 < address + size - 1 && (currBlock = currBlock.Successor) != null)
             {
                 // Check if the block state matches what we expect.
                 if ((info.State & stateMask) != stateExpected ||
                     (info.Permission & permissionMask) != permissionExpected ||
                     (info.Attribute & attributeMask) != attributeExpected)
                 {
+                    KMemoryInfo.Pool.Release(info);
+                    
                     return false;
                 }
+                
+                info = currBlock.GetInfo(info);
             }
+            
+            KMemoryInfo.Pool.Release(info);
 
             return true;
         }
@@ -2654,6 +2669,8 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
 
                     ulong currBaseAddr = info.Address + reservedPagesCount * PageSize;
                     ulong currEndAddr = info.Address + info.Size;
+                    
+                    KMemoryInfo.Pool.Release(info);
 
                     if (aslrAddress >= regionStart &&
                         aslrAddress >= currBaseAddr &&
@@ -2734,6 +2751,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                         allocationEndAddr <= regionEndAddr &&
                         allocationEndAddr <= currEndAddr)
                     {
+                        KMemoryInfo.Pool.Release(info);
                         return address;
                     }
                 }
@@ -2744,9 +2762,11 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                 {
                     break;
                 }
-
-                info = currBlock.GetInfo();
+                
+                info = currBlock.GetInfo(info);
             }
+            
+            KMemoryInfo.Pool.Release(info);
 
             return 0;
         }

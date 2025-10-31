@@ -84,7 +84,7 @@ namespace Ryujinx.Input.SDL2
             _triggerThreshold = 0.0f;
 
             // Enable motion tracking
-            if (Features.HasFlag(GamepadFeaturesFlag.Motion))
+            if ((Features & GamepadFeaturesFlag.Motion) != 0)
             {
                 if (SDL_GameControllerSetSensorEnabled(_gamepadHandle, SDL_SensorType.SDL_SENSOR_ACCEL, SDL_bool.SDL_TRUE) != 0)
                 {
@@ -145,7 +145,7 @@ namespace Ryujinx.Input.SDL2
 
         public void Rumble(float lowFrequency, float highFrequency, uint durationMs)
         {
-            if (Features.HasFlag(GamepadFeaturesFlag.Rumble))
+            if ((Features & GamepadFeaturesFlag.Rumble) == 0)
             {
                 ushort lowFrequencyRaw = (ushort)(lowFrequency * ushort.MaxValue);
                 ushort highFrequencyRaw = (ushort)(highFrequency * ushort.MaxValue);
@@ -184,32 +184,32 @@ namespace Ryujinx.Input.SDL2
                 sensorType = SDL_SensorType.SDL_SENSOR_GYRO;
             }
 
-            if (Features.HasFlag(GamepadFeaturesFlag.Motion) && sensorType != SDL_SensorType.SDL_SENSOR_INVALID)
+            if ((Features & GamepadFeaturesFlag.Motion) == 0 || sensorType is SDL_SensorType.SDL_SENSOR_INVALID)
+                return Vector3.Zero;
+
+            const int ElementCount = 3;
+
+            unsafe
             {
-                const int ElementCount = 3;
+                float* values = stackalloc float[ElementCount];
 
-                unsafe
+                int result = SDL_GameControllerGetSensorData(_gamepadHandle, sensorType, (nint)values, ElementCount);
+
+                if (result == 0)
                 {
-                    float* values = stackalloc float[ElementCount];
+                    Vector3 value = new(values[0], values[1], values[2]);
 
-                    int result = SDL_GameControllerGetSensorData(_gamepadHandle, sensorType, (nint)values, ElementCount);
-
-                    if (result == 0)
+                    if (inputId == MotionInputId.Gyroscope)
                     {
-                        Vector3 value = new(values[0], values[1], values[2]);
-
-                        if (inputId == MotionInputId.Gyroscope)
-                        {
-                            return RadToDegree(value);
-                        }
-
-                        if (inputId == MotionInputId.Accelerometer)
-                        {
-                            return GsToMs2(value);
-                        }
-
-                        return value;
+                        return RadToDegree(value);
                     }
+
+                    if (inputId == MotionInputId.Accelerometer)
+                    {
+                        return GsToMs2(value);
+                    }
+
+                    return value;
                 }
             }
 

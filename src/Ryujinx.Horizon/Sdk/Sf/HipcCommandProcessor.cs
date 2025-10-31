@@ -48,36 +48,36 @@ namespace Ryujinx.Horizon.Sdk.Sf
                     case CommandArgType.Buffer:
                         var flags = argInfo.BufferFlags;
 
-                        if (flags.HasFlag(HipcBufferFlags.In))
+                        if ((flags & HipcBufferFlags.In) != 0)
                         {
-                            if (flags.HasFlag(HipcBufferFlags.AutoSelect))
+                            if ((flags & HipcBufferFlags.AutoSelect) != 0)
                             {
                                 _inMapAliasBuffersCount++;
                                 _inPointerBuffersCount++;
                             }
-                            else if (flags.HasFlag(HipcBufferFlags.MapAlias))
+                            else if ((flags & HipcBufferFlags.MapAlias) != 0)
                             {
                                 _inMapAliasBuffersCount++;
                             }
-                            else if (flags.HasFlag(HipcBufferFlags.Pointer))
+                            else if ((flags & HipcBufferFlags.Pointer) != 0)
                             {
                                 _inPointerBuffersCount++;
                             }
                         }
                         else
                         {
-                            bool autoSelect = flags.HasFlag(HipcBufferFlags.AutoSelect);
-                            if (autoSelect || flags.HasFlag(HipcBufferFlags.Pointer))
+                            bool autoSelect = (flags & HipcBufferFlags.AutoSelect) != 0;
+                            if (autoSelect || (flags & HipcBufferFlags.Pointer) != 0)
                             {
                                 _outPointerBuffersCount++;
 
-                                if (flags.HasFlag(HipcBufferFlags.FixedSize))
+                                if ((flags & HipcBufferFlags.FixedSize) != 0)
                                 {
                                     _outFixedSizePointerBuffersCount++;
                                 }
                             }
 
-                            if (autoSelect || flags.HasFlag(HipcBufferFlags.MapAlias))
+                            if (autoSelect || (flags & HipcBufferFlags.MapAlias) != 0)
                             {
                                 _outMapAliasBuffersCount++;
                             }
@@ -149,17 +149,17 @@ namespace Ryujinx.Horizon.Sdk.Sf
                 var flags = _args[i].BufferFlags;
                 bool isMapAlias;
 
-                if (flags.HasFlag(HipcBufferFlags.MapAlias))
+                if ((flags & HipcBufferFlags.MapAlias) != 0)
                 {
                     isMapAlias = true;
                 }
-                else if (flags.HasFlag(HipcBufferFlags.Pointer))
+                else if ((flags & HipcBufferFlags.Pointer) != 0)
                 {
                     isMapAlias = false;
                 }
-                else /* if (flags.HasFlag(HipcBufferFlags.HipcAutoSelect)) */
+                else /* if (flags & HipcBufferFlags.HipcAutoSelect)) */
                 {
-                    var descriptor = flags.HasFlag(HipcBufferFlags.In)
+                    var descriptor = (flags & HipcBufferFlags.In) != 0
                         ? context.Request.Data.SendBuffers[sendMapAliasIndex]
                         : context.Request.Data.ReceiveBuffers[recvMapAliasIndex];
 
@@ -170,7 +170,7 @@ namespace Ryujinx.Horizon.Sdk.Sf
 
                 if (isMapAlias)
                 {
-                    var descriptor = flags.HasFlag(HipcBufferFlags.In)
+                    var descriptor = (flags & HipcBufferFlags.In) != 0
                         ? context.Request.Data.SendBuffers[sendMapAliasIndex++]
                         : context.Request.Data.ReceiveBuffers[recvMapAliasIndex++];
 
@@ -183,7 +183,7 @@ namespace Ryujinx.Horizon.Sdk.Sf
                 }
                 else
                 {
-                    if (flags.HasFlag(HipcBufferFlags.In))
+                    if ((flags & HipcBufferFlags.In) != 0)
                     {
                         var descriptor = context.Request.Data.SendStatics[sendPointerIndex++];
                         ulong address = descriptor.Address;
@@ -196,11 +196,11 @@ namespace Ryujinx.Horizon.Sdk.Sf
                             pointerBufferTail = Math.Max(pointerBufferTail, address + size);
                         }
                     }
-                    else /* if (flags.HasFlag(HipcBufferFlags.Out)) */
+                    else /* if (flags & HipcBufferFlags.Out)) */
                     {
                         ulong size;
 
-                        if (flags.HasFlag(HipcBufferFlags.FixedSize))
+                        if ((flags & HipcBufferFlags.FixedSize) != 0)
                         {
                             size = _args[i].BufferFixedSize;
                         }
@@ -233,12 +233,12 @@ namespace Ryujinx.Horizon.Sdk.Sf
 
         private static bool IsMapTransferModeValid(HipcBufferFlags flags, HipcBufferMode mode)
         {
-            if (flags.HasFlag(HipcBufferFlags.MapTransferAllowsNonSecure))
+            if ((flags & HipcBufferFlags.MapTransferAllowsNonSecure) != 0)
             {
                 return mode == HipcBufferMode.NonSecure;
             }
 
-            if (flags.HasFlag(HipcBufferFlags.MapTransferAllowsNonDevice))
+            if ((flags & HipcBufferFlags.MapTransferAllowsNonDevice) != 0)
             {
                 return mode == HipcBufferMode.NonDevice;
             }
@@ -258,18 +258,18 @@ namespace Ryujinx.Horizon.Sdk.Sf
                 }
 
                 var flags = _args[i].BufferFlags;
-                if (!flags.HasFlag(HipcBufferFlags.Out))
+                if ((flags & HipcBufferFlags.Out) == 0)
                 {
                     continue;
                 }
 
                 var buffer = _bufferRanges[i];
 
-                if (flags.HasFlag(HipcBufferFlags.Pointer))
+                if ((flags & HipcBufferFlags.Pointer) != 0)
                 {
                     response.SendStatics[recvPointerIndex] = new HipcStaticDescriptor(buffer.Address, (ushort)buffer.Size, recvPointerIndex);
                 }
-                else if (flags.HasFlag(HipcBufferFlags.AutoSelect))
+                else if ((flags & HipcBufferFlags.AutoSelect) != 0)
                 {
                     if (!isBufferMapAlias[i])
                     {

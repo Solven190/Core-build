@@ -395,7 +395,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
         /// <returns>True if queried, false otherwise</returns>
         public bool IsPrimitiveTopologyQueried()
         {
-            return _queriedState.HasFlag(QueriedStateFlags.PrimitiveTopology);
+            return (_queriedState & QueriedStateFlags.PrimitiveTopology) == QueriedStateFlags.PrimitiveTopology;
         }
 
         /// <summary>
@@ -902,7 +902,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 specState.PipelineState = pipelineState;
             }
 
-            if (specState._queriedState.HasFlag(QueriedStateFlags.TransformFeedback))
+            if ((specState._queriedState & QueriedStateFlags.TransformFeedback) == QueriedStateFlags.TransformFeedback)
             {
                 ushort tfCount = 0;
                 dataReader.Read(ref tfCount);
@@ -928,7 +928,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 specState._textureSpecialization[textureKey] = textureState;
             }
 
-            if (specState._queriedState.HasFlag(QueriedStateFlags.TextureArrayFromBuffer))
+            if ((specState._queriedState & QueriedStateFlags.TextureArrayFromBuffer) == QueriedStateFlags.TextureArrayFromBuffer)
             {
                 dataReader.Read(ref count);
 
@@ -944,7 +944,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 }
             }
 
-            if (specState._queriedState.HasFlag(QueriedStateFlags.TextureArrayFromPool))
+            if ((specState._queriedState & QueriedStateFlags.TextureArrayFromPool) == QueriedStateFlags.TextureArrayFromPool)
             {
                 dataReader.Read(ref count);
 
@@ -1007,7 +1007,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 }
             }
 
-            if (_queriedState.HasFlag(QueriedStateFlags.TransformFeedback))
+            if ((_queriedState & QueriedStateFlags.TransformFeedback) == QueriedStateFlags.TransformFeedback)
             {
                 ushort tfCount = (ushort)TransformFeedbackDescriptors.Length;
                 dataWriter.Write(ref tfCount);
@@ -1030,7 +1030,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 dataWriter.WriteWithMagicAndSize(ref textureState.Value, TexsMagic);
             }
 
-            if (_queriedState.HasFlag(QueriedStateFlags.TextureArrayFromBuffer))
+            if ((_queriedState & QueriedStateFlags.TextureArrayFromBuffer) == QueriedStateFlags.TextureArrayFromBuffer)
             {
                 count = (ushort)_textureArrayFromBufferSpecialization.Count;
                 dataWriter.Write(ref count);
@@ -1045,7 +1045,7 @@ namespace Ryujinx.Graphics.Gpu.Shader
                 }
             }
 
-            if (_queriedState.HasFlag(QueriedStateFlags.TextureArrayFromPool))
+            if ((_queriedState & QueriedStateFlags.TextureArrayFromPool) == QueriedStateFlags.TextureArrayFromPool)
             {
                 count = (ushort)_textureArrayFromPoolSpecialization.Count;
                 dataWriter.Write(ref count);
