@@ -27,6 +27,7 @@ namespace Ryujinx.Graphics.GAL
         public readonly bool SupportsSparseBuffer;
         public readonly bool Supports5BitComponentFormat;
         public readonly bool SupportsBlendEquationAdvanced;
+        public readonly bool SupportsFastDmaTextureCopy;
         public readonly bool SupportsFragmentShaderInterlock;
         public readonly bool SupportsFragmentShaderOrderingIntel;
         public readonly bool SupportsGeometryShader;
@@ -95,6 +96,7 @@ namespace Ryujinx.Graphics.GAL
             bool supports5BitComponentFormat,
             bool supportsSparseBuffer,
             bool supportsBlendEquationAdvanced,
+            bool supportsFastDmaTextureCopy,
             bool supportsFragmentShaderInterlock,
             bool supportsFragmentShaderOrderingIntel,
             bool supportsGeometryShader,
@@ -157,6 +159,7 @@ namespace Ryujinx.Graphics.GAL
             Supports5BitComponentFormat = supports5BitComponentFormat;
             SupportsSparseBuffer = supportsSparseBuffer;
             SupportsBlendEquationAdvanced = supportsBlendEquationAdvanced;
+            SupportsFastDmaTextureCopy = supportsFastDmaTextureCopy;
             SupportsFragmentShaderInterlock = supportsFragmentShaderInterlock;
             SupportsFragmentShaderOrderingIntel = supportsFragmentShaderOrderingIntel;
             SupportsGeometryShader = supportsGeometryShader;
