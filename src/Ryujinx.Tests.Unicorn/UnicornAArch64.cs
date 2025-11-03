@@ -282,17 +282,17 @@ namespace Ryujinx.Tests.Unicorn
 
         public void MemoryMap(ulong address, ulong size, MemoryPermission permissions)
         {
-            Uc.MemMap((long)address, (long)size, (int)permissions);
+            Uc.MemMap((long)address, size, (int)permissions);
         }
 
         public void MemoryUnmap(ulong address, ulong size)
         {
-            Uc.MemUnmap((long)address, (long)size);
+            Uc.MemUnmap((long)address, size);
         }
 
         public void MemoryProtect(ulong address, ulong size, MemoryPermission permissions)
         {
-            Uc.MemProtect((long)address, (long)size, (int)permissions);
+            Uc.MemProtect((long)address, size, (int)permissions);
         }
     }
 }
