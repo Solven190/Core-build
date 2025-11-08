@@ -204,6 +204,7 @@
   "SettingsTabGraphicsAspectRatio16x9": "16:9",
   "SettingsTabGraphicsAspectRatio16x10": "16:10",
   "SettingsTabGraphicsAspectRatio21x9": "21:9",
+  "SettingsTabGraphicsAspectRatio43x18": "43:18",
   "SettingsTabGraphicsAspectRatio32x9": "32:9",
   "SettingsTabGraphicsAspectRatioStretch": "Растянуть до размеров окна",
   "SettingsTabGraphicsDeveloperOptions": "Параметры разработчика",

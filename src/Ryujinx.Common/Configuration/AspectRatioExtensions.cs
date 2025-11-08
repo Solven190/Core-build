@@ -10,6 +10,7 @@ namespace Ryujinx.Common.Configuration
         Fixed16x9,
         Fixed16x10,
         Fixed21x9,
+        Fixed43x18,
         Fixed32x9,
         Stretched,
     }
@@ -30,6 +31,7 @@ namespace Ryujinx.Common.Configuration
                 AspectRatio.Fixed16x9  => 16.0f,
                 AspectRatio.Fixed16x10 => 16.0f,
                 AspectRatio.Fixed21x9  => 21.0f,
+                AspectRatio.Fixed43x18 => 43.0f,
                 AspectRatio.Fixed32x9  => 32.0f,
                 _                      => 16.0f,
 #pragma warning restore IDE0055
@@ -45,6 +47,7 @@ namespace Ryujinx.Common.Configuration
                 AspectRatio.Fixed16x9  => 9.0f,
                 AspectRatio.Fixed16x10 => 10.0f,
                 AspectRatio.Fixed21x9  => 9.0f,
+                AspectRatio.Fixed43x18 => 18.0f,
                 AspectRatio.Fixed32x9  => 9.0f,
                 _                      => 9.0f,
 #pragma warning restore IDE0055
@@ -60,6 +63,7 @@ namespace Ryujinx.Common.Configuration
                 AspectRatio.Fixed16x9  => "16:9",
                 AspectRatio.Fixed16x10 => "16:10",
                 AspectRatio.Fixed21x9  => "21:9",
+                AspectRatio.Fixed43x18 => "43:18",
                 AspectRatio.Fixed32x9  => "32:9",
                 _                      => "Stretched",
 #pragma warning restore IDE0055

@@ -221,6 +221,8 @@
                             <ComboBoxItem
                                 Content="{locale:Locale SettingsTabGraphicsAspectRatio21x9}" />
                             <ComboBoxItem
+                                Content="{locale:Locale SettingsTabGraphicsAspectRatio43x18}" />
+                            <ComboBoxItem
                                 Content="{locale:Locale SettingsTabGraphicsAspectRatio32x9}" />
                             <ComboBoxItem
                                 Content="{locale:Locale SettingsTabGraphicsAspectRatioStretch}" />

@@ -195,6 +195,10 @@
                             Command="{Binding SetAspectRatio}"
                             CommandParameter="{x:Static config:AspectRatio.Fixed21x9}"/>
                         <MenuItem
+                            Header="{locale:Locale SettingsTabGraphicsAspectRatio43x18}"
+                            Command="{Binding SetAspectRatio}"
+                            CommandParameter="{x:Static config:AspectRatio.Fixed43x18}"/>
+                        <MenuItem
                             Header="{locale:Locale SettingsTabGraphicsAspectRatio32x9}"
                             Command="{Binding SetAspectRatio}"
                             CommandParameter="{x:Static config:AspectRatio.Fixed32x9}"/>
