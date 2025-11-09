@@ -42,6 +42,9 @@ namespace Ryujinx.UI.Common.Helper
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool bool_objc_msgSend(nint receiver, Selector selector, nint param);
 
+        [LibraryImport(ObjCRuntime, EntryPoint = "objc_msgSend")]
+        private static partial double double_objc_msgSend(nint receiver, Selector selector);
+
         public readonly struct Object
         {
             public readonly nint ObjPtr;
@@ -104,6 +107,11 @@ namespace Ryujinx.UI.Common.Helper
             public bool GetBoolFromMessage(Selector selector, Object obj)
             {
                 return bool_objc_msgSend(ObjPtr, selector, obj.ObjPtr);
+            }
+
+            public double GetDoubleFromMessage(string selectorName)
+            {
+                return double_objc_msgSend(ObjPtr, selectorName);
             }
         }
 

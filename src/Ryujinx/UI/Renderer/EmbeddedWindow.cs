@@ -189,12 +189,17 @@ namespace Ryujinx.Ava.UI.Renderer
             // Make its renderer our metal layer.
             child.SendMessage("setWantsLayer:", 1);
             child.SendMessage("setLayer:", metalLayer);
-            metalLayer.SendMessage("setContentsScale:", Program.DesktopScaleFactor);
+
+            double initialScaleFactor = child.GetDoubleFromMessage("backingScaleFactor");
+
+            metalLayer.SendMessage("setContentsScale:", initialScaleFactor);
 
             // Ensure the scale factor is up to date.
             _updateBoundsCallback = _ =>
             {
-                metalLayer.SendMessage("setContentsScale:", Program.DesktopScaleFactor);
+                double currentScaleFactor = child.GetDoubleFromMessage("backingScaleFactor");
+
+                metalLayer.SendMessage("setContentsScale:", currentScaleFactor);
             };
 
             nint nsView = child.ObjPtr;
