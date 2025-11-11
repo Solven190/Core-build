@@ -87,6 +87,7 @@ namespace Ryujinx.Audio.Renderer.Dsp.Command
                 }
 
                 short[] outputBuffer = ArrayPool<short>.Shared.Rent((int)inputCount * SampleCount);
+                Array.Fill(outputBuffer, (short)0, 0, (int)inputCount * SampleCount);
 
                 for (int i = 0; i < bufferCount; i++)
                 {
