@@ -13,6 +13,8 @@ using Ryujinx.UI.Common.Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 
 namespace Ryujinx.UI.Common.Configuration
 {
@@ -1092,6 +1094,7 @@ namespace Ryujinx.UI.Common.Configuration
                 Ryujinx.Common.Logging.Logger.Warning?.Print(LogClass.Application, $"Unsupported configuration version {configurationFileFormat.Version}, loading default.");
 
                 LoadDefault();
+                return;
             }
 
             if (configurationFileFormat.Version < 2)
@@ -1867,11 +1870,53 @@ namespace Ryujinx.UI.Common.Configuration
             Debug.GdbStubPort.Value = configurationFileFormat.GdbStubPort; // Get from global config only
             Debug.DebuggerSuspendOnStart.Value = configurationFileFormat.DebuggerSuspendOnStart; // Get from global config only
 
-            if (configurationFileUpdated)
+            List<string> existingDirs = [];
+            bool didPathUpdate = false;
+
+            { // Game dirs
+                foreach (var gameDir in UI.GameDirs.Value)
+                {
+                    if (Directory.Exists(gameDir))
+                    {
+                        existingDirs.Add(gameDir);
+                    }
+                    else
+                    {
+                        Ryujinx.Common.Logging.Logger.Warning?.Print(LogClass.Configuration, $"Path '{gameDir}' seems to no longer exist. Removing it from game directory configuration.");
+                        didPathUpdate = true;
+                    }
+                }
+
+                UI.GameDirs.Value = existingDirs.ToList();
+            }
+
+            existingDirs.Clear();
+
+            { // Autoload dirs
+                foreach (var autoloadDir in UI.AutoloadDirs.Value)
+                {
+                    if (Directory.Exists(autoloadDir))
+                    {
+                        existingDirs.Add(autoloadDir);
+                    }
+                    else
+                    {
+                        Ryujinx.Common.Logging.Logger.Warning?.Print(LogClass.Configuration, $"Path '{autoloadDir}' seems to no longer exist. Removing it from auto load directory configuration.");
+                        didPathUpdate = true;
+                    }
+                }
+
+                UI.AutoloadDirs.Value = existingDirs.ToList();
+            }
+            
+            if (configurationFileUpdated || didPathUpdate)
             {
                 ToFileFormat().SaveConfig(configurationFilePath);
 
-                Ryujinx.Common.Logging.Logger.Notice.Print(LogClass.Application, $"Configuration file updated to version {ConfigurationFileFormat.CurrentVersion}");
+                if (configurationFileUpdated)
+                {
+                    Ryujinx.Common.Logging.Logger.Notice.Print(LogClass.Application, $"Configuration file updated to version {ConfigurationFileFormat.CurrentVersion}");
+                }
             }
         }
 
