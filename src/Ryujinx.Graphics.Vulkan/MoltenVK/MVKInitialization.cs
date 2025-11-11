@@ -1,6 +1,5 @@
 using Silk.NET.Core.Loader;
 using Silk.NET.Vulkan;
-using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 

@@ -1,7 +1,6 @@
 using Ryujinx.Graphics.GAL;
 using Silk.NET.Vulkan;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Format = Ryujinx.Graphics.GAL.Format;
 using VkFormat = Silk.NET.Vulkan.Format;

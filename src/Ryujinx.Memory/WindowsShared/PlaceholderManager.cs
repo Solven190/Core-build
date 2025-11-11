@@ -2,7 +2,6 @@ using Ryujinx.Common;
 using Ryujinx.Common.Collections;
 using Ryujinx.Common.Memory.PartialUnmaps;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;

@@ -1,11 +1,8 @@
 using Gommon;
-using JetBrains.Annotations;
 using Ryujinx.Common.Logging;
-using Ryujinx.HLE.HOS.Kernel.Process;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Ryujinx.HLE.Debugger
 {

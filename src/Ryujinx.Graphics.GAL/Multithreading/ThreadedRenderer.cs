@@ -9,7 +9,6 @@ using Ryujinx.Graphics.GAL.Multithreading.Resources.Programs;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Ryujinx.Graphics.GAL.Multithreading

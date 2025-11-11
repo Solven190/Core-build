@@ -1,7 +1,6 @@
 ﻿using Ryujinx.Common.Memory;
 using Ryujinx.Graphics.Nvdec.Vp9.Common;
 using Ryujinx.Graphics.Video;
-using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 

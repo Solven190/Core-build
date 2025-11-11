@@ -1,5 +1,4 @@
 using ARMeilleure.Memory;
-using System;
 using System.Threading;
 
 namespace ARMeilleure.State

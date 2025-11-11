@@ -3,7 +3,6 @@ using Ryujinx.Audio.Renderer.Server.Sink;
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Ryujinx.Audio.Renderer.Dsp.Command
 {
