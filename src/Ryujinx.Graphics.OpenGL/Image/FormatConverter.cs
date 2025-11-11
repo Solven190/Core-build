@@ -139,7 +139,7 @@ namespace Ryujinx.Graphics.OpenGL.Image
                 start = sizeAligned;
             }
 
-            var outSpan = MemoryMarshal.Cast<byte, uint>(output);
+            var outSpan = MemoryMarshal.Cast<byte, uint>(new Span<byte>(output));
             var dataSpan = MemoryMarshal.Cast<byte, uint>(data);
             for (int i = start / sizeof(uint); i < dataSpan.Length; i++)
             {
