@@ -10,6 +10,8 @@
     <string>Ryujinx</string>
     <key>CFBundleIconFile</key>
     <string>Ryujinx.icns</string>
+    <key>CFBundleIconName</key>
+    <string>Ryujinx</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -40,17 +42,17 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.1</string>
+    <string>2.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
-    <string>1.1.0</string>
+    <string>2.0.0</string>
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>CSResourcesFileMapped</key>
     <true/>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 2018 - 2023 Ryujinx Team and Contributors.</string>
+    <string>Copyright © 2018 - 2024 Ryujinx Team and Contributors. Copyright © 2024 - 2025 Kenji-NX and Contributors.</string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.games</string>
     <key>LSMinimumSystemVersion</key>
