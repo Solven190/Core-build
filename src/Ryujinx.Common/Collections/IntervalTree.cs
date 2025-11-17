@@ -384,10 +384,7 @@ namespace Ryujinx.Common.Collections
 
             IntervalTreeNode<TKey, TValue> tmp = LeftOf(replacementNode) ?? RightOf(replacementNode);
 
-            if (tmp != null)
-            {
-                tmp.Parent = ParentOf(replacementNode);
-            }
+            tmp?.Parent = ParentOf(replacementNode);
 
             if (ParentOf(replacementNode) == null)
             {
