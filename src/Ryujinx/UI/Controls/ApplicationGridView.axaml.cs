@@ -37,10 +37,7 @@ namespace Ryujinx.Ava.UI.Controls
 
         private void SearchBox_OnKeyUp(object sender, KeyEventArgs args)
         {
-            if (DataContext is MainWindowViewModel model)
-            {
-                model.SearchText = (sender as TextBox)?.Text;
-            }
+            (DataContext as MainWindowViewModel)?.SearchText = (sender as TextBox)?.Text;
         }
     }
 }

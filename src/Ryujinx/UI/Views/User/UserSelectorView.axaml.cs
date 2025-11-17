@@ -42,10 +42,7 @@ namespace Ryujinx.Ava.UI.Views.User
 
                 if (arg.NavigationMode == NavigationMode.Back)
                 {
-                    if (_parent.Parent != null)
-                    {
-                        ((ContentDialog)_parent.Parent).Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle];
-                    }
+                    ((ContentDialog)_parent.Parent)?.Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle];
                 }
 
                 DataContext = ViewModel;

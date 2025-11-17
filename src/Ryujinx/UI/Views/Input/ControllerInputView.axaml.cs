@@ -68,10 +68,8 @@ namespace Ryujinx.Ava.UI.Views.Input
 
                 if (_changeSlider != -1.0f && _changeSlider != (float)check.Value)
                 {
-                    if (DataContext is ControllerInputViewModel viewModel)
-                    {
-                        viewModel.ParentModel.IsModified = true;
-                    }
+                    var viewModel = (DataContext as ControllerInputViewModel);
+                    viewModel?.ParentModel.IsModified = true;
 
                     _changeSlider = (float)check.Value;
                 }
