@@ -1,6 +1,5 @@
 using DiscordRPC;
 using Humanizer;
-using Humanizer.Localisation;
 using Ryujinx.Common;
 using Ryujinx.HLE.Loaders.Processes;
 using Ryujinx.UI.App.Common;
