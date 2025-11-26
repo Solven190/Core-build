@@ -735,6 +735,7 @@ namespace Ryujinx.Graphics.Vulkan
                 memoryType: memoryType,
                 hasFrontFacingBug: IsIntelWindows,
                 hasVectorIndexingBug: IsQualcommProprietary,
+                hasClipDistanceInitBug: IsMoltenVk,
                 needsFragmentOutputSpecialization: IsMoltenVk,
                 reduceShaderPrecision: IsMoltenVk,
                 supportsAstcCompression: features2.Features.TextureCompressionAstcLdr && supportsAstcFormats,
