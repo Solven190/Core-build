@@ -7,6 +7,7 @@ using Ryujinx.Common.Configuration;
 using Ryujinx.Common.GraphicsDriver;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.SystemInterop;
+using Ryujinx.Common.Utilities;
 using Ryujinx.Graphics.Vulkan.MoltenVK;
 using Ryujinx.Headless;
 using Ryujinx.Modules;
@@ -16,6 +17,7 @@ using Ryujinx.UI.Common.Configuration;
 using Ryujinx.UI.Common.Helper;
 using Ryujinx.UI.Common.SystemInfo;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -46,11 +48,23 @@ namespace Ryujinx.Ava
                 _ = MessageBoxA(nint.Zero, "You are running an outdated version of Windows.\n\nRyujinx supports Windows 10 version 20H1 and newer.\n", $"Ryujinx {Version}", MbIconwarning);
             }
 
+            bool noGuiArg = ConsumeCommandLineArgument(ref args, "--no-gui") || ConsumeCommandLineArgument(ref args, "nogui");
+            bool coreDumpArg = ConsumeCommandLineArgument(ref args, "--core-dumps");
+
+            // TODO: Ryujinx causes core dumps on Linux when it exits "uncleanly", eg. through an unhandled exception.
+            //       This is undesirable and causes very odd behavior during development (the process stops responding, 
+            //       the .NET debugger freezes or suddenly detaches, /tmp/ gets filled etc.), unless explicitly requested by the user.
+            //       This needs to be investigated, but calling prctl() is better than modifying system-wide settings or leaving this be.
+            if (!coreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
+
             PreviewerDetached = true;
             
-            if (args.Length > 0 && args[0] is "--no-gui" or "nogui")
+            if (noGuiArg)
             {
-                HeadlessRyujinx.Entrypoint(args[1..]);
+                HeadlessRyujinx.Entrypoint(args);
                 return;
             }
 
@@ -82,6 +96,14 @@ namespace Ryujinx.Ava
                         new[] { Win32RenderingMode.Software },
                 })
                 .UseSkia();
+        }
+
+        private static bool ConsumeCommandLineArgument(ref string[] args, string targetArgument)
+        {
+            List<string> argList = [.. args];
+            bool found = argList.Remove(targetArgument);
+            args = argList.ToArray();
+            return found;
         }
 
         private static void Initialize(string[] args)
