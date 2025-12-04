@@ -571,5 +571,10 @@ namespace Ryujinx.Headless
                 SDL2Driver.Instance.Dispose();
             }
         }
+
+        public void TakeScreenshot()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

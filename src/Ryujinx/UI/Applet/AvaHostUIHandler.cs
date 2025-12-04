@@ -260,5 +260,10 @@ namespace Ryujinx.Ava.UI.Applet
         {
             return new AvaloniaDynamicTextInputHandler(_parent);
         }
+        
+        public void TakeScreenshot()
+        {
+            _parent.ViewModel.AppHost.ScreenshotRequested = true;
+        }
     }
 }

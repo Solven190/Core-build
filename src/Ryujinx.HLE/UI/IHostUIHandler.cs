@@ -60,5 +60,10 @@ namespace Ryujinx.HLE.UI
         /// Gets fonts and colors used by the host.
         /// </summary>
         IHostUITheme HostUITheme { get; }
+
+        /// <summary>
+        /// Takes a screenshot from the current renderer and saves it in the screenshots folder.
+        /// </summary>
+        void TakeScreenshot();
     }
 }

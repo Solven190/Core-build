@@ -416,7 +416,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletAE.AllSystemAppletProxiesService.Sys
                 return ResultCode.InvalidParameters;
             }
 
-            Logger.Stub?.PrintStub(LogClass.ServiceAm, new { albumReportOption });
+            context.Device.UIHandler.TakeScreenshot();
 
             return ResultCode.Success;
         }
