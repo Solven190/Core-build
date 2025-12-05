@@ -19,6 +19,11 @@ namespace Ryujinx.Audio.Renderer.Parameter.Effect
         /// The output channel indices that will be used by the <see cref="Dsp.AudioProcessor"/>.
         /// </summary>
         public Array6<byte> Output;
+        
+        /// <summary>
+        /// Reserved/unused.
+        /// </summary>
+        private readonly uint _padding;
 
         /// <summary>
         /// Biquad filter numerator (b0, b1, b2).
