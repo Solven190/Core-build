@@ -198,9 +198,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                     aliasRegion.Size = 0x180000000;
                     heapRegion.Size = memConfig switch {
                         MemoryConfiguration.MemoryConfiguration6GiB => 0x180000000u,
-                        MemoryConfiguration.MemoryConfiguration8GiB
-                            or MemoryConfiguration.MemoryConfiguration10GiB
-                            or MemoryConfiguration.MemoryConfiguration12GiB => 0x200000000u,
+                        MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
+                        MemoryConfiguration.MemoryConfiguration10GiB => 0x280000000u,
+                        MemoryConfiguration.MemoryConfiguration12GiB => 0x300000000u,
                         _ => 0x100000000u
                     };
                     stackRegion.Size = 0;
@@ -234,9 +234,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                         aliasRegion.Size = 1UL << (addressSpaceWidth - 3);
                         heapRegion.Size = memConfig switch {
                             MemoryConfiguration.MemoryConfiguration6GiB => 0x180000000u,
-                            MemoryConfiguration.MemoryConfiguration8GiB
-                                or MemoryConfiguration.MemoryConfiguration10GiB
-                                or MemoryConfiguration.MemoryConfiguration12GiB => 0x200000000u,
+                            MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
+                            MemoryConfiguration.MemoryConfiguration10GiB => 0x280000000u,
+                            MemoryConfiguration.MemoryConfiguration12GiB => 0x300000000u,
                             _ => 0x100000000u
                         };
                         stackRegion.Size = 1UL << (addressSpaceWidth - 8);
@@ -254,9 +254,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                         aliasRegion.Size = 0x1000000000;
                         heapRegion.Size = memConfig switch {
                             MemoryConfiguration.MemoryConfiguration6GiB => 0x180000000u,
-                            MemoryConfiguration.MemoryConfiguration8GiB
-                                or MemoryConfiguration.MemoryConfiguration10GiB
-                                or MemoryConfiguration.MemoryConfiguration12GiB => 0x200000000u,
+                            MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
+                            MemoryConfiguration.MemoryConfiguration10GiB => 0x280000000u,
+                            MemoryConfiguration.MemoryConfiguration12GiB => 0x300000000u,
                             _ => 0x100000000u
                         };
                         stackRegion.Size = 0x80000000;
