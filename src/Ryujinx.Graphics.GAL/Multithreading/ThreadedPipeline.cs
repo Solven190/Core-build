@@ -266,12 +266,12 @@ namespace Ryujinx.Graphics.GAL.Multithreading
             _renderer.QueueCommand();
         }
 
-        public unsafe void SetRenderTargets(ITexture[] colors, ITexture depthStencil)
+        public unsafe void SetRenderTargets(Span<ITexture> colors, ITexture depthStencil)
         {
             ITexture[] colorsCopy = SetRenderTargetsCommand.ArrayPool.Rent(colors.Length);
-            colors.CopyTo(colorsCopy, 0);
+            colors.CopyTo(colorsCopy.AsSpan());
             
-            _renderer.New<SetRenderTargetsCommand>()->Set(Ref(colorsCopy), Ref(depthStencil));
+            _renderer.New<SetRenderTargetsCommand>()->Set(colors.Length, Ref(colorsCopy), Ref(depthStencil));
             _renderer.QueueCommand();
         }
 

@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace Ryujinx.Input
@@ -8,6 +7,8 @@ namespace Ryujinx.Input
     /// </summary>
     public interface IKeyboard : IGamepad
     {
+        private static bool[] _keyState;
+
         /// <summary>
         /// Check if a given key is pressed on the keyboard.
         /// </summary>
@@ -29,15 +30,17 @@ namespace Ryujinx.Input
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static KeyboardStateSnapshot GetStateSnapshot(IKeyboard keyboard)
         {
+            if (_keyState is null)
+            {
+                _keyState = new bool[(int)Key.Count];
+            }
             
-            bool[] keysState = ArrayPool<bool>.Shared.Rent((int)Key.Count);
-
             for (Key key = 0; key < Key.Count; key++)
             {
-                keysState[(int)key] = keyboard.IsPressed(key);
+                _keyState[(int)key] = keyboard.IsPressed(key);
             }
 
-            return new KeyboardStateSnapshot(keysState);
+            return new KeyboardStateSnapshot(_keyState);
         }
     }
 }

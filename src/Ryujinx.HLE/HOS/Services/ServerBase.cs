@@ -451,8 +451,9 @@ namespace Ryujinx.HLE.HOS.Services
 
                 response.RawData = _responseDataStream.ToArray();
 
-                using var responseStream = response.GetStreamTipc();
+                var responseStream = response.GetStreamTipc();
                 _selfProcess.CpuMemory.Write(_selfThread.TlsAddress, responseStream.GetReadOnlySequence());
+                MemoryStreamManager.Shared.ReleaseStream(responseStream);
             }
             else
             {
@@ -461,8 +462,9 @@ namespace Ryujinx.HLE.HOS.Services
 
             if (!isTipcCommunication)
             {
-                using var responseStream = response.GetStream((long)_selfThread.TlsAddress, recvListAddr | ((ulong)PointerBufferSize << 48));
+                var responseStream = response.GetStream((long)_selfThread.TlsAddress, recvListAddr | ((ulong)PointerBufferSize << 48));
                 _selfProcess.CpuMemory.Write(_selfThread.TlsAddress, responseStream.GetReadOnlySequence());
+                MemoryStreamManager.Shared.ReleaseStream(responseStream);
             }
 
             return shouldReply;

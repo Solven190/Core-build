@@ -7,6 +7,9 @@ namespace Ryujinx.Common.Memory
     {
         private static readonly RecyclableMemoryStreamManager _shared = new();
 
+        private static readonly ObjectPool<RecyclableMemoryStream> _streamPool =
+            new(() => new RecyclableMemoryStream(_shared, Guid.NewGuid(), null, 0));
+
         /// <summary>
         /// We don't expose the <c>RecyclableMemoryStreamManager</c> directly because version 2.x
         /// returns them as <c>MemoryStream</c>. This Shared class is here to a) offer only the GetStream() versions we use
@@ -19,7 +22,12 @@ namespace Ryujinx.Common.Memory
             /// </summary>
             /// <returns>A <c>RecyclableMemoryStream</c></returns>
             public static RecyclableMemoryStream GetStream()
-                => new(_shared);
+            {
+                RecyclableMemoryStream stream = _streamPool.Allocate();
+                stream.SetLength(0);
+
+                return stream;
+            }
 
             /// <summary>
             /// Retrieve a new <c>MemoryStream</c> object with the contents copied from the provided
@@ -55,7 +63,8 @@ namespace Ryujinx.Common.Memory
                 RecyclableMemoryStream stream = null;
                 try
                 {
-                    stream = new RecyclableMemoryStream(_shared, id, tag, buffer.Length);
+                    stream = _streamPool.Allocate();
+                    stream.SetLength(0);
                     stream.Write(buffer);
                     stream.Position = 0;
                     return stream;
@@ -83,7 +92,8 @@ namespace Ryujinx.Common.Memory
                 RecyclableMemoryStream stream = null;
                 try
                 {
-                    stream = new RecyclableMemoryStream(_shared, id, tag, count);
+                    stream = _streamPool.Allocate();
+                    stream.SetLength(0);
                     stream.Write(buffer, offset, count);
                     stream.Position = 0;
                     return stream;
@@ -93,6 +103,11 @@ namespace Ryujinx.Common.Memory
                     stream?.Dispose();
                     throw;
                 }
+            }
+
+            public static void ReleaseStream(RecyclableMemoryStream stream)
+            {
+                _streamPool.Release(stream);
             }
         }
     }

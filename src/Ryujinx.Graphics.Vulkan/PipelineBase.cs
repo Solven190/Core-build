@@ -3,7 +3,6 @@ using Ryujinx.Graphics.Shader;
 using Silk.NET.Vulkan;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -1032,7 +1031,7 @@ namespace Ryujinx.Graphics.Vulkan
             }
         }
 
-        private void SetRenderTargetsInternal(ITexture[] colors, ITexture depthStencil, bool filterWriteMasked)
+        private void SetRenderTargetsInternal(Span<ITexture> colors, ITexture depthStencil, bool filterWriteMasked)
         {
             CreateFramebuffer(colors, depthStencil, filterWriteMasked);
             CreateRenderPass();
@@ -1040,7 +1039,7 @@ namespace Ryujinx.Graphics.Vulkan
             SignalAttachmentChange();
         }
 
-        public void SetRenderTargets(ITexture[] colors, ITexture depthStencil)
+        public void SetRenderTargets(Span<ITexture> colors, ITexture depthStencil)
         {
             _framebufferUsingColorWriteMask = false;
             SetRenderTargetsInternal(colors, depthStencil, Gd.IsTBDR);
@@ -1384,7 +1383,7 @@ namespace Ryujinx.Graphics.Vulkan
             _currentPipelineHandle = 0;
         }
 
-        private void CreateFramebuffer(ITexture[] colors, ITexture depthStencil, bool filterWriteMasked)
+        private void CreateFramebuffer(Span<ITexture> colors, ITexture depthStencil, bool filterWriteMasked)
         {
             if (filterWriteMasked)
             {
@@ -1394,7 +1393,7 @@ namespace Ryujinx.Graphics.Vulkan
                 // Just try to remove duplicate attachments.
                 // Save a copy of the array to rebind when mask changes.
 
-                void MaskOut()
+                void MaskOut(ReadOnlySpan<ITexture> colors)
                 {
                     if (!_framebufferUsingColorWriteMask)
                     {
@@ -1431,12 +1430,12 @@ namespace Ryujinx.Graphics.Vulkan
                             if (vkBlend.ColorWriteMask == 0)
                             {
                                 colors[i] = null;
-                                MaskOut();
+                                MaskOut(colors);
                             }
                             else if (vkBlend2.ColorWriteMask == 0)
                             {
                                 colors[j] = null;
-                                MaskOut();
+                                MaskOut(colors);
                             }
                         }
                     }

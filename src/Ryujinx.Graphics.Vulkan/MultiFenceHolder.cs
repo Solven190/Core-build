@@ -1,7 +1,7 @@
+using Ryujinx.Common;
 using Ryujinx.Common.Memory;
 using Silk.NET.Vulkan;
 using System;
-using System.Buffers;
 
 namespace Ryujinx.Graphics.Vulkan
 {
@@ -10,6 +10,8 @@ namespace Ryujinx.Graphics.Vulkan
     /// </summary>
     class MultiFenceHolder
     {
+        public static readonly ObjectPool<FenceHolder[]> FencePool = new(() => new FenceHolder[CommandBufferPool.MaxCommandBuffers]);
+        
         private const int BufferUsageTrackingGranularity = 4096;
 
         public FenceHolder[] Fences { get; }
@@ -20,7 +22,7 @@ namespace Ryujinx.Graphics.Vulkan
         /// </summary>
         public MultiFenceHolder()
         {
-            Fences = ArrayPool<FenceHolder>.Shared.Rent(CommandBufferPool.MaxCommandBuffers);
+            Fences = FencePool.Allocate();
         }
 
         /// <summary>
@@ -29,7 +31,7 @@ namespace Ryujinx.Graphics.Vulkan
         /// <param name="size">Size of the buffer</param>
         public MultiFenceHolder(int size)
         {
-            Fences = ArrayPool<FenceHolder>.Shared.Rent(CommandBufferPool.MaxCommandBuffers);
+            Fences = FencePool.Allocate();
             _bufferUsageBitmap = new BufferUsageBitmap(size, BufferUsageTrackingGranularity);
         }
 

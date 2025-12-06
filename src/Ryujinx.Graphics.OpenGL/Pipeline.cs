@@ -1166,7 +1166,7 @@ namespace Ryujinx.Graphics.OpenGL
             }
         }
 
-        public void SetRenderTargets(ITexture[] colors, ITexture depthStencil)
+        public void SetRenderTargets(Span<ITexture> colors, ITexture depthStencil)
         {
             EnsureFramebuffer();
 

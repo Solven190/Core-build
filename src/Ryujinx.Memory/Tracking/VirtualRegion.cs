@@ -6,7 +6,7 @@ namespace Ryujinx.Memory.Tracking
     /// <summary>
     /// A region of virtual memory.
     /// </summary>
-    class VirtualRegion : AbstractRegion
+    class VirtualRegion : AbstractRegion<VirtualRegion>
     {
         public List<RegionHandle> Handles = [];
 
@@ -136,7 +136,7 @@ namespace Ryujinx.Memory.Tracking
             }
         }
 
-        public override INonOverlappingRange Split(ulong splitAddress)
+        public override INonOverlappingRange<VirtualRegion> Split(ulong splitAddress)
         {
             VirtualRegion newRegion = new(_tracking, splitAddress, EndAddress - splitAddress, Guest, _lastPermission);
             Size = splitAddress - Address;

@@ -15,7 +15,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
     /// <summary>
     /// Buffer, used to store vertex and index data, uniform and storage buffers, and others.
     /// </summary>
-    class Buffer : INonOverlappingRange, ISyncActionHandler, IDisposable
+    class Buffer : INonOverlappingRange<Buffer>, ISyncActionHandler, IDisposable
     {
         private const ulong GranularBufferThreshold = 4096;
 
@@ -41,6 +41,9 @@ namespace Ryujinx.Graphics.Gpu.Memory
         /// End address of the buffer in guest memory.
         /// </summary>
         public ulong EndAddress => Address + Size;
+        
+        public Buffer Next { get; set; }
+        public Buffer Previous { get; set; }
 
         /// <summary>
         /// Increments when the buffer is (partially) unmapped or disposed.
@@ -87,6 +90,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
 
         private readonly bool _useGranular;
         private bool _syncActionRegistered;
+        private bool _bufferInherited;
 
         private int _referenceCount = 1;
 
@@ -113,7 +117,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
             ulong size,
             BufferStage stage,
             bool sparseCompatible,
-            RangeItem<Buffer>[] baseBuffers)
+            Buffer[] baseBuffers)
         {
             _context = context;
             _physicalMemory = physicalMemory;
@@ -134,15 +138,15 @@ namespace Ryujinx.Graphics.Gpu.Memory
             if (baseBuffers.Length != 0)
             {
                 baseHandles = new List<IRegionHandle>();
-                foreach (RangeItem<Buffer> item in baseBuffers)
+                foreach (Buffer item in baseBuffers)
                 {
-                    if (item.Value._useGranular)
+                    if (item._useGranular)
                     {
-                        baseHandles.AddRange((item.Value._memoryTrackingGranular.GetHandles()));
+                        baseHandles.AddRange((item._memoryTrackingGranular.GetHandles()));
                     }
                     else
                     {
-                        baseHandles.Add(item.Value._memoryTracking);
+                        baseHandles.Add(item._memoryTracking);
                     }
                 }
             }
@@ -247,14 +251,14 @@ namespace Ryujinx.Graphics.Gpu.Memory
         /// Checks if a given range overlaps with the buffer.
         /// </summary>
         /// <param name="address">Start address of the range</param>
-        /// <param name="size">Size in bytes of the range</param>
+        /// <param name="endAddress">End address of the range</param>
         /// <returns>True if the range overlaps, false otherwise</returns>
-        public bool OverlapsWith(ulong address, ulong size)
+        public bool OverlapsWith(ulong address, ulong endAddress)
         {
-            return Address < address + size && address < EndAddress;
+            return Address < endAddress && address < EndAddress;
         }
 
-        public INonOverlappingRange Split(ulong splitAddress)
+        public INonOverlappingRange<Buffer> Split(ulong splitAddress)
         {
             throw new NotImplementedException();
         }
@@ -426,10 +430,13 @@ namespace Ryujinx.Graphics.Gpu.Memory
         {
             _syncActionRegistered = false;
 
+            if (_bufferInherited)
+            {
+                return true;
+            }
+
             if (_useGranular)
             {
-                
-
                 _modifiedRanges?.GetRanges(Address, Size, _syncRangeAction);
             }
             else
@@ -453,6 +460,8 @@ namespace Ryujinx.Graphics.Gpu.Memory
         /// <param name="from">The buffer to inherit from</param>
         public void InheritModifiedRanges(Buffer from)
         {
+            from._bufferInherited = true;
+            
             if (from._modifiedRanges is { HasRanges: true })
             {
                 if (from._syncActionRegistered && !_syncActionRegistered)

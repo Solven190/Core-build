@@ -82,7 +82,7 @@ namespace Ryujinx.Graphics.GAL
         void SetRasterizerDiscard(bool discard);
 
         void SetRenderTargetColorMasks(ReadOnlySpan<uint> componentMask);
-        void SetRenderTargets(ITexture[] colors, ITexture depthStencil);
+        void SetRenderTargets(Span<ITexture> colors, ITexture depthStencil);
 
         void SetScissors(ReadOnlySpan<Rectangle<int>> regions);
 

@@ -24,8 +24,8 @@ namespace Ryujinx.Memory.Range
         /// Check if this range overlaps with another.
         /// </summary>
         /// <param name="address">Base address</param>
-        /// <param name="size">Size of the range</param>
+        /// <param name="endAddress">EndAddress of the range</param>
         /// <returns>True if overlapping, false otherwise</returns>
-        bool OverlapsWith(ulong address, ulong size);
+        bool OverlapsWith(ulong address, ulong endAddress);
     }
 }

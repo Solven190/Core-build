@@ -32,7 +32,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
         {
             KThread currentThread = KernelStatic.GetCurrentThread();
 
-            KSessionRequest request = new(currentThread, customCmdBuffAddr, customCmdBuffSize);
+            KSessionRequest request = _parent.ServerSession.RequestPool.Allocate().Set(currentThread, customCmdBuffAddr, customCmdBuffSize);
 
             KernelContext.CriticalSection.Enter();
 
@@ -55,7 +55,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
         {
             KThread currentThread = KernelStatic.GetCurrentThread();
 
-            KSessionRequest request = new(currentThread, customCmdBuffAddr, customCmdBuffSize, asyncEvent);
+            KSessionRequest request = _parent.ServerSession.RequestPool.Allocate().Set(currentThread, customCmdBuffAddr, customCmdBuffSize, asyncEvent);
 
             KernelContext.CriticalSection.Enter();
 

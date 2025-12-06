@@ -5,7 +5,7 @@ namespace Ryujinx.Memory.Tracking
     /// <summary>
     /// A region of memory.
     /// </summary>
-    abstract class AbstractRegion : INonOverlappingRange
+    abstract class AbstractRegion<T> : INonOverlappingRange<T> where T : class, INonOverlappingRange<T>
     {
         /// <summary>
         /// Base address.
@@ -21,6 +21,9 @@ namespace Ryujinx.Memory.Tracking
         /// End address.
         /// </summary>
         public ulong EndAddress => Address + Size;
+        
+        public T Next { get; set; }
+        public T Previous { get; set; }
 
         /// <summary>
         /// Create a new region.
@@ -37,11 +40,11 @@ namespace Ryujinx.Memory.Tracking
         /// Check if this range overlaps with another.
         /// </summary>
         /// <param name="address">Base address</param>
-        /// <param name="size">Size of the range</param>
+        /// <param name="endAddress">End address</param>
         /// <returns>True if overlapping, false otherwise</returns>
-        public bool OverlapsWith(ulong address, ulong size)
+        public bool OverlapsWith(ulong address, ulong endAddress)
         {
-            return Address < address + size && address < EndAddress;
+            return Address < endAddress && address < EndAddress;
         }
 
         /// <summary>
@@ -68,6 +71,6 @@ namespace Ryujinx.Memory.Tracking
         /// </summary>
         /// <param name="splitAddress">Address to split the region around</param>
         /// <returns>The second part of the split region, with start address at the given split.</returns>
-        public abstract INonOverlappingRange Split(ulong splitAddress);
+        public abstract INonOverlappingRange<T> Split(ulong splitAddress);
     }
 }

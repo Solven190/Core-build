@@ -1,4 +1,3 @@
-using Ryujinx.Common;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Common.Configuration.Hid.Keyboard;
@@ -19,7 +18,6 @@ namespace Ryujinx.Input.HLE
 {
     public class NpadManager : IDisposable
     {
-        private static readonly ObjectPool<List<SixAxisInput>> _hleMotionStatesPool = new (() => new List<SixAxisInput>(NpadDevices.MaxControllers));
         private readonly CemuHookClient _cemuHookClient;
 
         private readonly Lock _lock = new();
@@ -39,6 +37,9 @@ namespace Ryujinx.Input.HLE
         private bool _enableKeyboard;
         private bool _enableMouse;
         private Switch _device;
+        
+        private readonly List<GamepadInput> _hleInputStates = [];
+        private readonly List<SixAxisInput> _hleMotionStates = new(NpadDevices.MaxControllers);
 
         public NpadManager(IGamepadDriver keyboardDriver, IGamepadDriver gamepadDriver, IGamepadDriver mouseDriver)
         {
@@ -207,8 +208,8 @@ namespace Ryujinx.Input.HLE
         {
             lock (_lock)
             {
-                List<GamepadInput> hleInputStates = [];
-                List<SixAxisInput> hleMotionStates = _hleMotionStatesPool.Allocate();
+                _hleInputStates.Clear();
+                _hleMotionStates.Clear();
 
                 KeyboardInput? hleKeyboardInput = null;
 
@@ -250,14 +251,14 @@ namespace Ryujinx.Input.HLE
                     inputState.PlayerId = playerIndex;
                     motionState.Item1.PlayerId = playerIndex;
 
-                    hleInputStates.Add(inputState);
-                    hleMotionStates.Add(motionState.Item1);
+                    _hleInputStates.Add(inputState);
+                    _hleMotionStates.Add(motionState.Item1);
 
                     if (isJoyconPair && !motionState.Item2.Equals(default))
                     {
                         motionState.Item2.PlayerId = playerIndex;
 
-                        hleMotionStates.Add(motionState.Item2);
+                        _hleMotionStates.Add(motionState.Item2);
                     }
                 }
 
@@ -266,8 +267,8 @@ namespace Ryujinx.Input.HLE
                     hleKeyboardInput = NpadController.GetHLEKeyboardInput(_keyboardDriver);
                 }
 
-                _device.Hid.Npads.Update(hleInputStates);
-                _device.Hid.Npads.UpdateSixAxis(hleMotionStates);
+                _device.Hid.Npads.Update(_hleInputStates);
+                _device.Hid.Npads.UpdateSixAxis(_hleMotionStates);
 
                 if (hleKeyboardInput.HasValue)
                 {
@@ -321,10 +322,7 @@ namespace Ryujinx.Input.HLE
                     _device.Hid.Mouse.Update(0, 0);
                 }
 
-                _device.TamperMachine.UpdateInput(hleInputStates);
-                
-                hleMotionStates.Clear();
-                _hleMotionStatesPool.Release(hleMotionStates);
+                _device.TamperMachine.UpdateInput(_hleInputStates);
             }
         }
 

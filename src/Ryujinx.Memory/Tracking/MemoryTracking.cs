@@ -81,10 +81,10 @@ namespace Ryujinx.Memory.Tracking
                 {
                     NonOverlappingRangeList<VirtualRegion> regions = type == 0 ? _virtualRegions : _guestVirtualRegions;
                     regions.Lock.EnterReadLock();
-                    Span<RangeItem<VirtualRegion>> overlaps = regions.FindOverlapsAsSpan(va, size);
+                    ReadOnlySpan<VirtualRegion> overlaps = regions.FindOverlapsAsSpan(va, size);
                     for (int i = 0; i < overlaps.Length; i++)
                     {
-                        VirtualRegion region = overlaps[i].Value;
+                        VirtualRegion region = overlaps[i];
 
                         // If the region has been fully remapped, signal that it has been mapped again.
                         bool remapped = _memoryManager.IsRangeMapped(region.Address, region.Size);
@@ -117,11 +117,11 @@ namespace Ryujinx.Memory.Tracking
                 {
                     NonOverlappingRangeList<VirtualRegion> regions = type == 0 ? _virtualRegions : _guestVirtualRegions;
                     regions.Lock.EnterReadLock();
-                    Span<RangeItem<VirtualRegion>> overlaps = regions.FindOverlapsAsSpan(va, size);
+                    ReadOnlySpan<VirtualRegion> overlaps = regions.FindOverlapsAsSpan(va, size);
                     
                     for (int i = 0; i < overlaps.Length; i++)
                     {
-                        overlaps[i].Value.SignalMappingChanged(false);
+                        overlaps[i].SignalMappingChanged(false);
                     }
                     regions.Lock.ExitReadLock();
                 }
@@ -301,7 +301,7 @@ namespace Ryujinx.Memory.Tracking
                 
                 // We use the non-span method here because keeping the lock will cause a deadlock.
                 regions.Lock.EnterReadLock();
-                RangeItem<VirtualRegion>[] overlaps = regions.FindOverlapsAsArray(address, size, out int length);
+                VirtualRegion[] overlaps = regions.FindOverlapsAsArray(address, size, out int length);
                 regions.Lock.ExitReadLock();
 
                 if (length == 0 && !precise)
@@ -327,7 +327,7 @@ namespace Ryujinx.Memory.Tracking
                     
                     for (int i = 0; i < length; i++)
                     {
-                        VirtualRegion region = overlaps[i].Value;
+                        VirtualRegion region = overlaps[i];
 
                         if (precise)
                         {
@@ -341,7 +341,7 @@ namespace Ryujinx.Memory.Tracking
 
                     if (length != 0)
                     {
-                        ArrayPool<RangeItem<VirtualRegion>>.Shared.Return(overlaps);
+                        ArrayPool<VirtualRegion>.Shared.Return(overlaps);
                     }
                 }
             }

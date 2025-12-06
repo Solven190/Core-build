@@ -5,7 +5,6 @@ using Ryujinx.Common.Configuration.Hid.Controller.Motion;
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.HOS.Services.Hid;
 using System;
-using System.Buffers;
 using System.Collections.Concurrent;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -532,8 +531,6 @@ namespace Ryujinx.Input.HLE
 
                 hidKeyboard.Modifier |= value << entry.Target;
             }
-            
-            ArrayPool<bool>.Shared.Return(keyboardState.KeysState);
 
             return hidKeyboard;
 

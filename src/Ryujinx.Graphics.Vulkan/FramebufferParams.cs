@@ -1,7 +1,6 @@
 using Ryujinx.Graphics.GAL;
 using Silk.NET.Vulkan;
 using System;
-using System.Linq;
 using Format = Ryujinx.Graphics.GAL.Format;
 using VkFormat = Silk.NET.Vulkan.Format;
 
@@ -70,17 +69,31 @@ namespace Ryujinx.Graphics.Vulkan
             HasDepthStencil = isDepthStencil;
         }
 
-        public FramebufferParams(Device device, ITexture[] colors, ITexture depthStencil)
+        public FramebufferParams(Device device, ReadOnlySpan<ITexture> colors, ITexture depthStencil)
         {
             _device = device;
 
-            int colorsCount = colors.Count(IsValidTextureView);
+            int colorsCount = 0;
+            _colorsCanonical = new TextureView[colors.Length];
+
+            for (int i = 0; i < colors.Length; i++)
+            {
+                ITexture color = colors[i];
+                if (color is TextureView { Valid: true } view)
+                {
+                    colorsCount++;
+                    _colorsCanonical[i] = view;
+                }
+                else
+                {
+                    _colorsCanonical[i] = null;
+                }
+            }
 
             int count = colorsCount + (IsValidTextureView(depthStencil) ? 1 : 0);
 
             _attachments = new Auto<DisposableImageView>[count];
             _colors = new TextureView[colorsCount];
-            _colorsCanonical = colors.Select(color => color is TextureView view && view.Valid ? view : null).ToArray();
 
             AttachmentSamples = new uint[count];
             AttachmentFormats = new VkFormat[count];
@@ -164,9 +177,17 @@ namespace Ryujinx.Graphics.Vulkan
             _totalCount = colors.Length;
         }
         
-        public FramebufferParams Update(ITexture[] colors, ITexture depthStencil)
+        public FramebufferParams Update(ReadOnlySpan<ITexture> colors, ITexture depthStencil)
         {
-            int colorsCount = colors.Count(IsValidTextureView);
+            int colorsCount = 0;
+            
+            foreach (ITexture color in colors)
+            {
+                if (IsValidTextureView(color))
+                {
+                    colorsCount++;
+                }
+            }
 
             int count = colorsCount + (IsValidTextureView(depthStencil) ? 1 : 0);
             

@@ -15,7 +15,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
         /// <summary>
         /// Represents a GPU virtual memory range.
         /// </summary>
-        private class VirtualRange : INonOverlappingRange
+        private class VirtualRange : INonOverlappingRange<VirtualRange>
         {
             /// <summary>
             /// GPU virtual address where the range starts.
@@ -31,6 +31,9 @@ namespace Ryujinx.Graphics.Gpu.Memory
             /// GPU virtual address where the range ends.
             /// </summary>
             public ulong EndAddress => Address + Size;
+
+            public VirtualRange Next { get; set; }
+            public VirtualRange Previous { get; set; }
 
             /// <summary>
             /// Physical regions where the GPU virtual region is mapped.
@@ -54,14 +57,14 @@ namespace Ryujinx.Graphics.Gpu.Memory
             /// Checks if a given range overlaps with the buffer.
             /// </summary>
             /// <param name="address">Start address of the range</param>
-            /// <param name="size">Size in bytes of the range</param>
+            /// <param name="endAddress">End address of the range</param>
             /// <returns>True if the range overlaps, false otherwise</returns>
-            public bool OverlapsWith(ulong address, ulong size)
+            public bool OverlapsWith(ulong address, ulong endAddress)
             {
-                return Address < address + size && address < EndAddress;
+                return Address < endAddress && address < EndAddress;
             }
 
-            public INonOverlappingRange Split(ulong splitAddress)
+            public INonOverlappingRange<VirtualRange> Split(ulong splitAddress)
             {
                 throw new NotImplementedException();
             }
@@ -122,7 +125,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
             ulong originalVa = gpuVa;
 
             _virtualRanges.Lock.EnterWriteLock();
-            (RangeItem<VirtualRange> first, RangeItem<VirtualRange> last) = _virtualRanges.FindOverlapsAsNodes(gpuVa, size);
+            (VirtualRange first, VirtualRange last) = _virtualRanges.FindOverlapsAsNodes(gpuVa, size);
             
             if (first is not null)
             {
@@ -147,8 +150,8 @@ namespace Ryujinx.Graphics.Gpu.Memory
                 }
                 else
                 {
-                    found = first.Value.Range.Count == 1 || IsSparseAligned(first.Value.Range);
-                    range = first.Value.Range.Slice(gpuVa - first.Address, size);
+                    found = first.Range.Count == 1 || IsSparseAligned(first.Range);
+                    range = first.Range.Slice(gpuVa - first.Address, size);
                 }
             }
             else

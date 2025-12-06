@@ -61,8 +61,6 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
 
         public KSynchronizationObject SignaledObj { get; set; }
 
-        public ulong CondVarAddress { get; set; }
-
         private ulong _entrypoint;
         private ThreadStart _customThreadStart;
         private bool _forcedUnschedulable;

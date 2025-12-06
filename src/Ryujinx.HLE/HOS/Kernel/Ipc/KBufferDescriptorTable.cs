@@ -20,6 +20,15 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
             _exchangeBufferDescriptors = new List<KBufferDescriptor>(MaxInternalBuffersCount);
         }
 
+        public KBufferDescriptorTable Clear()
+        {
+            _sendBufferDescriptors.Clear();
+            _receiveBufferDescriptors.Clear();
+            _exchangeBufferDescriptors.Clear();
+
+            return this;
+        }
+
         public Result AddSendBuffer(ulong src, ulong dst, ulong size, MemoryState state)
         {
             return Add(_sendBufferDescriptors, src, dst, size, state);

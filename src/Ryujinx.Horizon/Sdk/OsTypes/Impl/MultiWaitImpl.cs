@@ -19,6 +19,9 @@ namespace Ryujinx.Horizon.Sdk.OsTypes.Impl
         private int _waitingThreadHandle;
 
         private MultiWaitHolderBase _signaledHolder;
+        
+        ObjectPool<int[]> _objectHandlePool = new(() => new int[64]);
+        ObjectPool<MultiWaitHolderBase[]> _objectPool = new(() => new MultiWaitHolderBase[64]);
 
         public long CurrentTime { get; private set; }
 
@@ -76,11 +79,15 @@ namespace Ryujinx.Horizon.Sdk.OsTypes.Impl
 
         private MultiWaitHolderBase WaitAnyHandleImpl(bool infinite, long timeout)
         {
-            Span<int> objectHandles = new int[64];
+            int[] objectHandles = _objectHandlePool.Allocate();
+            Span<int> objectHandlesSpan = objectHandles;
+            objectHandlesSpan.Clear();
 
-            Span<MultiWaitHolderBase> objects = new MultiWaitHolderBase[64];
+            MultiWaitHolderBase[] objects = _objectPool.Allocate();
+            Span<MultiWaitHolderBase> objectsSpan = objects;
+            objectsSpan.Clear();
 
-            int count = FillObjectsArray(objectHandles, objects);
+            int count = FillObjectsArray(objectHandlesSpan, objectsSpan);
 
             long endTime = infinite ? long.MaxValue : PerformanceCounter.ElapsedMilliseconds * 1000000;
 
@@ -98,7 +105,7 @@ namespace Ryujinx.Horizon.Sdk.OsTypes.Impl
                 }
                 else
                 {
-                    index = WaitSynchronization(objectHandles[..count], minTimeout);
+                    index = WaitSynchronization(objectHandlesSpan[..count], minTimeout);
 
                     DebugUtil.Assert(index != WaitInvalid);
                 }
@@ -116,12 +123,18 @@ namespace Ryujinx.Horizon.Sdk.OsTypes.Impl
                                 {
                                     _signaledHolder = minTimeoutObject;
 
+                                    _objectHandlePool.Release(objectHandles);
+                                    _objectPool.Release(objects);
+                                    
                                     return _signaledHolder;
                                 }
                             }
                         }
                         else
                         {
+                            _objectHandlePool.Release(objectHandles);
+                            _objectPool.Release(objects);
+                            
                             return null;
                         }
                         break;
@@ -130,6 +143,9 @@ namespace Ryujinx.Horizon.Sdk.OsTypes.Impl
                         {
                             if (_signaledHolder != null)
                             {
+                                _objectHandlePool.Release(objectHandles);
+                                _objectPool.Release(objects);
+                                
                                 return _signaledHolder;
                             }
                         }
@@ -137,8 +153,11 @@ namespace Ryujinx.Horizon.Sdk.OsTypes.Impl
                     default:
                         lock (_lock)
                         {
-                            _signaledHolder = objects[index];
+                            _signaledHolder = objectsSpan[index];
 
+                            _objectHandlePool.Release(objectHandles);
+                            _objectPool.Release(objects);
+                            
                             return _signaledHolder;
                         }
                 }

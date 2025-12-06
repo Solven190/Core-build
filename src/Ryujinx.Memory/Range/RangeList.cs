@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -14,14 +13,14 @@ namespace Ryujinx.Memory.Range
     /// startIndex is inclusive.
     /// endIndex is exclusive.
     /// </remarks>
-    public readonly struct OverlapResult<T> where T : IRange
+    public readonly struct OverlapResult<T> where T : class, IRangeListRange<T>
     {
         public readonly int StartIndex = -1;
         public readonly int EndIndex = -1;
-        public readonly RangeItem<T> QuickResult;
+        public readonly T QuickResult;
         public int Count => EndIndex - StartIndex;
 
-        public OverlapResult(int startIndex, int endIndex, RangeItem<T> quickResult = null)
+        public OverlapResult(int startIndex, int endIndex, T quickResult = null)
         {
             this.StartIndex = startIndex;
             this.EndIndex = endIndex;
@@ -33,7 +32,7 @@ namespace Ryujinx.Memory.Range
     /// Sorted list of ranges that supports binary search.
     /// </summary>
     /// <typeparam name="T">Type of the range.</typeparam>
-    public class RangeList<T> : RangeListBase<T> where T : IRange
+    public class RangeList<T> : RangeListBase<T> where T : class, IRangeListRange<T>
     {
         public readonly ReaderWriterLockSlim Lock = new();
 
@@ -61,104 +60,6 @@ namespace Ryujinx.Memory.Range
                 index = ~index;
             }
 
-            Insert(index, new RangeItem<T>(item));
-        }
-
-        /// <summary>
-        /// Updates an item's end address on the list. Address must be the same.
-        /// </summary>
-        /// <param name="item">The item to be updated</param>
-        /// <returns>True if the item was located and updated, false otherwise</returns>
-        protected override bool Update(T item)
-        {
-            int index = BinarySearch(item.Address);
-
-            if (index >= 0)
-            {
-                while (index < Count)
-                {
-                    if (Items[index].Value.Equals(item))
-                    {
-                        RangeItem<T> rangeItem = new(item) { Previous = Items[index].Previous, Next = Items[index].Next };
-                        
-                        if (index > 0)
-                        {
-                            Items[index - 1].Next = rangeItem;
-                        }
-
-                        if (index < Count - 1)
-                        {
-                            Items[index + 1].Previous = rangeItem;
-                        }
-                        
-                        Items[index] = rangeItem;
-
-                        return true;
-                    }
-
-                    if (Items[index].Address > item.Address)
-                    {
-                        break;
-                    }
-
-                    index++;
-                }
-            }
-
-            return false;
-        }
-        
-        /// <summary>
-        /// Updates an item's end address on the list. Address must be the same.
-        /// </summary>
-        /// <param name="item">The RangeItem to be updated</param>
-        /// <returns>True if the item was located and updated, false otherwise</returns>
-        protected override bool Update(RangeItem<T> item)
-        {
-            int index = BinarySearch(item.Address);
-
-            if (index >= 0)
-            {
-                while (index < Count)
-                {
-                    if (Items[index].Equals(item))
-                    {
-                        RangeItem<T> rangeItem = new(item.Value) { Previous = item.Previous, Next = item.Next };
-                        
-                        if (index > 0)
-                        {
-                            Items[index - 1].Next = rangeItem;
-                        }
-
-                        if (index < Count - 1)
-                        {
-                            Items[index + 1].Previous = rangeItem;
-                        }
-                        
-                        Items[index] = rangeItem;
-
-                        return true;
-                    }
-
-                    if (Items[index].Address > item.Address)
-                    {
-                        break;
-                    }
-
-                    index++;
-                }
-            }
-
-            return false;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Insert(int index, RangeItem<T> item)
-        {
-            Debug.Assert(item.Address != item.EndAddress);
-            
-            Debug.Assert(item.Address % 32 == 0);
-            
             if (Count + 1 > Items.Length)
             {
                 Array.Resize(ref Items, Items.Length + BackingGrowthSize);
@@ -220,7 +121,7 @@ namespace Ryujinx.Memory.Range
         /// <param name="startItem">The first item in the range of items to be removed</param>
         /// <param name="endItem">The last item in the range of items to be removed</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void RemoveRange(RangeItem<T> startItem, RangeItem<T> endItem)
+        public override void RemoveRange(T startItem, T endItem)
         {
             if (startItem is null)
             {
@@ -229,30 +130,29 @@ namespace Ryujinx.Memory.Range
 
             if (startItem == endItem)
             {
-                Remove(startItem.Value);
+                Remove(startItem);
                 return;
             }
             
-            int startIndex = BinarySearch(startItem.Address);
-            int endIndex = BinarySearch(endItem.Address);
+            (int index, int endIndex) = BinarySearchEdges(startItem.Address, endItem.EndAddress);
             
-            if (endIndex < Count - 1)
+            if (endIndex < Count)
             {
-                Items[endIndex + 1].Previous = startIndex > 0 ? Items[startIndex - 1] : null;
+                Items[endIndex].Previous = index > 0 ? Items[index - 1] : null;
             }
 
-            if (startIndex > 0)
+            if (index > 0)
             {
-                Items[startIndex - 1].Next = endIndex < Count - 1 ? Items[endIndex + 1] : null;
+                Items[index - 1].Next = endIndex < Count ? Items[endIndex] : null;
             }
             
             
-            if (endIndex < Count - 1)
+            if (endIndex < Count)
             {
-                Array.Copy(Items, endIndex + 1, Items, startIndex, Count - endIndex - 1);
+                Array.Copy(Items, endIndex, Items, index, Count - endIndex);
             }
             
-            Count -= endIndex - startIndex + 1;
+            Count -= endIndex - index;
         }
 
         /// <summary>
@@ -268,7 +168,7 @@ namespace Ryujinx.Memory.Range
             {
                 while (index < Count)
                 {
-                    if (Items[index].Value.Equals(item))
+                    if (Items[index] == item)
                     {
                         RemoveAt(index);
 
@@ -298,7 +198,7 @@ namespace Ryujinx.Memory.Range
         /// <param name="size">Size in bytes of the range</param>
         /// <returns>The overlapping item, or the default value for the type if none found</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override RangeItem<T> FindOverlap(ulong address, ulong size)
+        public override T FindOverlap(ulong address, ulong size)
         {
             int index = BinarySearchLeftEdge(address, address + size);
 
@@ -321,7 +221,7 @@ namespace Ryujinx.Memory.Range
         /// <param name="size">Size in bytes of the range</param>
         /// <returns>The overlapping item, or the default value for the type if none found</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override RangeItem<T> FindOverlapFast(ulong address, ulong size)
+        public override T FindOverlapFast(ulong address, ulong size)
         {
             int index = BinarySearch(address, address + size);
 
@@ -340,7 +240,7 @@ namespace Ryujinx.Memory.Range
         /// <param name="size">Size in bytes of the range</param>
         /// <param name="output">Output array where matches will be written. It is automatically resized to fit the results</param>
         /// <returns>Range information of overlapping items found</returns>
-        private OverlapResult<T> FindOverlaps(ulong address, ulong size, ref RangeItem<T>[] output)
+        private OverlapResult<T> FindOverlaps(ulong address, ulong size, ref T[] output)
         {
             int outputCount = 0;
 
@@ -353,7 +253,7 @@ namespace Ryujinx.Memory.Range
 
             for (int i = startIndex; i < Count; i++)
             {
-                ref RangeItem<T> item = ref Items[i];
+                T item = Items[i];
 
                 if (item.Address >= endAddress)
                 {
@@ -398,7 +298,7 @@ namespace Ryujinx.Memory.Range
         {
             for (int i = 0; i < Count; i++)
             {
-                yield return Items[i].Value;
+                yield return Items[i];
             }
         }
     }

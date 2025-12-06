@@ -5,18 +5,18 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
 {
     class KSessionRequest
     {
-        public KBufferDescriptorTable BufferDescriptorTable { get; }
+        public KBufferDescriptorTable BufferDescriptorTable { get; private set; }
 
-        public KThread ClientThread { get; }
+        public KThread ClientThread { get; private set; }
 
         public KProcess ServerProcess { get; set; }
 
-        public KWritableEvent AsyncEvent { get; }
+        public KWritableEvent AsyncEvent { get; private set; }
 
-        public ulong CustomCmdBuffAddr { get; }
-        public ulong CustomCmdBuffSize { get; }
+        public ulong CustomCmdBuffAddr { get; private set; }
+        public ulong CustomCmdBuffSize { get; private set; }
 
-        public KSessionRequest(
+        public KSessionRequest Set(
             KThread clientThread,
             ulong customCmdBuffAddr,
             ulong customCmdBuffSize,
@@ -27,7 +27,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Ipc
             CustomCmdBuffSize = customCmdBuffSize;
             AsyncEvent = asyncEvent;
 
-            BufferDescriptorTable = new KBufferDescriptorTable();
+            BufferDescriptorTable = BufferDescriptorTable?.Clear() ?? new KBufferDescriptorTable();
+
+            return this;
         }
     }
 }

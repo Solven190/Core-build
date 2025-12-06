@@ -1,56 +1,20 @@
-﻿using Ryujinx.Common;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Ryujinx.Memory.Range
 {
-    public class RangeItem<TValue> where TValue : IRange
+    public interface IRangeListRange<TValue> : IRange where TValue : class, IRangeListRange<TValue>
     {
-        public RangeItem<TValue> Next;
-        public RangeItem<TValue> Previous;
-        
-        public ulong Address;
-        public ulong EndAddress;
-
-        public TValue Value;
-        
-        public RangeItem()
-        {
-            
-        }
-        
-        public RangeItem(TValue value)
-        {
-            Address = value.Address;
-            EndAddress = value.Address + value.Size;
-            Value = value;
-        }
-
-        public RangeItem<TValue> Set(TValue value)
-        {
-            Next = null;
-            Previous = null;
-            Address = value.Address;
-            EndAddress = value.Address + value.Size;
-            Value = value;
-            
-            return this;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool OverlapsWith(ulong address, ulong endAddress)
-        {
-            return Address < endAddress && address < EndAddress;
-        }
+        public TValue Next { get; set; }
+        public TValue Previous { get; set; }
     }
     
-    public unsafe abstract class RangeListBase<T> : IEnumerable<T> where T : IRange
+    public unsafe abstract class RangeListBase<T> : IEnumerable<T> where T : class, IRangeListRange<T>
     {
-        protected static readonly ObjectPool<RangeItem<T>> _rangeItemPool = new(() => new RangeItem<T>());
         private const int BackingInitialSize = 1024;
 
-        protected RangeItem<T>[] Items;
+        protected T[] Items;
         protected readonly int BackingGrowthSize;
         
         public int Count { get; protected set; }
@@ -62,32 +26,18 @@ namespace Ryujinx.Memory.Range
         protected RangeListBase(int backingInitialSize = BackingInitialSize)
         {
             BackingGrowthSize = backingInitialSize;
-            Items = new RangeItem<T>[backingInitialSize];
+            Items = new T[backingInitialSize];
         }
         
         public abstract void Add(T item);
-
-        /// <summary>
-        /// Updates an item's end address on the list. Address must be the same.
-        /// </summary>
-        /// <param name="item">The item to be updated</param>
-        /// <returns>True if the item was located and updated, false otherwise</returns>
-        protected abstract bool Update(T item);
-        
-        /// <summary>
-        /// Updates an item's end address on the list. Address must be the same.
-        /// </summary>
-        /// <param name="item">The RangeItem to be updated</param>
-        /// <returns>True if the item was located and updated, false otherwise</returns>
-        protected abstract bool Update(RangeItem<T> item);
         
         public abstract bool Remove(T item);
 
-        public abstract void RemoveRange(RangeItem<T> startItem, RangeItem<T> endItem);
+        public abstract void RemoveRange(T startItem, T endItem);
 
-        public abstract RangeItem<T> FindOverlap(ulong address, ulong size);
+        public abstract T FindOverlap(ulong address, ulong size);
         
-        public abstract RangeItem<T> FindOverlapFast(ulong address, ulong size);
+        public abstract T FindOverlapFast(ulong address, ulong size);
 
         /// <summary>
         /// Performs binary search on the internal list of items.
@@ -106,7 +56,7 @@ namespace Ryujinx.Memory.Range
 
                 int middle = left + (range >> 1);
 
-                ref RangeItem<T> item = ref Items[middle];
+                T item = Items[middle];
 
                 if (item.Address == address)
                 {
@@ -144,7 +94,7 @@ namespace Ryujinx.Memory.Range
 
                 int middle = left + (range >> 1);
 
-                ref RangeItem<T> item = ref Items[middle];
+                T item = Items[middle];
 
                 if (item.OverlapsWith(address, endAddress))
                 {
@@ -185,7 +135,7 @@ namespace Ryujinx.Memory.Range
 
                 int middle = left + (range >> 1);
 
-                ref RangeItem<T> item = ref Items[middle];
+                T item = Items[middle];
 
                 bool match = item.OverlapsWith(address, endAddress);
 
@@ -237,7 +187,7 @@ namespace Ryujinx.Memory.Range
 
                 int middle = right - (range >> 1);
 
-                ref RangeItem<T> item = ref Items[middle];
+                T item = Items[middle];
 
                 bool match = item.OverlapsWith(address, endAddress);
 
@@ -282,7 +232,7 @@ namespace Ryujinx.Memory.Range
 
             if (Count == 1)
             {
-                ref RangeItem<T> item = ref Items[0];
+                T item = Items[0];
 
                 if (item.OverlapsWith(address, endAddress))
                 {
@@ -312,7 +262,7 @@ namespace Ryujinx.Memory.Range
 
                 int middle = left + (range >> 1);
 
-                ref RangeItem<T> item = ref Items[middle];
+                T item = Items[middle];
 
                 bool match = item.OverlapsWith(address, endAddress);
 
@@ -369,7 +319,7 @@ namespace Ryujinx.Memory.Range
 
                 int middle = right - (range >> 1);
 
-                ref RangeItem<T> item = ref Items[middle];
+                T item = Items[middle];
 
                 bool match = item.OverlapsWith(address, endAddress);
 

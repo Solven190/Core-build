@@ -59,6 +59,10 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
         // TODO: This should call set:sys::GetDebugModeFlag
         private readonly bool _debugModeEnabled = false;
+        
+        private byte[] _ioctl2Buffer = [];
+        private byte[] _ioctlArgumentBuffer = [];
+        private byte[] _ioctl3Buffer = [];
 
         public INvDrvServices(ServiceCtx context) : base(context.Device.System.NvDrvServer)
         {
@@ -128,27 +132,38 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                 if (!context.Memory.TryReadUnsafe(inputDataPosition, (int)inputDataSize, out arguments))
                 {
-                    arguments = new byte[inputDataSize];
+                    if (_ioctlArgumentBuffer.Length < (int)inputDataSize)
+                    {
+                        Array.Resize(ref _ioctlArgumentBuffer, (int)inputDataSize);
+                    }
+                    
+                    arguments = _ioctlArgumentBuffer.AsSpan(0, (int)inputDataSize);
+
                     context.Memory.Read(inputDataPosition, arguments);
-                }
-                else
-                {
-                    arguments = arguments.ToArray();
                 }
             }
             else if (isWrite)
             {
-                byte[] outputData = new byte[outputDataSize];
-
-                arguments = new Span<byte>(outputData);
+                if (_ioctlArgumentBuffer.Length < (int)outputDataSize)
+                {
+                    Array.Resize(ref _ioctlArgumentBuffer, (int)outputDataSize);
+                }
+                    
+                arguments = _ioctlArgumentBuffer.AsSpan(0, (int)outputDataSize);
             }
             else
             {
-                byte[] temp = new byte[inputDataSize];
+                if (!context.Memory.TryReadUnsafe(inputDataPosition, (int)inputDataSize, out arguments))
+                {
+                    if (_ioctlArgumentBuffer.Length < (int)inputDataSize)
+                    {
+                        Array.Resize(ref _ioctlArgumentBuffer, (int)inputDataSize);
+                    }
+                    
+                    arguments = _ioctlArgumentBuffer.AsSpan(0, (int)inputDataSize);
 
-                context.Memory.Read(inputDataPosition, temp);
-
-                arguments = new Span<byte>(temp);
+                    context.Memory.Read(inputDataPosition, arguments);
+                }
             }
 
             return NvResult.Success;
@@ -270,7 +285,7 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                         if ((ioctlCommand.DirectionValue & NvIoctl.Direction.Write) != 0)
                         {
-                            context.Memory.Write(context.Request.GetBufferType0x22(0).Position, arguments.ToArray());
+                            context.Memory.Write(context.Request.GetBufferType0x22(0).Position, arguments);
                         }
                     }
                 }
@@ -474,13 +489,15 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                 errorCode = GetIoctlArgument(context, ioctlCommand, out Span<byte> arguments);
 
-                byte[] inlineInBuffer = null;
-                
                 if (!context.Memory.TryReadUnsafe(inlineInBufferPosition, (int)inlineInBufferSize, out Span<byte> inlineInBufferSpan))
                 {
-                    inlineInBuffer = _byteArrayPool.Rent((int)inlineInBufferSize);
-                    inlineInBufferSpan = inlineInBuffer;
-                    context.Memory.Read(inlineInBufferPosition, inlineInBufferSpan[..(int)inlineInBufferSize]);
+                    if (_ioctl2Buffer.Length < (int)inlineInBufferSize)
+                    {
+                        Array.Resize(ref _ioctl2Buffer, (int)inlineInBufferSize);
+                    }
+                    
+                    inlineInBufferSpan = _ioctl2Buffer.AsSpan(0, (int)inlineInBufferSize);
+                    context.Memory.Read(inlineInBufferPosition, inlineInBufferSpan);
                 }
 
                 if (errorCode == NvResult.Success)
@@ -489,7 +506,7 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                     if (errorCode == NvResult.Success)
                     {
-                        NvInternalResult internalResult = deviceFile.Ioctl2(ioctlCommand, arguments, inlineInBufferSpan[..(int)inlineInBufferSize]);
+                        NvInternalResult internalResult = deviceFile.Ioctl2(ioctlCommand, arguments, inlineInBufferSpan);
 
                         if (internalResult == NvInternalResult.NotImplemented)
                         {
@@ -500,14 +517,9 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                         if ((ioctlCommand.DirectionValue & NvIoctl.Direction.Write) != 0)
                         {
-                            context.Memory.Write(context.Request.GetBufferType0x22(0).Position, arguments.ToArray());
+                            context.Memory.Write(context.Request.GetBufferType0x22(0).Position, arguments);
                         }
                     }
-                }
-                
-                if (inlineInBuffer is not null)
-                {
-                    _byteArrayPool.Return(inlineInBuffer);
                 }
             }
 
@@ -531,13 +543,15 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                 errorCode = GetIoctlArgument(context, ioctlCommand, out Span<byte> arguments);
 
-                byte[] inlineOutBuffer = null;
-                
                 if (!context.Memory.TryReadUnsafe(inlineOutBufferPosition, (int)inlineOutBufferSize, out Span<byte> inlineOutBufferSpan))
                 {
-                    inlineOutBuffer = _byteArrayPool.Rent((int)inlineOutBufferSize);
-                    inlineOutBufferSpan = inlineOutBuffer;
-                    context.Memory.Read(inlineOutBufferPosition, inlineOutBufferSpan[..(int)inlineOutBufferSize]);
+                    if (_ioctl3Buffer.Length < (int)inlineOutBufferSize)
+                    {
+                        Array.Resize(ref _ioctl3Buffer, (int)inlineOutBufferSize);
+                    }
+
+                    inlineOutBufferSpan = _ioctl3Buffer.AsSpan(0, (int)inlineOutBufferSize);
+                    context.Memory.Read(inlineOutBufferPosition, inlineOutBufferSpan);
                 }
 
                 if (errorCode == NvResult.Success)
@@ -546,7 +560,7 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                     if (errorCode == NvResult.Success)
                     {
-                        NvInternalResult internalResult = deviceFile.Ioctl3(ioctlCommand, arguments, inlineOutBufferSpan[..(int)inlineOutBufferSize]);
+                        NvInternalResult internalResult = deviceFile.Ioctl3(ioctlCommand, arguments, inlineOutBufferSpan);
 
                         if (internalResult == NvInternalResult.NotImplemented)
                         {
@@ -557,15 +571,10 @@ namespace Ryujinx.HLE.HOS.Services.Nv
 
                         if ((ioctlCommand.DirectionValue & NvIoctl.Direction.Write) != 0)
                         {
-                            context.Memory.Write(context.Request.GetBufferType0x22(0).Position, arguments.ToArray());
-                            context.Memory.Write(inlineOutBufferPosition, inlineOutBufferSpan[..(int)inlineOutBufferSize].ToArray());
+                            context.Memory.Write(context.Request.GetBufferType0x22(0).Position, arguments);
+                            context.Memory.Write(inlineOutBufferPosition, inlineOutBufferSpan);
                         }
                     }
-                }
-                
-                if (inlineOutBuffer is not null)
-                {
-                    _byteArrayPool.Return(inlineOutBuffer);
                 }
             }
 
