@@ -529,7 +529,12 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
             // The value is decremented if the number of threads waiting is less
             // or equal to the Count of threads to be signaled, or Count is zero
             // or negative. It is incremented if there are no threads waiting.
-            int waitingCount = _arbiterThreads[address].Count;
+            int waitingCount = 0;
+
+            if (_arbiterThreads.TryGetValue(address, out List<KThread> threads))
+            {
+                waitingCount = threads.Count;
+            }
 
             if (waitingCount > 0)
             {
