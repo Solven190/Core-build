@@ -411,7 +411,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// flushes often enough, which is determined by the flush balance.
         /// </summary>
         /// <inheritdoc/>
-        public void SyncPreAction(bool syncpoint)
+        public bool SyncPreAction(bool syncpoint)
         {
             if (syncpoint || NextSyncCopies())
             {
@@ -421,6 +421,8 @@ namespace Ryujinx.Graphics.Gpu.Image
                     _registeredBufferSync = _modifiedSync;
                 }
             }
+
+            return true;
         }
 
         /// <summary>

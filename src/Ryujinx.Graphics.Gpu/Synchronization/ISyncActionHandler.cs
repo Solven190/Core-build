@@ -17,6 +17,6 @@ namespace Ryujinx.Graphics.Gpu.Synchronization
         /// Action to be performed immediately before sync is created.
         /// </summary>
         /// <param name="syncpoint">True if the action is a guest syncpoint</param>
-        void SyncPreAction(bool syncpoint) { }
+        bool SyncPreAction(bool syncpoint) { return true; }
     }
 }

@@ -393,11 +393,16 @@ namespace Ryujinx.Graphics.Gpu.Memory
         /// This will copy any buffer ranges designated for pre-flushing.
         /// </summary>
         /// <param name="syncpoint">True if the action is a guest syncpoint</param>
-        public void SyncPreAction(bool syncpoint)
+        public bool SyncPreAction(bool syncpoint)
         {
+            if (_bufferInherited)
+            {
+                return true;
+            }
+            
             if (_referenceCount == 0)
             {
-                return;
+                return false;
             }
 
             if (BackingState.ShouldChangeBacking())
@@ -414,6 +419,8 @@ namespace Ryujinx.Graphics.Gpu.Memory
                     _modifiedRanges?.GetRangesAtSync(Address, Size, _context.SyncNumber, _syncPreRangeAction);
                 }
             }
+
+            return false;
         }
         
         void SyncPreRangeAction(ulong address, ulong size)
