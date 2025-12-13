@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Configurations>Debug;Release</Configurations>
+    <Configurations>Debug;Release;Debug AOT;Release AOT</Configurations>
     <DefaultItemExcludes>$(DefaultItemExcludes);._*</DefaultItemExcludes>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

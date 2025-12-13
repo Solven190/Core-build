@@ -11,6 +11,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <DefaultItemExcludes>$(DefaultItemExcludes);._*</DefaultItemExcludes>
     <IncludeSourceRevisionInInformationalVersion Condition="'$(Configuration)'=='Release'">false</IncludeSourceRevisionInInformationalVersion>
+    <Configurations>Debug;Release;Debug AOT;Release AOT</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <Target Name="RemoveNativePackagePdbs" AfterTargets="ResolvePackageAssets">

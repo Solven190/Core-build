@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <DefaultItemExcludes>$(DefaultItemExcludes);._*</DefaultItemExcludes>
+    <Configurations>Debug;Release;Debug AOT;Release AOT</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
