@@ -64,7 +64,7 @@ namespace Ryujinx.Horizon.Sdk.Friends.Detail.Ipc
         {
             lock (_lock)
             {
-                if (_notifications.Count >= 1)
+                if (_notifications.Count >= 1 && _notifications.First != null)
                 {
                     sizedNotificationInfo = _notifications.First.Value;
                     _notifications.RemoveFirst();
@@ -97,7 +97,7 @@ namespace Ryujinx.Horizon.Sdk.Friends.Detail.Ipc
                     {
                         SizedNotificationInfo friendListNotification = new();
 
-                        if (_notifications.Count != 0)
+                        if (_notifications.Count != 0 && _notifications.First != null)
                         {
                             friendListNotification = _notifications.First.Value;
                             _notifications.RemoveFirst();
@@ -110,7 +110,7 @@ namespace Ryujinx.Horizon.Sdk.Friends.Detail.Ipc
                         {
                             SizedNotificationInfo newFriendRequestNotification = new();
 
-                            if (_notifications.Count != 0)
+                            if (_notifications.Count != 0 && _notifications.First != null)
                             {
                                 newFriendRequestNotification = _notifications.First.Value;
                                 _notifications.RemoveFirst();

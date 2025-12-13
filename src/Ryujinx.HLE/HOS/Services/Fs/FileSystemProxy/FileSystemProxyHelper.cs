@@ -78,9 +78,9 @@ namespace Ryujinx.HLE.HOS.Services.Fs.FileSystemProxy
 
             DirectoryInfo archivePath = new DirectoryInfo(fullPath).Parent;
 
-            while (string.IsNullOrWhiteSpace(archivePath.Extension))
+            while (string.IsNullOrWhiteSpace(archivePath?.Extension))
             {
-                archivePath = archivePath.Parent;
+                archivePath = archivePath?.Parent;
             }
 
             if (archivePath.Extension == ".nsp" && File.Exists(archivePath.FullName))

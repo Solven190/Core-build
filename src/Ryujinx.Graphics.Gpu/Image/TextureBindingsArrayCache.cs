@@ -1061,17 +1061,17 @@ namespace Ryujinx.Graphics.Gpu.Image
                 }
             }
 
-            if (entry.CacheNode != null)
+            if (entry?.CacheNode != null)
             {
                 _lruCache.Remove(entry.CacheNode);
                 _lruCache.AddLast(entry.CacheNode);
             }
             else
             {
-                entry.CacheNode = _lruCache.AddLast(entry);
+                entry?.CacheNode = _lruCache.AddLast(entry);
             }
 
-            entry.CacheTimestamp = ++_currentTimestamp;
+            entry?.CacheTimestamp = ++_currentTimestamp;
 
             RemoveLeastUsedEntries();
 

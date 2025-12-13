@@ -409,7 +409,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu
 
                 bool openSuccess = i < P2pProxyServer.PrivatePortRange;
 
-                if (openSuccess)
+                if (openSuccess && _hostedProxy != null)
                 {
                     Task<ushort> natPunchResult = _hostedProxy.NatPunch();
 
@@ -421,7 +421,10 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator.LdnRyu
                             request.ExternalProxyPort = natPunchResult.Result;
                         }
                     }
-                    catch (Exception) { }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
 
                     if (request.ExternalProxyPort == 0)
                     {

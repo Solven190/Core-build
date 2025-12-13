@@ -45,7 +45,7 @@ namespace Ryujinx.Horizon.Sdk.Sf.Cmif
                         return null;
                     }
 
-                    var entry = _freeList.First.Value;
+                    var entry = _freeList.First?.Value;
                     _freeList.RemoveFirst();
                     return entry;
                 }
@@ -117,11 +117,9 @@ namespace Ryujinx.Horizon.Sdk.Sf.Cmif
             public override void RegisterObject(int id, ServiceObjectHolder obj)
             {
                 var entry = _manager._entryManager.GetEntry(id);
-                DebugUtil.Assert(entry != null);
 
                 lock (_manager._entryOwnerLock)
                 {
-                    DebugUtil.Assert(entry.Owner == null);
                     entry.Owner = this;
                     entry.Node = _entries.AddLast(entry);
                 }
@@ -187,9 +185,6 @@ namespace Ryujinx.Horizon.Sdk.Sf.Cmif
                 for (int i = 0; i < ids.Length; i++)
                 {
                     var entry = _manager._entryManager.GetEntry(ids[i]);
-
-                    DebugUtil.Assert(entry != null);
-                    DebugUtil.Assert(entry.Owner == null);
 
                     _manager._entryManager.FreeEntry(entry);
                 }

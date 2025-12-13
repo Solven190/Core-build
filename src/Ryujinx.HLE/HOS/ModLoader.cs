@@ -173,7 +173,7 @@ namespace Ryujinx.HLE.HOS
                 types.Clear();
                 Mod<DirectoryInfo> mod = new("", null, true);
 
-                if (StrEquals(RomfsDir, modDir.Name))
+                if (StrEquals(RomfsDir, modDir.Name) && modDir.Parent != null)
                 {
                     var modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
                     var enabled = modData?.Enabled ?? true;
@@ -181,7 +181,7 @@ namespace Ryujinx.HLE.HOS
                     mods.RomfsDirs.Add(mod = new Mod<DirectoryInfo>(dir.Name, modDir, enabled));
                     types.Append('R');
                 }
-                else if (StrEquals(ExefsDir, modDir.Name))
+                else if (StrEquals(ExefsDir, modDir.Name) && modDir.Parent != null)
                 {
                     var modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
                     var enabled = modData?.Enabled ?? true;

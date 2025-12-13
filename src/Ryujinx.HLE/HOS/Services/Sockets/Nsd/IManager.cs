@@ -44,7 +44,7 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Nsd
             NsdSettings = new NsdSettings
             {
                 Initialized = true,
-                TestMode = (bool)testMode,
+                TestMode = (bool)testMode!,
                 Environment = (string)environmentIdentifier,
             };
         }

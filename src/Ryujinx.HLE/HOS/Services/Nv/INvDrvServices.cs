@@ -83,9 +83,9 @@ namespace Ryujinx.HLE.HOS.Services.Nv
                 ConstructorInfo constructor = deviceFileClass.GetConstructor([typeof(ServiceCtx), typeof(IVirtualMemoryManager), typeof(ulong)
                 ]);
 
-                NvDeviceFile deviceFile = (NvDeviceFile)constructor.Invoke([context, _clientMemory, _owner]);
+                NvDeviceFile deviceFile = (NvDeviceFile)constructor?.Invoke([context, _clientMemory, _owner]);
 
-                deviceFile.Path = path;
+                deviceFile?.Path = path;
 
                 fd = DeviceFileIdRegistry.Add(deviceFile);
 

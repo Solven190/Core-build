@@ -56,6 +56,7 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Bsd.Types
             {
                 for (int index = 0; index < iovCount; index++)
                 {
+                    if (message.Iov == null) continue;
                     ulong iovLength = (ulong)message.Iov[index].Length;
 
                     if (!MemoryMarshal.TryWrite(rawData, in iovLength))

@@ -225,10 +225,15 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed.Blender
             {
                 Hash128 hash = XXHash128.ComputeHash(MemoryMarshal.Cast<uint, byte>(entry.Code));
 
-                string[] constants = new string[entry.Constants != null ? entry.Constants.Length : 0];
+                string[] constants = new string[entry.Constants?.Length ?? 0];
 
                 for (int i = 0; i < constants.Length; i++)
                 {
+                    if (entry.Constants == null)
+                    {
+                        continue;
+                    }
+
                     RgbFloat rgb = entry.Constants[i];
 
                     constants[i] = string.Format(CultureInfo.InvariantCulture, "new " + nameof(RgbFloat) + "({0}f, {1}f, {2}f)", rgb.R, rgb.G, rgb.B);

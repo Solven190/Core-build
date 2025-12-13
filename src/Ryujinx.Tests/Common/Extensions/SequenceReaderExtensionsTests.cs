@@ -354,7 +354,9 @@ namespace Ryujinx.Tests.Common.Extensions
                 index += nextSegmentLength;
             }
 
-            return new ReadOnlySequence<byte>(first, 0, last, (int)(memory.Length - last.RunningIndex));
+            return first != null
+                ? new ReadOnlySequence<byte>(first, 0, last, (int)(memory.Length - last.RunningIndex))
+                : default;
         }
     }
 }

@@ -143,7 +143,7 @@ namespace Ryujinx.Audio.Backends.SoundIo
                     {
                         for (int frame = 0; frame < frameCount; frame++)
                         {
-                            ((byte*)area.Pointer)[0] = srcptr[frame * bytesPerFrame];
+                            (((byte*)area.Pointer)!)[0] = srcptr[frame * bytesPerFrame];
 
                             area.Pointer += area.Step;
                         }
@@ -152,7 +152,7 @@ namespace Ryujinx.Audio.Backends.SoundIo
                     {
                         for (int frame = 0; frame < frameCount; frame++)
                         {
-                            ((short*)area.Pointer)[0] = ((short*)srcptr)[frame * bytesPerFrame >> 1];
+                            (((short*)area.Pointer)!)[0] = ((short*)srcptr)[frame * bytesPerFrame >> 1];
 
                             area.Pointer += area.Step;
                         }
@@ -161,7 +161,7 @@ namespace Ryujinx.Audio.Backends.SoundIo
                     {
                         for (int frame = 0; frame < frameCount; frame++)
                         {
-                            ((int*)area.Pointer)[0] = ((int*)srcptr)[frame * bytesPerFrame >> 2];
+                            (((int*)area.Pointer)!)[0] = ((int*)srcptr)[frame * bytesPerFrame >> 2];
 
                             area.Pointer += area.Step;
                         }
@@ -190,10 +190,10 @@ namespace Ryujinx.Audio.Backends.SoundIo
                         for (int frame = 0; frame < frameCount; frame++)
                         {
                             // Channel 1
-                            ((byte*)area1.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 0];
+                            (((byte*)area1.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 0];
 
                             // Channel 2
-                            ((byte*)area2.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 1];
+                            (((byte*)area2.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 1];
 
                             area1.Pointer += area1.Step;
                             area2.Pointer += area2.Step;
@@ -204,10 +204,10 @@ namespace Ryujinx.Audio.Backends.SoundIo
                         for (int frame = 0; frame < frameCount; frame++)
                         {
                             // Channel 1
-                            ((short*)area1.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 0];
+                            (((short*)area1.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 0];
 
                             // Channel 2
-                            ((short*)area2.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 1];
+                            (((short*)area2.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 1];
 
                             area1.Pointer += area1.Step;
                             area2.Pointer += area2.Step;
@@ -218,10 +218,10 @@ namespace Ryujinx.Audio.Backends.SoundIo
                         for (int frame = 0; frame < frameCount; frame++)
                         {
                             // Channel 1
-                            ((int*)area1.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 0];
+                            (((int*)area1.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 0];
 
                             // Channel 2
-                            ((int*)area2.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 1];
+                            (((int*)area2.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 1];
 
                             area1.Pointer += area1.Step;
                             area2.Pointer += area2.Step;
@@ -260,22 +260,22 @@ namespace Ryujinx.Audio.Backends.SoundIo
                         for (int frame = 0; frame < frameCount; frame++)
                         {
                             // Channel 1
-                            ((byte*)area1.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 0];
+                            (((byte*)area1.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 0];
 
                             // Channel 2
-                            ((byte*)area2.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 1];
+                            (((byte*)area2.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 1];
 
                             // Channel 3
-                            ((byte*)area3.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 2];
+                            (((byte*)area3.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 2];
 
                             // Channel 4
-                            ((byte*)area4.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 3];
+                            (((byte*)area4.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 3];
 
                             // Channel 5
-                            ((byte*)area5.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 4];
+                            (((byte*)area5.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 4];
 
                             // Channel 6
-                            ((byte*)area6.Pointer)[0] = srcptr[(frame * bytesPerFrame) + 5];
+                            (((byte*)area6.Pointer)!)[0] = srcptr[(frame * bytesPerFrame) + 5];
 
                             area1.Pointer += area1.Step;
                             area2.Pointer += area2.Step;
@@ -290,22 +290,22 @@ namespace Ryujinx.Audio.Backends.SoundIo
                         for (int frame = 0; frame < frameCount; frame++)
                         {
                             // Channel 1
-                            ((short*)area1.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 0];
+                            (((short*)area1.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 0];
 
                             // Channel 2
-                            ((short*)area2.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 1];
+                            (((short*)area2.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 1];
 
                             // Channel 3
-                            ((short*)area3.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 2];
+                            (((short*)area3.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 2];
 
                             // Channel 4
-                            ((short*)area4.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 3];
+                            (((short*)area4.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 3];
 
                             // Channel 5
-                            ((short*)area5.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 4];
+                            (((short*)area5.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 4];
 
                             // Channel 6
-                            ((short*)area6.Pointer)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 5];
+                            (((short*)area6.Pointer)!)[0] = ((short*)srcptr)[(frame * bytesPerFrame >> 1) + 5];
 
                             area1.Pointer += area1.Step;
                             area2.Pointer += area2.Step;
@@ -320,22 +320,22 @@ namespace Ryujinx.Audio.Backends.SoundIo
                         for (int frame = 0; frame < frameCount; frame++)
                         {
                             // Channel 1
-                            ((int*)area1.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 0];
+                            (((int*)area1.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 0];
 
                             // Channel 2
-                            ((int*)area2.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 1];
+                            (((int*)area2.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 1];
 
                             // Channel 3
-                            ((int*)area3.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 2];
+                            (((int*)area3.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 2];
 
                             // Channel 4
-                            ((int*)area4.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 3];
+                            (((int*)area4.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 3];
 
                             // Channel 5
-                            ((int*)area5.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 4];
+                            (((int*)area5.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 4];
 
                             // Channel 6
-                            ((int*)area6.Pointer)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 5];
+                            (((int*)area6.Pointer)!)[0] = ((int*)srcptr)[(frame * bytesPerFrame >> 2) + 5];
 
                             area1.Pointer += area1.Step;
                             area2.Pointer += area2.Step;

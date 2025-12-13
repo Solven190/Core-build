@@ -150,7 +150,7 @@ namespace Ryujinx.Cpu.AppleHv
                     // Entry is a block but is not aligned, we need to turn it into a table.
                     ref ulong pte = ref level.AsSpan()[l];
                     nextTable = CreateTable(pte, depth + 1);
-                    level.Next[l] = nextTable;
+                    level.Next?[l] = nextTable;
 
                     // Now that we have a table, we can handle it like the first case.
                     UnmapImpl(nextTable, depth + 1, va, chunckSize);
@@ -166,7 +166,7 @@ namespace Ryujinx.Cpu.AppleHv
                     if (nextTable != null)
                     {
                         nextTable.Allocation.Dispose();
-                        level.Next[l] = null;
+                        level.Next?[l] = null;
                     }
 
                     level.AsSpan()[l] = 0UL;
@@ -215,7 +215,7 @@ namespace Ryujinx.Cpu.AppleHv
                     {
                         // Entry is a block but is not aligned, we need to turn it into a table.
                         nextTable = CreateTable(pte, depth + 1);
-                        level.Next[l] = nextTable;
+                        level.Next?[l] = nextTable;
 
                         // Now that we have a table, we can handle it like the first case.
                         UpdateAttributes(nextTable, depth + 1, va, chunckSize, newAttr);

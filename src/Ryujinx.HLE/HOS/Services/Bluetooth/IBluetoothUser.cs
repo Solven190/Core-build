@@ -15,7 +15,7 @@ namespace Ryujinx.HLE.HOS.Services.Bluetooth
         {
             NxSettings.Settings.TryGetValue("bluetooth_debug!skip_boot", out object debugMode);
 
-            if ((bool)debugMode)
+            if ((bool)debugMode!)
             {
                 context.Response.HandleDesc = IpcHandleDesc.MakeCopy(BluetoothEventManager.RegisterBleDebugEventHandle);
             }

@@ -24,7 +24,7 @@ namespace Ryujinx.HLE.HOS.Services.Bluetooth
 
             int initializeEventHandle;
 
-            if ((bool)debugMode)
+            if ((bool)debugMode!)
             {
                 if (BluetoothEventManager.InitializeBleDebugEventHandle == 0)
                 {

@@ -254,18 +254,23 @@ namespace Ryujinx.HLE.HOS.Services.Ssl.SslService
 
         public ResultCode GetServerCertificate(string hostname, Span<byte> certificates, out uint storageSize, out uint certificateCount)
         {
-            byte[] rawCertData = _stream.RemoteCertificate.GetRawCertData();
-
-            storageSize = (uint)rawCertData.Length;
-            certificateCount = 1;
-
-            if (rawCertData.Length > certificates.Length)
+            if (_stream.RemoteCertificate != null)
             {
-                return ResultCode.CertBufferTooSmall;
+                byte[] rawCertData = _stream.RemoteCertificate.GetRawCertData();
+
+                storageSize = (uint)rawCertData.Length;
+                certificateCount = 1;
+
+                if (rawCertData.Length > certificates.Length)
+                {
+                    return ResultCode.CertBufferTooSmall;
+                }
+
+                rawCertData.CopyTo(certificates);
             }
 
-            rawCertData.CopyTo(certificates);
-
+            storageSize = 0;
+            certificateCount = 0;
             return ResultCode.Success;
         }
 

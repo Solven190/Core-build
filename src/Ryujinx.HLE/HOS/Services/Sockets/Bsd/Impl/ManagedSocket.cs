@@ -190,7 +190,7 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Bsd.Impl
             {
                 Socket.Listen(backlog);
 
-                Logger.Info?.PrintMsg(LogClass.ServiceBsd, $"Socket listening: {ProtocolType}/{(Socket.LocalEndPoint as IPEndPoint).Port}");
+                Logger.Info?.PrintMsg(LogClass.ServiceBsd, $"Socket listening: {ProtocolType}/{((IPEndPoint)Socket.LocalEndPoint).Port}");
 
                 return LinuxError.SUCCESS;
             }
@@ -573,7 +573,7 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Bsd.Impl
 
             try
             {
-                int receiveSize = (Socket as DefaultSocket).BaseSocket.Receive(ConvertMessagesToBuffer(message), ConvertBsdSocketFlags(flags), out SocketError socketError);
+                int receiveSize = ((DefaultSocket)Socket).BaseSocket.Receive(ConvertMessagesToBuffer(message), ConvertBsdSocketFlags(flags), out SocketError socketError);
 
                 if (receiveSize > 0)
                 {
@@ -615,7 +615,7 @@ namespace Ryujinx.HLE.HOS.Services.Sockets.Bsd.Impl
 
             try
             {
-                int sendSize = (Socket as DefaultSocket).BaseSocket.Send(ConvertMessagesToBuffer(message), ConvertBsdSocketFlags(flags), out SocketError socketError);
+                int sendSize = ((DefaultSocket)Socket).BaseSocket.Send(ConvertMessagesToBuffer(message), ConvertBsdSocketFlags(flags), out SocketError socketError);
 
                 if (sendSize > 0)
                 {

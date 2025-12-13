@@ -54,6 +54,11 @@ namespace Ryujinx.Graphics.OpenGL.Effects
             GL.ActiveTexture(TextureUnit.Texture0);
             int previousTextureBinding = GL.GetInteger(GetPName.TextureBinding2D);
 
+            if (textureView == null)
+            {
+                return null;
+            }
+
             GL.BindImageTexture(0, textureView.Handle, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba8);
             GL.UseProgram(_shaderProgram);
 
@@ -76,6 +81,7 @@ namespace Ryujinx.Graphics.OpenGL.Effects
             GL.ActiveTexture((TextureUnit)previousUnit);
 
             return textureView;
+
         }
     }
 }

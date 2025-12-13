@@ -59,7 +59,7 @@ namespace Ryujinx.HLE.HOS.Services.Fs
 
             if (!File.Exists(fullPath))
             {
-                if (fullPath.Contains('.'))
+                if (fullPath!.Contains('.'))
                 {
                     ResultCode result = FileSystemProxyHelper.OpenFileSystemFromInternalFile(context, fullPath, out FileSystemProxy.IFileSystem fileSystem);
 

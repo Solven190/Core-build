@@ -316,7 +316,7 @@ namespace ARMeilleure.Translation
             {
                 _root = newNode;
             }
-            else if (start.CompareTo(parent.Start) < 0)
+            else if (start.CompareTo(parent!.Start) < 0)
             {
                 parent.Left = newNode;
             }
