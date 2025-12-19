@@ -21,18 +21,6 @@
     <PublishSingleFile>true</PublishSingleFile>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <PublishTrimmed>true</PublishTrimmed>
-    <PublishTrimmed Condition="'$(RuntimeIdentifier)' == 'win-arm64'">false</PublishTrimmed>
-    <TrimMode>partial</TrimMode>
-  </PropertyGroup>
-
-  <!--
-    FluentAvalonia, used in the Avalonia UI, requires a workaround for the json serializer used internally when using .NET 8+ System.Text.Json.
-    See:
-      https://github.com/amwx/FluentAvalonia/issues/481
-      https://devblogs.microsoft.com/dotnet/system-text-json-in-dotnet-8/
-  -->
-  <PropertyGroup>
-    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -167,5 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="Assets\Locales\en_US.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <TrimmerRootDescriptor Include="TrimmerRootDescriptor.xml" />
   </ItemGroup>
 </Project>

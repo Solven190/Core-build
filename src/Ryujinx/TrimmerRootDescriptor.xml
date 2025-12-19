@@ -1,0 +1,9 @@
+<linker>
+    <assembly fullname="Ryujinx">
+        <type fullname="Ryujinx.Ava.UI.Views.User*" preserve="all"/>
+    </assembly>
+    <assembly fullname="Ryujinx.HLE">
+        <type fullname="Ryujinx.HLE.HOS.Services*" preserve="all"/>
+    </assembly>
+    <assembly fullname="DiscordRPC" preserve="all" />
+</linker>
