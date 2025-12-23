@@ -1,9 +1,8 @@
-using Ryujinx.Common.Utilities;
 using System.Text.Json.Serialization;
 
 namespace Ryujinx.UI.Common.Configuration.System
 {
-    [JsonConverter(typeof(TypedStringEnumConverter<Language>))]
+    [JsonConverter(typeof(JsonStringEnumConverter<Language>))]
     public enum Language
     {
         Japanese,
