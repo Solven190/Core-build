@@ -8,6 +8,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static Ryujinx.Graphics.Gpu.GraphicsConfig;
 
 namespace Ryujinx.HLE.HOS.Kernel.Memory
 {
@@ -179,6 +180,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
 
             AliasRegionExtraSize = 0;
 
+            // Limit heap for games that crash or won't load with extended heaps
+            bool isHeapLimited = (TitleId is "0100965017338000" or "010038b015560000");
+
             switch (flags & ProcessCreationFlags.AddressSpaceMask)
             {
                 case ProcessCreationFlags.AddressSpace32Bit:
@@ -197,11 +201,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                 case ProcessCreationFlags.AddressSpace64BitDeprecated:
                     aliasRegion.Size = 0x180000000;
                     heapRegion.Size = memConfig switch {
-                        MemoryConfiguration.MemoryConfiguration6GiB => 0x180000000u,
                         MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
-                        MemoryConfiguration.MemoryConfiguration10GiB => 0x280000000u,
-                        MemoryConfiguration.MemoryConfiguration12GiB => 0x300000000u,
-                        _ => 0x100000000u
+                        MemoryConfiguration.MemoryConfiguration10GiB when !isHeapLimited => 0x280000000u,
+                        MemoryConfiguration.MemoryConfiguration12GiB when !isHeapLimited => 0x300000000u,
+                        _ => 0x180000000u
                     };
                     stackRegion.Size = 0;
                     tlsIoRegion.Size = 0;
@@ -233,11 +236,10 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
 
                         aliasRegion.Size = 1UL << (addressSpaceWidth - 3);
                         heapRegion.Size = memConfig switch {
-                            MemoryConfiguration.MemoryConfiguration6GiB => 0x180000000u,
                             MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
-                            MemoryConfiguration.MemoryConfiguration10GiB => 0x280000000u,
-                            MemoryConfiguration.MemoryConfiguration12GiB => 0x300000000u,
-                            _ => 0x100000000u
+                            MemoryConfiguration.MemoryConfiguration10GiB when !isHeapLimited => 0x280000000u,
+                            MemoryConfiguration.MemoryConfiguration12GiB when !isHeapLimited => 0x300000000u,
+                            _ => 0x180000000u
                         };
                         stackRegion.Size = 1UL << (addressSpaceWidth - 8);
                         tlsIoRegion.Size = 1UL << (addressSpaceWidth - 3);
@@ -252,12 +254,12 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                     else
                     {
                         aliasRegion.Size = 0x1000000000;
-                        heapRegion.Size = memConfig switch {
-                            MemoryConfiguration.MemoryConfiguration6GiB => 0x180000000u,
+                        heapRegion.Size = memConfig switch
+                        {
                             MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
-                            MemoryConfiguration.MemoryConfiguration10GiB => 0x280000000u,
-                            MemoryConfiguration.MemoryConfiguration12GiB => 0x300000000u,
-                            _ => 0x100000000u
+                            MemoryConfiguration.MemoryConfiguration10GiB when !isHeapLimited => 0x280000000u,
+                            MemoryConfiguration.MemoryConfiguration12GiB when !isHeapLimited => 0x300000000u,
+                            _ => 0x180000000u
                         };
                         stackRegion.Size = 0x80000000;
                         tlsIoRegion.Size = 0x1000000000;
