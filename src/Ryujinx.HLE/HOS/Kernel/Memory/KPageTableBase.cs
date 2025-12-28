@@ -181,7 +181,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
             AliasRegionExtraSize = 0;
 
             // Limit heap for games that crash or won't load with extended heaps
-            bool isHeapLimited = (TitleId is "0100965017338000" or "010038b015560000");
+            bool isHeapLimited = TitleId is "0100965017338000" or "010038b015560000";
 
             switch (flags & ProcessCreationFlags.AddressSpaceMask)
             {
@@ -254,8 +254,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Memory
                     else
                     {
                         aliasRegion.Size = 0x1000000000;
-                        heapRegion.Size = memConfig switch
-                        {
+                        heapRegion.Size = memConfig switch {
                             MemoryConfiguration.MemoryConfiguration8GiB => 0x200000000u,
                             MemoryConfiguration.MemoryConfiguration10GiB when !isHeapLimited => 0x280000000u,
                             MemoryConfiguration.MemoryConfiguration12GiB when !isHeapLimited => 0x300000000u,
