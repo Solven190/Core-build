@@ -292,12 +292,10 @@
                                   HorizontalContentAlignment="Left"
                                   ToolTip.Tip="{locale:Locale GraphicsTextureDumpFormatTooltip}"
                                   SelectedIndex="{Binding TextureDumpFormatIndex}">
-                            <ComboBoxItem>
-                                <TextBlock Text="{locale:Locale SettingsTabGraphicsTextureDumpFormatDds}" />
-                            </ComboBoxItem>
-                            <ComboBoxItem>
-                                <TextBlock Text="{locale:Locale SettingsTabGraphicsTextureDumpFormatPng}" />
-                            </ComboBoxItem>
+                            <ComboBoxItem
+                                Content="{locale:Locale SettingsTabGraphicsTextureDumpFormatDds}" />
+                            <ComboBoxItem
+                                Content="{locale:Locale SettingsTabGraphicsTextureDumpFormatPng}" />
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Vertical">
