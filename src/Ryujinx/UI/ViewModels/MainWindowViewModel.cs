@@ -7,6 +7,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using System.Runtime.Versioning;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
 using FluentAvalonia.UI.Controls;
@@ -25,6 +26,7 @@ using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.Utilities;
 using Ryujinx.Cpu;
+using Ryujinx.Graphics.RenderDocApi;
 using Ryujinx.HLE;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS;
@@ -1833,6 +1835,31 @@ namespace Ryujinx.Ava.UI.ViewModels
         }
 
 
+        public void ReloadRenderDocApi()
+        {
+            RenderDoc.ReloadApi(ignoreAlreadyLoaded: true);
+
+            OnPropertyChanged(nameof(ShowStartCaptureButton));
+            OnPropertyChanged(nameof(ShowEndCaptureButton));
+            OnPropertyChanged(nameof(RenderDocIsAvailable));
+
+            if (RenderDoc.IsAvailable)
+                RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+
+            NotificationHelper.ShowInformation(
+                "RenderDoc API reloaded",
+                RenderDoc.IsAvailable ? "RenderDoc is now available." : "RenderDoc is no longer available."
+            );
+        }
+
+        public void ToggleCapture()
+        {
+            if (ShowLoadProgress) return;
+
+            AppHost.RendererHost.EmbeddedWindow.ToggleRenderDocCapture(AppHost.Device);
+            RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+        }
+
         public void ToggleFullscreen()
         {
             if (Environment.TickCount64 - LastFullscreenToggle < HotKeyPressDelayMs)
@@ -2111,6 +2138,72 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
+        #endregion
+
+        #region Context Menu commands
+
+        public bool ShowStartCaptureButton => !RenderDocIsCapturing && RenderDoc.IsAvailable;
+        public bool ShowEndCaptureButton => RenderDocIsCapturing && RenderDoc.IsAvailable;
+        public static bool RenderDocIsAvailable => RenderDoc.IsAvailable;
+
+        public bool RenderDocIsCapturing
+        {
+            get;
+            set
+            {
+                field = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowStartCaptureButton));
+                OnPropertyChanged(nameof(ShowEndCaptureButton));
+            }
+        }
+        
+        public static RelayCommand<MainWindowViewModel> StartRenderDocCapture { get; } =
+            Commands.CreateConditional<MainWindowViewModel>(vm => RenderDoc.IsAvailable && !vm.ShowLoadProgress,
+                viewModel =>
+                {
+                    if (!RenderDoc.IsFrameCapturing)
+                    {
+                        if (viewModel.AppHost.RendererHost
+                            .EmbeddedWindow.StartRenderDocCapture(viewModel.AppHost.Device))
+                        {
+                            Logger.Info?.Print(LogClass.Application, "Starting RenderDoc capture.");
+                        }
+                    }
+
+                    viewModel.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+                });
+
+        public static RelayCommand<MainWindowViewModel> EndRenderDocCapture { get; } =
+            Commands.CreateConditional<MainWindowViewModel>(vm => RenderDoc.IsAvailable && !vm.ShowLoadProgress,
+                viewModel =>
+                {
+                    if (RenderDoc.IsFrameCapturing)
+                    {
+                        if (viewModel.AppHost.RendererHost.EmbeddedWindow.EndRenderDocCapture())
+                        {
+                            Logger.Info?.Print(LogClass.Application, "Ended RenderDoc capture.");
+                        }
+                    }
+
+                    viewModel.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+                });
+
+        public static RelayCommand<MainWindowViewModel> DiscardRenderDocCapture { get; } =
+            Commands.CreateConditional<MainWindowViewModel>(vm => RenderDoc.IsAvailable  && !vm.ShowLoadProgress,
+                viewModel =>
+                {
+                    if (RenderDoc.IsFrameCapturing)
+                    {
+                        if (viewModel.AppHost.RendererHost.EmbeddedWindow.DiscardRenderDocCapture())
+                        {
+                            Logger.Info?.Print(LogClass.Application, "Discarded RenderDoc capture.");
+                        }
+                    }
+
+                    viewModel.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+                });
+        
         #endregion
     }
 }

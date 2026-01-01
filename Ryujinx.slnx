@@ -21,6 +21,7 @@
   <Project Path="src/Ryujinx.Graphics.Nvdec.Vp9/Ryujinx.Graphics.Nvdec.Vp9.csproj" />
   <Project Path="src/Ryujinx.Graphics.Nvdec/Ryujinx.Graphics.Nvdec.csproj" />
   <Project Path="src/Ryujinx.Graphics.OpenGL/Ryujinx.Graphics.OpenGL.csproj" />
+  <Project Path="src\Ryujinx.Graphics.RenderDocApi\Ryujinx.Graphics.RenderDocApi.csproj" />
   <Project Path="src/Ryujinx.Graphics.Shader/Ryujinx.Graphics.Shader.csproj" />
   <Project Path="src/Ryujinx.Graphics.Texture/Ryujinx.Graphics.Texture.csproj" />
   <Project Path="src/Ryujinx.Graphics.Vic/Ryujinx.Graphics.Vic.csproj" />
