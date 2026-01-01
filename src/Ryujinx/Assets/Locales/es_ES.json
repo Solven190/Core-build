@@ -807,5 +807,9 @@
   "MultiplayerModeDisabled": "Deshabilitar",
   "MultiplayerModeLdnMitm": "ldn_mitm",
   "SettingsTabSystemSkipUserProfilesManager": "Omitir el Diálogo 'Gestionar Perfiles de Usuario'",
-  "SkipUserProfilesTooltip": "Esta opción omite el diálogo de 'Gestionar perfiles de usuario' durante el juego, utilizando un perfil preseleccionado.\n\nEl cambio de perfil se encuentra en 'Configuración' - 'Gestionar perfiles de usuario'. Seleccione el perfil deseado antes de cargar el juego."
+  "SkipUserProfilesTooltip": "Esta opción omite el diálogo de 'Gestionar perfiles de usuario' durante el juego, utilizando un perfil preseleccionado.\n\nEl cambio de perfil se encuentra en 'Configuración' - 'Gestionar perfiles de usuario'. Seleccione el perfil deseado antes de cargar el juego.",
+  "MenuBarActions_StartCapture": "Iniciar una captura de fotograma de RenderDoc",
+  "MenuBarActions_EndCapture": "Detener la captura de fotograma de RenderDoc",
+  "MenuBarActions_DiscardCapture": "Descartar la captura de fotograma de RenderDoc",
+  "MenuBarActions_DiscardCapture_ToolTip": "Finaliza la captura de fotograma de RenderDoc actualmente activa y descarta inmediatamente su resultado."
 }

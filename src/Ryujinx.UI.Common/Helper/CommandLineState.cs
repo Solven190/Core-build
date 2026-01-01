@@ -15,6 +15,9 @@ namespace Ryujinx.UI.Common.Helper
         public static string OverrideBackendThreading { get; private set; }
         public static string OverrideHideCursor { get; private set; }
         public static string BaseDirPathArg { get; private set; }
+
+        public static string RenderDocCaptureTitleFormat { get; private set; } =
+            "{EmuVersion}\n{GuestName} {GuestVersion} {GuestTitleId} {GuestArch}";
         public static FilePath FirmwareToInstallPathArg { get; set; }
         public static string Profile { get; private set; }
         public static string LaunchPathArg { get; private set; }
@@ -44,6 +47,20 @@ namespace Ryujinx.UI.Common.Helper
                         }
 
                         BaseDirPathArg = args[++i];
+
+                        arguments.Add(arg);
+                        arguments.Add(args[i]);
+                        break;
+                    case "-rdct":
+                    case "--rd-capture-title-format":
+                        if (i + 1 >= args.Length)
+                        {
+                            Logger.Error?.Print(LogClass.Application, $"Invalid option '{arg}'");
+
+                            continue;
+                        }
+
+                        RenderDocCaptureTitleFormat = args[++i];
 
                         arguments.Add(arg);
                         arguments.Add(args[i]);

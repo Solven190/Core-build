@@ -227,6 +227,26 @@
                     Click="OpenCheatManagerForCurrentApp"
                     Header="{locale:Locale GameListContextMenuManageCheat}"
                     IsEnabled="{Binding IsGameRunning}" />
+                <Separator IsVisible="{Binding RenderDocIsAvailable}" />
+                <MenuItem
+                    Click="StartRenderDocCapture_Click"
+                    IsVisible="{Binding ShowStartCaptureButton}"
+                    CommandParameter="{Binding}"
+                    Header="{locale:Locale MenuBarActions_StartCapture}"
+                    IsEnabled="{Binding IsGameRunning}" />
+                <MenuItem
+                    Click="EndRenderDocCapture_Click"
+                    IsVisible="{Binding ShowEndCaptureButton}"
+                    CommandParameter="{Binding}"
+                    Header="{locale:Locale MenuBarActions_EndCapture}"
+                    IsEnabled="{Binding IsGameRunning}" />
+                <MenuItem
+                    Click="DiscardRenderDocCapture_Click"
+                    IsVisible="{Binding ShowEndCaptureButton}"
+                    CommandParameter="{Binding}"
+                    Header="{locale:Locale MenuBarActions_DiscardCapture}"
+                    ToolTip.Tip="{locale:Locale MenuBarActions_DiscardCapture_ToolTip}"
+                    IsEnabled="{Binding IsGameRunning}" />
             </MenuItem>
             <MenuItem VerticalAlignment="Center" Header="{locale:Locale MenuBarTools}">
                 <MenuItem Header="{locale:Locale MenuBarToolsInstallKeys}" IsEnabled="{Binding EnableNonGameRunningControls}">
