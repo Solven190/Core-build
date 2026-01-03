@@ -374,7 +374,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             IsAmdRdna3 = Vendor == Vendor.Amd && (VendorUtils.AmdRdna3Regex().IsMatch(GpuRenderer)
                                                   // ROG Ally (X) Device IDs
-                                                  || properties.DeviceID is 0x15BF or 0x15C8);
+                                                  || properties.DeviceID is 0x15BF or 0x15C8 or 0x150E);
 
             if (Vendor == Vendor.Nvidia)
             {
