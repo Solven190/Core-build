@@ -6,6 +6,7 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommandLine;
+using FluentAvalonia.Core;
 using Ryujinx.Ava.Common;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Helpers;
@@ -34,6 +35,8 @@ namespace Ryujinx.Ava
         public override void Initialize()
         {
             Name = $"Ryujinx {Program.Version}";
+
+            FAUISettings.SetAnimationsEnabledAtAppLevel(false);
 
             AvaloniaXamlLoader.Load(this);
 

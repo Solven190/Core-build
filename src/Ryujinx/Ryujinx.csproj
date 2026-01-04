@@ -33,7 +33,7 @@
     <PackageReference Include="Svg.Controls.Skia.Avalonia" />
     <PackageReference Include="CommandLineParser" />
     <PackageReference Include="DynamicData" />
-    <PackageReference Include="FluentAvaloniaUI.NoAnim" />
+    <PackageReference Include="FluentAvaloniaUI" />
 
     <PackageReference Include="OpenTK.Core" />
     <PackageReference Include="Ryujinx.Audio.OpenAL" Condition="'$(RuntimeIdentifier)' == 'win-x64' OR '$(RuntimeIdentifier)' == 'win-arm64'" />
