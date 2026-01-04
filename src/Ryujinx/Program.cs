@@ -87,6 +87,7 @@ namespace Ryujinx.Ava
                     RenderingMode = UseHardwareAcceleration ?
                         new[] { X11RenderingMode.Glx, X11RenderingMode.Software } :
                         new[] { X11RenderingMode.Software },
+                    UseDBusFilePicker = false,
                 })
                 .With(new Win32PlatformOptions
                 {
