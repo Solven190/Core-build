@@ -19,7 +19,7 @@ if platform.system() == "Darwin":
 else:
     OTOOL = shutil.which("llvm-otool")
     if OTOOL is None:
-        for llvm_ver in [15, 14, 13]:
+        for llvm_ver in [17, 16, 15, 14, 13]:
             otool_path = shutil.which(f"llvm-otool-{llvm_ver}")
             if otool_path is not None:
                 OTOOL = otool_path
@@ -562,26 +562,29 @@ search_path = [
 
 
 for path in content_directory.rglob("**/*.dylib"):
-    current_search_path = [path.parent]
-    current_search_path.extend(search_path)
+    if not path.name.startswith("._"):
+        current_search_path = [path.parent]
+        current_search_path.extend(search_path)
 
-    fixup_dylib(
-        path,
-        get_path_related_to_target_exec(content_directory, path),
-        current_search_path,
-        content_directory,
-    )
+        print(f"Fixing path '{path}' using search path of '{current_search_path}' for context of '{content_directory}'.")
+        fixup_dylib(
+            path,
+            get_path_related_to_target_exec(content_directory, path),
+            current_search_path,
+            content_directory,
+        )
 
 for path in content_directory.rglob("**/*.so"):
-    current_search_path = [path.parent]
-    current_search_path.extend(search_path)
+    if not path.name.startswith("._"):
+        current_search_path = [path.parent]
+        current_search_path.extend(search_path)
 
-    fixup_dylib(
-        path,
-        get_path_related_to_target_exec(content_directory, path),
-        current_search_path,
-        content_directory,
-    )
+        fixup_dylib(
+            path,
+            get_path_related_to_target_exec(content_directory, path),
+            current_search_path,
+            content_directory,
+        )
 
 
 with open(executable_path, "rb") as input:

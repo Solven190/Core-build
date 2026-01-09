@@ -20,7 +20,19 @@ SOURCE_REVISION_ID=$6
 CONFIGURATION=$7
 EXTRA_ARGS=$8
 
-if [ "$VERSION" == "1.1.0" ];
+if [[ "$(uname)" == "Darwin" ]]; then
+    echo "Clearing xattr on all dot underscore files"
+    find "$BASE_DIR" -type f -name "._*" -exec sh -c '
+    for f; do
+        dir=$(dirname "$f")
+        base=$(basename "$f")
+        orig="$dir/${base#._}"
+        [ -f "$orig" ] && xattr -c "$orig" || true
+    done
+    ' sh {} +
+fi
+
+if [ "$VERSION" == "2.0.0" ];
 then
   RELEASE_TAR_FILE_NAME=ryujinx-$CONFIGURATION-$VERSION+$SOURCE_REVISION_ID-macos_universal.app.tar
 else
@@ -66,11 +78,11 @@ python3 "$BASE_DIR/distribution/macos/construct_universal_dylib.py" "$ARM64_APP_
 
 if ! [ -x "$(command -v lipo)" ];
 then
-    if ! [ -x "$(command -v llvm-lipo-14)" ];
+    if ! [ -x "$(command -v llvm-lipo-17)" ];
     then
         LIPO=llvm-lipo
     else
-        LIPO=llvm-lipo-14
+        LIPO=llvm-lipo-17
     fi
 else
     LIPO=lipo
@@ -108,12 +120,6 @@ tar --exclude "Ryujinx.app/Contents/MacOS/Ryujinx" -cvf "$RELEASE_TAR_FILE_NAME"
 python3 "$BASE_DIR/distribution/misc/add_tar_exec.py" "$RELEASE_TAR_FILE_NAME" "Ryujinx.app/Contents/MacOS/Ryujinx" "Ryujinx.app/Contents/MacOS/Ryujinx"
 gzip -9 < "$RELEASE_TAR_FILE_NAME" > "$RELEASE_TAR_FILE_NAME.gz"
 rm "$RELEASE_TAR_FILE_NAME"
-
-# Create legacy update package for Avalonia to not left behind old testers.
-if [ "$VERSION" != "1.1.0" ];
-then
-    cp $RELEASE_TAR_FILE_NAME.gz test-ava-ryujinx-$VERSION-macos_universal.app.tar.gz
-fi
 
 popd
 
