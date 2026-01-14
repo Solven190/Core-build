@@ -1,6 +1,7 @@
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LibHac.Tools.FsSystem;
 using Ryujinx.Audio.Backends.OpenAL;
 using Ryujinx.Audio.Backends.SDL2;
@@ -41,34 +42,27 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         private readonly Dictionary<string, string> _networkInterfaces;
 
-        private float _customResolutionScale;
         private int _resolutionScale;
-        private int _graphicsBackendMultithreadingIndex;
-        private float _volume;
+
+        [ObservableProperty]
         private bool _isVulkanAvailable = true;
+
         private bool _gameDirectoryChanged;
         private bool _autoloadDirectoryChanged;
-        private readonly List<string> _gpuIds = new();
-        private int _graphicsBackendIndex;
+        private readonly List<string> _gpuIds = [];
         private int _scalingFilter;
-        private int _scalingFilterLevel;
         private int _customVSyncInterval;
-        private bool _enableCustomVSyncInterval;
         private int _customVSyncIntervalPercentageProxy;
         private VSyncMode _vSyncMode;
-        private long _turboModeMultiplier;
 
         public event Action CloseWindow;
         public event Action SaveSettingsEvent;
-        private int _networkInterfaceIndex;
-        private int _multiplayerModeIndex;
-        private string _ldnPassphrase;
         private string _LdnServer;
+
+        [ObservableProperty]
         private bool _matchSystemTime;
 
         private bool _enableGDBStub;
-        private ushort _gdbStubPort;
-        private bool _debuggerSuspendOnStart;
 
         public int ResolutionScale
         {
@@ -84,15 +78,15 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public int GraphicsBackendMultithreadingIndex
         {
-            get => _graphicsBackendMultithreadingIndex;
+            get;
             set
             {
-                _graphicsBackendMultithreadingIndex = value;
+                field = value;
 
-                if (_graphicsBackendMultithreadingIndex != (int)ConfigurationState.Instance.Graphics.BackendThreading.Value)
+                if (field != (int)ConfigurationState.Instance.Graphics.BackendThreading.Value)
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
-                         ContentDialogHelper.CreateInfoDialog(LocaleManager.Instance[LocaleKeys.DialogSettingsBackendThreadingWarningMessage],
+                        ContentDialogHelper.CreateInfoDialog(LocaleManager.Instance[LocaleKeys.DialogSettingsBackendThreadingWarningMessage],
                             "",
                             "",
                             LocaleManager.Instance[LocaleKeys.InputDialogOk],
@@ -106,21 +100,10 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public float CustomResolutionScale
         {
-            get => _customResolutionScale;
+            get;
             set
             {
-                _customResolutionScale = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsVulkanAvailable
-        {
-            get => _isVulkanAvailable;
-            set
-            {
-                _isVulkanAvailable = value;
+                field = value;
 
                 OnPropertyChanged();
             }
@@ -201,10 +184,10 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public bool EnableCustomVSyncInterval
         {
-            get => _enableCustomVSyncInterval;
+            get;
             set
             {
-                _enableCustomVSyncInterval = value;
+                field = value;
                 if (_vSyncMode == VSyncMode.Custom && !value)
                 {
                     VSyncMode = VSyncMode.Switch;
@@ -213,6 +196,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 {
                     VSyncMode = VSyncMode.Custom;
                 }
+
                 OnPropertyChanged();
             }
         }
@@ -232,23 +216,22 @@ namespace Ryujinx.Ava.UI.ViewModels
         }
         public bool EnablePptc { get; set; }
         public bool EnableLowPowerPptc { get; set; }
-        
-        
+
         public long TurboMultiplier
         {
-            get => _turboModeMultiplier;
+            get;
             set
             {
-                if (_turboModeMultiplier != value)
+                if (field != value)
                 {
-                    _turboModeMultiplier = value;
-                    
+                    field = value;
+
                     OnPropertyChanged();
                     OnPropertyChanged((nameof(TurboMultiplierPercentageText)));
                 }
             }
         }
-        
+
         public string TurboMultiplierPercentageText => $"{TurboMultiplier}%";
 
         public bool EnableInternetAccess { get; set; }
@@ -284,10 +267,10 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public string LdnPassphrase
         {
-            get => _ldnPassphrase;
+            get;
             set
             {
-                _ldnPassphrase = value;
+                field = value;
                 IsInvalidLdnPassphraseVisible = !ValidateLdnPassphrase(value);
 
                 OnPropertyChanged();
@@ -308,29 +291,33 @@ namespace Ryujinx.Ava.UI.ViewModels
         public int AspectRatio { get; set; }
         public int AntiAliasingEffect { get; set; }
         public string ScalingFilterLevelText => ScalingFilterLevel.ToString("0");
+
         public int ScalingFilterLevel
         {
-            get => _scalingFilterLevel;
+            get;
             set
             {
-                _scalingFilterLevel = value;
+                field = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ScalingFilterLevelText));
             }
         }
+
         public int OpenglDebugLevel { get; set; }
         public int MemoryMode { get; set; }
         public int BaseStyleIndex { get; set; }
+
         public int GraphicsBackendIndex
         {
-            get => _graphicsBackendIndex;
+            get;
             set
             {
-                _graphicsBackendIndex = value;
+                field = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsVulkanSelected));
             }
         }
+
         public int ScalingFilter
         {
             get => _scalingFilter;
@@ -346,26 +333,12 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public float Volume
         {
-            get => _volume;
+            get;
             set
             {
-                _volume = value;
+                field = value;
 
-                ConfigurationState.Instance.System.AudioVolume.Value = _volume / 100;
-
-                OnPropertyChanged();
-            }
-        }
-
-        //private DateTimeOffset _currentDate;
-        //private TimeSpan _currentTime;
-
-        public bool MatchSystemTime
-        {
-            get => _matchSystemTime;
-            set
-            {
-                _matchSystemTime = value;
+                ConfigurationState.Instance.System.AudioVolume.Value = field / 100;
 
                 OnPropertyChanged();
             }
@@ -389,21 +362,21 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public int NetworkInterfaceIndex
         {
-            get => _networkInterfaceIndex;
+            get;
             set
             {
-                _networkInterfaceIndex = value != -1 ? value : 0;
-                ConfigurationState.Instance.Multiplayer.LanInterfaceId.Value = _networkInterfaces[NetworkInterfaceList[_networkInterfaceIndex]];
+                field = value != -1 ? value : 0;
+                ConfigurationState.Instance.Multiplayer.LanInterfaceId.Value = _networkInterfaces[NetworkInterfaceList[field]];
             }
         }
 
         public int MultiplayerModeIndex
         {
-            get => _multiplayerModeIndex;
+            get;
             set
             {
-                _multiplayerModeIndex = value;
-                ConfigurationState.Instance.Multiplayer.Mode.Value = (MultiplayerMode)_multiplayerModeIndex;
+                field = value;
+                ConfigurationState.Instance.Multiplayer.Mode.Value = (MultiplayerMode)field;
             }
         }
 
@@ -434,21 +407,21 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public ushort GDBStubPort
         {
-            get => _gdbStubPort;
+            get;
             set
             {
-                _gdbStubPort = value;
-                ConfigurationState.Instance.Debug.GdbStubPort.Value = _gdbStubPort;
+                field = value;
+                ConfigurationState.Instance.Debug.GdbStubPort.Value = field;
             }
         }
 
         public bool DebuggerSuspendOnStart
         {
-            get => _debuggerSuspendOnStart;
+            get;
             set
             {
-                _debuggerSuspendOnStart = value;
-                ConfigurationState.Instance.Debug.DebuggerSuspendOnStart.Value = _debuggerSuspendOnStart;
+                field = value;
+                ConfigurationState.Instance.Debug.DebuggerSuspendOnStart.Value = field;
             }
         }
 

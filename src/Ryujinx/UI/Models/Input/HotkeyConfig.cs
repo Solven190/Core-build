@@ -1,152 +1,48 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Common.Configuration.Hid;
 
 namespace Ryujinx.Ava.UI.Models.Input
 {
-    public class HotkeyConfig : BaseModel
+    public partial class HotkeyConfig : BaseModel
     {
+        [ObservableProperty]
         private Key _toggleVSyncMode;
-        public Key ToggleVSyncMode
-        {
-            get => _toggleVSyncMode;
-            set
-            {
-                _toggleVSyncMode = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _screenshot;
-        public Key Screenshot
-        {
-            get => _screenshot;
-            set
-            {
-                _screenshot = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _showUI;
-        public Key ShowUI
-        {
-            get => _showUI;
-            set
-            {
-                _showUI = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _pause;
-        public Key Pause
-        {
-            get => _pause;
-            set
-            {
-                _pause = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _toggleMute;
-        public Key ToggleMute
-        {
-            get => _toggleMute;
-            set
-            {
-                _toggleMute = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _resScaleUp;
-        public Key ResScaleUp
-        {
-            get => _resScaleUp;
-            set
-            {
-                _resScaleUp = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _resScaleDown;
-        public Key ResScaleDown
-        {
-            get => _resScaleDown;
-            set
-            {
-                _resScaleDown = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _volumeUp;
-        public Key VolumeUp
-        {
-            get => _volumeUp;
-            set
-            {
-                _volumeUp = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _volumeDown;
-        public Key VolumeDown
-        {
-            get => _volumeDown;
-            set
-            {
-                _volumeDown = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _customVSyncIntervalIncrement;
-        public Key CustomVSyncIntervalIncrement
-        {
-            get => _customVSyncIntervalIncrement;
-            set
-            {
-                _customVSyncIntervalIncrement = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _customVSyncIntervalDecrement;
-        public Key CustomVSyncIntervalDecrement
-        {
-            get => _customVSyncIntervalDecrement;
-            set
-            {
-                _customVSyncIntervalDecrement = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private Key _turboMode;
-        public Key TurboMode
-        {
-            get => _turboMode;
-            set
-            {
-                _turboMode = value;
-                OnPropertyChanged();
-            }
-        }
-        
-        private bool _turboModeWhileHeld;
-        public bool TurboModeWhileHeld
-        {
-            get => _turboModeWhileHeld;
-            set
-            {
-                _turboModeWhileHeld = value;
-                OnPropertyChanged();
-            }
-        }
+
+        [ObservableProperty] private bool _turboModeWhileHeld;
 
         public HotkeyConfig(KeyboardHotkeys config)
         {

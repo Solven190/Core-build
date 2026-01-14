@@ -1,18 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace Ryujinx.Ava.UI.ViewModels
 {
-    internal class UserProfileImageSelectorViewModel : BaseModel
+    internal partial class UserProfileImageSelectorViewModel : BaseModel
     {
+        [ObservableProperty]
         private bool _firmwareFound;
-
-        public bool FirmwareFound
-        {
-            get => _firmwareFound;
-
-            set
-            {
-                _firmwareFound = value;
-                OnPropertyChanged();
-            }
-        }
     }
 }

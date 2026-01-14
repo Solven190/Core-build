@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Svg.Skia;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.Input;
 using Ryujinx.Ava.UI.Helpers;
@@ -32,7 +33,7 @@ using Key = Ryujinx.Common.Configuration.Hid.Key;
 
 namespace Ryujinx.Ava.UI.ViewModels.Input
 {
-    public class InputViewModel : BaseModel, IDisposable
+    public partial class InputViewModel : BaseModel, IDisposable
     {
         private const string Disabled = "disabled";
         private const string ProControllerResource = "Ryujinx.UI.Common/Resources/Controller_ProCon.svg";
@@ -48,8 +49,10 @@ namespace Ryujinx.Ava.UI.ViewModels.Input
         private int _controller;
         private string _controllerImage;
         private int _device;
-        private object _configViewModel;
+
+        [ObservableProperty]
         private string _profileName;
+
         private bool _isLoaded;
 
         private static readonly InputConfigJsonSerializerContext _serializerContext = new(JsonHelper.GetDefaultSerializerOptions());
@@ -76,10 +79,10 @@ namespace Ryujinx.Ava.UI.ViewModels.Input
 
         public object ConfigViewModel
         {
-            get => _configViewModel;
+            get;
             set
             {
-                _configViewModel = value;
+                field = value;
 
                 VisualStick.UpdateConfig(value);
 
@@ -200,16 +203,6 @@ namespace Ryujinx.Ava.UI.ViewModels.Input
                 }
 
                 return image;
-            }
-        }
-
-        public string ProfileName
-        {
-            get => _profileName; set
-            {
-                _profileName = value;
-
-                OnPropertyChanged();
             }
         }
 
@@ -451,7 +444,7 @@ namespace Ryujinx.Ava.UI.ViewModels.Input
             const string Hyphen = "-";
             const int Offset = 1;
 
-            return str[(str.IndexOf(Hyphen) + Offset)..];
+            return str[(str.IndexOf(Hyphen, StringComparison.Ordinal) + Offset)..];
         }
 
         public void LoadDevices()

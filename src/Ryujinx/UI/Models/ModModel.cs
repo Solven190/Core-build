@@ -1,20 +1,12 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.UI.ViewModels;
 
 namespace Ryujinx.Ava.UI.Models
 {
-    public class ModModel : BaseModel
+    public partial class ModModel : BaseModel
     {
+        [ObservableProperty]
         private bool _enabled;
-
-        public bool Enabled
-        {
-            get => _enabled;
-            set
-            {
-                _enabled = value;
-                OnPropertyChanged();
-            }
-        }
 
         public bool InSd { get; }
         public string Path { get; }

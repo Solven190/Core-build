@@ -1,4 +1,5 @@
-﻿using Ryujinx.UI.App.Common;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Models;
 using System.Linq;
 
@@ -6,30 +7,12 @@ namespace Ryujinx.Ava.UI.ViewModels
 {
     public partial class DlcSelectViewModel : BaseModel
     {
+        [ObservableProperty]
         private DownloadableContentModel[] _dlcs;
-        private DownloadableContentModel _selectedDlc;
-        
-        public DownloadableContentModel[] Dlcs
-        {
-            get => _dlcs;
-            set
-            {
-                _dlcs = value;
 
-                OnPropertyChanged();
-            }
-        }
         #nullable enable
-        public DownloadableContentModel? SelectedDlc
-        {
-            get => _selectedDlc;
-            set
-            {
-                _selectedDlc = value;
-
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private DownloadableContentModel? _selectedDlc;
         #nullable disable
         
         public DlcSelectViewModel(ulong titleId, ApplicationLibrary appLibrary)

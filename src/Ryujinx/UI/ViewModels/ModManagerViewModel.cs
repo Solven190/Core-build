@@ -3,6 +3,7 @@ using Avalonia.Collections;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Helpers;
@@ -18,12 +19,14 @@ using System.Linq;
 
 namespace Ryujinx.Ava.UI.ViewModels
 {
-    public class ModManagerViewModel : BaseModel
+    public partial class ModManagerViewModel : BaseModel
     {
         private readonly string _modJsonPath;
 
-        private AvaloniaList<ModModel> _mods = [];
+        [ObservableProperty]
         private AvaloniaList<ModModel> _views = [];
+
+        [ObservableProperty]
         private AvaloniaList<ModModel> _selectedMods = [];
 
         private string _search;
@@ -35,35 +38,15 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public AvaloniaList<ModModel> Mods
         {
-            get => _mods;
+            get;
             set
             {
-                _mods = value;
+                field = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ModCount));
                 Sort();
             }
-        }
-
-        public AvaloniaList<ModModel> Views
-        {
-            get => _views;
-            set
-            {
-                _views = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public AvaloniaList<ModModel> SelectedMods
-        {
-            get => _selectedMods;
-            set
-            {
-                _selectedMods = value;
-                OnPropertyChanged();
-            }
-        }
+        } = [];
 
         public string Search
         {
@@ -112,7 +95,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 var inSd = path == ModLoader.GetSdModsBasePath();
                 var modCache = new ModLoader.ModCache();
 
-                ModLoader.QueryContentsDir(modCache, new DirectoryInfo(Path.Combine(path, "contents")), applicationId, _installedDlcIds);
+                ModLoader.QueryContentsDir(modCache, new DirectoryInfo(Path.Combine(path, "contents")), applicationId, installedDlcIds);
 
                 foreach (var mod in modCache.RomfsDirs)
                 {
@@ -161,8 +144,8 @@ namespace Ryujinx.Ava.UI.ViewModels
                 .Filter(Filter)
                 .Bind(out var view).AsObservableList();
 
-            _views.Clear();
-            _views.AddRange(view);
+            Views.Clear();
+            Views.AddRange(view);
 
             SelectedMods = new(Views.Where(x => x.Enabled));
 

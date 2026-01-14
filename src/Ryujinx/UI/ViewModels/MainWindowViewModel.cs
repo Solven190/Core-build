@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using DynamicData.Binding;
 using FluentAvalonia.UI.Controls;
@@ -50,90 +51,84 @@ using ShaderCacheLoadingState = Ryujinx.Graphics.Gpu.Shader.ShaderCacheState;
 
 namespace Ryujinx.Ava.UI.ViewModels
 {
-    public class MainWindowViewModel : BaseModel
+    public partial class MainWindowViewModel : BaseModel
     {
         private const int HotKeyPressDelayMs = 500;
         private delegate int LoadContentFromFolderDelegate(List<string> dirs, out int numRemoved);
 
-        private ObservableCollectionExtended<ApplicationData> _applications;
-        private string _aspectStatusText;
+        [ObservableProperty] private ObservableCollectionExtended<ApplicationData> _applications;
+        [ObservableProperty] private string _aspectRatioStatusText;
 
-        private string _loadHeading;
-        private string _cacheLoadStatus;
+        [ObservableProperty] private string _loadHeading;
+        [ObservableProperty] private string _cacheLoadStatus;
+        [ObservableProperty] private string _dockedStatusText;
+        [ObservableProperty] private string _fifoStatusText;
+        [ObservableProperty] private string _gameStatusText;
+        [ObservableProperty] private string _volumeStatusText;
+        [ObservableProperty] private string _gpuNameText;
+        [ObservableProperty] private string _shaderCountText;
+        [ObservableProperty] private bool _showRightmostSeparator;
+        [ObservableProperty] private bool _isFullScreen;
+        [ObservableProperty] private int _progressMaximum;
+        [ObservableProperty] private int _progressValue;
+        [ObservableProperty] private long _lastFullscreenToggle = Environment.TickCount64;
+        [ObservableProperty] private bool _showMenuAndStatusBar = true;
+        [ObservableProperty] private bool _showStatusSeparator;
+        [ObservableProperty] private Brush _progressBarForegroundColor;
+        [ObservableProperty] private Brush _progressBarBackgroundColor;
+        [ObservableProperty] private Brush _vSyncModeColor;
+        #nullable enable
+        [ObservableProperty] private byte[]? _selectedIcon;
+        #nullable disable
+        [ObservableProperty] private int _statusBarProgressMaximum;
+        [ObservableProperty] private int _statusBarProgressValue;
+        [ObservableProperty] private string _statusBarProgressStatusText;
+        [ObservableProperty] private bool _statusBarProgressStatusVisible;
+        [ObservableProperty] private bool _isPaused;
+        [ObservableProperty] private bool _showContent = true;
+        [ObservableProperty] private bool _isLoadingIndeterminate = true;
+        [ObservableProperty] private bool _showAll;
+        [ObservableProperty] private string _lastScannedAmiiboId;
+        [ObservableProperty] private ReadOnlyObservableCollection<ApplicationData> _appsObservableList;
+        
+        [ObservableProperty] private float _volumeBeforeMute;
+        [ObservableProperty] private string _backendText;
+
+        [ObservableProperty] private bool _areMimeTypesRegistered = FileAssociationHelper.AreMimeTypesRegistered;
+        [ObservableProperty] private Cursor _cursor;
+        [ObservableProperty] private string _title;
+        [ObservableProperty] private WindowState _windowState;
+        [ObservableProperty] private double _windowWidth;
+        [ObservableProperty] private double _windowHeight;
+
+        [ObservableProperty] private bool _isActive;
+        [ObservableProperty] private bool _isSubMenuOpen;
+
+        private ApplicationContextMenu _listAppContextMenu;
+        private ApplicationContextMenu _gridAppContextMenu;
+
+        private bool _isGameRunning;
         private string _searchText;
         private Timer _searchTimer;
-        private string _dockedStatusText;
-        private string _vSyncModeText;
-        private string _fifoStatusText;
-        private string _gameStatusText;
-        private string _volumeStatusText;
-        private string _gpuStatusText;
-        private string _shaderCountText;
-        private bool _isAmiiboRequested;
-        private bool _showRightmostSeparator;
-        private bool _isAmiiboBinRequested;
-        private bool _isGameRunning;
-        private bool _isFullScreen;
-        private int _progressMaximum;
-        private int _progressValue;
-        private long _lastFullscreenToggle = Environment.TickCount64;
-        private bool _showLoadProgress;
-        private bool _showMenuAndStatusBar = true;
-        private bool _showStatusSeparator;
-        private Brush _progressBarForegroundColor;
-        private Brush _progressBarBackgroundColor;
-        private Brush _vSyncModeColor;
-        private byte[] _selectedIcon;
-        private bool _isAppletMenuActive;
-        private int _statusBarProgressMaximum;
-        private int _statusBarProgressValue;
-        private string _statusBarProgressStatusText;
-        private bool _statusBarProgressStatusVisible;
-        private bool _isPaused;
-        private bool _showContent = true;
-        private bool _isLoadingIndeterminate = true;
-        private bool _showAll;
-        private string _lastScannedAmiiboId;
-        private bool _statusBarVisible;
-        private ReadOnlyObservableCollection<ApplicationData> _appsObservableList;
-
         private string _showUiKey = "F4";
         private string _pauseKey = "F5";
         private string _screenshotKey = "F8";
         private float _volume;
-        private float _volumeBeforeMute;
-        private string _backendText;
-
-        private bool _areMimeTypesRegistered = FileAssociationHelper.AreMimeTypesRegistered;
-        private bool _canUpdate = true;
-        private Cursor _cursor;
-        private string _title;
         private ApplicationData _currentApplicationData;
         private readonly AutoResetEvent _rendererWaitEvent;
-        private WindowState _windowState;
-        private double _windowWidth;
-        private double _windowHeight;
         private int _customVSyncInterval;
         private int _customVSyncIntervalPercentageProxy;
 
-        private bool _isActive;
-        private bool _isSubMenuOpen;
-
-        private ApplicationData _listSelectedApplication;
-        private ApplicationData _gridSelectedApplication;
-        private ApplicationContextMenu _listAppContextMenu;
-        private ApplicationContextMenu _gridAppContextMenu;
-
         public ApplicationData ListSelectedApplication
         {
-            get => _listSelectedApplication;
+            get;
             set
             {
-                _listSelectedApplication = value;
+                field = value;
 
-                if (_listSelectedApplication != null && _listAppContextMenu == null)
+                if (field != null && _listAppContextMenu == null)
                     ListAppContextMenu = new ApplicationContextMenu();
-                else if (_listSelectedApplication == null && _listAppContextMenu != null)
+                else if (field == null && _listAppContextMenu != null)
                     ListAppContextMenu = null;
 
                 OnPropertyChanged();
@@ -142,20 +137,20 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public ApplicationData GridSelectedApplication
         {
-            get => _gridSelectedApplication;
+            get;
             set
             {
-                _gridSelectedApplication = value;
+                field = value;
 
-                if (_gridSelectedApplication != null && _gridAppContextMenu == null)
+                if (field != null && _gridAppContextMenu == null)
                     GridAppContextMenu = new ApplicationContextMenu();
-                else if (_gridSelectedApplication == null && _gridAppContextMenu != null)
+                else if (field == null && _gridAppContextMenu != null)
                     GridAppContextMenu = null;
-                
+
                 OnPropertyChanged();
             }
         }
-        
+
         public IEnumerable<LdnGameData> LastLdnGameData;
 
         public MainWindow Window { get; init; }
@@ -169,6 +164,8 @@ namespace Ryujinx.Ava.UI.ViewModels
             Applications.ToObservableChangeSet()
                 .Filter(Filter)
                 .Sort(GetComparer())
+                .OnItemAdded(_ => OnPropertyChanged(nameof(AppsObservableList)))
+                .OnItemRemoved(_ => OnPropertyChanged(nameof(AppsObservableList)))
                 .Bind(out _appsObservableList)
                 .Subscribe();
 
@@ -239,31 +236,10 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public bool CanUpdate
         {
-            get => _canUpdate && EnableNonGameRunningControls && Updater.CanUpdate(false);
+            get => field && EnableNonGameRunningControls && Updater.CanUpdate(false);
             set
             {
-                _canUpdate = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Cursor Cursor
-        {
-            get => _cursor;
-            set
-            {
-                _cursor = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ReadOnlyObservableCollection<ApplicationData> AppsObservableList
-        {
-            get => _appsObservableList;
-            set
-            {
-                _appsObservableList = value;
-
+                field = value;
                 OnPropertyChanged();
             }
         }
@@ -290,34 +266,12 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
-        public bool IsPaused
-        {
-            get => _isPaused;
-            set
-            {
-                _isPaused = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public long LastFullscreenToggle
-        {
-            get => _lastFullscreenToggle;
-            set
-            {
-                _lastFullscreenToggle = value;
-
-                OnPropertyChanged();
-            }
-        }
-
         public bool StatusBarVisible
         {
-            get => _statusBarVisible && EnableNonGameRunningControls;
+            get => field && EnableNonGameRunningControls;
             set
             {
-                _statusBarVisible = value;
+                field = value;
 
                 OnPropertyChanged();
             }
@@ -326,17 +280,6 @@ namespace Ryujinx.Ava.UI.ViewModels
         public bool EnableNonGameRunningControls => !IsGameRunning;
 
         public bool ShowFirmwareStatus => !ShowLoadProgress;
-
-        public bool ShowRightmostSeparator 
-        {
-            get => _showRightmostSeparator;
-            set
-            {
-                _showRightmostSeparator = value;
-
-                OnPropertyChanged();
-            }
-        }
 
         public bool IsGameRunning
         {
@@ -360,20 +303,20 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public bool IsAmiiboRequested
         {
-            get => _isAmiiboRequested && _isGameRunning;
+            get => field && _isGameRunning;
             set
             {
-                _isAmiiboRequested = value;
+                field = value;
 
                 OnPropertyChanged();
             }
         }
         public bool IsAmiiboBinRequested
         {
-            get => _isAmiiboBinRequested && _isGameRunning;
+            get => field && _isGameRunning;
             set
             {
-                _isAmiiboBinRequested = value;
+                field = value;
 
                 OnPropertyChanged();
             }
@@ -383,68 +326,13 @@ namespace Ryujinx.Ava.UI.ViewModels
         
         public bool ShowLoadProgress
         {
-            get => _showLoadProgress;
+            get;
             set
             {
-                _showLoadProgress = value;
+                field = value;
 
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ShowFirmwareStatus));
-            }
-        }
-
-        public string GameStatusText
-        {
-            get => _gameStatusText;
-            set
-            {
-                _gameStatusText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsFullScreen
-        {
-            get => _isFullScreen;
-            set
-            {
-                _isFullScreen = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsSubMenuOpen
-        {
-            get => _isSubMenuOpen;
-            set
-            {
-                _isSubMenuOpen = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool ShowAll
-        {
-            get => _showAll;
-            set
-            {
-                _showAll = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string LastScannedAmiiboId
-        {
-            get => _lastScannedAmiiboId;
-            set
-            {
-                _lastScannedAmiiboId = value;
-
-                OnPropertyChanged();
             }
         }
 
@@ -471,62 +359,7 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public bool CreateShortcutEnabled => !ReleaseInformation.IsFlatHubBuild;
 
-        public string LoadHeading
-        {
-            get => _loadHeading;
-            set
-            {
-                _loadHeading = value;
-
-                OnPropertyChanged();
-            }
-        }
-
         public bool HasDlc => ApplicationLibrary.HasDlcs(SelectedApplication.Id);
-
-        public string CacheLoadStatus
-        {
-            get => _cacheLoadStatus;
-            set
-            {
-                _cacheLoadStatus = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public Brush ProgressBarBackgroundColor
-        {
-            get => _progressBarBackgroundColor;
-            set
-            {
-                _progressBarBackgroundColor = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public Brush ProgressBarForegroundColor
-        {
-            get => _progressBarForegroundColor;
-            set
-            {
-                _progressBarForegroundColor = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public Brush VSyncModeColor
-        {
-            get => _vSyncModeColor;
-            set
-            {
-                _vSyncModeColor = value;
-
-                OnPropertyChanged();
-            }
-        }
 
         public bool ShowCustomVSyncIntervalPicker
         {
@@ -537,10 +370,8 @@ namespace Ryujinx.Ava.UI.ViewModels
                     return AppHost.Device.VSyncMode ==
                            VSyncMode.Custom;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
             set
             {
@@ -598,165 +429,12 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
-        public byte[] SelectedIcon
-        {
-            get => _selectedIcon;
-            set
-            {
-                _selectedIcon = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public int ProgressMaximum
-        {
-            get => _progressMaximum;
-            set
-            {
-                _progressMaximum = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public int ProgressValue
-        {
-            get => _progressValue;
-            set
-            {
-                _progressValue = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public int StatusBarProgressMaximum
-        {
-            get => _statusBarProgressMaximum;
-            set
-            {
-                _statusBarProgressMaximum = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public int StatusBarProgressValue
-        {
-            get => _statusBarProgressValue;
-            set
-            {
-                _statusBarProgressValue = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool StatusBarProgressStatusVisible
-        {
-            get => _statusBarProgressStatusVisible;
-            set
-            {
-                _statusBarProgressStatusVisible = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string StatusBarProgressStatusText
-        {
-            get => _statusBarProgressStatusText;
-            set
-            {
-                _statusBarProgressStatusText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string FifoStatusText
-        {
-            get => _fifoStatusText;
-            set
-            {
-                _fifoStatusText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string GpuNameText
-        {
-            get => _gpuStatusText;
-            set
-            {
-                _gpuStatusText = value;
-
-                OnPropertyChanged();
-            }
-        }
-        
-        public string ShaderCountText
-        {
-            get => _shaderCountText;
-            set
-            {
-                _shaderCountText = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string BackendText
-        {
-            get => _backendText;
-            set
-            {
-                _backendText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
         public string VSyncModeText
         {
-            get => _vSyncModeText;
+            get;
             set
             {
-                _vSyncModeText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string DockedStatusText
-        {
-            get => _dockedStatusText;
-            set
-            {
-                _dockedStatusText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string AspectRatioStatusText
-        {
-            get => _aspectStatusText;
-            set
-            {
-                _aspectStatusText = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public string VolumeStatusText
-        {
-            get => _volumeStatusText;
-            set
-            {
-                _volumeStatusText = value;
+                field = value;
 
                 OnPropertyChanged();
             }
@@ -782,112 +460,12 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
-        public float VolumeBeforeMute
-        {
-            get => _volumeBeforeMute;
-            set
-            {
-                _volumeBeforeMute = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool ShowStatusSeparator
-        {
-            get => _showStatusSeparator;
-            set
-            {
-                _showStatusSeparator = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool ShowMenuAndStatusBar
-        {
-            get => _showMenuAndStatusBar;
-            set
-            {
-                _showMenuAndStatusBar = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsLoadingIndeterminate
-        {
-            get => _isLoadingIndeterminate;
-            set
-            {
-                _isLoadingIndeterminate = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsActive
-        {
-            get => _isActive;
-            set
-            {
-                _isActive = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-
-        public bool ShowContent
-        {
-            get => _showContent;
-            set
-            {
-                _showContent = value;
-
-                OnPropertyChanged();
-            }
-        }
-
         public bool IsAppletMenuActive
         {
-            get => _isAppletMenuActive && EnableNonGameRunningControls;
+            get => field && EnableNonGameRunningControls;
             set
             {
-                _isAppletMenuActive = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public WindowState WindowState
-        {
-            get => _windowState;
-            internal set
-            {
-                _windowState = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public double WindowWidth
-        {
-            get => _windowWidth;
-            set
-            {
-                _windowWidth = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public double WindowHeight
-        {
-            get => _windowHeight;
-            set
-            {
-                _windowHeight = value;
+                field = value;
 
                 OnPropertyChanged();
             }
@@ -949,17 +527,6 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
-        public string Title
-        {
-            get => _title;
-            set
-            {
-                _title = value;
-
-                OnPropertyChanged();
-            }
-        }
-
         public bool ShowConsoleVisible
         {
             get => ConsoleHelper.SetConsoleWindowStateSupported;
@@ -968,27 +535,6 @@ namespace Ryujinx.Ava.UI.ViewModels
         public bool ManageFileTypesVisible
         {
             get => FileAssociationHelper.IsTypeAssociationSupported;
-        }
-
-        public bool AreMimeTypesRegistered
-        {
-            get => _areMimeTypesRegistered;
-            set {
-                _areMimeTypesRegistered = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollectionExtended<ApplicationData> Applications
-        {
-            get => _applications;
-            set
-            {
-                _applications = value;
-
-                OnPropertyChanged();
-            }
         }
 
         public Glyph Glyph
@@ -1225,9 +771,10 @@ namespace Ryujinx.Ava.UI.ViewModels
             Applications.ToObservableChangeSet()
                 .Filter(Filter)
                 .Sort(GetComparer())
-                .Bind(out _appsObservableList).AsObservableList();
+                .Bind(out ReadOnlyObservableCollection<ApplicationData> apps)
+                .AsObservableList();
 
-            OnPropertyChanged(nameof(AppsObservableList));
+            AppsObservableList = apps;
         }
 
         private bool Filter(object arg)
@@ -1338,7 +885,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
             catch (MissingKeyException ex)
             {
-                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime)
                 {
                     Logger.Error?.Print(LogClass.Application, ex.ToString());
 
@@ -1570,7 +1117,7 @@ namespace Ryujinx.Ava.UI.ViewModels
 
                     VSyncModeText = args.VSyncMode == "Custom" ? "Custom" : "VSync";
                     ShowCustomVSyncIntervalPicker =
-                        args.VSyncMode == VSyncMode.Custom.ToString();
+                        args.VSyncMode == nameof(VSyncMode.Custom);
                     DockedStatusText = args.DockedMode;
                     AspectRatioStatusText = args.AspectRatio;
                     GameStatusText = args.GameStatus;
@@ -1604,7 +1151,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 var dirs = result.Select(it => it.Path.LocalPath).ToList();
                 var numAdded = onDirsSelected(dirs, out int numRemoved);
 
-                var msg = String.Join("\r\n", new string[] {
+                var msg = String.Join("\r\n", new[] {
                     string.Format(LocaleManager.Instance[localeMessageRemovedKey], numRemoved),
                     string.Format(LocaleManager.Instance[localeMessageAddedKey], numAdded)
                 });
@@ -2288,11 +1835,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 switch (operationOutcome)
                 {
                     case XCIFileTrimmer.OperationOutcome.Successful:
-                        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                        {
-                            if (desktop.MainWindow is MainWindow mainWindow)
-                                mainWindow.LoadApplications();
-                        }
+                        App.MainWindow.LoadApplications();
                         break;
                 }
             }

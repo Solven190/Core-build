@@ -1,54 +1,51 @@
 using Avalonia.Svg.Skia;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.UI.Models.Input;
 using Ryujinx.Ava.UI.Views.Input;
 
 namespace Ryujinx.Ava.UI.ViewModels.Input
 {
-    public class ControllerInputViewModel : BaseModel
+    public partial class ControllerInputViewModel : BaseModel
     {
-        private GamepadInputConfig _config;
         public GamepadInputConfig Config
         {
-            get => _config;
+            get;
             set
             {
-                _config = value;
+                field = value;
 
                 OnPropertyChanged();
             }
         }
 
-        private StickVisualizer _visualizer;
         public StickVisualizer Visualizer
         {
-            get => _visualizer;
+            get;
             set
             {
-                _visualizer = value;
+                field = value;
 
                 OnPropertyChanged();
             }
         }
-        
-        private bool _isLeft;
+
         public bool IsLeft
         {
-            get => _isLeft;
+            get;
             set
             {
-                _isLeft = value;
+                field = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(HasSides));
             }
         }
 
-        private bool _isRight;
         public bool IsRight
         {
-            get => _isRight;
+            get;
             set
             {
-                _isRight = value;
+                field = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(HasSides));
             }
@@ -56,16 +53,8 @@ namespace Ryujinx.Ava.UI.ViewModels.Input
 
         public bool HasSides => IsLeft ^ IsRight;
         
+        [ObservableProperty]
         private SvgImage _image;
-        public SvgImage Image
-        {
-            get => _image;
-            set
-            {
-                _image = value;
-                OnPropertyChanged();
-            }
-        }
 
         public readonly InputViewModel ParentModel;
         

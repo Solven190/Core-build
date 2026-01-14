@@ -1,6 +1,7 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.Common;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.UI.Common.Configuration;
@@ -8,42 +9,16 @@ using System;
 
 namespace Ryujinx.Ava.UI.ViewModels
 {
-    public class AboutWindowViewModel : BaseModel, IDisposable
+    public partial class AboutWindowViewModel : BaseModel, IDisposable
     {
-        private Bitmap _gitlabLogo;
+        [ObservableProperty]
+        private Bitmap _gitLabLogo;
+
+        [ObservableProperty]
         private Bitmap _discordLogo;
 
+        [ObservableProperty]
         private string _version;
-
-        public Bitmap GitLabLogo
-        {
-            get => _gitlabLogo;
-            set
-            {
-                _gitlabLogo = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Bitmap DiscordLogo
-        {
-            get => _discordLogo;
-            set
-            {
-                _discordLogo = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string Version
-        {
-            get => _version;
-            set
-            {
-                _version = value;
-                OnPropertyChanged();
-            }
-        }
 
         public string FormerDevelopers => LocaleManager.Instance.UpdateAndGetDynamicValue(LocaleKeys.AboutPageDeveloperListMore, "gdkchan, Ac_K, marysaka, rip in peri peri, LDj3SNuD, emmaus, Thealexbarney, GoffyDude, TSRBerry, IsaacMarovitz");
 

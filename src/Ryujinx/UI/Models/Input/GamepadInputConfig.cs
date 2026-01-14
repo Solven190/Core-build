@@ -1,12 +1,12 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Common.Configuration.Hid.Controller.Motion;
-using System;
 
 namespace Ryujinx.Ava.UI.Models.Input
 {
-    public class GamepadInputConfig : BaseModel
+    public partial class GamepadInputConfig : BaseModel
     {
         public bool EnableCemuHookMotion { get; set; }
         public string DsuServerHost { get; set; }
@@ -24,390 +24,110 @@ namespace Ryujinx.Ava.UI.Models.Input
         public ControllerType ControllerType { get; set; }
         public PlayerIndex PlayerIndex { get; set; }
 
+        [ObservableProperty]
         private StickInputId _leftJoystick;
-        public StickInputId LeftJoystick
-        {
-            get => _leftJoystick;
-            set
-            {
-                _leftJoystick = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _leftInvertStickX;
-        public bool LeftInvertStickX
-        {
-            get => _leftInvertStickX;
-            set
-            {
-                _leftInvertStickX = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _leftInvertStickY;
-        public bool LeftInvertStickY
-        {
-            get => _leftInvertStickY;
-            set
-            {
-                _leftInvertStickY = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _leftRotate90;
-        public bool LeftRotate90
-        {
-            get => _leftRotate90;
-            set
-            {
-                _leftRotate90 = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _leftStickButton;
-        public GamepadInputId LeftStickButton
-        {
-            get => _leftStickButton;
-            set
-            {
-                _leftStickButton = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private StickInputId _rightJoystick;
-        public StickInputId RightJoystick
-        {
-            get => _rightJoystick;
-            set
-            {
-                _rightJoystick = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _rightInvertStickX;
-        public bool RightInvertStickX
-        {
-            get => _rightInvertStickX;
-            set
-            {
-                _rightInvertStickX = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _rightInvertStickY;
-        public bool RightInvertStickY
-        {
-            get => _rightInvertStickY;
-            set
-            {
-                _rightInvertStickY = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _rightRotate90;
-        public bool RightRotate90
-        {
-            get => _rightRotate90;
-            set
-            {
-                _rightRotate90 = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _rightStickButton;
-        public GamepadInputId RightStickButton
-        {
-            get => _rightStickButton;
-            set
-            {
-                _rightStickButton = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _dpadUp;
-        public GamepadInputId DpadUp
-        {
-            get => _dpadUp;
-            set
-            {
-                _dpadUp = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _dpadDown;
-        public GamepadInputId DpadDown
-        {
-            get => _dpadDown;
-            set
-            {
-                _dpadDown = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _dpadLeft;
-        public GamepadInputId DpadLeft
-        {
-            get => _dpadLeft;
-            set
-            {
-                _dpadLeft = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _dpadRight;
-        public GamepadInputId DpadRight
-        {
-            get => _dpadRight;
-            set
-            {
-                _dpadRight = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private GamepadInputId _buttonL;
-        public GamepadInputId ButtonL
-        {
-            get => _buttonL;
-            set
-            {
-                _buttonL = value;
-                OnPropertyChanged();
-            }
-        }
 
-        private GamepadInputId _buttonMinus;
-        public GamepadInputId ButtonMinus
-        {
-            get => _buttonMinus;
-            set
-            {
-                _buttonMinus = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _leftButtonSl;
-        public GamepadInputId LeftButtonSl
-        {
-            get => _leftButtonSl;
-            set
-            {
-                _leftButtonSl = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _leftButtonSr;
-        public GamepadInputId LeftButtonSr
-        {
-            get => _leftButtonSr;
-            set
-            {
-                _leftButtonSr = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _buttonZl;
-        public GamepadInputId ButtonZl
-        {
-            get => _buttonZl;
-            set
-            {
-                _buttonZl = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _buttonA;
-        public GamepadInputId ButtonA
-        {
-            get => _buttonA;
-            set
-            {
-                _buttonA = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _buttonB;
-        public GamepadInputId ButtonB
-        {
-            get => _buttonB;
-            set
-            {
-                _buttonB = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _buttonX;
-        public GamepadInputId ButtonX
-        {
-            get => _buttonX;
-            set
-            {
-                _buttonX = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private GamepadInputId _buttonY;
-        public GamepadInputId ButtonY
-        {
-            get => _buttonY;
-            set
-            {
-                _buttonY = value;
-                OnPropertyChanged();
-            }
-        }
-
+        [ObservableProperty]
         private GamepadInputId _buttonR;
-        public GamepadInputId ButtonR
-        {
-            get => _buttonR;
-            set
-            {
-                _buttonR = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
+        private GamepadInputId _buttonMinus;
+
+        [ObservableProperty]
         private GamepadInputId _buttonPlus;
-        public GamepadInputId ButtonPlus
-        {
-            get => _buttonPlus;
-            set
-            {
-                _buttonPlus = value;
-                OnPropertyChanged();
-            }
-        }
 
-        private GamepadInputId _rightButtonSl;
-        public GamepadInputId RightButtonSl
-        {
-            get => _rightButtonSl;
-            set
-            {
-                _rightButtonSl = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private GamepadInputId _leftButtonSl;
 
-        private GamepadInputId _rightButtonSr;
-        public GamepadInputId RightButtonSr
-        {
-            get => _rightButtonSr;
-            set
-            {
-                _rightButtonSr = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private GamepadInputId _leftButtonSr;
 
+        [ObservableProperty]
+        private GamepadInputId _buttonZl;
+
+        [ObservableProperty]
         private GamepadInputId _buttonZr;
-        public GamepadInputId ButtonZr
-        {
-            get => _buttonZr;
-            set
-            {
-                _buttonZr = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
+        private GamepadInputId _buttonA;
+
+        [ObservableProperty]
+        private GamepadInputId _buttonB;
+
+        [ObservableProperty]
+        private GamepadInputId _buttonX;
+
+        [ObservableProperty]
+        private GamepadInputId _buttonY;
+
+        [ObservableProperty]
+        private GamepadInputId _rightButtonSl;
+
+        [ObservableProperty]
+        private GamepadInputId _rightButtonSr;
+
+        [ObservableProperty]
         private float _deadzoneLeft;
-        public float DeadzoneLeft
-        {
-            get => _deadzoneLeft;
-            set
-            {
-                _deadzoneLeft = MathF.Round(value, 3);
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private float _deadzoneRight;
-        public float DeadzoneRight
-        {
-            get => _deadzoneRight;
-            set
-            {
-                _deadzoneRight = MathF.Round(value, 3);
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private float _rangeLeft;
-        public float RangeLeft
-        {
-            get => _rangeLeft;
-            set
-            {
-                _rangeLeft = MathF.Round(value, 3);
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private float _rangeRight;
-        public float RangeRight
-        {
-            get => _rangeRight;
-            set
-            {
-                _rangeRight = MathF.Round(value, 3);
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private float _triggerThreshold;
-        public float TriggerThreshold
-        {
-            get => _triggerThreshold;
-            set
-            {
-                _triggerThreshold = MathF.Round(value, 3);
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _enableMotion;
-        public bool EnableMotion
-        {
-            get => _enableMotion;
-            set
-            {
-                _enableMotion = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         private bool _enableRumble;
-        public bool EnableRumble
-        {
-            get => _enableRumble;
-            set
-            {
-                _enableRumble = value;
-                OnPropertyChanged();
-            }
-        }
 
         public GamepadInputConfig(InputConfig config)
         {

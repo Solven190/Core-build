@@ -2,6 +2,7 @@ using Avalonia.Collections;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentAvalonia.UI.Controls;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Helpers;
@@ -15,57 +16,24 @@ using Application = Avalonia.Application;
 
 namespace Ryujinx.Ava.UI.ViewModels
 {
-    public record TitleUpdateViewNoUpdateSentinal();
+    public record TitleUpdateViewNoUpdateSentinal;
 
-    public class TitleUpdateViewModel : BaseModel
+    public partial class TitleUpdateViewModel : BaseModel
     {
         private ApplicationLibrary ApplicationLibrary { get; }
         private ApplicationData ApplicationData { get; }
 
+        [ObservableProperty]
         private AvaloniaList<TitleUpdateModel> _titleUpdates = [];
+
+        [ObservableProperty]
         private AvaloniaList<object> _views = [];
+        
+        [ObservableProperty]
         private object _selectedUpdate = new TitleUpdateViewNoUpdateSentinal();
-        private bool _showBundledContentNotice = false;
 
-        public AvaloniaList<TitleUpdateModel> TitleUpdates
-        {
-            get => _titleUpdates;
-            set
-            {
-                _titleUpdates = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public AvaloniaList<object> Views
-        {
-            get => _views;
-            set
-            {
-                _views = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public object SelectedUpdate
-        {
-            get => _selectedUpdate;
-            set
-            {
-                _selectedUpdate = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool ShowBundledContentNotice
-        {
-            get => _showBundledContentNotice;
-            set
-            {
-                _showBundledContentNotice = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        private bool _showBundledContentNotice;
 
         public IStorageProvider StorageProvider;
 

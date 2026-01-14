@@ -1,32 +1,15 @@
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.UI.ViewModels;
 
 namespace Ryujinx.Ava.UI.Models
 {
-    public class ProfileImageModel : BaseModel
+    public partial class ProfileImageModel(string name, byte[] data) : BaseModel
     {
-        public ProfileImageModel(string name, byte[] data)
-        {
-            Name = name;
-            Data = data;
-        }
+        public string Name { get; set; } = name;
+        public byte[] Data { get; set; } = data;
 
-        public string Name { get; set; }
-        public byte[] Data { get; set; }
-
+        [ObservableProperty]
         private SolidColorBrush _backgroundColor = new(Colors.White);
-
-        public SolidColorBrush BackgroundColor
-        {
-            get
-            {
-                return _backgroundColor;
-            }
-            set
-            {
-                _backgroundColor = value;
-                OnPropertyChanged();
-            }
-        }
     }
 }

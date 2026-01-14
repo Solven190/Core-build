@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LibHac.Common;
 using LibHac.Fs;
 using LibHac.Fs.Fsa;
@@ -20,58 +21,38 @@ using Image = SkiaSharp.SKImage;
 
 namespace Ryujinx.Ava.UI.ViewModels
 {
-    internal class UserFirmwareAvatarSelectorViewModel : BaseModel
+    internal partial class UserFirmwareAvatarSelectorViewModel : BaseModel
     {
         private static readonly Dictionary<string, byte[]> _avatarStore = new();
 
+        [ObservableProperty]
         private ObservableCollection<ProfileImageModel> _images;
-        private Color _backgroundColor = Colors.White;
 
-        private int _selectedIndex;
+        [ObservableProperty]
+        private Color _backgroundColor = Colors.White;
 
         public UserFirmwareAvatarSelectorViewModel()
         {
             _images = [];
 
             LoadImagesFromStore();
-        }
-
-        public Color BackgroundColor
-        {
-            get => _backgroundColor;
-            set
+            PropertyChanged += (_, args) =>
             {
-                _backgroundColor = value;
-                OnPropertyChanged();
-                ChangeImageBackground();
-            }
-        }
-
-        public ObservableCollection<ProfileImageModel> Images
-        {
-            get => _images;
-            set
-            {
-                _images = value;
-                OnPropertyChanged();
-            }
+                if (args.PropertyName == nameof(BackgroundColor))
+                    ChangeImageBackground();
+            };
         }
 
         public int SelectedIndex
         {
-            get => _selectedIndex;
+            get;
             set
             {
-                _selectedIndex = value;
+                field = value;
 
-                if (_selectedIndex == -1)
-                {
-                    SelectedImage = null;
-                }
-                else
-                {
-                    SelectedImage = _images[_selectedIndex].Data;
-                }
+                SelectedImage = field == -1
+                    ? null
+                    : Images[field].Data;
 
                 OnPropertyChanged();
             }
