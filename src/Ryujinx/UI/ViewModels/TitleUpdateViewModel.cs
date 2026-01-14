@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FluentAvalonia.UI.Controls;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Helpers;
+using Ryujinx.Common.Utilities;
 using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Models;
 using System.Collections.Generic;
@@ -154,6 +155,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public async Task Add()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 AllowMultiple = true,
@@ -182,6 +185,11 @@ namespace Ryujinx.Ava.UI.ViewModels
             if (totalUpdatesAdded > 0)
             {
                 await ShowNewUpdatesAddedDialog(totalUpdatesAdded);
+            }
+            
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 

@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using Ryujinx.Ava.UI.ViewModels;
+using Ryujinx.Common.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace Ryujinx.Ava.UI.Views.Settings
 
         private async void AddGameDirButton_OnClick(object sender, RoutedEventArgs e)
         {
+            OsUtils.SetCoreDumpable(true);
+
             string path = GameDirPathBox.Text;
 
             if (!string.IsNullOrWhiteSpace(path) && Directory.Exists(path) && !ViewModel.GameDirectories.Contains(path))
@@ -43,6 +46,11 @@ namespace Ryujinx.Ava.UI.Views.Settings
                     }
                 }
             }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
         private void RemoveGameDirButton_OnClick(object sender, RoutedEventArgs e)
@@ -63,6 +71,8 @@ namespace Ryujinx.Ava.UI.Views.Settings
 
         private async void AddAutoloadDirButton_OnClick(object sender, RoutedEventArgs e)
         {
+            OsUtils.SetCoreDumpable(true);
+
             string path = AutoloadDirPathBox.Text;
 
             if (!string.IsNullOrWhiteSpace(path) && Directory.Exists(path) && !ViewModel.AutoloadDirectories.Contains(path))
@@ -85,6 +95,11 @@ namespace Ryujinx.Ava.UI.Views.Settings
                         ViewModel.AutoloadDirectoryChanged = true;
                     }
                 }
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 

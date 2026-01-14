@@ -10,6 +10,7 @@ using Ryujinx.Ava.UI.Helpers;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Ava.UI.Windows;
 using Ryujinx.Common.Configuration;
+using Ryujinx.Common.Utilities;
 using Ryujinx.HLE.HOS;
 using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Helper;
@@ -391,6 +392,8 @@ namespace Ryujinx.Ava.UI.Controls
 
         public async void ExtractApplicationLogo_Click(object sender, RoutedEventArgs args)
         {
+            OsUtils.SetCoreDumpable(true);
+
             var viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
 
             if (viewModel?.SelectedApplication is { } selectedApp)
@@ -419,6 +422,11 @@ namespace Ryujinx.Ava.UI.Controls
 
                     fileStream.Write(selectedApp.Icon);
                 }
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 

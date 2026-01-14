@@ -7,6 +7,7 @@ using DynamicData;
 using FluentAvalonia.UI.Controls;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Helpers;
+using Ryujinx.Common.Utilities;
 using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Models;
 using System.Collections.Generic;
@@ -137,6 +138,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public async void Add()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await _storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.SelectDlcDialogTitle],
@@ -166,6 +169,11 @@ namespace Ryujinx.Ava.UI.ViewModels
             if (totalDlcAdded > 0)
             {
                 await ShowNewDlcAddedDialog(totalDlcAdded);
+            }
+            
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 

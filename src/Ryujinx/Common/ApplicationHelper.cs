@@ -16,6 +16,7 @@ using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Controls;
 using Ryujinx.Ava.UI.Helpers;
 using Ryujinx.Common.Logging;
+using Ryujinx.Common.Utilities;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS.Services.Account.Acc;
 using Ryujinx.HLE.Loaders.Processes.Extensions;
@@ -419,6 +420,8 @@ namespace Ryujinx.Ava.Common
 
         public static async Task ExtractAoc(IStorageProvider storageProvider, string updateFilePath, string updateName)
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.FolderDialogExtractTitle],
@@ -431,11 +434,18 @@ namespace Ryujinx.Ava.Common
             }
 
             ExtractAoc(result[0].Path.LocalPath, updateFilePath, updateName);
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
 
         public static async Task ExtractSection(IStorageProvider storageProvider, NcaSectionType ncaSectionType, string titleFilePath, string titleName, int programIndex = 0)
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.FolderDialogExtractTitle],
@@ -448,6 +458,11 @@ namespace Ryujinx.Ava.Common
             }
 
             ExtractSection(result[0].Path.LocalPath, ncaSectionType, titleFilePath, titleName, programIndex);
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
         public static (Result? result, bool canceled) CopyDirectory(FileSystemClient fs, string sourcePath, string destPath, CancellationToken token)

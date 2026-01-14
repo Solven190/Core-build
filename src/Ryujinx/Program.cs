@@ -33,6 +33,7 @@ namespace Ryujinx.Ava
         public static string ConfigurationPath { get; private set; }
         public static bool PreviewerDetached { get; private set; }
         public static bool UseHardwareAcceleration { get; private set; }
+        public static bool CoreDumpArg { get; private set; }
 
         [LibraryImport("user32.dll", SetLastError = true)]
         public static partial int MessageBoxA(nint hWnd, [MarshalAs(UnmanagedType.LPStr)] string text, [MarshalAs(UnmanagedType.LPStr)] string caption, uint type);
@@ -50,6 +51,8 @@ namespace Ryujinx.Ava
 
             bool noGuiArg = ConsumeCommandLineArgument(ref args, "--no-gui") || ConsumeCommandLineArgument(ref args, "nogui");
             bool coreDumpArg = ConsumeCommandLineArgument(ref args, "--core-dumps");
+
+            CoreDumpArg = coreDumpArg;
 
             // TODO: Ryujinx causes core dumps on Linux when it exits "uncleanly", eg. through an unhandled exception.
             //       This is undesirable and causes very odd behavior during development (the process stops responding, 
@@ -81,13 +84,11 @@ namespace Ryujinx.Ava
                 .UsePlatformDetect()
                 .With(new X11PlatformOptions
                 {
-                    EnableMultiTouch = true,
                     EnableIme = true,
                     EnableInputFocusProxy = Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP") == "gamescope",
                     RenderingMode = UseHardwareAcceleration ?
                         new[] { X11RenderingMode.Glx, X11RenderingMode.Software } :
                         new[] { X11RenderingMode.Software },
-                    UseDBusFilePicker = false,
                 })
                 .With(new Win32PlatformOptions
                 {

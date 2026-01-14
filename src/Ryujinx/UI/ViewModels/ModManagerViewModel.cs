@@ -296,6 +296,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public async void Add()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await _storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.SelectModDialogTitle],
@@ -305,6 +307,11 @@ namespace Ryujinx.Ava.UI.ViewModels
             foreach (var folder in result)
             {
                 AddMod(new DirectoryInfo(folder.Path.LocalPath));
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 

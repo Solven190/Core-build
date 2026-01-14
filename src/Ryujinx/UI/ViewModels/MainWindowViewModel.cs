@@ -1140,6 +1140,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         private async Task LoadContentFromFolder(LocaleKeys localeMessageAddedKey, LocaleKeys localeMessageRemovedKey, LoadContentFromFolderDelegate onDirsSelected)
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.OpenFolderDialogTitle],
@@ -1162,6 +1164,11 @@ namespace Ryujinx.Ava.UI.ViewModels
                         LocaleManager.Instance[numAdded > 0 || numRemoved > 0 ? LocaleKeys.RyujinxConfirm : LocaleKeys.RyujinxInfo],
                         msg, "", "", "", LocaleManager.Instance[LocaleKeys.InputDialogOk], (int)Symbol.Checkmark);
                 });
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 
@@ -1241,6 +1248,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public async Task InstallFirmwareFromFile()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 AllowMultiple = false,
@@ -1271,10 +1280,17 @@ namespace Ryujinx.Ava.UI.ViewModels
             {
                 await HandleFirmwareInstallation(result[0].Path.LocalPath);
             }
+            
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
         public async Task InstallFirmwareFromFolder()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 AllowMultiple = false,
@@ -1284,10 +1300,17 @@ namespace Ryujinx.Ava.UI.ViewModels
             {
                 await HandleFirmwareInstallation(result[0].Path.LocalPath);
             }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
         public async Task InstallKeysFromFile()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 AllowMultiple = false,
@@ -1318,10 +1341,17 @@ namespace Ryujinx.Ava.UI.ViewModels
             {
                 await HandleKeysInstallation(result[0].Path.LocalPath);
             }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
         public async Task InstallKeysFromFolder()
         {
+            OsUtils.SetCoreDumpable(true);
+            
             var result = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 AllowMultiple = false,
@@ -1330,6 +1360,11 @@ namespace Ryujinx.Ava.UI.ViewModels
             if (result.Count > 0)
             {
                 await HandleKeysInstallation(result[0].Path.LocalPath);
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 
@@ -1432,6 +1467,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public async Task OpenFile()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.OpenFileDialogTitle],
@@ -1503,6 +1540,11 @@ namespace Ryujinx.Ava.UI.ViewModels
                     await ContentDialogHelper.CreateErrorDialog(LocaleManager.Instance[LocaleKeys.MenuBarFileOpenFromFileError]);
                 }
             }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
+            }
         }
 
         public async Task LoadDlcFromFolder()
@@ -1523,6 +1565,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public async Task OpenFolder()
         {
+            OsUtils.SetCoreDumpable(true);
+
             var result = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.OpenFolderDialogTitle],
@@ -1538,6 +1582,11 @@ namespace Ryujinx.Ava.UI.ViewModels
                 };
 
                 await LoadApplication(applicationData);
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 
@@ -1706,6 +1755,8 @@ namespace Ryujinx.Ava.UI.ViewModels
         }
         public async Task OpenBinFile()
         {
+            OsUtils.SetCoreDumpable(true);
+
             if (AppHost.Device.System.SearchingForAmiibo(out _) && IsGameRunning)
             {
                 var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -1723,6 +1774,11 @@ namespace Ryujinx.Ava.UI.ViewModels
                 if (result.Count > 0)
                 {
                     AppHost.Device.System.ScanAmiiboFromBin(result[0].Path.LocalPath);
+                }
+
+                if (!Program.CoreDumpArg)
+                {
+                    OsUtils.SetCoreDumpable(false);
                 }
             }
         }

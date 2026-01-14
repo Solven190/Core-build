@@ -8,6 +8,7 @@ using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Controls;
 using Ryujinx.Ava.UI.Models;
 using Ryujinx.Ava.UI.ViewModels;
+using Ryujinx.Common.Utilities;
 using Ryujinx.HLE.FileSystem;
 using SkiaSharp;
 using System.Collections.Generic;
@@ -63,6 +64,8 @@ namespace Ryujinx.Ava.UI.Views.User
 
         private async void Import_OnClick(object sender, RoutedEventArgs e)
         {
+            OsUtils.SetCoreDumpable(true);
+            
             if (this.GetVisualRoot() is Window window)
             {
                 var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -84,6 +87,11 @@ namespace Ryujinx.Ava.UI.Views.User
                     _profile.Image = ProcessProfileImage(File.ReadAllBytes(result[0].Path.LocalPath));
                     _parent.GoBack();
                 }
+            }
+
+            if (!Program.CoreDumpArg)
+            {
+                OsUtils.SetCoreDumpable(false);
             }
         }
 
