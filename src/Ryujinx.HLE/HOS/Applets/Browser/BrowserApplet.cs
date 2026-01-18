@@ -37,11 +37,17 @@ namespace Ryujinx.HLE.HOS.Applets.Browser
                 Logger.Stub?.PrintStub(LogClass.ServiceAm, $"{argument.Type}: {argument.GetValue()}");
             }
 
+            // Web and Offline browser applets use LastUrl as the completion result.
+            // Non-navigation shims (Shop, Login, Share, etc.) do not depend on navigation state and expect ExitButton.
+            WebExitReason exitReason = (_shimKind == ShimKind.Web || _shimKind == ShimKind.Offline)
+                ? WebExitReason.LastUrl
+                : WebExitReason.ExitButton;
+
             if ((_commonArguments.AppletVersion >= 0x80000 && _shimKind == ShimKind.Web) || (_commonArguments.AppletVersion >= 0x30000 && _shimKind == ShimKind.Share))
             {
                 List<BrowserOutput> result =
                 [
-                    new(BrowserOutputType.ExitReason, (uint)WebExitReason.ExitButton)
+                    new(BrowserOutputType.ExitReason, (uint)exitReason)
                 ];
 
                 _normalSession.Push(BuildResponseNew(result));
@@ -50,7 +56,7 @@ namespace Ryujinx.HLE.HOS.Applets.Browser
             {
                 WebCommonReturnValue result = new()
                 {
-                    ExitReason = WebExitReason.ExitButton,
+                    ExitReason = exitReason,
                 };
 
                 _normalSession.Push(BuildResponseOld(result));
