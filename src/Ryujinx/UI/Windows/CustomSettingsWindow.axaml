@@ -32,6 +32,7 @@
             <settings:CustomSettingsSystemView Name="SystemPage" />
             <settings:CustomSettingsCPUView Name="CpuPage" />
             <settings:CustomSettingsGraphicsView Name="GraphicsPage" />
+            <settings:CustomSettingsAudioView Name="AudioPage" />
         </Grid>
         <ui:NavigationView
             Grid.Row="1"
@@ -82,6 +83,10 @@
                     Content="{locale:Locale SettingsTabGraphics}"
                     Tag="GraphicsPage"
                     IconSource="Image" />
+                <ui:NavigationViewItem
+                    Content="{locale:Locale SettingsTabAudio}"
+                    IconSource="Audio"
+                    Tag="AudioPage" />
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.Styles>
                 <Style Selector="Grid#PlaceholderGrid">

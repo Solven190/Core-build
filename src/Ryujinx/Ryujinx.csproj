@@ -178,5 +178,8 @@
     <Compile Update="UI\Windows\CustomSettingsWindow.axaml.cs">
       <DependentUpon>CustomSettingsWindow.axaml</DependentUpon>
     </Compile>
+    <Compile Update="UI\Views\Settings\CustomSettingsAudioView.axaml.cs">
+      <DependentUpon>CustomSettingsAudioView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

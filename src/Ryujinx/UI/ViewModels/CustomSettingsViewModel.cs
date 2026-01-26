@@ -2,6 +2,9 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Ryujinx.Audio.Backends.OpenAL;
+using Ryujinx.Audio.Backends.SDL2;
+using Ryujinx.Audio.Backends.SoundIo;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.Helpers;
 using Ryujinx.Graphics.Vulkan;
@@ -131,11 +134,32 @@ namespace Ryujinx.Ava.UI.ViewModels
         public int MaxAnisotropyIndex { get; set; }
         public int BackendThreading { get; set; }
 
+        // Audio settings
+        public bool IsOpenAlEnabled { get; set; }
+        public bool IsSoundIoEnabled { get; set; }
+        public bool IsSDL2Enabled { get; set; }
+        public AudioBackend AudioBackend { get; set; }
+        
+        public float Volume
+        {
+            get;
+            set
+            {
+                field = value;
+
+                ConfigurationState.Instance.System.AudioVolume.Value = field / 100;
+
+                OnPropertyChanged();
+            }
+        }
+        
         public CustomSettingsViewModel(string titleId, byte[] icon, string titleName)
         {
             AvailableGpus = [];
             ApplicationIdBase = ulong.Parse(titleId, NumberStyles.HexNumber);
             CustomSettingsModel = CustomSettingsHelper.LoadCustomSettingsJson(CustomSettingsHelper.PathToGameSettingsJson(ApplicationIdBase));
+
+            Task.Run(CheckSoundBackends);
 
             if (icon is { Length: > 0 })
             {
@@ -150,6 +174,20 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
         }
 
+        public async Task CheckSoundBackends()
+        {
+            IsOpenAlEnabled = OpenALHardwareDeviceDriver.IsSupported;
+            IsSoundIoEnabled = SoundIoHardwareDeviceDriver.IsSupported;
+            IsSDL2Enabled = SDL2HardwareDeviceDriver.IsSupported;
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                OnPropertyChanged(nameof(IsOpenAlEnabled));
+                OnPropertyChanged(nameof(IsSoundIoEnabled));
+                OnPropertyChanged(nameof(IsSDL2Enabled));
+            });
+        }
+        
         private async Task LoadAvailableGpus()
         {
             AvailableGpus.Clear();
@@ -206,6 +244,8 @@ namespace Ryujinx.Ava.UI.ViewModels
                 ResScaleIndex = ComputeResScaleIndex(config.Graphics.ResScale);
                 MaxAnisotropyIndex = ComputeMaxAnisotropyIndex(config.Graphics.MaxAnisotropy);
                 BackendThreading = (int)config.Graphics.BackendThreading.Value;
+                AudioBackend = config.System.AudioBackend.Value;
+                Volume = config.System.AudioVolume * 100;
             }
             else
             {
@@ -230,6 +270,8 @@ namespace Ryujinx.Ava.UI.ViewModels
                 ResScaleIndex = ComputeResScaleIndex(CustomSettingsModel.ResScale);
                 MaxAnisotropyIndex = ComputeMaxAnisotropyIndex(CustomSettingsModel.MaxAnisotropy);
                 BackendThreading = CustomSettingsModel.BackendThreading;
+                AudioBackend = CustomSettingsModel.AudioBackend;
+                Volume = CustomSettingsModel.AudioVolume * 100;
             }
         }
 
@@ -263,6 +305,8 @@ namespace Ryujinx.Ava.UI.ViewModels
             CustomSettingsModel.ResScale = ComputeResScale(ResScaleIndex);
             CustomSettingsModel.MaxAnisotropy = ComputeMaxAnisotropy(MaxAnisotropyIndex);
             CustomSettingsModel.BackendThreading = BackendThreading;
+            CustomSettingsModel.AudioBackend = AudioBackend;
+            CustomSettingsModel.AudioVolume = Volume / 100;
             CustomSettingsHelper.SaveCustomSettingsJson(CustomSettingsHelper.PathToGameSettingsJson(ApplicationIdBase), CustomSettingsModel);
         }
 

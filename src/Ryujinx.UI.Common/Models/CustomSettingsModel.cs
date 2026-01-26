@@ -28,5 +28,10 @@ namespace Ryujinx.UI.Common.Models
         public float ResScale { get; set; }
         public float MaxAnisotropy { get; set; }
         public int BackendThreading { get; set; }
+        public int IsOpenAlEnabled { get; set; }
+        public int IsSDL2Enabled { get; set; }
+        public int IsSoundIoEnabled { get; set; }
+        public AudioBackend AudioBackend { get; set; }
+        public float AudioVolume { get; set; }
     }
 }

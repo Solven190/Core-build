@@ -94,6 +94,9 @@ namespace Ryujinx.Ava.UI.Windows
                     case "GraphicsPage":
                         NavPanel.Content = GraphicsPage;
                         break;
+                    case "AudioPage":
+                        NavPanel.Content = AudioPage;
+                        break;
                     default:
                         throw new NotImplementedException();
                 }
