@@ -10,7 +10,7 @@ using static Ryujinx.Audio.Integration.IHardwareDeviceDriver;
 
 namespace Ryujinx.Audio.Backends.SoundIo
 {
-    public class SoundIoHardwareDeviceDriver : IHardwareDeviceDriver
+    public sealed class SoundIoHardwareDeviceDriver : IHardwareDeviceDriver
     {
         private readonly SoundIoContext _audioContext;
         private readonly SoundIoDeviceContext _audioDevice;
@@ -227,7 +227,7 @@ namespace Ryujinx.Audio.Backends.SoundIo
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {

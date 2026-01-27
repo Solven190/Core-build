@@ -1,6 +1,5 @@
-using Ryujinx.Common.Memory;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace Ryujinx.Audio.Backends.Apple.Native
 {

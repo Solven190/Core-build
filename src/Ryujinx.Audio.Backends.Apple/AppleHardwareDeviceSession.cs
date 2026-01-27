@@ -64,7 +64,7 @@ namespace Ryujinx.Audio.Backends.Apple
         {
             lock (_lock)
             {
-                var format = AppleHardwareDeviceDriver.GetAudioFormat(
+                AudioStreamBasicDescription format = AppleHardwareDeviceDriver.GetAudioFormat(
                     RequestedSampleFormat,
                     RequestedSampleRate,
                     RequestedChannelCount);

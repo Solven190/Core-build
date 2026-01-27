@@ -9,7 +9,8 @@ using System.Threading;
 
 namespace Ryujinx.Audio.Backends.OpenAL
 {
-    class OpenALHardwareDeviceSession : HardwareDeviceSessionOutputBase
+    // ReSharper disable once InconsistentNaming
+    sealed class OpenALHardwareDeviceSession : HardwareDeviceSessionOutputBase
     {
         private readonly OpenALHardwareDeviceDriver _driver;
         private readonly int _sourceId;
@@ -190,7 +191,7 @@ namespace Ryujinx.Audio.Backends.OpenAL
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing && _driver.Unregister(this))
             {

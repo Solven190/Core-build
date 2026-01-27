@@ -11,7 +11,7 @@ using static Ryujinx.Audio.Backends.SoundIo.Native.SoundIo;
 
 namespace Ryujinx.Audio.Backends.SoundIo
 {
-    class SoundIoHardwareDeviceSession : HardwareDeviceSessionOutputBase
+    sealed class SoundIoHardwareDeviceSession : HardwareDeviceSessionOutputBase
     {
         private readonly SoundIoHardwareDeviceDriver _driver;
         private readonly ConcurrentQueue<SoundIoAudioBuffer> _queuedBuffers;
@@ -428,7 +428,7 @@ namespace Ryujinx.Audio.Backends.SoundIo
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing && _driver.Unregister(this))
             {

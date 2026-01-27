@@ -10,7 +10,8 @@ using static Ryujinx.Audio.Integration.IHardwareDeviceDriver;
 
 namespace Ryujinx.Audio.Backends.OpenAL
 {
-    public class OpenALHardwareDeviceDriver : IHardwareDeviceDriver
+    // ReSharper disable once InconsistentNaming
+    public sealed class OpenALHardwareDeviceDriver : IHardwareDeviceDriver
     {
         private readonly ALDevice _device;
         private readonly ALContext _context;
@@ -148,7 +149,7 @@ namespace Ryujinx.Audio.Backends.OpenAL
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {

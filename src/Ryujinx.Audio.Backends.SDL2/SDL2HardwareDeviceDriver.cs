@@ -12,7 +12,7 @@ using static SDL2.SDL;
 
 namespace Ryujinx.Audio.Backends.SDL2
 {
-    public class SDL2HardwareDeviceDriver : IHardwareDeviceDriver
+    public sealed class SDL2HardwareDeviceDriver : IHardwareDeviceDriver
     {
         private readonly ManualResetEvent _updateRequiredEvent;
         private readonly ManualResetEvent _pauseEvent;
@@ -164,7 +164,7 @@ namespace Ryujinx.Audio.Backends.SDL2
             Dispose(true);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {

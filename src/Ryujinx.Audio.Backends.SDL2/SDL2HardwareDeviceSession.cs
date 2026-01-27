@@ -11,7 +11,7 @@ using static SDL2.SDL;
 
 namespace Ryujinx.Audio.Backends.SDL2
 {
-    class SDL2HardwareDeviceSession : HardwareDeviceSessionOutputBase
+    sealed class SDL2HardwareDeviceSession : HardwareDeviceSessionOutputBase
     {
         private readonly SDL2HardwareDeviceDriver _driver;
         private readonly ConcurrentQueue<SDL2AudioBuffer> _queuedBuffers;
@@ -211,7 +211,7 @@ namespace Ryujinx.Audio.Backends.SDL2
             return driverBuffer.DriverIdentifier != buffer.DataPointer;
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing && _driver.Unregister(this))
             {
