@@ -6,6 +6,7 @@
     <File Path="nuget.config" />
   </Folder>
   <Project Path="src/ARMeilleure/ARMeilleure.csproj" />
+  <Project Path="src/Ryujinx.Audio.Backends.Apple/Ryujinx.Audio.Backends.Apple.csproj" />
   <Project Path="src/Ryujinx.Audio.Backends.OpenAL/Ryujinx.Audio.Backends.OpenAL.csproj" />
   <Project Path="src/Ryujinx.Audio.Backends.SDL2/Ryujinx.Audio.Backends.SDL2.csproj" />
   <Project Path="src/Ryujinx.Audio.Backends.SoundIo/Ryujinx.Audio.Backends.SoundIo.csproj" />
