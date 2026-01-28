@@ -78,6 +78,7 @@ namespace Ryujinx.UI.Common.Helper
             ConfigurationState.Instance.System.EnableLowPowerPptc.Value = customSettingsModel.EnableLowPowerPptc;
             ConfigurationState.Instance.System.MemoryManagerMode.Value = (MemoryManagerMode)customSettingsModel.MemoryManagerMode;
             ConfigurationState.Instance.System.UseHypervisor.Value = customSettingsModel.UseHypervisor;
+            ConfigurationState.Instance.System.TickScalar.Value = customSettingsModel.TickScalar;
             ConfigurationState.Instance.System.AudioBackend.Value = customSettingsModel.AudioBackend;
             ConfigurationState.Instance.System.AudioVolume.Value = customSettingsModel.AudioVolume;
             ConfigurationState.Instance.Graphics.GraphicsBackend.Value = (GraphicsBackend)customSettingsModel.GraphicsBackend;

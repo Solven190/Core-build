@@ -116,10 +116,28 @@ namespace Ryujinx.Ava.UI.ViewModels
         public int DramSize { get; set; }
         public bool EnableFsIntegrityChecks { get; set; }
         public bool IgnoreMissingServices { get; set; }
+        
+        // CPU settings
         public bool EnablePptc { get; set; }
         public bool EnableLowPowerPptc { get; set; }
         public int MemoryManagerMode { get; set; }
         public bool UseHypervisor { get; set; }
+        public long TurboMultiplier
+        {
+            get;
+            set
+            {
+                if (field != value)
+                {
+                    field = value;
+
+                    OnPropertyChanged();
+                    OnPropertyChanged((nameof(TurboMultiplierPercentageText)));
+                }
+            }
+        }
+
+        public string TurboMultiplierPercentageText => $"{TurboMultiplier}%";
 
         // Graphics settings
         public int VSyncMode { get; set; }
@@ -235,6 +253,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 EnableLowPowerPptc = config.System.EnableLowPowerPptc.Value;
                 MemoryManagerMode = (int)config.System.MemoryManagerMode.Value;
                 UseHypervisor = config.System.UseHypervisor.Value;
+                TurboMultiplier = config.System.TickScalar.Value;
                 GraphicsBackend = (int)config.Graphics.GraphicsBackend.Value;
                 PreferredGpuIndex = ComputePreferredGpuIndex(config.Graphics.PreferredGpu.Value);
                 EnableShaderCache = config.Graphics.EnableShaderCache.Value;
@@ -261,6 +280,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 EnableLowPowerPptc = CustomSettingsModel.EnableLowPowerPptc;
                 MemoryManagerMode = CustomSettingsModel.MemoryManagerMode;
                 UseHypervisor = CustomSettingsModel.UseHypervisor;
+                TurboMultiplier = CustomSettingsModel.TickScalar;
                 GraphicsBackend = CustomSettingsModel.GraphicsBackend;
                 PreferredGpuIndex = ComputePreferredGpuIndex(CustomSettingsModel.PreferredGpu);
                 EnableShaderCache = CustomSettingsModel.EnableShaderCache;
@@ -297,6 +317,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             CustomSettingsModel.EnableLowPowerPptc = EnableLowPowerPptc;
             CustomSettingsModel.MemoryManagerMode = MemoryManagerMode;
             CustomSettingsModel.UseHypervisor = UseHypervisor;
+            CustomSettingsModel.TickScalar = TurboMultiplier;
             CustomSettingsModel.GraphicsBackend = GraphicsBackend;
             CustomSettingsModel.PreferredGpu = ComputePreferredGpu(PreferredGpuIndex);
             CustomSettingsModel.EnableShaderCache = EnableShaderCache;

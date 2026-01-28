@@ -19,6 +19,7 @@ namespace Ryujinx.UI.Common.Models
         public bool EnableLowPowerPptc { get; set; }
         public int MemoryManagerMode { get; set; }
         public bool UseHypervisor { get; set; }
+        public long TickScalar { get; set; }
         public int GraphicsBackend { get; set; }
         public string PreferredGpu { get; set; }
         public bool EnableShaderCache { get; set; }
@@ -28,9 +29,6 @@ namespace Ryujinx.UI.Common.Models
         public float ResScale { get; set; }
         public float MaxAnisotropy { get; set; }
         public int BackendThreading { get; set; }
-        public int IsOpenAlEnabled { get; set; }
-        public int IsSDL2Enabled { get; set; }
-        public int IsSoundIoEnabled { get; set; }
         public AudioBackend AudioBackend { get; set; }
         public float AudioVolume { get; set; }
     }
