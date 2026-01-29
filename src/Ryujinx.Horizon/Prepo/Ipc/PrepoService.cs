@@ -39,7 +39,20 @@ namespace Ryujinx.Horizon.Prepo.Ipc
         [CmifCommand(10100)] // 1.0.0-5.1.0
         [CmifCommand(10102)] // 6.0.0-9.2.0
         [CmifCommand(10104)] // 10.0.0+
-        public Result SaveReport([Buffer(HipcBufferFlags.In | HipcBufferFlags.Pointer)] ReadOnlySpan<byte> gameRoomBuffer, [Buffer(HipcBufferFlags.In | HipcBufferFlags.MapAlias)] ReadOnlySpan<byte> reportBuffer, [ClientProcessId] ulong pid)
+        public Result SaveReportOld([Buffer(HipcBufferFlags.In | HipcBufferFlags.Pointer)] ReadOnlySpan<byte> gameRoomBuffer, [Buffer(HipcBufferFlags.In | HipcBufferFlags.MapAlias)] ReadOnlySpan<byte> reportBuffer, [ClientProcessId] ulong pid)
+        {
+            if ((_permissionLevel & PrepoServicePermissionLevel.User) == 0)
+            {
+                return PrepoResult.PermissionDenied;
+            }
+
+            ProcessPlayReport(PlayReportKind.Normal, gameRoomBuffer, reportBuffer, pid, Uid.Null);
+
+            return Result.Success;
+        }
+
+        [CmifCommand(10106)] // 21.0.0+
+        public Result SaveReport([Buffer(HipcBufferFlags.In | HipcBufferFlags.Pointer)] ReadOnlySpan<byte> gameRoomBuffer, [Buffer(HipcBufferFlags.In | HipcBufferFlags.MapAlias)] ReadOnlySpan<byte> reportBuffer, [ClientProcessId] ulong pid, bool optInCheckEnabled)
         {
             if ((_permissionLevel & PrepoServicePermissionLevel.User) == 0)
             {
@@ -54,7 +67,20 @@ namespace Ryujinx.Horizon.Prepo.Ipc
         [CmifCommand(10101)] // 1.0.0-5.1.0
         [CmifCommand(10103)] // 6.0.0-9.2.0
         [CmifCommand(10105)] // 10.0.0+
-        public Result SaveReportWithUser(Uid userId, [Buffer(HipcBufferFlags.In | HipcBufferFlags.Pointer)] ReadOnlySpan<byte> gameRoomBuffer, [Buffer(HipcBufferFlags.In | HipcBufferFlags.MapAlias)] ReadOnlySpan<byte> reportBuffer, [ClientProcessId] ulong pid)
+        public Result SaveReportWithUserOld(Uid userId, [Buffer(HipcBufferFlags.In | HipcBufferFlags.Pointer)] ReadOnlySpan<byte> gameRoomBuffer, [Buffer(HipcBufferFlags.In | HipcBufferFlags.MapAlias)] ReadOnlySpan<byte> reportBuffer, [ClientProcessId] ulong pid)
+        {
+            if ((_permissionLevel & PrepoServicePermissionLevel.User) == 0)
+            {
+                return PrepoResult.PermissionDenied;
+            }
+
+            ProcessPlayReport(PlayReportKind.Normal, gameRoomBuffer, reportBuffer, pid, userId, true);
+
+            return Result.Success;
+        }
+
+        [CmifCommand(10107)] // 21.0.0+
+        public Result SaveReportWithUser(Uid userId, [Buffer(HipcBufferFlags.In | HipcBufferFlags.Pointer)] ReadOnlySpan<byte> gameRoomBuffer, [Buffer(HipcBufferFlags.In | HipcBufferFlags.MapAlias)] ReadOnlySpan<byte> reportBuffer, [ClientProcessId] ulong pid, bool optInCheckEnabled)
         {
             if ((_permissionLevel & PrepoServicePermissionLevel.User) == 0)
             {
