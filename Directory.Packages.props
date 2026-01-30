@@ -15,7 +15,7 @@
     <PackageVersion Include="Concentus" Version="2.2.2" />
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageVersion Include="DynamicData" Version="9.4.1" />
-    <PackageVersion Include="FluentAvaloniaUI" Version="2.4.1" />
+    <PackageVersion Include="FluentAvaloniaUI" Version="2.5.0" />
     <PackageVersion Include="Gommon" Version="2.8.0.4" />
     <PackageVersion Include="Humanizer" Version="3.0.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
