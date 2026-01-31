@@ -25,10 +25,10 @@ namespace Ryujinx.Input.SDL3
         private readonly Dictionary<GamepadButtonInputId,SDL_GamepadButton> _leftButtonsDriverMapping = new()
         {
             { GamepadButtonInputId.LeftStick , SDL_GamepadButton.SDL_GAMEPAD_BUTTON_LEFT_STICK },
-             {GamepadButtonInputId.DpadUp ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_NORTH},
-             {GamepadButtonInputId.DpadDown ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_SOUTH},
-             {GamepadButtonInputId.DpadLeft ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_EAST},
-             {GamepadButtonInputId.DpadRight ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_WEST},
+             {GamepadButtonInputId.DpadUp ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_WEST},
+             {GamepadButtonInputId.DpadDown ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_EAST},
+             {GamepadButtonInputId.DpadLeft ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_SOUTH},
+             {GamepadButtonInputId.DpadRight ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_NORTH},
              {GamepadButtonInputId.Minus ,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_START},
              {GamepadButtonInputId.LeftShoulder,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_LEFT_PADDLE1},
              {GamepadButtonInputId.LeftTrigger,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_LEFT_PADDLE2},
@@ -38,10 +38,10 @@ namespace Ryujinx.Input.SDL3
         private readonly Dictionary<GamepadButtonInputId,SDL_GamepadButton> _rightButtonsDriverMapping = new()
         {
              {GamepadButtonInputId.RightStick,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_LEFT_STICK},
-             {GamepadButtonInputId.A,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_EAST},
-             {GamepadButtonInputId.B,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_NORTH},
-             {GamepadButtonInputId.X,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_SOUTH},
-             {GamepadButtonInputId.Y,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_WEST},
+             {GamepadButtonInputId.A,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_SOUTH},
+             {GamepadButtonInputId.B,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_WEST},
+             {GamepadButtonInputId.X,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_EAST},
+             {GamepadButtonInputId.Y,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_NORTH},
              {GamepadButtonInputId.Plus,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_START},
              {GamepadButtonInputId.RightShoulder,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_RIGHT_PADDLE1},
              {GamepadButtonInputId.RightTrigger,SDL_GamepadButton.SDL_GAMEPAD_BUTTON_RIGHT_PADDLE2},
