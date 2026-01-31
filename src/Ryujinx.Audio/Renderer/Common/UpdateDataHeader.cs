@@ -17,7 +17,7 @@ namespace Ryujinx.Audio.Renderer.Common
         public uint MixesSize;
         public uint SinksSize;
         public uint PerformanceBufferSize;
-        public uint Unknown24;
+        public uint SplitterSize;
         public uint RenderInfoSize;
 
 #pragma warning disable IDE0051, CS0169 // Remove unused field

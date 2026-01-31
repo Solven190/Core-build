@@ -433,8 +433,12 @@ namespace Ryujinx.Audio.Renderer.Server
 
         public ResultCode UpdateSplitter(SplitterContext context)
         {
+            long initialInputConsumed = _inputReader.Consumed;
+
             if (context.Update(ref _inputReader))
             {
+                _inputReader.SetConsumed(initialInputConsumed + _inputHeader.SplitterSize);
+
                 return ResultCode.Success;
             }
 
