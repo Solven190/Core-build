@@ -396,5 +396,15 @@ namespace Ryujinx.Input.SDL3
 
             return SDL_GetGamepadButton(_gamepadHandle, button);
         }
+
+        public static bool IsJoyCon(SDL_JoystickID gamepadsId)
+        {
+            return SDL_GetGamepadNameForID(gamepadsId) is LeftName or RightName;
+        }
+
+        public static bool IsLeftJoyCon(SDL_JoystickID gamepadsId)
+        {
+            return SDL_GetGamepadNameForID(gamepadsId) is LeftName;
+        }
     }
 }
