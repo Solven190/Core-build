@@ -624,6 +624,12 @@ namespace Ryujinx.Ava
             _gpuCancellationTokenSource.Dispose();
 
             DisposeGpu();
+
+            if (CustomSettingsHelper.HasCustomSettings(CustomSettingsHelper.PathToGameSettingsJson(ApplicationId)))
+            {
+                Program.ReloadConfig();
+            }
+
             AppExit?.Invoke(this, EventArgs.Empty);
         }
 
@@ -1071,8 +1077,6 @@ namespace Ryujinx.Ava
                     break;
                 }
             }
-
-            MainWindowViewModel.SaveConfig();
 
             return deviceDriver;
         }
