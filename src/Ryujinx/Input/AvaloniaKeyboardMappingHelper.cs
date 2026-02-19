@@ -141,7 +141,7 @@ namespace Ryujinx.Ava.Input
             AvaKey.OemComma,
             AvaKey.OemPeriod,
             AvaKey.OemQuestion,
-            AvaKey.OemBackslash,
+            AvaKey.OemPipe,
 
             // NOTE: invalid
             AvaKey.None
