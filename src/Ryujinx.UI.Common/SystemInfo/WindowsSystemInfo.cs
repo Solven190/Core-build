@@ -1,6 +1,5 @@
 using Ryujinx.Common.Logging;
 using System;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
@@ -11,7 +10,7 @@ namespace Ryujinx.UI.Common.SystemInfo
     {
         internal WindowsSystemInfo()
         {
-            CpuName = $"{GetCpuidCpuName() ?? GetCpuNameWMI()} ; {LogicalCoreCount} logical"; // WMI is very slow
+            CpuName = $"{GetCpuidCpuName() ?? GetCpuName()} ; {LogicalCoreCount} logical";
             (RamTotal, RamAvailable) = GetMemoryStats();
         }
 
@@ -28,25 +27,33 @@ namespace Ryujinx.UI.Common.SystemInfo
             return (0, 0);
         }
 
-        private static string GetCpuNameWMI()
+        private static string GetCpuName()
         {
-            ManagementObjectCollection cpuObjs = GetWMIObjects("root\\CIMV2", "SELECT * FROM Win32_Processor");
+            string cpuName = GetCpuNameFromRegistry();
 
-            if (cpuObjs != null)
+            return !string.IsNullOrEmpty(cpuName) ? cpuName : Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")?.Trim();
+        }
+
+        private static string GetCpuNameFromRegistry()
+        {
+            try
             {
-                foreach (var cpuObj in cpuObjs)
-                {
-                    return cpuObj["Name"].ToString()?.Trim();
-                }
-            }
+                using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
+                    @"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
 
-            return Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")?.Trim();
+                return key?.GetValue("ProcessorNameString")?.ToString()?.Trim();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error?.Print(LogClass.Application, $"Registry CPU name lookup failed: {ex.Message}");
+                return null;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct MemoryStatusEx
+        private struct MemoryStatusEx()
         {
-            public uint Length;
+            public uint Length = (uint)Marshal.SizeOf<MemoryStatusEx>();
             public uint MemoryLoad;
             public ulong TotalPhys;
             public ulong AvailPhys;
@@ -55,33 +62,10 @@ namespace Ryujinx.UI.Common.SystemInfo
             public ulong TotalVirtual;
             public ulong AvailVirtual;
             public ulong AvailExtendedVirtual;
-
-            public MemoryStatusEx()
-            {
-                Length = (uint)Marshal.SizeOf<MemoryStatusEx>();
-            }
         }
 
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool GlobalMemoryStatusEx(ref MemoryStatusEx lpBuffer);
-
-        private static ManagementObjectCollection GetWMIObjects(string scope, string query)
-        {
-            try
-            {
-                return new ManagementObjectSearcher(scope, query).Get();
-            }
-            catch (PlatformNotSupportedException ex)
-            {
-                Logger.Error?.Print(LogClass.Application, $"WMI isn't available : {ex.Message}");
-            }
-            catch (COMException ex)
-            {
-                Logger.Error?.Print(LogClass.Application, $"WMI isn't available : {ex.Message}");
-            }
-
-            return null;
-        }
     }
 }
