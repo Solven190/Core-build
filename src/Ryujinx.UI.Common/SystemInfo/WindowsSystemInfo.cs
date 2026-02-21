@@ -10,7 +10,7 @@ namespace Ryujinx.UI.Common.SystemInfo
     {
         internal WindowsSystemInfo()
         {
-            CpuName = $"{GetCpuidCpuName() ?? GetCpuName()} ; {LogicalCoreCount} logical";
+            CpuName = $"{GetCpuidCpuName() ?? GetCpuNameFromRegistry()} ; {LogicalCoreCount} logical";
             (RamTotal, RamAvailable) = GetMemoryStats();
         }
 
@@ -27,13 +27,6 @@ namespace Ryujinx.UI.Common.SystemInfo
             return (0, 0);
         }
 
-        private static string GetCpuName()
-        {
-            string cpuName = GetCpuNameFromRegistry();
-
-            return !string.IsNullOrEmpty(cpuName) ? cpuName : Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")?.Trim();
-        }
-
         private static string GetCpuNameFromRegistry()
         {
             try
@@ -46,7 +39,8 @@ namespace Ryujinx.UI.Common.SystemInfo
             catch (Exception ex)
             {
                 Logger.Error?.Print(LogClass.Application, $"Registry CPU name lookup failed: {ex.Message}");
-                return null;
+
+                return Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER")?.Trim();
             }
         }
 
