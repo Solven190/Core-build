@@ -19,7 +19,7 @@ namespace Ryujinx.UI.Common.Helper
 
             MemoryStream iconDataStream = new(iconData);
             using var image = SKBitmap.Decode(iconDataStream);
-            image.Resize(new SKImageInfo(128, 128), SKFilterQuality.High);
+            image.Resize(new SKImageInfo(128, 128), new SKSamplingOptions(SKFilterMode.Linear));
             SaveBitmapAsIcon(image, iconPath);
 
             var shortcut = Shortcut.CreateShortcut(basePath, GetArgsString(applicationFilePath, applicationId), iconPath, 0);
