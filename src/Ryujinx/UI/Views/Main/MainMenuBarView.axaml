@@ -189,6 +189,11 @@
                     Click="StopEmulation_Click"
                     Header="{locale:Locale MenuBarOptionsStopEmulation}"
                     InputGesture="Escape"
+                    IsEnabled="{Binding IsGameRunning}" />
+                <MenuItem
+                    Name="RestartEmulationMenuItem"
+                    Header="{locale:Locale MenuBarOptionsRestartEmulation}"
+                    InputGesture="Ctrl + R"
                     IsEnabled="{Binding IsGameRunning}"
                     ToolTip.Tip="{locale:Locale StopEmulationTooltip}" />
                 <MenuItem Command="{Binding SimulateWakeUpMessage}" Header="{locale:Locale MenuBarOptionsSimulateWakeUpMessage}" />

@@ -42,6 +42,7 @@
         <KeyBinding Gesture="Ctrl+A" Command="{Binding OpenAmiiboWindow}" />
         <KeyBinding Gesture="Ctrl+B" Command="{Binding OpenBinFile}" />
         <KeyBinding Gesture="Ctrl+," Command="{Binding OpenSettings}" />
+        <KeyBinding Gesture="Ctrl+R" Command="{Binding RestartEmulation}" />
     </Window.KeyBindings>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
