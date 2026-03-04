@@ -211,6 +211,9 @@ namespace Ryujinx.Graphics.Vulkan
                     case Format.R16G16B16Uint:
                         format = VkFormat.R16G16B16A16Uint;
                         break;
+                    case Format.A8B8G8R8Uint:
+                        format = VkFormat.A8B8G8R8UintPack32;
+                        break;
                     default:
                         Logger.Error?.Print(LogClass.Gpu, $"Format {srcFormat} is not supported by the host.");
                         break;

@@ -149,6 +149,7 @@ namespace Ryujinx.Graphics.GAL
         B8G8R8A8Srgb,
         B10G10R10A2Unorm,
         X8UintD24Unorm,
+        A8B8G8R8Uint,
     }
 
     public static class FormatExtensions
@@ -183,6 +184,7 @@ namespace Ryujinx.Graphics.GAL
                 case Format.R8G8B8A8Snorm:
                 case Format.R8G8B8A8Uint:
                 case Format.R8G8B8A8Sint:
+                case Format.A8B8G8R8Uint:
                 case Format.R8G8B8A8Srgb:
                 case Format.R4G4Unorm:
                 case Format.R8Uscaled:
@@ -656,6 +658,7 @@ namespace Ryujinx.Graphics.GAL
                 case Format.R32Uint:
                 case Format.R8G8Uint:
                 case Format.R16G16Uint:
+                case Format.A8B8G8R8Uint:
                 case Format.R32G32Uint:
                 case Format.R8G8B8Uint:
                 case Format.R16G16B16Uint:
