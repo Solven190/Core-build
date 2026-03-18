@@ -91,6 +91,7 @@ namespace Ryujinx.Graphics.Vulkan
         internal bool IsIntelLinux { get; private set; }
         internal bool IsAmdGcn { get; private set; }
         internal bool IsAmdRdna3 { get; private set; }
+        internal bool IsFeedbackLoopDevice { get; private set; }
         internal bool IsNvidiaPreTuring { get; private set; }
         internal bool IsIntelArc { get; private set; }
         internal bool IsQualcommProprietary { get; private set; }
@@ -376,6 +377,8 @@ namespace Ryujinx.Graphics.Vulkan
                                                   // ROG Ally (X) Device IDs
                                                   || properties.DeviceID is 0x15BF or 0x15C8 or 0x150E);
 
+            IsFeedbackLoopDevice = IsAmdRdna3;
+
             if (Vendor == Vendor.Nvidia)
             {
                 var match = VendorUtils.NvidiaConsumerClassRegex().Match(GpuRenderer);
@@ -439,8 +442,8 @@ namespace Ryujinx.Graphics.Vulkan
                 _physicalDevice.IsDeviceExtensionPresent("VK_NV_viewport_array2"),
                 _physicalDevice.IsDeviceExtensionPresent(ExtExternalMemoryHost.ExtensionName),
                 supportsDepthClipControl && featuresDepthClipControl.DepthClipControl,
-                supportsAttachmentFeedbackLoop && featuresAttachmentFeedbackLoop.AttachmentFeedbackLoopLayout,
-                supportsDynamicAttachmentFeedbackLoop && featuresDynamicAttachmentFeedbackLoop.AttachmentFeedbackLoopDynamicState,
+                supportsAttachmentFeedbackLoop && featuresAttachmentFeedbackLoop.AttachmentFeedbackLoopLayout && IsFeedbackLoopDevice,
+                supportsDynamicAttachmentFeedbackLoop && featuresDynamicAttachmentFeedbackLoop.AttachmentFeedbackLoopDynamicState && IsFeedbackLoopDevice,
                 propertiesSubgroup.SubgroupSize,
                 supportedSampleCounts,
                 portabilityFlags,

@@ -1532,24 +1532,20 @@ namespace Ryujinx.Graphics.Vulkan
 
         private bool ChangeFeedbackLoop(FeedbackLoopAspects aspects)
         {
-            // AMD RDNA 3 GPUs + Qualcomm SoCs only
-            if (Gd.IsAmdRdna3 || Gd.Vendor == Vendor.Qualcomm)
+            if (_feedbackLoop != aspects)
             {
-                if (_feedbackLoop != aspects)
+                if (Gd.Capabilities.SupportsDynamicAttachmentFeedbackLoop)
                 {
-                    if (Gd.Capabilities.SupportsDynamicAttachmentFeedbackLoop)
-                    {
-                        DynamicState.SetFeedbackLoop(aspects);
-                    }
-                    else
-                    {
-                        _newState.FeedbackLoopAspects = aspects;
-                    }
-
-                    _feedbackLoop = aspects;
-
-                    return true;
+                    DynamicState.SetFeedbackLoop(aspects);
                 }
+                else
+                {
+                    _newState.FeedbackLoopAspects = aspects;
+                }
+
+                _feedbackLoop = aspects;
+
+                return true;
             }
 
             return false;
