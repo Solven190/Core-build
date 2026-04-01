@@ -46,7 +46,8 @@ namespace Ryujinx.Graphics.Vulkan
             "VK_KHR_8bit_storage",
             "VK_KHR_maintenance2",
             "VK_EXT_attachment_feedback_loop_layout",
-            "VK_EXT_attachment_feedback_loop_dynamic_state"
+            "VK_EXT_attachment_feedback_loop_dynamic_state",
+            "VK_EXT_memory_priority"
         ];
 
         private static readonly string[] _requiredExtensions =
@@ -389,7 +390,21 @@ namespace Ryujinx.Graphics.Vulkan
                 PNext = features2.PNext,
             };
 
-            features2.PNext = &supportedPageableDeviceLocalMemoryFeatures;
+            if (physicalDevice.IsDeviceExtensionPresent(ExtPageableDeviceLocalMemory.ExtensionName))
+            {
+                features2.PNext = &supportedPageableDeviceLocalMemoryFeatures;
+            }
+
+            PhysicalDeviceMemoryPriorityFeaturesEXT supportedDeviceMemoryPriorityFeatures = new()
+            {
+                SType = StructureType.PhysicalDeviceMemoryPriorityFeaturesExt,
+                PNext = features2.PNext,
+            };
+
+            if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_memory_priority"))
+            {
+                features2.PNext = &supportedDeviceMemoryPriorityFeatures;
+            }
 
             PhysicalDeviceVulkan12Features supportedPhysicalDeviceVulkan12Features = new()
             {
@@ -578,14 +593,31 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresDynamicAttachmentFeedbackLoopLayout;
             }
             
-            PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT featuresPageableDeviceLocalMemory = new()
+            if (physicalDevice.IsDeviceExtensionPresent(ExtPageableDeviceLocalMemory.ExtensionName) &&
+                supportedPageableDeviceLocalMemoryFeatures.PageableDeviceLocalMemory)
             {
-                SType = StructureType.PhysicalDevicePageableDeviceLocalMemoryFeaturesExt,
-                PNext = pExtendedFeatures,
-                PageableDeviceLocalMemory = supportedPageableDeviceLocalMemoryFeatures.PageableDeviceLocalMemory,
-            };
+                PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT featuresPageableDeviceLocalMemory = new()
+                {
+                    SType = StructureType.PhysicalDevicePageableDeviceLocalMemoryFeaturesExt,
+                    PNext = pExtendedFeatures,
+                    PageableDeviceLocalMemory = true,
+                };
 
-            pExtendedFeatures = &featuresPageableDeviceLocalMemory;
+                pExtendedFeatures = &featuresPageableDeviceLocalMemory;
+            }
+
+            if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_memory_priority") &&
+                supportedDeviceMemoryPriorityFeatures.MemoryPriority)
+            {
+                PhysicalDeviceMemoryPriorityFeaturesEXT featuresDeviceMemoryPriority = new()
+                {
+                    SType = StructureType.PhysicalDeviceMemoryPriorityFeaturesExt,
+                    PNext = pExtendedFeatures,
+                    MemoryPriority = true,
+                };
+
+                pExtendedFeatures = &featuresDeviceMemoryPriority;
+            }
 
             var enabledExtensions = _requiredExtensions.Union(_desirableExtensions.Intersect(physicalDevice.DeviceExtensions)).ToArray();
 

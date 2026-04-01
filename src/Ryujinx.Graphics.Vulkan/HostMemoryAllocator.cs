@@ -108,12 +108,19 @@ namespace Ryujinx.Graphics.Vulkan
                     PHostPointer = (void*)pageAlignedPointer,
                 };
 
+                MemoryPriorityAllocateInfoEXT priorityInfo = new()
+                {
+                    SType = StructureType.MemoryPriorityAllocateInfoExt,
+                    Priority = 0.0f,
+                    PNext = &importInfo,
+                };
+
                 var memoryAllocateInfo = new MemoryAllocateInfo
                 {
                     SType = StructureType.MemoryAllocateInfo,
                     AllocationSize = pageAlignedSize,
                     MemoryTypeIndex = (uint)memoryTypeIndex,
-                    PNext = &importInfo,
+                    PNext = &priorityInfo,
                 };
 
                 Result result = _api.AllocateMemory(_device, in memoryAllocateInfo, null, out var deviceMemory);
