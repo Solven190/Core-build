@@ -432,11 +432,9 @@ namespace Ryujinx.Graphics.Vulkan
 
             void* pExtendedFeatures = null;
 
-            PhysicalDeviceTransformFeedbackFeaturesEXT featuresTransformFeedback;
-
             if (physicalDevice.IsDeviceExtensionPresent(ExtTransformFeedback.ExtensionName))
             {
-                featuresTransformFeedback = new PhysicalDeviceTransformFeedbackFeaturesEXT
+                PhysicalDeviceTransformFeedbackFeaturesEXT featuresTransformFeedback = new PhysicalDeviceTransformFeedbackFeaturesEXT
                 {
                     SType = StructureType.PhysicalDeviceTransformFeedbackFeaturesExt,
                     PNext = pExtendedFeatures,
@@ -446,11 +444,9 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresTransformFeedback;
             }
 
-            PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT featuresPrimitiveTopologyListRestart;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_primitive_topology_list_restart"))
             {
-                featuresPrimitiveTopologyListRestart = new PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT
+                PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT featuresPrimitiveTopologyListRestart = new PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT
                 {
                     SType = StructureType.PhysicalDevicePrimitiveTopologyListRestartFeaturesExt,
                     PNext = pExtendedFeatures,
@@ -461,11 +457,9 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresPrimitiveTopologyListRestart;
             }
 
-            PhysicalDeviceRobustness2FeaturesEXT featuresRobustness2;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_robustness2"))
             {
-                featuresRobustness2 = new PhysicalDeviceRobustness2FeaturesEXT
+                PhysicalDeviceRobustness2FeaturesEXT featuresRobustness2 = new PhysicalDeviceRobustness2FeaturesEXT
                 {
                     SType = StructureType.PhysicalDeviceRobustness2FeaturesExt,
                     PNext = pExtendedFeatures,
@@ -506,11 +500,9 @@ namespace Ryujinx.Graphics.Vulkan
 
             pExtendedFeatures = &featuresVk12;
 
-            PhysicalDeviceIndexTypeUint8FeaturesEXT featuresIndexU8;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_index_type_uint8"))
             {
-                featuresIndexU8 = new PhysicalDeviceIndexTypeUint8FeaturesEXT
+                PhysicalDeviceIndexTypeUint8FeaturesEXT featuresIndexU8 = new PhysicalDeviceIndexTypeUint8FeaturesEXT
                 {
                     SType = StructureType.PhysicalDeviceIndexTypeUint8FeaturesExt,
                     PNext = pExtendedFeatures,
@@ -520,11 +512,9 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresIndexU8;
             }
 
-            PhysicalDeviceFragmentShaderInterlockFeaturesEXT featuresFragmentShaderInterlock;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_fragment_shader_interlock"))
             {
-                featuresFragmentShaderInterlock = new PhysicalDeviceFragmentShaderInterlockFeaturesEXT
+                PhysicalDeviceFragmentShaderInterlockFeaturesEXT featuresFragmentShaderInterlock = new PhysicalDeviceFragmentShaderInterlockFeaturesEXT
                 {
                     SType = StructureType.PhysicalDeviceFragmentShaderInterlockFeaturesExt,
                     PNext = pExtendedFeatures,
@@ -534,13 +524,11 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresFragmentShaderInterlock;
             }
 
-            PhysicalDeviceCustomBorderColorFeaturesEXT featuresCustomBorderColor;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_custom_border_color") &&
                 supportedFeaturesCustomBorderColor.CustomBorderColors &&
                 supportedFeaturesCustomBorderColor.CustomBorderColorWithoutFormat)
             {
-                featuresCustomBorderColor = new PhysicalDeviceCustomBorderColorFeaturesEXT
+                PhysicalDeviceCustomBorderColorFeaturesEXT featuresCustomBorderColor = new PhysicalDeviceCustomBorderColorFeaturesEXT
                 {
                     SType = StructureType.PhysicalDeviceCustomBorderColorFeaturesExt,
                     PNext = pExtendedFeatures,
@@ -551,12 +539,10 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresCustomBorderColor;
             }
 
-            PhysicalDeviceDepthClipControlFeaturesEXT featuresDepthClipControl;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_depth_clip_control") &&
                 supportedFeaturesDepthClipControl.DepthClipControl)
             {
-                featuresDepthClipControl = new PhysicalDeviceDepthClipControlFeaturesEXT
+                PhysicalDeviceDepthClipControlFeaturesEXT featuresDepthClipControl = new PhysicalDeviceDepthClipControlFeaturesEXT
                 {
                     SType = StructureType.PhysicalDeviceDepthClipControlFeaturesExt,
                     PNext = pExtendedFeatures,
@@ -566,12 +552,10 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresDepthClipControl;
             }
 
-            PhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT featuresAttachmentFeedbackLoopLayout;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_attachment_feedback_loop_layout") &&
                 supportedFeaturesAttachmentFeedbackLoopLayout.AttachmentFeedbackLoopLayout)
             {
-                featuresAttachmentFeedbackLoopLayout = new()
+                PhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT featuresAttachmentFeedbackLoopLayout = new()
                 {
                     SType = StructureType.PhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesExt,
                     PNext = pExtendedFeatures,
@@ -581,12 +565,10 @@ namespace Ryujinx.Graphics.Vulkan
                 pExtendedFeatures = &featuresAttachmentFeedbackLoopLayout;
             }
 
-            PhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT featuresDynamicAttachmentFeedbackLoopLayout;
-
             if (physicalDevice.IsDeviceExtensionPresent("VK_EXT_attachment_feedback_loop_dynamic_state") &&
                 supportedFeaturesDynamicAttachmentFeedbackLoopLayout.AttachmentFeedbackLoopDynamicState)
             {
-                featuresDynamicAttachmentFeedbackLoopLayout = new()
+                PhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT featuresDynamicAttachmentFeedbackLoopLayout = new()
                 {
                     SType = StructureType.PhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesExt,
                     PNext = pExtendedFeatures,
