@@ -123,6 +123,9 @@ namespace Ryujinx.Headless
             if (NeedsOverride(nameof(DisableMacroHLE)))
                 DisableMacroHLE = !configurationState.Graphics.EnableMacroHLE;
             
+            if (NeedsOverride(nameof(EnableColorSpacePassthrough)))
+                EnableColorSpacePassthrough = configurationState.Graphics.EnableColorSpacePassthrough;
+            
             if (NeedsOverride(nameof(GraphicsShadersDumpPath)))
                 GraphicsShadersDumpPath = configurationState.Graphics.ShadersDumpPath;
             
@@ -358,6 +361,9 @@ namespace Ryujinx.Headless
         [Option("disable-macro-hle", Required = false, HelpText = "Disables high-level emulation of Macro code. Leaving this enabled improves performance but may cause graphical glitches in some games.")]
         public bool DisableMacroHLE { get; set; }
 
+        [Option("enable-color-space-passthrough", Required = false, HelpText = "Directs the Vulkan backend to pass through color information without specifying a color space.")]
+        public bool EnableColorSpacePassthrough { get; set; }
+        
         [Option("graphics-shaders-dump-path", Required = false, HelpText = "Dumps shaders in this local directory. (Developer only)")]
         public string GraphicsShadersDumpPath { get; set; }
 

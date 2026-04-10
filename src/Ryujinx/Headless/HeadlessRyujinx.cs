@@ -283,6 +283,7 @@ namespace Ryujinx.Headless
             GraphicsConfig.MaxAnisotropy = option.MaxAnisotropy;
             GraphicsConfig.ShadersDumpPath = option.GraphicsShadersDumpPath;
             GraphicsConfig.EnableMacroHLE = !option.DisableMacroHLE;
+            GraphicsConfig.EnableColorSpacePassthrough = option.EnableColorSpacePassthrough;
 
             DriverUtilities.InitDriverConfig(option.BackendThreading == BackendThreading.Off);
 
