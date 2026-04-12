@@ -11,7 +11,7 @@ namespace Ryujinx.Tests.Audio.Renderer.Parameter.Effect
         public void EnsureTypeSize()
         {
             ClassicAssert.AreEqual(0x18, Unsafe.SizeOf<BiquadFilterEffectParameter1>());
-            ClassicAssert.AreEqual(0x24, Unsafe.SizeOf<BiquadFilterEffectParameter2>());
+            ClassicAssert.AreEqual(0x28, Unsafe.SizeOf<BiquadFilterEffectParameter2>());
         }
     }
 }
