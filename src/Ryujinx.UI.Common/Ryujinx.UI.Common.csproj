@@ -34,8 +34,7 @@
     <EmbeddedResource Include="Resources\Logo_Ryujinx.png" />
     <EmbeddedResource Include="Resources\Logo_Discord_Dark.png" />
     <EmbeddedResource Include="Resources\Logo_Discord_Light.png" />
-    <EmbeddedResource Include="Resources\Logo_GitLab_Dark.png" />
-    <EmbeddedResource Include="Resources\Logo_GitLab_Light.png" />
+    <EmbeddedResource Include="Resources\Logo_Forgejo.png" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64' OR '$(RuntimeIdentifier)' == 'linux-arm64'">

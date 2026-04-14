@@ -1,31 +1,27 @@
 <h1 align="center">
   <br>
-  <img src="https://git.ryujinx.app/kenji-nx/ryujinx/-/raw/master/distribution/misc/Logo.png" alt="Kenji-NX">
+  <img src="https://git.ryujinx.app/projects/Kenji-NX/raw/branch/master/distribution/misc/Logo.png" alt="Kenji-NX">
   <br>
   <b>Kenji-NX</b>
   <br>
-    <a href="https://github.com/Kenji-NX/Releases/releases/latest">
-        <img src="https://img.shields.io/github/v/release/Kenji-NX/Releases"
-            alt="Latest Release">
-    </a>
+
+[![Latest Desktop Release](https://img.shields.io/gitea/v/release/projects/Kenji-NX?gitea_url=https://git.ryujinx.app&label=desktop
+)](https://git.ryujinx.app/projects/Kenji-NX/releases/latest)
+[![Latest Android Release](https://img.shields.io/gitea/v/release/Kenji-NX/android?gitea_url=https://git.ryujinx.app&include_prereleases&label=android)](https://git.ryujinx.app/Kenji-NX/android/releases/latest)
+<br>
+[![Discord](https://img.shields.io/discord/1294443224030511104?color=5865F2&label=Kenji-NX&logo=discord&logoColor=white)](https://discord.gg/zBSAuZfKqe)
+
 </h1>
 
-<p>
-  Kenji-NX is an open-source Nintendo Switch emulator, originally created by gdkchan, written in C#.
-  This emulator aims at providing excellent accuracy and performance, a user-friendly interface and consistent builds.
-  It was written from scratch and development on the project began in September 2017.
-  Kenji-NX is available on GitHub under the <a href="https://git.ryujinx.app/kenji-nx/ryujinx/-/raw/master/LICENSE.txt" target="_blank">MIT license</a>.
-  <br><br>
-  On October 1st 2024, Ryujinx was discontinued as the creator was forced to abandon the project.
-  <br><br>
-  This fork is not a Ryujinx revival project; it aims to be a middle ground between GreemDev's <a href="https://git.ryujinx.app/ryubing/ryujinx">Ryujinx</a> fork and the more preservative <a href="https://git.ryujinx.app/archive/ryujinx-mirror">ryujinx-mirror</a> fork.
-  It brings over many of the front-facing features from the aforementioned forks with <i>additional</i> contributions from KeatonTheBot and others.
-  <br>
-</p>
+Kenji-NX is an open-source Nintendo Switch emulator, originally created by gdkchan, written in C#.
+This emulator aims at providing excellent accuracy and performance, a user-friendly interface and consistent builds.
+It was written from scratch and development on the project began in September 2017.
+Kenji-NX is available on GitHub under the [MIT license](LICENSE.txt).
 
-<p>
-  <img src="docs/shell.png">
-</p>
+On October 1st 2024, Ryujinx was discontinued as the creator was forced to abandon the project.
+
+This fork is not a Ryujinx revival project; it aims to be a middle ground between GreemDev's [Ryujinx](https://git.ryujinx.app/projects/Ryubing) fork and the more preservative [ryujinx-mirror](https://git.ryujinx.app/archive/ryujinx-mirror) fork.
+It brings over many of the front-facing features from the aforementioned forks with *additional* contributions from KeatonTheBot and others.
 
 ## Compatibility
 
@@ -58,12 +54,12 @@ If you wish to build the emulator yourself, follow these steps:
 
 ### Step 1
 
-Install the [.NET 9.0 (or higher) SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
+Install the [.NET 10.0 (or higher) SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
 Make sure your SDK version is higher or equal to the required version specified in [global.json](global.json).
 
 ### Step 2
 
-Either use `git clone https://git.ryujinx.app/kenji-nx/ryujinx` on the command line to clone the repository or use Code --> Download zip button to get the files.
+Either use `git clone https://git.ryujinx.app/projects/Kenji-NX` on the command line to clone the repository or use Code --> Download zip button to get the files.
 
 ### Step 3
 
@@ -125,7 +121,7 @@ See [LICENSE.txt](LICENSE.txt) and [THIRDPARTY.md](distribution/legal/THIRDPARTY
 
 ## Credits
 
-- [LibHac](https://github.com/Thealexbarney/LibHac) is used for our file-system.
+- [LibHac](https://git.ryujinx.app/projects/LibHac) is used for our file-system.
 - [AmiiboAPI](https://www.amiiboapi.com) is used in our Amiibo emulation.
 - [ldn_mitm](https://github.com/spacemeowx2/ldn_mitm) is used for one of our available multiplayer modes.
 - [ShellLink](https://github.com/securifybv/ShellLink) is used for Windows shortcut generation.

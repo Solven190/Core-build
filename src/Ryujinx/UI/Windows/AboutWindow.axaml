@@ -125,9 +125,9 @@
                         Background="Transparent"
                         Click="Button_OnClick"
                         CornerRadius="15"
-                        Tag="https://git.ryujinx.app/kenji-nx/ryujinx"
-                        ToolTip.Tip="{locale:Locale AboutGitLabUrlTooltipMessage}">
-                        <Image Source="{Binding GitLabLogo}" />
+                        Tag="https://git.ryujinx.app/projects/Kenji-NX"
+                        ToolTip.Tip="{locale:Locale AboutForgejoUrlTooltipMessage}">
+                        <Image Source="{Binding ForgejoLogo}" />
                     </Button>
                     <Button
                         MinWidth="30"
