@@ -5,9 +5,8 @@
   <b>Kenji-NX</b>
   <br>
 
-[![Latest Desktop Release](https://img.shields.io/gitea/v/release/projects/Kenji-NX?gitea_url=https://git.ryujinx.app&label=desktop
-)](https://git.ryujinx.app/projects/Kenji-NX/releases/latest)
-[![Latest Android Release](https://img.shields.io/gitea/v/release/Kenji-NX/android?gitea_url=https://git.ryujinx.app&include_prereleases&label=android)](https://git.ryujinx.app/Kenji-NX/android/releases/latest)
+[![Latest Desktop Release](https://git.ryujinx.app/projects/Kenji-NX/badges/release.svg?label=desktop)](https://git.ryujinx.app/projects/Kenji-NX/releases/latest)
+[![Latest Android Release](https://git.ryujinx.app/Kenji-NX/android/badges/release.svg?label=android)](https://git.ryujinx.app/Kenji-NX/android/releases/latest)
 <br>
 [![Discord](https://img.shields.io/discord/1294443224030511104?color=5865F2&label=Kenji-NX&logo=discord&logoColor=white)](https://discord.gg/zBSAuZfKqe)
 
