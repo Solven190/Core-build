@@ -999,7 +999,7 @@ namespace Ryujinx.UI.Common.Configuration
             System.EnableInternetAccess.Value = false;
             System.EnableFsIntegrityChecks.Value = true;
             System.FsGlobalAccessLogMode.Value = 0;
-            System.AudioBackend.Value = AudioBackend.SDL2;
+            System.AudioBackend.Value = AudioBackend.SDL3;
             System.AudioVolume.Value = 1;
             System.MemoryManagerMode.Value = MemoryManagerMode.HostMappedUnsafe;
             System.DramSize.Value = MemoryConfiguration.MemoryConfiguration4GiB;

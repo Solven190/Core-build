@@ -8,7 +8,7 @@ Intro to Kenji-NX
 Kenji-NX is an open-source Nintendo Switch emulator written in C#. It is based on Ryujinx, which was originally created by gdkchan.
 * The CPU emulator, ARMeilleure, emulates an ARMv8 CPU and currently has support for most 64-bit ARMv8 and some of the ARMv7 (and older) instructions.
 * The GPU emulator emulates the Switch's Maxwell GPU using either the OpenGL (version 4.5 minimum), Vulkan, or Metal (via MoltenVK) APIs through a custom build of OpenTK or Silk.NET respectively.
-* Audio output is entirely supported via C# wrappers for SDL2, with OpenAL & libsoundio as fallbacks.
+* Audio output is entirely supported via C# wrappers for SDL3, with OpenAL & libsoundio as fallbacks.
 
 Getting Started
 ===============

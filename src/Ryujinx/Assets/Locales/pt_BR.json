@@ -155,7 +155,7 @@
   "SettingsTabSystemAudioBackendDummy": "Nenhuma",
   "SettingsTabSystemAudioBackendOpenAL": "OpenAL",
   "SettingsTabSystemAudioBackendSoundIO": "SoundIO",
-  "SettingsTabSystemAudioBackendSDL2": "SDL2",
+  "SettingsTabSystemAudioBackendSDL3": "SDL3",
   "SettingsTabSystemHacks": "Hacks",
   "SettingsTabSystemHacksNote": " (Pode causar instabilidade)",
   "SettingsTabSystemDramSize": "Tamanho da DRAM:",

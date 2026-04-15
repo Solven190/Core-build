@@ -20,7 +20,7 @@ using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS;
 using Ryujinx.HLE.HOS.Services.Account.Acc;
 using Ryujinx.Input.HLE;
-using Ryujinx.Input.SDL2;
+using Ryujinx.Input.SDL3;
 using Ryujinx.Modules;
 using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common;
@@ -105,7 +105,7 @@ namespace Ryujinx.Ava.UI.Windows
 
             if (Program.PreviewerDetached)
             {
-                InputManager = new InputManager(new AvaloniaKeyboardDriver(this), new SDL2GamepadDriver());
+                InputManager = new InputManager(new AvaloniaKeyboardDriver(this), new SDL3GamepadDriver());
 
                 this.GetObservable(IsActiveProperty).Subscribe(IsActiveChanged);
                 this.ScalingChanged += OnScalingChanged;

@@ -155,7 +155,7 @@
   "SettingsTabSystemAudioBackendDummy": "더미",
   "SettingsTabSystemAudioBackendOpenAL": "OpenAL",
   "SettingsTabSystemAudioBackendSoundIO": "사운드IO",
-  "SettingsTabSystemAudioBackendSDL2": "SDL2",
+  "SettingsTabSystemAudioBackendSDL3": "SDL3",
   "SettingsTabSystemHacks": "해킹",
   "SettingsTabSystemHacksNote": "불안정성을 유발할 수 있음",
   "SettingsTabSystemDramSize": "대체 메모리 레이아웃 사용(개발자)",

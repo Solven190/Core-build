@@ -19,9 +19,10 @@ using Ryujinx.HLE.HOS;
 using Ryujinx.HLE.HOS.Services.Account.Acc;
 using Ryujinx.Input;
 using Ryujinx.Input.HLE;
-using Ryujinx.Input.SDL2;
-using Ryujinx.SDL2.Common;
+using Ryujinx.Input.SDL3;
+using Ryujinx.SDL3.Common;
 using Ryujinx.UI.Common.Configuration;
+using SDL;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +59,7 @@ namespace Ryujinx.Headless
                 AutoResetEvent invoked = new(false);
 
                 // MacOS must perform SDL polls from the main thread.
-                SDL2Driver.MainThreadDispatcher = action =>
+                SDL3Driver.MainThreadDispatcher = action =>
                 {
                     invoked.Reset();
 
@@ -169,7 +170,7 @@ namespace Ryujinx.Headless
             _accountManager = new AccountManager(_libHacHorizonManager.RyujinxClient, option.UserProfile);
             _userChannelPersistence = new UserChannelPersistence();
 
-            _inputManager = new InputManager(new SDL2KeyboardDriver(), new SDL2GamepadDriver());
+            _inputManager = new InputManager(new SDL3KeyboardDriver(), new SDL3GamepadDriver());
 
             GraphicsConfig.EnableShaderCache = !option.DisableShaderCache;
 
@@ -368,7 +369,7 @@ namespace Ryujinx.Headless
             _window = window;
 
             _window.IsFullscreen = options.IsFullscreen;
-            _window.DisplayId = options.DisplayId;
+            _window.DisplayId = (SDL_DisplayID)options.DisplayId;
             _window.IsExclusiveFullscreen = options.IsExclusiveFullscreen;
             _window.ExclusiveFullscreenWidth = options.ExclusiveFullscreenWidth;
             _window.ExclusiveFullscreenHeight = options.ExclusiveFullscreenHeight;

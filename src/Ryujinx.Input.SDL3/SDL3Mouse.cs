@@ -3,17 +3,17 @@ using System;
 using System.Drawing;
 using System.Numerics;
 
-namespace Ryujinx.Input.SDL2
+namespace Ryujinx.Input.SDL3
 {
-    class SDL2Mouse : IMouse
+    class SDL3Mouse : IMouse
     {
-        private SDL2MouseDriver _driver;
+        private SDL3MouseDriver _driver;
 
         public GamepadFeaturesFlag Features => throw new NotImplementedException();
 
         public string Id => "0";
 
-        public string Name => "SDL2Mouse";
+        public string Name => "SDL3Mouse";
 
         public bool IsConnected => true;
 
@@ -21,7 +21,7 @@ namespace Ryujinx.Input.SDL2
 
         Size IMouse.ClientSize => _driver.GetClientSize();
 
-        public SDL2Mouse(SDL2MouseDriver driver)
+        public SDL3Mouse(SDL3MouseDriver driver)
         {
             _driver = driver;
         }

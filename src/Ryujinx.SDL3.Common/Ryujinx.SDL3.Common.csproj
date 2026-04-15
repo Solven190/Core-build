@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <DefaultItemExcludes>$(DefaultItemExcludes);._*</DefaultItemExcludes>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ryujinx.SDL2-CS-Redux" />
+    <PackageReference Include="ppy.SDL3-CS" />
   </ItemGroup>
 
   <ItemGroup>

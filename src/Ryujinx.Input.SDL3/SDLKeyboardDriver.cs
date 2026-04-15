@@ -1,16 +1,16 @@
-using Ryujinx.SDL2.Common;
+using Ryujinx.SDL3.Common;
 using System;
 
-namespace Ryujinx.Input.SDL2
+namespace Ryujinx.Input.SDL3
 {
-    public class SDL2KeyboardDriver : IGamepadDriver
+    public class SDL3KeyboardDriver : IGamepadDriver
     {
-        public SDL2KeyboardDriver()
+        public SDL3KeyboardDriver()
         {
-            SDL2Driver.Instance.Initialize();
+            SDL3Driver.Instance.Initialize();
         }
 
-        public string DriverName => "SDL2";
+        public string DriverName => "SDL3";
 
         private static readonly string[] _keyboardIdentifers = ["0"];
 
@@ -32,7 +32,7 @@ namespace Ryujinx.Input.SDL2
         {
             if (disposing)
             {
-                SDL2Driver.Instance.Dispose();
+                SDL3Driver.Instance.Dispose();
             }
         }
 
@@ -49,7 +49,7 @@ namespace Ryujinx.Input.SDL2
                 return null;
             }
 
-            return new SDL2Keyboard(this, _keyboardIdentifers[0], "All keyboards");
+            return new SDL3Keyboard(this, _keyboardIdentifers[0], "All keyboards");
         }
     }
 }

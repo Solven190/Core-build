@@ -1,6 +1,6 @@
 ﻿using DiscordRPC;
 using LibHac.Tools.FsSystem;
-using Ryujinx.Audio.Backends.SDL2;
+using Ryujinx.Audio.Backends.SDL3;
 using Ryujinx.Ava;
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Configuration.Hid;
@@ -159,7 +159,7 @@ namespace Ryujinx.Headless
                     config = new StandardControllerInputConfig
                     {
                         Version = InputConfig.CurrentVersion,
-                        Backend = InputBackendType.GamepadSDL2,
+                        Backend = InputBackendType.GamepadSDL3,
                         Id = null,
                         ControllerType = ControllerType.JoyconPair,
                         DeadzoneLeft = 0.1f,
@@ -308,7 +308,7 @@ namespace Ryujinx.Headless
                 return new VulkanRenderer(
                     api,
                     (instance, _) => new SurfaceKHR((ulong)(vulkanWindow.CreateWindowSurface(instance.Handle))),
-                    vulkanWindow.GetRequiredInstanceExtensions,
+                    VulkanWindow.GetRequiredInstanceExtensions,
                     preferredGpuId);
             }
 
@@ -332,7 +332,7 @@ namespace Ryujinx.Headless
                 _accountManager,
                 _userChannelPersistence,
                 renderer,
-                new SDL2HardwareDeviceDriver(),
+                new SDL3HardwareDeviceDriver(),
                 options.DramSize,
                 window,
                 options.SystemLanguage,

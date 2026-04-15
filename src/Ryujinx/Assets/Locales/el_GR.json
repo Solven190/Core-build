@@ -152,7 +152,7 @@
   "SettingsTabSystemAudioBackendDummy": "Απενεργοποιημένο",
   "SettingsTabSystemAudioBackendOpenAL": "OpenAL",
   "SettingsTabSystemAudioBackendSoundIO": "SoundIO",
-  "SettingsTabSystemAudioBackendSDL2": "SDL2",
+  "SettingsTabSystemAudioBackendSDL3": "SDL3",
   "SettingsTabSystemHacks": "Μικροδιορθώσεις",
   "SettingsTabSystemHacksNote": " (Μπορεί να προκαλέσουν αστάθεια)",
   "SettingsTabSystemDramSize": "Μέγεθος DRAM:",
