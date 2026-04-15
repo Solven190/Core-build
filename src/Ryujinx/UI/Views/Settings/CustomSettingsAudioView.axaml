@@ -43,8 +43,8 @@
                             IsEnabled="{Binding IsSoundIoEnabled}"
                             Content="{locale:Locale SettingsTabSystemAudioBackendSoundIO}" />
                         <ComboBoxItem
-                            IsEnabled="{Binding IsSDL2Enabled}"
-                            Content="{locale:Locale SettingsTabSystemAudioBackendSDL2}" />
+                            IsEnabled="{Binding IsSDL3Enabled}"
+                            Content="{locale:Locale SettingsTabSystemAudioBackendSDL3}" />
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
