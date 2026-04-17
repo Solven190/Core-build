@@ -118,8 +118,11 @@ namespace Ryujinx.HLE.HOS.Services.Caps
                 }
 
                 // NOTE: The saved JPEG file doesn't have the limitation in the extra EXIF data.
-                using var bitmap = new SKBitmap(new SKImageInfo(1280, 720, SKColorType.Rgba8888));
-                Marshal.Copy(screenshotData, 0, bitmap.GetPixels(), screenshotData.Length);
+                using var bitmap = new SKBitmap(new SKImageInfo(1280, 720, SKColorType.Rgba8888, SKAlphaType.Premul));
+                int dataLen = screenshotData.Length > bitmap.ByteCount ? bitmap.ByteCount : screenshotData.Length;
+
+                Marshal.Copy(screenshotData, 0, bitmap.GetPixels(), dataLen);
+
                 using var data = bitmap.Encode(SKEncodedImageFormat.Jpeg, 80);
                 using var file = File.OpenWrite(filePath);
                 data.SaveTo(file);
