@@ -42,12 +42,12 @@ namespace Ryujinx.Audio.Backends.Apple
 
                 int result = AudioQueueNewOutput(
                     ref format,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
+                    nint.Zero,
+                    nint.Zero,
+                    nint.Zero,
+                    nint.Zero,
                     0,
-                    out IntPtr testQueue);
+                    out nint testQueue);
 
                 if (result == 0)
                 {

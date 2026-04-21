@@ -24,8 +24,8 @@ namespace Ryujinx.Audio.Backends.Apple
         private readonly AudioQueueOutputCallback _callbackDelegate;
         private readonly GCHandle _gcHandle;
 
-        private IntPtr _audioQueue;
-        private readonly IntPtr[] _audioQueueBuffers = new IntPtr[NumBuffers];
+        private nint _audioQueue;
+        private readonly nint[] _audioQueueBuffers = new nint[NumBuffers];
         private readonly int[] _bufferBytesFilled = new int[NumBuffers];
 
         private readonly int _bytesPerFrame;
@@ -38,9 +38,9 @@ namespace Ryujinx.Audio.Backends.Apple
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void AudioQueueOutputCallback(
-            IntPtr userData,
-            IntPtr audioQueue,
-            IntPtr buffer);
+            nint userData,
+            nint audioQueue,
+            nint buffer);
 
         public AppleHardwareDeviceSession(
             AppleHardwareDeviceDriver driver,
@@ -69,15 +69,15 @@ namespace Ryujinx.Audio.Backends.Apple
                     RequestedSampleRate,
                     RequestedChannelCount);
 
-                IntPtr callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
-                IntPtr userData = GCHandle.ToIntPtr(_gcHandle);
+                nint callbackPtr = Marshal.GetFunctionPointerForDelegate(_callbackDelegate);
+                nint userData = GCHandle.ToIntPtr(_gcHandle);
 
                 int result = AudioQueueNewOutput(
                     ref format,
                     callbackPtr,
                     userData,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
+                    nint.Zero,
+                    nint.Zero,
                     0,
                     out _audioQueue);
 
@@ -99,7 +99,7 @@ namespace Ryujinx.Audio.Backends.Apple
             }
         }
 
-        private unsafe void PrimeBuffer(IntPtr bufferPtr, int bufferIndex)
+        private unsafe void PrimeBuffer(nint bufferPtr, int bufferIndex)
         {
             AudioQueueBuffer* buffer = (AudioQueueBuffer*)bufferPtr;
 
@@ -123,12 +123,12 @@ namespace Ryujinx.Audio.Backends.Apple
             buffer->AudioDataByteSize = (uint)capacityBytes;
             _bufferBytesFilled[bufferIndex] = bytesToRead;
 
-            AudioQueueEnqueueBuffer(_audioQueue, bufferPtr, 0, IntPtr.Zero);
+            AudioQueueEnqueueBuffer(_audioQueue, bufferPtr, 0, nint.Zero);
         }
 
-        private void OutputCallback(IntPtr userData, IntPtr audioQueue, IntPtr bufferPtr)
+        private void OutputCallback(nint userData, nint audioQueue, nint bufferPtr)
         {
-            if (!_started || bufferPtr == IntPtr.Zero)
+            if (!_started || bufferPtr == nint.Zero)
                 return;
 
             int bufferIndex = Array.IndexOf(_audioQueueBuffers, bufferPtr);
@@ -173,7 +173,7 @@ namespace Ryujinx.Audio.Backends.Apple
             }
         }
 
-        private unsafe void ApplyVolume(IntPtr dataPtr, int byteSize)
+        private unsafe void ApplyVolume(nint dataPtr, int byteSize)
         {
             float volume = Math.Clamp(_volume * _driver.Volume, 0f, 1f);
             if (volume >= 0.999f)
@@ -223,7 +223,7 @@ namespace Ryujinx.Audio.Backends.Apple
                     return;
 
                 _started = true;
-                AudioQueueStart(_audioQueue, IntPtr.Zero);
+                AudioQueueStart(_audioQueue, nint.Zero);
             }
         }
 
@@ -262,11 +262,11 @@ namespace Ryujinx.Audio.Backends.Apple
             {
                 Stop();
 
-                if (_audioQueue != IntPtr.Zero)
+                if (_audioQueue != nint.Zero)
                 {
                     AudioQueueStop(_audioQueue, true);
                     AudioQueueDispose(_audioQueue, true);
-                    _audioQueue = IntPtr.Zero;
+                    _audioQueue = nint.Zero;
                 }
 
                 if (_gcHandle.IsAllocated)

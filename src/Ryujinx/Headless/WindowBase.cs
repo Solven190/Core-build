@@ -148,7 +148,7 @@ namespace Ryujinx.Headless
 
             fixed (byte* iconPtr = iconBytes)
             {
-                SDL_IOStream* rwOpsStruct = SDL_IOFromConstMem((nint)iconPtr, (UIntPtr)iconBytes.Length);
+                SDL_IOStream* rwOpsStruct = SDL_IOFromConstMem((nint)iconPtr, (uint)iconBytes.Length);
                 SDL_Surface* iconHandle = SDL_LoadBMP_IO(rwOpsStruct, true);
 
                 SDL_SetWindowIcon(WindowHandle, iconHandle);
