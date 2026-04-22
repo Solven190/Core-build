@@ -13,6 +13,12 @@
     <IncludeSourceRevisionInInformationalVersion Condition="'$(Configuration)'=='Release'">false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
+  <Target Name="RemoveNativePackagePdbs" AfterTargets="ResolvePackageAssets">
+    <ItemGroup Condition="'$(Configuration)'=='Release'">
+      <NativeCopyLocalItems Remove="@(NativeCopyLocalItems)" Condition="'%(Extension)' == '.pdb'" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <Exec Command="codesign --entitlements '$(ProjectDir)..\..\distribution\macos\entitlements.xml' -f --deep -s $(SigningCertificate) '$(TargetDir)$(TargetName)'" />
   </Target>
