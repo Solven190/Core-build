@@ -1133,8 +1133,14 @@ namespace Ryujinx.UI.App.Common
             ApplicationCountUpdated?.Invoke(null, e);
         }
 
-        public static ApplicationMetadata LoadAndSaveMetaData(string titleId, Action<ApplicationMetadata> modifyFunction = null)
+        public static Gommon.Optional<ApplicationMetadata> LoadAndSaveMetaData(string titleId, Action<ApplicationMetadata> modifyFunction = null)
         {
+            if (titleId is null)
+            {
+                Logger.Warning?.PrintMsg(LogClass.Application, "Cannot save metadata because title ID is invalid.");
+                return null;
+            }
+            
             string metadataFolder = Path.Combine(AppDataManager.GamesDirPath, titleId, "gui");
             string metadataFile = Path.Combine(metadataFolder, "metadata.json");
 
@@ -1142,6 +1148,7 @@ namespace Ryujinx.UI.App.Common
 
             if (!File.Exists(metadataFile))
             {
+                Logger.Info?.Print(LogClass.Application, $"Metadata file does not exist. Creating metadata for {titleId}...");
                 Directory.CreateDirectory(metadataFolder);
 
                 appMetadata = new ApplicationMetadata();
@@ -1151,12 +1158,12 @@ namespace Ryujinx.UI.App.Common
 
             try
             {
+                Logger.Debug?.Print(LogClass.Application, $"Deserializing metadata for {titleId}...");
                 appMetadata = JsonHelper.DeserializeFromFile(metadataFile, _serializerContext.ApplicationMetadata);
             }
             catch (JsonException)
             {
                 Logger.Warning?.Print(LogClass.Application, $"Failed to parse metadata json for {titleId}. Loading defaults.");
-
                 appMetadata = new ApplicationMetadata();
             }
 

@@ -52,6 +52,7 @@ namespace Ryujinx.HLE.Loaders.Processes
 
             if (metaLoader is not null)
             {
+                Logger.Info?.Print(LogClass.Application,$"metaLoader: {metaLoader}");
                 ulong programId = metaLoader.GetProgramId();
 
                 Name = ApplicationControlProperties.Title[(int)titleLanguage].NameString.ToString();
@@ -70,7 +71,14 @@ namespace Ryujinx.HLE.Loaders.Processes
                 DisplayVersion = ApplicationControlProperties.DisplayVersionString.ToString();
                 ProgramId = programId;
                 ProgramIdText = $"{programId:x16}";
-                Is64Bit = metaLoader.IsProgram64Bit();
+                Is64Bit = metaLoader.IsProgram64Bit;
+            }
+
+            else
+            {
+                Logger.Error?.Print(LogClass.Application,$"metaLoader is null !!!");
+                ProcessId = 0;
+                return;
             }
 
             DiskCacheEnabled = diskCacheEnabled;
