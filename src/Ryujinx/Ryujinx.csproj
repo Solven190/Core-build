@@ -37,6 +37,9 @@
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
     <PackageReference Include="Svg.Controls.Avalonia" />
     <PackageReference Include="Svg.Controls.Skia.Avalonia" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Condition="'$(RuntimeIdentifier)' != 'linux-x64' AND '$(RuntimeIdentifier)' != 'linux-arm64' AND '$(RuntimeIdentifier)' != 'osx'" />
+    <PackageReference Include="SkiaSharp.NativeAssets.macOS" Condition="'$(RuntimeIdentifier)' != 'linux-x64' AND '$(RuntimeIdentifier)' != 'linux-arm64' AND '$(RuntimeIdentifier)' != 'win-x64' AND '$(RuntimeIdentifier)' != 'win-arm64'" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Condition="'$(RuntimeIdentifier)' != 'win-x64' AND '$(RuntimeIdentifier)' != 'win-arm64' AND '$(RuntimeIdentifier)' != 'osx'" />
     <PackageReference Include="CommandLineParser" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="DynamicData" />
