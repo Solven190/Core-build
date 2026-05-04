@@ -120,6 +120,9 @@ namespace Ryujinx.UI.Common
                 // All games are in Alphabetical order by Game name.
             
                           // Dragon Quest Franchise
+            "0100d7c01f254000", // Dragon Quest I & II HD-2D Remake
+            "01003e601e324000", // Dragon Quest III HD-2D Remake
+            "0100a9d01c446000", // Dragon Quest VII Reimagined
             "010008900705c000", // Dragon Quest Builders
             "010042000a986000", // Dragon Quest Builders 2
             
@@ -268,6 +271,7 @@ namespace Ryujinx.UI.Common
             "01005ea01c0fc001", // ^
             "01006e001823c000", // Sonic Racing: CrossWorlds
             "010064b0242be000", // Sonic Racing: CrossWorlds - Demo
+            "010092b0091d0000", // Team Sonic Racing
             
                           // Xenoblade Franchise
             "0100ff500e34a000", // Xenoblade Chronicles: Definitive Edition
@@ -307,8 +311,8 @@ namespace Ryujinx.UI.Common
             "0100fa501af90000", // Castlevania: Dominus Collection
             "01002b30028f6000", // Celeste
             "0100c510166f0000", // Chained Echoes
-            "0100b41013c82000", // Cruis'n Blast
             "0100cf401a98e000", // Contra: Operation Galuga
+            "0100b41013c82000", // Cruis'n Blast
             "010085900337e000", // Death Squared
             "0100309016e7a000", // Demon Slayer -Kimestsu no Yaiba- The Hinokami Chronicles
             "01001b300b9be000", // Diablo III: Eternal Collection
@@ -317,6 +321,7 @@ namespace Ryujinx.UI.Common
             "01008c8012920000", // Dying Light Platinum Edition
             "0100ed9018f3e000", // Eiyuden Chronicle: Hundred Heroes
             "0100da201ebf8000", // Epic Mickey: Rebrushed
+            "0100d11013e6a000", // Eschatos
             "010038b015560000", // Final Fantasy Tactics: The Ivalice Chronicles
             "0100eb100ab42000", // Final Fantasy XII: The Zodiac Age
             "01001cc01b2d4000", // Goat Simulator 3
@@ -333,16 +338,22 @@ namespace Ryujinx.UI.Common
             "010069301e220000", // Marvel vs. Capcom Fighting Collection: Arcade Classics
             "0100d71004694000", // Minecraft
             "01007430037f6000", // Monopoly
-            "0100853015e86000", // No Man's Sky
-            "0100276009872000", // Okami HD
-            "01007bb017812000", // Portal
-            "0100abd01785c000", // Portal 2
             "01008e200c5c2000", // Muse Dash
             "01001d301b83a000", // Neva
             "0100be7013e06000", // Ni No Kuni II: Revenant Kingdom
             "0100d810170d0000", // Nine Sols
+            "0100853015e86000", // No Man's Sky
+            "0100f85014ed0000", // No More Heroes
+            "0100463014ed4000", // No More Heroes 2
             "010057d006492000", // Octopath Traveler
+            "0100276009872000", // Okami HD
+            "0100e570094e8000", // Owlboy
+            "01007bb017812000", // Portal
+            "0100abd01785c000", // Portal 2
+            "01009f100bc52000", // Psikyo Collection 1
+            "01009d400c4a8000", // Psikyo Collection 2
             "0100210019428000", // Prince of Persia: The Lost Crown
+            "01005ff002e2a000", // Rayman Legends
             "01007820196a6000", // Red Dead Redemption
             "0100e8300a67a000", // Risk
             "01002f7013224000", // Rune Factory 5
@@ -360,6 +371,7 @@ namespace Ryujinx.UI.Common
             "01000a10041ea000", // The Elder Scrolls V: Skyrim
             "0100c1500b82e000", // The World Ends with You: Final Remix
             "010024601bb16000", // Tomb Raider I-III Remastered
+            "010051f0207b2000", // Tomodachi Life: Living the Dream
             "010057a01e4d4000", // TSUKIHIME -A piece of blue glass moon-
             "010080b00ad66000", // Undertale
             "010069401adb8000", // Unicorn Overlord
