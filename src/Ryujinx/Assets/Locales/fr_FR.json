@@ -768,6 +768,7 @@
   "SettingsTabGraphicsPreferredGpu": "GPU préféré",
   "SettingsTabGraphicsPreferredGpuTooltip": "Sélectionnez la carte graphique qui sera utilisée avec l'interface graphique Vulkan.\n\nCela ne change pas le GPU qu'OpenGL utilisera.\n\nChoisissez le GPU noté \"dGPU\" si vous n'êtes pas sûr. S'il n'y en a pas, ne pas modifier.",
   "SettingsAppRequiredRestartMessage": "Redémarrage de Ryujinx requis",
+  "SettingsShowConsoleRestartMessage": "La console sera disponible au prochain démarrage de Ryujinx.",
   "SettingsGpuBackendRestartMessage": "Les paramètres de l'interface graphique ou du GPU ont été modifiés. Cela nécessitera un redémarrage pour être appliqué",
   "SettingsGpuBackendRestartSubMessage": "\n\nVoulez-vous redémarrer maintenant ?",
   "RyujinxUpdaterMessage": "Voulez-vous mettre à jour Ryujinx vers la dernière version ?",

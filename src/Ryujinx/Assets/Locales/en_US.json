@@ -850,6 +850,7 @@
   "SettingsTabGraphicsPreferredGpu": "Preferred GPU",
   "SettingsTabGraphicsPreferredGpuTooltip": "Select the graphics card that will be used with the Vulkan graphics backend.\n\nDoes not affect the GPU that OpenGL will use.\n\nSet to the GPU flagged as \"dGPU\" if unsure. If there isn't one, leave untouched.",
   "SettingsAppRequiredRestartMessage": "Ryujinx Restart Required",
+  "SettingsShowConsoleRestartMessage": "The console will be available the next time Ryujinx starts.",
   "SettingsGpuBackendRestartMessage": "Graphics Backend or GPU settings have been modified. This will require a restart to be applied",
   "SettingsGpuBackendRestartSubMessage": "Do you want to restart now?",
   "RyujinxUpdaterMessage": "Do you want to update Ryujinx to the latest version?",

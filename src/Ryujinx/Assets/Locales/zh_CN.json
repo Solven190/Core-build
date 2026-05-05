@@ -762,6 +762,7 @@
   "SettingsTabGraphicsPreferredGpu": "首选 GPU：",
   "SettingsTabGraphicsPreferredGpuTooltip": "选择 Vulkan 图形引擎使用的 GPU。\n\n此选项不会影响 OpenGL 使用的 GPU。\n\n如果不确定，建议选择\"独立显卡(dGPU)\"。如果没有独立显卡，则无需改动此选项。",
   "SettingsAppRequiredRestartMessage": "Ryujinx 模拟器需要重启",
+  "SettingsShowConsoleRestartMessage": "控制台将会在下次启动 Ryujinx 时可用。",
   "SettingsGpuBackendRestartMessage": "您修改了图形引擎或 GPU 设置，需要重启模拟器才能生效",
   "SettingsGpuBackendRestartSubMessage": "是否要立即重启模拟器？",
   "RyujinxUpdaterMessage": "是否更新 Ryujinx 到最新的版本？",
