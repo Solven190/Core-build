@@ -81,8 +81,10 @@ namespace Ryujinx.HLE.HOS.Services.Mii
             return ResultCode.Success;
         }
 
-        public ResultCode UpdateLatest<T>(DatabaseSessionMetadata metadata, IStoredData<T> oldMiiData, SourceFlag flag, IStoredData<T> newMiiData) where T : unmanaged
+        public ResultCode UpdateLatest<T>(DatabaseSessionMetadata metadata, T oldMiiData, SourceFlag flag, out T newMiiData) where T : unmanaged, IStoredData<T>
         {
+            newMiiData = default;
+
             if (!flag.HasFlag(SourceFlag.Database))
             {
                 return ResultCode.NotFound;
@@ -106,7 +108,7 @@ namespace Ryujinx.HLE.HOS.Services.Mii
 
                 newMiiData.SetFromStoreData(storeData);
 
-                if (oldMiiData == newMiiData)
+                if (oldMiiData.Equals(newMiiData))
                 {
                     return ResultCode.NotUpdated;
                 }
@@ -277,6 +279,18 @@ namespace Ryujinx.HLE.HOS.Services.Mii
         public ResultCode AddOrReplace(DatabaseSessionMetadata metadata, StoreData storeData)
         {
             ResultCode result = _miiDatabase.AddOrReplace(metadata, storeData);
+
+            if (result == ResultCode.Success)
+            {
+                result = _miiDatabase.SaveDatabase();
+            }
+
+            return result;
+        }
+
+        public ResultCode Append(DatabaseSessionMetadata metadata, CharInfo charInfo)
+        {
+            ResultCode result = _miiDatabase.Append(metadata, _utilityImpl, charInfo);
 
             if (result == ResultCode.Success)
             {

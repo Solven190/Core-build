@@ -450,6 +450,32 @@ namespace Ryujinx.HLE.HOS.Services.Mii
             return ResultCode.Success;
         }
 
+        public ResultCode Append(DatabaseSessionMetadata metadata, UtilityImpl utilityImpl, CharInfo charInfo)
+        {
+            if (!charInfo.IsValid())
+            {
+                return ResultCode.InvalidCharInfo;
+            }
+
+            if (charInfo.Type == 1)
+            {
+                return ResultCode.InvalidOperationOnSpecialMii;
+            }
+
+            CoreData coreData = new();
+            coreData.SetFromCharInfo(charInfo);
+
+            StoreData storeData;
+
+            do
+            {
+                storeData = StoreData.BuildFromCoreData(utilityImpl, coreData);
+            }
+            while (_database.GetIndexByCreatorId(out _, storeData.CreateId));
+
+            return AddOrReplace(metadata, storeData);
+        }
+
         public ResultCode Delete(DatabaseSessionMetadata metadata, CreateId createId)
         {
             if (!_database.GetIndexByCreatorId(out int index, createId))

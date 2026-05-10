@@ -54,9 +54,7 @@ namespace Ryujinx.HLE.HOS.Services.Mii.StaticService
 
         protected override ResultCode UpdateLatest(CharInfo oldCharInfo, SourceFlag flag, out CharInfo newCharInfo)
         {
-            newCharInfo = default;
-
-            return _database.UpdateLatest(_metadata, oldCharInfo, flag, newCharInfo);
+            return _database.UpdateLatest(_metadata, oldCharInfo, flag, out newCharInfo);
         }
 
         protected override ResultCode BuildRandom(Age age, Gender gender, Race race, out CharInfo charInfo)
@@ -113,14 +111,14 @@ namespace Ryujinx.HLE.HOS.Services.Mii.StaticService
 
         protected override ResultCode UpdateLatest1(StoreData oldStoreData, SourceFlag flag, out StoreData newStoreData)
         {
-            newStoreData = default;
-
             if (!_isSystem)
             {
+                newStoreData = default;
+
                 return ResultCode.PermissionDenied;
             }
 
-            return _database.UpdateLatest(_metadata, oldStoreData, flag, newStoreData);
+            return _database.UpdateLatest(_metadata, oldStoreData, flag, out newStoreData);
         }
 
         protected override ResultCode FindIndex(CreateId createId, bool isSpecial, out int index)
@@ -261,6 +259,11 @@ namespace Ryujinx.HLE.HOS.Services.Mii.StaticService
         protected override ResultCode ConvertCharInfoToCoreData(CharInfo charInfo, out CoreData coreData)
         {
             return _database.ConvertCharInfoToCoreData(charInfo, out coreData);
+        }
+
+        protected override ResultCode Append(CharInfo charInfo)
+        {
+            return _database.Append(_metadata, charInfo);
         }
     }
 }

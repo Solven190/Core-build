@@ -340,6 +340,15 @@ namespace Ryujinx.HLE.HOS.Services.Mii.StaticService
             return result;
         }
 
+        [CommandCmif(26)] // 10.2.0+
+        // Append(nn::mii::CharInfo char_info)
+        public ResultCode Append(ServiceCtx context)
+        {
+            CharInfo charInfo = context.RequestData.ReadStruct<CharInfo>();
+
+            return Append(charInfo);
+        }
+
         private Span<byte> CreateByteSpanFromBuffer(ServiceCtx context, IpcBuffDesc ipcBuff, bool isOutput)
         {
             byte[] rawData;
@@ -421,5 +430,7 @@ namespace Ryujinx.HLE.HOS.Services.Mii.StaticService
         protected abstract ResultCode ConvertCoreDataToCharInfo(CoreData coreData, out CharInfo charInfo);
 
         protected abstract ResultCode ConvertCharInfoToCoreData(CharInfo charInfo, out CoreData coreData);
+
+        protected abstract ResultCode Append(CharInfo charInfo);
     }
 }
