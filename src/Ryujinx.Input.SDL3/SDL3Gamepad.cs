@@ -2,6 +2,7 @@ using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Common.Logging;
 using SDL;
+using Ryujinx.HLE.HOS.Services.Hid;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -75,11 +76,14 @@ namespace Ryujinx.Input.SDL3
 
         private SDL_Gamepad* _gamepadHandle;
 
+        private NpadHdRumble _hdRumble;
+
         private float _triggerThreshold;
 
         public SDL3Gamepad(SDL_Gamepad* gamepadHandle, string driverId)
         {
             _gamepadHandle = gamepadHandle;
+            _hdRumble = NpadHdRumble.Create(gamepadHandle);
             _buttonsUserMapping = new List<ButtonMappingEntry>(20);
 
             Name = SDL_GetGamepadName(_gamepadHandle);
@@ -145,6 +149,10 @@ namespace Ryujinx.Input.SDL3
 
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing && _hdRumble != null)
+            {
+                _hdRumble.Dispose();
+            }
             if (disposing && _gamepadHandle != null)
             {
                 SDL_CloseGamepad(_gamepadHandle);
@@ -162,6 +170,11 @@ namespace Ryujinx.Input.SDL3
         public void SetTriggerThreshold(float triggerThreshold)
         {
             _triggerThreshold = triggerThreshold;
+        }
+
+        public bool HDRumble(VibrationValue left, VibrationValue right)
+        {
+            return _hdRumble?.HdRumble(left, right) ?? false;
         }
 
         public void Rumble(float lowFrequency, float highFrequency, uint durationMs)
