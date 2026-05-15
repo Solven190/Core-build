@@ -591,7 +591,16 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
         {
             if (context.HostCapabilities.SupportsShaderNonUniformIndexing)
             {
+                if (!context.WasNonUniformAccessDeclared)
+                {
+                    context.AddExtension("SPV_EXT_descriptor_indexing");
+                    context.AddCapability(Capability.ShaderNonUniform);
+                    context.AddCapability(Capability.SampledImageArrayNonUniformIndexing);
+                    context.AddCapability(Capability.StorageImageArrayNonUniformIndexing);
+                }
+
                 context.Decorate(inst, Decoration.NonUniform);
+                context.WasNonUniformAccessDeclared = true;
             }
         }
 

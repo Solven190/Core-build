@@ -82,6 +82,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
 
         public bool IsMainFunction { get; private set; }
         public bool MayHaveReturned { get; set; }
+        public bool WasNonUniformAccessDeclared { get; set; }
 
         public CodeGenContext(
             StructuredProgramInfo info,
@@ -89,6 +90,8 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
             GeneratorPool<Instruction> instPool,
             GeneratorPool<LiteralInteger> integerPool) : base(SpirvVersionPacked, instPool, integerPool)
         {
+            WasNonUniformAccessDeclared = false;
+
             Info = info;
             AttributeUsage = parameters.AttributeUsage;
             Definitions = parameters.Definitions;
