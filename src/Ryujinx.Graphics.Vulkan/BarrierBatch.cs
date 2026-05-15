@@ -46,7 +46,14 @@ namespace Ryujinx.Graphics.Vulkan
 
         public static (AccessFlags Access, PipelineStageFlags Stages) GetSubpassAccessSuperset(VulkanRenderer gd)
         {
-            AccessFlags access = BufferAccess;
+            AccessFlags access = BufferAccess |
+                AccessFlags.ShaderReadBit |
+                AccessFlags.ShaderWriteBit |
+                AccessFlags.ColorAttachmentReadBit |
+                AccessFlags.ColorAttachmentWriteBit |
+                AccessFlags.DepthStencilAttachmentReadBit |
+                AccessFlags.DepthStencilAttachmentWriteBit;
+
             PipelineStageFlags stages = PipelineStageFlags.AllGraphicsBit;
 
             if (gd.TransformFeedbackApi != null)

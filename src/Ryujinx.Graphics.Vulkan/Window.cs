@@ -390,12 +390,12 @@ namespace Ryujinx.Graphics.Vulkan
             {
                 if (_effect != null)
                 {
+                    _gd.FlushAllCommands();
                     _gd.CommandBufferPool.Return(
                         cbs,
                         null,
                         [PipelineStageFlags.ColorAttachmentOutputBit],
                         null);
-                    _gd.FlushAllCommands();
                     cbs.GetFence().Wait();
                     cbs = _gd.CommandBufferPool.Rent();
                 }
@@ -453,6 +453,8 @@ namespace Ryujinx.Graphics.Vulkan
                 0,
                 ImageLayout.General,
                 ImageLayout.PresentSrcKhr);
+
+            _gd.FlushAllCommands();
 
             _gd.CommandBufferPool.Return(
                 cbs,

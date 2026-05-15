@@ -15,6 +15,8 @@ namespace Ryujinx.Graphics.Vulkan
             Image dstImage,
             TextureCreateInfo srcInfo,
             TextureCreateInfo dstInfo,
+            TextureCreateInfo srcStorageInfo,
+            TextureCreateInfo dstStorageInfo,
             Extents2D srcRegion,
             Extents2D dstRegion,
             int srcLayer,
@@ -38,6 +40,13 @@ namespace Ryujinx.Graphics.Vulkan
                 var xy2 = new Offset3D(Clamp(extents.X2, width) >> level, Clamp(extents.Y2, height) >> level, 1);
 
                 return (xy1, xy2);
+            }
+
+            static (Offset3D, Offset3D) ClampOffsetsToMip(Offset3D xy1, Offset3D xy2, int mipW, int mipH)
+            {
+                return (
+                    new Offset3D(Math.Min(xy1.X, mipW), Math.Min(xy1.Y, mipH), xy1.Z),
+                    new Offset3D(Math.Min(xy2.X, mipW), Math.Min(xy2.Y, mipH), xy2.Z));
             }
 
             if (srcAspectFlags == 0)
@@ -80,6 +89,14 @@ namespace Ryujinx.Graphics.Vulkan
                 (srcOffsets.Element0, srcOffsets.Element1) = ExtentsToOffset3D(srcRegion, srcInfo.Width, srcInfo.Height, level);
                 (dstOffsets.Element0, dstOffsets.Element1) = ExtentsToOffset3D(dstRegion, dstInfo.Width, dstInfo.Height, level);
 
+                int srcMipW = Math.Max(1, srcStorageInfo.Width >> (int)copySrcLevel);
+                int srcMipH = Math.Max(1, srcStorageInfo.Height >> (int)copySrcLevel);
+                int dstMipW = Math.Max(1, dstStorageInfo.Width >> (int)copyDstLevel);
+                int dstMipH = Math.Max(1, dstStorageInfo.Height >> (int)copyDstLevel);
+
+                (srcOffsets.Element0, srcOffsets.Element1) = ClampOffsetsToMip(srcOffsets.Element0, srcOffsets.Element1, srcMipW, srcMipH);
+                (dstOffsets.Element0, dstOffsets.Element1) = ClampOffsetsToMip(dstOffsets.Element0, dstOffsets.Element1, dstMipW, dstMipH);
+
                 var region = new ImageBlit
                 {
                     SrcSubresource = srcSl,
@@ -121,6 +138,8 @@ namespace Ryujinx.Graphics.Vulkan
             Image dstImage,
             TextureCreateInfo srcInfo,
             TextureCreateInfo dstInfo,
+            TextureCreateInfo srcStorageInfo,
+            TextureCreateInfo dstStorageInfo,
             int srcViewLayer,
             int dstViewLayer,
             int srcViewLevel,
@@ -151,6 +170,8 @@ namespace Ryujinx.Graphics.Vulkan
                 dstImage,
                 srcInfo,
                 dstInfo,
+                srcStorageInfo,
+                dstStorageInfo,
                 srcViewLayer,
                 dstViewLayer,
                 srcViewLevel,
@@ -186,6 +207,8 @@ namespace Ryujinx.Graphics.Vulkan
             Image dstImage,
             TextureCreateInfo srcInfo,
             TextureCreateInfo dstInfo,
+            TextureCreateInfo srcStorageInfo,
+            TextureCreateInfo dstStorageInfo,
             int srcViewLayer,
             int dstViewLayer,
             int srcViewLevel,
@@ -313,6 +336,14 @@ namespace Ryujinx.Graphics.Vulkan
 
                 int copyWidth = sizeInBlocks ? BitUtils.DivRoundUp(width, blockWidth) : width;
                 int copyHeight = sizeInBlocks ? BitUtils.DivRoundUp(height, blockHeight) : height;
+
+                int srcMipW = Math.Max(1, srcStorageInfo.Width >> (srcViewLevel + srcLevel + level));
+                int srcMipH = Math.Max(1, srcStorageInfo.Height >> (srcViewLevel + srcLevel + level));
+                int dstMipW = Math.Max(1, dstStorageInfo.Width >> (dstViewLevel + dstLevel + level));
+                int dstMipH = Math.Max(1, dstStorageInfo.Height >> (dstViewLevel + dstLevel + level));
+
+                copyWidth = Math.Min(copyWidth, Math.Min(srcMipW, dstMipW));
+                copyHeight = Math.Min(copyHeight, Math.Min(srcMipH, dstMipH));
 
                 var extent = new Extent3D((uint)copyWidth, (uint)copyHeight, (uint)srcDepth);
 

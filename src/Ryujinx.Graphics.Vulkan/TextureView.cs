@@ -64,7 +64,8 @@ namespace Ryujinx.Graphics.Vulkan
             bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample();
 
             var format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
-            var usage = TextureStorage.GetImageUsage(info.Format, info.Target, gd.Capabilities);
+            var usage = TextureStorage.GetImageUsage(info.Format, info.Target, gd.Capabilities, isMsImageStorageSupported) & storage.UsageFlags;
+
             var levels = (uint)info.Levels;
             var layers = (uint)info.GetLayers();
 
@@ -129,6 +130,8 @@ namespace Ryujinx.Graphics.Vulkan
             {
                 shaderUsage |= ImageUsageFlags.StorageBit;
             }
+
+            shaderUsage &= storage.UsageFlags;
 
             _imageView = CreateImageView(componentMapping, subresourceRange, type, shaderUsage);
 
@@ -254,6 +257,8 @@ namespace Ryujinx.Graphics.Vulkan
                     dstImage,
                     src.Info,
                     dst.Info,
+                    src.Storage.Info,
+                    dst.Storage.Info,
                     src.FirstLayer,
                     dst.FirstLayer,
                     src.FirstLevel,
@@ -307,6 +312,8 @@ namespace Ryujinx.Graphics.Vulkan
                     dstImage,
                     src.Info,
                     dst.Info,
+                    src.Storage.Info,
+                    dst.Storage.Info,
                     src.FirstLayer,
                     dst.FirstLayer,
                     src.FirstLevel,
@@ -382,6 +389,8 @@ namespace Ryujinx.Graphics.Vulkan
                             dst.GetImage().Get(cbs).Value,
                             src.Info,
                             dst.Info,
+                            src.Storage.Info,
+                            dst.Storage.Info,
                             src.FirstLayer,
                             dst.FirstLayer,
                             src.FirstLevel,
@@ -407,6 +416,8 @@ namespace Ryujinx.Graphics.Vulkan
                         dst.GetImage().Get(cbs).Value,
                         src.Info,
                         dst.Info,
+                        src.Storage.Info,
+                        dst.Storage.Info,
                         srcRegion,
                         dstRegion,
                         src.FirstLayer,
@@ -460,6 +471,8 @@ namespace Ryujinx.Graphics.Vulkan
                 dstImage.Get(cbs).Value,
                 src.Info,
                 dst.Info,
+                src.Storage.Info,
+                dst.Storage.Info,
                 srcRegion,
                 dstRegion,
                 src.FirstLayer,

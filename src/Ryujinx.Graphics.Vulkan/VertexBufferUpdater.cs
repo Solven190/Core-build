@@ -15,6 +15,10 @@ namespace Ryujinx.Graphics.Vulkan
         private readonly NativeArray<ulong> _sizes;
         private readonly NativeArray<ulong> _strides;
 
+        private readonly Auto<DisposableBuffer>[] _bufferAutos;
+        private readonly int[] _bufferOffsetsForGet;
+        private readonly int[] _bufferSizesForGet;
+
         public VertexBufferUpdater(VulkanRenderer gd)
         {
             _gd = gd;
@@ -23,9 +27,13 @@ namespace Ryujinx.Graphics.Vulkan
             _offsets = new NativeArray<ulong>(Constants.MaxVertexBuffers);
             _sizes = new NativeArray<ulong>(Constants.MaxVertexBuffers);
             _strides = new NativeArray<ulong>(Constants.MaxVertexBuffers);
+
+            _bufferAutos = new Auto<DisposableBuffer>[Constants.MaxVertexBuffers];
+            _bufferOffsetsForGet = new int[Constants.MaxVertexBuffers];
+            _bufferSizesForGet = new int[Constants.MaxVertexBuffers];
         }
 
-        public void BindVertexBuffer(CommandBufferScoped cbs, uint binding, VkBuffer buffer, ulong offset, ulong size, ulong stride)
+        public void BindVertexBuffer(CommandBufferScoped cbs, uint binding, Auto<DisposableBuffer> autoBuffer, int offset, int size, ulong stride)
         {
             if (_count == 0)
             {
@@ -39,9 +47,11 @@ namespace Ryujinx.Graphics.Vulkan
 
             int index = (int)_count;
 
-            _buffers[index] = buffer;
-            _offsets[index] = offset;
-            _sizes[index] = size;
+            _bufferAutos[index] = autoBuffer;
+            _bufferOffsetsForGet[index] = offset;
+            _bufferSizesForGet[index] = size;
+            _offsets[index] = (ulong)offset;
+            _sizes[index] = (ulong)size;
             _strides[index] = stride;
 
             _count++;
@@ -51,6 +61,12 @@ namespace Ryujinx.Graphics.Vulkan
         {
             if (_count != 0)
             {
+                for (int i = 0; i < _count; i++)
+                {
+                    _buffers[i] = _bufferAutos[i].Get(cbs, _bufferOffsetsForGet[i], _bufferSizesForGet[i]).Value;
+                    _bufferAutos[i] = null;
+                }
+
                 if (_gd.Capabilities.SupportsExtendedDynamicState)
                 {
                     _gd.ExtendedDynamicStateApi.CmdBindVertexBuffers2(
