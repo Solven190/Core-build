@@ -462,6 +462,8 @@
   "ControllerSettingsRumble": "Rumble",
   "ControllerSettingsRumbleStrongMultiplier": "Strong Rumble Multiplier",
   "ControllerSettingsRumbleWeakMultiplier": "Weak Rumble Multiplier",
+  "ControllerSettingsRumbleUseHDRumble": "Enable HD Rumble",
+  "HDRumbleTooltip": "EXPERIMENTAL.\n\nSends more data to the controller for better rumble.\n\nCurrently only supports first-party Nintendo Switch controllers.\n\nLeave OFF if unsure.",
   "DialogMessageSaveNotAvailableMessage": "There is no savedata for {0} [{1:x16}]",
   "DialogMessageSaveNotAvailableCreateSaveMessage": "Would you like to create savedata for this game?",
   "DialogConfirmationTitle": "Ryujinx - Confirmation",

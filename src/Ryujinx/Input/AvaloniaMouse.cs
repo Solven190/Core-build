@@ -1,4 +1,5 @@
 using Ryujinx.Common.Configuration.Hid;
+using Ryujinx.HLE.HOS.Services.Hid;
 using Ryujinx.Input;
 using System;
 using System.Drawing;
@@ -63,8 +64,13 @@ namespace Ryujinx.Ava.Input
         {
             throw new NotImplementedException();
         }
+        
+        public bool HDRumble(VibrationValue left, VibrationValue right)
+        {
+            throw new NotImplementedException();
+        }
 
-        public void Rumble(float lowFrequency, float highFrequency, uint durationMs)
+        public bool Rumble(float lowFrequency, float highFrequency, uint durationMs)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,7 @@
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid.Keyboard;
 using SDL;
+using Ryujinx.HLE.HOS.Services.Hid;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -385,9 +386,14 @@ namespace Ryujinx.Input.SDL3
             // No operations
         }
 
-        public void Rumble(float lowFrequency, float highFrequency, uint durationMs)
+        public bool HDRumble(VibrationValue left, VibrationValue right)
         {
-            // No operations
+            return false;
+        }
+        
+        public bool Rumble(float lowFrequency, float highFrequency, uint durationMs)
+        {
+            return false;
         }
 
         public Vector3 GetMotionData(MotionInputId inputId)
