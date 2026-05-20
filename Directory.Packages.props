@@ -37,7 +37,7 @@
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.Linux" Version="6.1.4-build6" />
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.macOS" Version="5.0.3-build14" />
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.Windows" Version="6.1.4-build6" />
-    <PackageVersion Include="Ryujinx.MoltenVK" Version="1.4.1" />
+    <PackageVersion Include="Ryujinx.Graphics.Vulkan.MoltenVK" Version="1.4.2-ryujinx.3" />
     <PackageVersion Include="Ryujinx.LibHac" Version="0.21.0-alpha.133" />
     <PackageVersion Include="Ryujinx.SDL3-CS" Version="2026.501.0" />
     <PackageVersion Include="securifybv.ShellLink" Version="0.1.0" />
@@ -49,7 +49,7 @@
     <PackageVersion Include="SkiaSharp" Version="3.119.2" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.2" />
     <PackageVersion Include="SPB" Version="0.0.4-build32" />
-    <PackageVersion Include="System.IO.Hashing" Version="10.0.7" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.8" />
     <PackageVersion Include="UnicornEngine.Unicorn" Version="2.1.4-a40db6c" />
   </ItemGroup>
 </Project>
