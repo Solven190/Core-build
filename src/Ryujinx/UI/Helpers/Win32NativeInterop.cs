@@ -65,6 +65,18 @@ namespace Ryujinx.Ava.UI.Helpers
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NativeRect
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+
+            public int Width => Right - Left;
+            public int Height => Bottom - Top;
+        }
+
         public static nint CreateEmptyCursor()
         {
             return CreateCursor(nint.Zero, 0, 0, 1, 1, [0xFF], [0x00]);
@@ -120,6 +132,10 @@ namespace Ryujinx.Ava.UI.Helpers
 
         [LibraryImport("user32.dll", SetLastError = true)]
         public static partial nint SetWindowLongPtrW(nint hWnd, int nIndex, nint value);
+
+        [LibraryImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool GetWindowRect(nint hWnd, out NativeRect lpRect);
 
         [LibraryImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

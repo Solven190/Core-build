@@ -42,6 +42,8 @@ namespace Ryujinx.Ava.UI.Windows
         
         private bool _isLoading;
         private bool _applicationsLoadedOnce;
+        private double _windowStartupWidthDelta;
+        private double _windowStartupHeightDelta;
 
         private UserChannelPersistence _userChannelPersistence;
         private static bool _deferLoad;
@@ -473,8 +475,8 @@ namespace Ryujinx.Ava.UI.Windows
             // Only save rectangle properties if the window is not in a maximized state.
             if (WindowState != WindowState.Maximized)
             {
-                ConfigurationState.Instance.UI.WindowStartup.WindowSizeHeight.Value = (int)Height;
-                ConfigurationState.Instance.UI.WindowStartup.WindowSizeWidth.Value = (int)Width;
+                ConfigurationState.Instance.UI.WindowStartup.WindowSizeHeight.Value = (int)((Height - _windowStartupHeightDelta) / Program.WindowScaleFactor);
+                ConfigurationState.Instance.UI.WindowStartup.WindowSizeWidth.Value = (int)((Width - _windowStartupWidthDelta) / Program.WindowScaleFactor);
 
                 ConfigurationState.Instance.UI.WindowStartup.WindowPositionX.Value = Position.X;
                 ConfigurationState.Instance.UI.WindowStartup.WindowPositionY.Value = Position.Y;
@@ -489,13 +491,10 @@ namespace Ryujinx.Ava.UI.Windows
 
             Initialize();
 
-            /// <summary>
-            /// Subscribe to the ColorValuesChanged event
-            /// </summary>
-            if (PlatformSettings != null)
-            {
-                PlatformSettings.ColorValuesChanged += OnPlatformColorValuesChanged;
-            }
+            _windowStartupWidthDelta = Math.Max(0, Width - ViewModel.WindowWidth);
+            _windowStartupHeightDelta = Math.Max(0, Height - ViewModel.WindowHeight);
+
+            PlatformSettings?.ColorValuesChanged += OnPlatformColorValuesChanged;
 
             ViewModel.Initialize(
                 ContentManager,
