@@ -885,7 +885,7 @@ namespace Ryujinx.HLE.HOS.Services.Fs
         {
             byte programIndex = context.RequestData.ReadByte();
 
-            if ((context.Device.Processes.ActiveApplication.ProgramId & 0xf) != programIndex)
+            if (context.Device.Processes.GetProcess(_pid).Identity.ProgramIndex != programIndex)
             {
                 throw new NotImplementedException($"Accessing storage from other programs is not supported (program index = {programIndex}).");
             }

@@ -1,5 +1,6 @@
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.HOS.Services.Fatal.Types;
+using Ryujinx.HLE.Loaders.Processes;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -50,12 +51,13 @@ namespace Ryujinx.HLE.HOS.Services.Fatal
 
         private ResultCode ThrowFatalWithCpuContextImpl(ServiceCtx context, ResultCode resultCode, ulong pid, FatalPolicy fatalPolicy, ReadOnlySpan<byte> cpuContext)
         {
+            ProcessResult process = context.Device.Processes.GetProcess(pid);
             StringBuilder errorReport = new();
 
             errorReport.AppendLine();
             errorReport.AppendLine("ErrorReport log:");
 
-            errorReport.AppendLine($"\tTitleId: {context.Device.Processes.ActiveApplication.ProgramIdText}");
+            errorReport.AppendLine($"\tTitleId: {process.ProgramIdText}");
             errorReport.AppendLine($"\tPid: {pid}");
             errorReport.AppendLine($"\tResultCode: {((int)resultCode & 0x1FF) + 2000}-{((int)resultCode >> 9) & 0x3FFF:d4}");
             errorReport.AppendLine($"\tFatalPolicy: {fatalPolicy}");
@@ -64,7 +66,7 @@ namespace Ryujinx.HLE.HOS.Services.Fatal
             {
                 errorReport.AppendLine("CPU Context:");
 
-                if (context.Device.Processes.ActiveApplication.Is64Bit)
+                if (process.Is64Bit)
                 {
                     CpuContext64 cpuContext64 = MemoryMarshal.Cast<byte, CpuContext64>(cpuContext)[0];
 

@@ -44,8 +44,9 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
         private int _jitLoaded;
 
         private readonly LibHac.HorizonClient _horizon;
+        private readonly ulong _pid;
 
-        public IApplicationFunctions(Horizon system)
+        public IApplicationFunctions(Horizon system, ulong pid)
         {
             // TODO: Find where they are signaled.
             _gpuErrorDetectedSystemEvent = new KEvent(system.KernelContext);
@@ -55,6 +56,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
             _unknownEvent = new KEvent(system.KernelContext);
 
             _horizon = system.LibHacHorizonManager.AmClient;
+            _pid = pid;
         }
 
         [CommandCmif(1)]
@@ -115,11 +117,12 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
         public ResultCode EnsureSaveData(ServiceCtx context)
         {
             Uid userId = context.RequestData.ReadStruct<AccountUid>().ToLibHacUid();
+            var process = context.Device.Processes.GetProcess(_pid);
 
             // Mask out the low nibble of the program ID to get the application ID
-            ApplicationId applicationId = new(context.Device.Processes.ActiveApplication.ProgramId & ~0xFul);
+            ApplicationId applicationId = new(process.Identity.ApplicationId);
 
-            ApplicationControlProperty nacp = context.Device.Processes.ActiveApplication.ApplicationControlProperties;
+            ApplicationControlProperty nacp = process.ApplicationControlProperties;
 
             LibHac.HorizonClient hos = context.Device.System.LibHacHorizonManager.AmClient;
             LibHac.Result result = hos.Fs.EnsureApplicationSaveData(out long requiredSize, applicationId, in nacp, in userId);
@@ -139,7 +142,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
             // TODO: When above calls are implemented, switch to using ns:am
 
             long desiredLanguageCode = context.Device.System.State.DesiredLanguageCode;
-            int supportedLanguages = (int)context.Device.Processes.ActiveApplication.ApplicationControlProperties.SupportedLanguageFlag;
+            int supportedLanguages = (int)context.Device.Processes.GetProcess(_pid).ApplicationControlProperties.SupportedLanguageFlag;
             int firstSupported = BitOperations.TrailingZeroCount(supportedLanguages);
 
             if (firstSupported > (int)TitleLanguage.BrazilianPortuguese)
@@ -182,7 +185,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
         public ResultCode GetDisplayVersion(ServiceCtx context)
         {
             // If an NACP isn't found, the buffer will be all '\0' which seems to be the correct implementation.
-            context.ResponseData.Write(context.Device.Processes.ActiveApplication.ApplicationControlProperties.DisplayVersion);
+            context.ResponseData.Write(context.Device.Processes.GetProcess(_pid).ApplicationControlProperties.DisplayVersion);
 
             return ResultCode.Success;
         }
@@ -235,11 +238,12 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
             ushort index = (ushort)context.RequestData.ReadUInt64();
             long saveSize = context.RequestData.ReadInt64();
             long journalSize = context.RequestData.ReadInt64();
+            var process = context.Device.Processes.GetProcess(_pid);
 
             // Mask out the low nibble of the program ID to get the application ID
-            ApplicationId applicationId = new(context.Device.Processes.ActiveApplication.ProgramId & ~0xFul);
+            ApplicationId applicationId = new(process.Identity.ApplicationId);
 
-            ApplicationControlProperty nacp = context.Device.Processes.ActiveApplication.ApplicationControlProperties;
+            ApplicationControlProperty nacp = process.ApplicationControlProperties;
 
             LibHac.Result result = _horizon.Fs.CreateApplicationCacheStorage(out long requiredSize,
                 out CacheStorageTargetMedia storageTarget, applicationId, in nacp, index, saveSize, journalSize);

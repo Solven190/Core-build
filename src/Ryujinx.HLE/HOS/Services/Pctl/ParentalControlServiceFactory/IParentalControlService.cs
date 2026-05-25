@@ -48,21 +48,22 @@ namespace Ryujinx.HLE.HOS.Services.Pctl.ParentalControlServiceFactory
             {
                 if ((_permissionFlag & 0x40) == 0)
                 {
-                    ulong titleId = ApplicationLaunchProperty.GetByPid(context).TitleId;
+                    ulong titleId = ApplicationLaunchProperty.GetByPid(context, _pid).TitleId;
 
                     if (titleId != 0)
                     {
                         _titleId = titleId;
+                        var process = context.Device.Processes.GetProcess(_pid);
 
                         // TODO: Call nn::arp::GetApplicationControlProperty here when implemented, if it return ResultCode.Success we assign fields.
-                        _ratingAge = new int[context.Device.Processes.ActiveApplication.ApplicationControlProperties.RatingAge.Length];
+                        _ratingAge = new int[process.ApplicationControlProperties.RatingAge.Length];
 
                         for (int i = 0; i < _ratingAge.Length; i++)
                         {
-                            _ratingAge[i] = Convert.ToInt32(context.Device.Processes.ActiveApplication.ApplicationControlProperties.RatingAge[i]);
+                            _ratingAge[i] = Convert.ToInt32(process.ApplicationControlProperties.RatingAge[i]);
                         }
                         
-                        _parentalControlFlag = context.Device.Processes.ActiveApplication.ApplicationControlProperties.ParentalControlFlag;
+                        _parentalControlFlag = process.ApplicationControlProperties.ParentalControlFlag;
                     }
                 }
 

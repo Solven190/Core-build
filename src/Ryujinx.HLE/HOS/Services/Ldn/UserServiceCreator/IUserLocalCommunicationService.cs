@@ -65,7 +65,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator
         private bool CheckLocalCommunicationIdPermission(ServiceCtx context, ulong localCommunicationIdChecked)
         {
             // TODO: Call nn::arp::GetApplicationControlProperty here when implemented.
-            ApplicationControlProperty controlProperty = context.Device.Processes.ActiveApplication.ApplicationControlProperties;
+            ApplicationControlProperty controlProperty = context.Device.Processes.GetProcess(context.ClientProcessId).ApplicationControlProperties;
 
             foreach (ulong localCommunicationId in controlProperty.LocalCommunicationId)
             {
@@ -423,7 +423,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator
                                 if (scanFilter.NetworkId.IntentId.LocalCommunicationId == -1 && NetworkClient.NeedsRealId)
                                 {
                                     // TODO: Call nn::arp::GetApplicationControlProperty here when implemented.
-                                    ApplicationControlProperty controlProperty = context.Device.Processes.ActiveApplication.ApplicationControlProperties;
+                                    ApplicationControlProperty controlProperty = context.Device.Processes.GetProcess(context.ClientProcessId).ApplicationControlProperties;
 
                                     scanFilter.NetworkId.IntentId.LocalCommunicationId = (long)controlProperty.LocalCommunicationId[0];
                                 }
@@ -591,7 +591,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator
             if (networkConfig.IntentId.LocalCommunicationId == -1 && NetworkClient.NeedsRealId)
             {
                 // TODO: Call nn::arp::GetApplicationControlProperty here when implemented.
-                ApplicationControlProperty controlProperty = context.Device.Processes.ActiveApplication.ApplicationControlProperties;
+                ApplicationControlProperty controlProperty = context.Device.Processes.GetProcess(context.ClientProcessId).ApplicationControlProperties;
 
                 networkConfig.IntentId.LocalCommunicationId = (long)controlProperty.LocalCommunicationId[0];
             }
@@ -896,7 +896,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator
             if (networkInfo.NetworkId.IntentId.LocalCommunicationId == -1 && NetworkClient.NeedsRealId)
             {
                 // TODO: Call nn::arp::GetApplicationControlProperty here when implemented.
-                ApplicationControlProperty controlProperty = context.Device.Processes.ActiveApplication.ApplicationControlProperties;
+                ApplicationControlProperty controlProperty = context.Device.Processes.GetProcess(context.ClientProcessId).ApplicationControlProperties;
 
                 networkInfo.NetworkId.IntentId.LocalCommunicationId = (long)controlProperty.LocalCommunicationId[0];
             }
@@ -1138,7 +1138,7 @@ namespace Ryujinx.HLE.HOS.Services.Ldn.UserServiceCreator
                         }
 
                         // TODO: Call nn::arp::GetApplicationLaunchProperty here when implemented.
-                        NetworkClient.SetGameVersion(context.Device.Processes.ActiveApplication.ApplicationControlProperties.DisplayVersion);
+                        NetworkClient.SetGameVersion(context.Device.Processes.GetProcess(context.ClientProcessId).ApplicationControlProperties.DisplayVersion);
 
                         resultCode = ResultCode.Success;
 

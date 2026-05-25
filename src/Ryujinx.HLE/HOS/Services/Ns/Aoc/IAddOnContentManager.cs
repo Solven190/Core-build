@@ -50,7 +50,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
 
             // NOTE: Service call arp:r GetApplicationLaunchProperty to get TitleId using the PId.
 
-            return CountAddOnContentImpl(context, context.Device.Processes.ActiveApplication.ProgramId);
+            return CountAddOnContentImpl(context, context.Device.Processes.GetProcess(pid).ProgramId);
         }
 
         [CommandCmif(3)]
@@ -63,7 +63,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
 
             // NOTE: Service call arp:r GetApplicationLaunchProperty to get TitleId using the PId.
 
-            return ListAddContentImpl(context, context.Device.Processes.ActiveApplication.ProgramId);
+            return ListAddContentImpl(context, context.Device.Processes.GetProcess(pid).ProgramId);
         }
 
         [CommandCmif(4)] // 1.0.0-6.2.0
@@ -85,7 +85,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
 
             // NOTE: Service call arp:r GetApplicationLaunchProperty to get TitleId using the PId.
 
-            return GetAddOnContentBaseIdImpl(context, context.Device.Processes.ActiveApplication.ProgramId);
+            return GetAddOnContentBaseIdImpl(context, context.Device.Processes.GetProcess(pid).ProgramId);
         }
 
         [CommandCmif(6)] // 1.0.0-6.2.0
@@ -107,7 +107,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
 
             // NOTE: Service call arp:r GetApplicationLaunchProperty to get TitleId using the PId.
 
-            return PrepareAddOnContentImpl(context, context.Device.Processes.ActiveApplication.ProgramId);
+            return PrepareAddOnContentImpl(context, context.Device.Processes.GetProcess(pid).ProgramId);
         }
 
         [CommandCmif(8)] // 4.0.0+
@@ -138,7 +138,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
             // NOTE: Service call arp:r GetApplicationLaunchProperty to get TitleId using the PId.
 
             // TODO: Found where stored value is used.
-            ResultCode resultCode = GetAddOnContentBaseIdFromTitleId(context, context.Device.Processes.ActiveApplication.ProgramId);
+            ResultCode resultCode = GetAddOnContentBaseIdFromTitleId(context, context.Device.Processes.GetProcess(pid).ProgramId);
 
             if (resultCode != ResultCode.Success)
             {
@@ -310,7 +310,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
             // NOTE: Service calls arp:r GetApplicationControlProperty to get AddOnContentBaseId using TitleId,
             //       If the call fails, it returns ResultCode.InvalidPid.
 
-            _addOnContentBaseId = context.Device.Processes.ActiveApplication.ApplicationControlProperties.AddOnContentBaseId;
+            _addOnContentBaseId = context.Device.Processes.GetProcess(context.ClientProcessId).ApplicationControlProperties.AddOnContentBaseId;
 
             if (_addOnContentBaseId == 0)
             {
@@ -324,7 +324,7 @@ namespace Ryujinx.HLE.HOS.Services.Ns.Aoc
         {
             uint index = context.RequestData.ReadUInt32();
 
-            ResultCode resultCode = GetAddOnContentBaseIdFromTitleId(context, context.Device.Processes.ActiveApplication.ProgramId);
+            ResultCode resultCode = GetAddOnContentBaseIdFromTitleId(context, titleId);
 
             if (resultCode != ResultCode.Success)
             {

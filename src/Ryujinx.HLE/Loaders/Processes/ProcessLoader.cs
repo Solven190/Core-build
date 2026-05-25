@@ -31,6 +31,23 @@ namespace Ryujinx.HLE.Loaders.Processes
             _processesByPid = new ConcurrentDictionary<ulong, ProcessResult>();
         }
 
+        public bool TryGetProcess(ulong pid, out ProcessResult process)
+        {
+            return _processesByPid.TryGetValue(pid, out process);
+        }
+
+        public ProcessResult GetProcess(ulong pid)
+        {
+            if (_processesByPid.TryGetValue(pid, out ProcessResult process))
+            {
+                return process;
+            }
+
+            Logger.Warning?.Print(LogClass.Loader, $"Process metadata for pid {pid} was not found. Falling back to active application metadata.");
+
+            return ActiveApplication;
+        }
+
         public bool LoadXci(string path, ulong applicationId)
         {
             FileStream stream = new(path, FileMode.Open, FileAccess.Read);

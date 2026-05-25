@@ -11,7 +11,7 @@ namespace Ryujinx.HLE.Loaders.Processes
 {
     public class ProcessResult
     {
-        public static ProcessResult Failed => new(null, new BlitStruct<ApplicationControlProperty>(1), false, false, null, 0, 0, 0, TitleLanguage.AmericanEnglish);
+        public static ProcessResult Failed => new(null, new BlitStruct<ApplicationControlProperty>(1), false, false, null, 0, 0, 0, 0, TitleLanguage.AmericanEnglish);
 
         private readonly byte _mainThreadPriority;
         private readonly uint _mainThreadStackSize;
@@ -29,6 +29,7 @@ namespace Ryujinx.HLE.Loaders.Processes
         public readonly bool Is64Bit;
         public readonly bool DiskCacheEnabled;
         public readonly bool AllowCodeMemoryForJit;
+        public readonly ProcessIdentity Identity;
 
         public ProcessResult(
             MetaLoader metaLoader,
@@ -37,6 +38,7 @@ namespace Ryujinx.HLE.Loaders.Processes
             bool allowCodeMemoryForJit,
             IDiskCacheLoadState diskCacheLoadState,
             ulong pid,
+            byte programIndex,
             byte mainThreadPriority,
             uint mainThreadStackSize,
             TitleLanguage titleLanguage)
@@ -72,8 +74,8 @@ namespace Ryujinx.HLE.Loaders.Processes
                 ProgramId = programId;
                 ProgramIdText = $"{programId:x16}";
                 Is64Bit = metaLoader.IsProgram64Bit;
+                Identity = new ProcessIdentity(pid, programId, programIndex, DisplayVersion, GetProcessKind(programId));
             }
-
             else
             {
                 Logger.Error?.Print(LogClass.Application,$"metaLoader is null !!!");
@@ -83,6 +85,31 @@ namespace Ryujinx.HLE.Loaders.Processes
 
             DiskCacheEnabled = diskCacheEnabled;
             AllowCodeMemoryForJit = allowCodeMemoryForJit;
+        }
+
+        private static ProcessKind GetProcessKind(ulong programId)
+        {
+            if (programId == 0)
+            {
+                return ProcessKind.Application;
+            }
+
+            if (programId is >= 0x0100000000001000 and <= 0x0100000000001FFF)
+            {
+                return ProcessKind.SystemApplet;
+            }
+
+            if (programId is >= 0x0100000000000800 and <= 0x0100000000000FFF)
+            {
+                return ProcessKind.LibraryApplet;
+            }
+
+            if (programId <= 0x0100000000007FFF)
+            {
+                return ProcessKind.SystemApplication;
+            }
+
+            return ProcessKind.Application;
         }
 
         public bool Start(Switch device)
@@ -101,6 +128,7 @@ namespace Ryujinx.HLE.Loaders.Processes
             string version = ProgramId > 0x0100000000007FFF ? DisplayVersion : device.System.ContentManager.GetCurrentFirmwareVersion()?.VersionString ?? "?";
 
             Logger.Info?.Print(LogClass.Loader, $"Application Loaded: {Name} v{version} [{ProgramIdText}] [{(Is64Bit ? "64-bit" : "32-bit")}]");
+            Logger.Info?.Print(LogClass.Loader, $"Process identity: {Identity}");
 
             return true;
         }

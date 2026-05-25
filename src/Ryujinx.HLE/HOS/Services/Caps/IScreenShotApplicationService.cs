@@ -50,7 +50,7 @@ namespace Ryujinx.HLE.HOS.Services.Caps
 
             byte[] screenshotData = context.Memory.GetSpan(screenshotDataPosition, (int)screenshotDataSize, true).ToArray();
 
-            ResultCode resultCode = context.Device.System.CaptureManager.SaveScreenShot(screenshotData, appletResourceUserId, context.Device.Processes.ActiveApplication.ProgramId, out ApplicationAlbumEntry applicationAlbumEntry);
+            ResultCode resultCode = context.Device.System.CaptureManager.SaveScreenShot(screenshotData, appletResourceUserId, context.Device.Processes.GetProcess(context.ClientProcessId).ProgramId, out ApplicationAlbumEntry applicationAlbumEntry);
 
             context.ResponseData.WriteStruct(applicationAlbumEntry);
 
@@ -98,7 +98,7 @@ namespace Ryujinx.HLE.HOS.Services.Caps
 
             byte[] screenshotData = context.Memory.GetSpan(screenshotDataPosition, (int)screenshotDataSize, true).ToArray();
 
-            ResultCode resultCode = context.Device.System.CaptureManager.SaveScreenShot(screenshotData, appletResourceUserId, context.Device.Processes.ActiveApplication.ProgramId, out ApplicationAlbumEntry applicationAlbumEntry);
+            ResultCode resultCode = context.Device.System.CaptureManager.SaveScreenShot(screenshotData, appletResourceUserId, context.Device.Processes.GetProcess(context.ClientProcessId).ProgramId, out ApplicationAlbumEntry applicationAlbumEntry);
 
             context.ResponseData.WriteStruct(applicationAlbumEntry);
 
@@ -143,7 +143,7 @@ namespace Ryujinx.HLE.HOS.Services.Caps
 
             byte[] screenshotData = context.Memory.GetSpan(screenshotDataPosition, (int)screenshotDataSize, true).ToArray();
 
-            ResultCode resultCode = context.Device.System.CaptureManager.SaveScreenShot(screenshotData, appletResourceUserId, context.Device.Processes.ActiveApplication.ProgramId, out ApplicationAlbumEntry applicationAlbumEntry);
+            ResultCode resultCode = context.Device.System.CaptureManager.SaveScreenShot(screenshotData, appletResourceUserId, context.Device.Processes.GetProcess(context.ClientProcessId).ProgramId, out ApplicationAlbumEntry applicationAlbumEntry);
 
             context.ResponseData.WriteStruct(applicationAlbumEntry);
 

@@ -28,12 +28,17 @@ namespace Ryujinx.HLE.HOS.Services.Arp
 
         public static ApplicationLaunchProperty GetByPid(ServiceCtx context)
         {
+            return GetByPid(context, context.ClientProcessId);
+        }
+
+        public static ApplicationLaunchProperty GetByPid(ServiceCtx context, ulong pid)
+        {
             // TODO: Handle ApplicationLaunchProperty as array when pid will be supported and return the right item.
             //       For now we can hardcode values, and fix it after GetApplicationLaunchProperty is implemented.
 
             return new ApplicationLaunchProperty
             {
-                TitleId = context.Device.Processes.ActiveApplication.ProgramId,
+                TitleId = context.Device.Processes.GetProcess(pid).ProgramId,
                 Version = 0x00,
                 BaseGameStorageId = (byte)StorageId.BuiltInSystem,
                 UpdateGameStorageId = (byte)StorageId.None,

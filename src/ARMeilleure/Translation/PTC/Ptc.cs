@@ -107,7 +107,7 @@ namespace ARMeilleure.Translation.PTC
             Profiler.Wait();
             Profiler.ClearEntries();
 
-            Logger.Info?.Print(LogClass.Ptc, $"Initializing Profiled Persistent Translation Cache (enabled: {enabled}).");
+            Logger.Info?.Print(LogClass.Ptc, $"Initializing Profiled Persistent Translation Cache v{InternalVersion}\n\t\t (title: {titleIdText}, version: '{displayVersion}', selector: '{cacheSelector}', enabled: {enabled}).");
 
             if (!enabled || string.IsNullOrEmpty(titleIdText) || titleIdText == TitleIdTextDefault)
             {
@@ -125,8 +125,6 @@ namespace ARMeilleure.Translation.PTC
             TitleIdText = titleIdText;
             DisplayVersion = !string.IsNullOrEmpty(displayVersion) ? displayVersion : DisplayVersionDefault;
             _memoryMode = memoryMode;
-
-            Logger.Info?.Print(LogClass.Ptc, $"PPTC (v{InternalVersion}) Profile: {DisplayVersion}-{cacheSelector}");
 
             string workPathActual = Path.Combine(AppDataManager.GamesDirPath, TitleIdText, "cache", "cpu", ActualDir);
             string workPathBackup = Path.Combine(AppDataManager.GamesDirPath, TitleIdText, "cache", "cpu", BackupDir);
