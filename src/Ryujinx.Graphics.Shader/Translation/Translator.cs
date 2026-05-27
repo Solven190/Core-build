@@ -259,14 +259,11 @@ namespace Ryujinx.Graphics.Shader.Translation
                 context.Store(StorageKind.Output, IoVariable.Position, null, Const(c), ConstF(c == 3 ? 1f : 0f));
             }
 
-            if (!context.TranslatorContext.GpuAccessor.QueryHostHasClipDistanceInitBug())
+            if (context.Program.ClipDistancesWritten != 0)
             {
-                if (context.Program.ClipDistancesWritten != 0)
+                for (int i = 0; i < 8; i++)
                 {
-                    for (int i = 0; i < 8; i++)
-                    {
-                        context.Store(StorageKind.Output, IoVariable.ClipDistance, null, Const(i), ConstF(0f));
-                    }
+                    context.Store(StorageKind.Output, IoVariable.ClipDistance, null, Const(i), ConstF(0f));
                 }
             }
         }

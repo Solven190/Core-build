@@ -10,7 +10,6 @@ namespace Ryujinx.Graphics.GAL
 
         public readonly bool HasFrontFacingBug;
         public readonly bool HasVectorIndexingBug;
-        public readonly bool HasClipDistanceInitBug;
         public readonly bool NeedsFragmentOutputSpecialization;
         public readonly bool ReduceShaderPrecision;
 
@@ -82,7 +81,6 @@ namespace Ryujinx.Graphics.GAL
             SystemMemoryType memoryType,
             bool hasFrontFacingBug,
             bool hasVectorIndexingBug,
-            bool hasClipDistanceInitBug,
             bool needsFragmentOutputSpecialization,
             bool reduceShaderPrecision,
             bool supportsAstcCompression,
@@ -147,7 +145,6 @@ namespace Ryujinx.Graphics.GAL
             MemoryType = memoryType;
             HasFrontFacingBug = hasFrontFacingBug;
             HasVectorIndexingBug = hasVectorIndexingBug;
-            HasClipDistanceInitBug = hasClipDistanceInitBug;
             NeedsFragmentOutputSpecialization = needsFragmentOutputSpecialization;
             ReduceShaderPrecision = reduceShaderPrecision;
             SupportsAstcCompression = supportsAstcCompression;

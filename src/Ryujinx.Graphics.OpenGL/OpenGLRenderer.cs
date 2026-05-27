@@ -152,7 +152,6 @@ namespace Ryujinx.Graphics.OpenGL
                 memoryType: SystemMemoryType.BackendManaged,
                 hasFrontFacingBug: intelWindows,
                 hasVectorIndexingBug: amdWindows,
-                hasClipDistanceInitBug: false,
                 needsFragmentOutputSpecialization: false,
                 reduceShaderPrecision: false,
                 supportsAstcCompression: HwCapabilities.SupportsAstcCompression,

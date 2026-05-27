@@ -201,8 +201,6 @@ namespace Ryujinx.Graphics.Gpu.Shader
 
         public bool QueryHostHasVectorIndexingBug() => _context.Capabilities.HasVectorIndexingBug;
 
-        public bool QueryHostHasClipDistanceInitBug() => _context.Capabilities.HasClipDistanceInitBug;
-
         public int QueryHostStorageBufferOffsetAlignment() => _context.Capabilities.StorageBufferOffsetAlignment;
 
         public int QueryHostSubgroupSize() => _context.Capabilities.ShaderSubgroupSize;

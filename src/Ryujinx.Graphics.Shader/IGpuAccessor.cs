@@ -208,15 +208,6 @@ namespace Ryujinx.Graphics.Shader
         }
 
         /// <summary>
-        /// Queries host about the presence of the clip distance initialization bug.
-        /// </summary>
-        /// <returns>True if the bug is present on the host device used, false otherwise</returns>
-        bool QueryHostHasClipDistanceInitBug()
-        {
-            return false;
-        }
-
-        /// <summary>
         /// Queries host storage buffer alignment required.
         /// </summary>
         /// <returns>Host storage buffer alignment in bytes</returns>
