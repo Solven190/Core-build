@@ -1090,9 +1090,10 @@ namespace Ryujinx.Ava
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (_viewModel.StartGamesInFullscreen)
+                if (_viewModel.StartGamesInFullscreen && _viewModel.WindowState is not WindowState.FullScreen)
                 {
-                    _viewModel.WindowState = WindowState.FullScreen;
+                    // Use the view model toggle so decoration ordering matches user toggles.
+                    _viewModel.ToggleFullscreen();
                 }
 
                 if (_viewModel.WindowState == WindowState.FullScreen || _viewModel.StartGamesWithoutUI)
