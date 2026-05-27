@@ -1,7 +1,6 @@
 using Ryujinx.Common;
 using Ryujinx.Common.Memory;
 using Ryujinx.Graphics.Device;
-using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.Gpu.Engine.Threed;
 using Ryujinx.Graphics.Gpu.Memory;
 using Ryujinx.Graphics.Texture;
@@ -288,9 +287,9 @@ namespace Ryujinx.Graphics.Gpu.Engine.Dma
                 bool completeSource = IsTextureCopyComplete(src, srcLinear, srcBpp, srcStride, xCount, yCount);
                 bool completeDest = IsTextureCopyComplete(dst, dstLinear, dstBpp, dstStride, xCount, yCount);
 
-                // Check if the source texture exists on the GPU, if it does, do a GPU-side copy.
+                // Check if the source texture exists on the GPU, if it does, do a GPU side copy.
                 // Otherwise, we would need to flush the source texture which is costly.
-                // We don't expect the source to be linear in such cases, as linear source usually indicates buffer or CPU-written data.
+                // We don't expect the source to be linear in such cases, as linear source usually indicates buffer or CPU written data.
 
                 if (completeSource && completeDest && !srcLinear && isIdentityRemap)
                 {
@@ -308,35 +307,27 @@ namespace Ryujinx.Graphics.Gpu.Engine.Dma
 
                     if (source != null && source.Height == yCount)
                     {
-                        // HACK: Exclude RGBA16Float texture format for fast DMA copy on Apple Silicon.
-                        // Fixes Sonic Frontiers when VK_EXT_external_memory_host is not available.
-                        bool skipDma = !_context.Capabilities.SupportsFastDmaTextureCopy &&
-                                       source.Info.FormatInfo.Format == Format.R16G16B16A16Float;
+                        source.SynchronizeMemory();
 
-                        if (!skipDma)
+                        var target = memoryManager.Physical.TextureCache.FindOrCreateTexture(
+                            memoryManager,
+                            source.Info.FormatInfo,
+                            dstGpuVa,
+                            xCount,
+                            yCount,
+                            dstStride,
+                            dstLinear,
+                            dst.MemoryLayout.UnpackGobBlocksInY(),
+                            dst.MemoryLayout.UnpackGobBlocksInZ());
+
+                        if (source.ScaleFactor != target.ScaleFactor)
                         {
-                            source.SynchronizeMemory();
-
-                            var target = memoryManager.Physical.TextureCache.FindOrCreateTexture(
-                                memoryManager,
-                                source.Info.FormatInfo,
-                                dstGpuVa,
-                                xCount,
-                                yCount,
-                                dstStride,
-                                dstLinear,
-                                dst.MemoryLayout.UnpackGobBlocksInY(),
-                                dst.MemoryLayout.UnpackGobBlocksInZ());
-
-                            if (source.ScaleFactor != target.ScaleFactor)
-                            {
-                                target.PropagateScale(source);
-                            }
-
-                            source.HostTexture.CopyTo(target.HostTexture, 0, 0);
-                            target.SignalModified();
-                            return;
+                            target.PropagateScale(source);
                         }
+
+                        source.HostTexture.CopyTo(target.HostTexture, 0, 0);
+                        target.SignalModified();
+                        return;
                     }
                 }
 

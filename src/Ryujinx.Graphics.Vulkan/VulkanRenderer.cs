@@ -758,7 +758,6 @@ namespace Ryujinx.Graphics.Vulkan
                 supports5BitComponentFormat: supports5BitComponentFormat,
                 supportsSparseBuffer: features2.Features.SparseBinding && mainQueueProperties.QueueFlags.HasFlag(QueueFlags.SparseBindingBit),
                 supportsBlendEquationAdvanced: Capabilities.SupportsBlendEquationAdvanced,
-                supportsFastDmaTextureCopy: !IsMoltenVk,
                 supportsFragmentShaderInterlock: Capabilities.SupportsFragmentShaderInterlock,
                 supportsFragmentShaderOrderingIntel: false,
                 supportsGeometryShader: Capabilities.SupportsGeometryShader,
