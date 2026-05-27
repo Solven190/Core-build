@@ -582,8 +582,10 @@ namespace Ryujinx.Graphics.Vulkan
                 dynamicStates[5] = DynamicState.StencilReference;
                 dynamicStates[6] = DynamicState.BlendConstants;
 
-                if (supportsExtDynamicState)
+                if (supportsExtDynamicState && (gd.SupportsMTL31 || !gd.IsMoltenVk))
                 {
+                    // Requires Metal 3.1 and new MoltenVK, however extended dynamic states extension is not
+                    // available on older versions of MVK, so we can safely check only OS version.
                     dynamicStates[dynamicStatesCount++] = DynamicState.VertexInputBindingStrideExt;
                 }
 

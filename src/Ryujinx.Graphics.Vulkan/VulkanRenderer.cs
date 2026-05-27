@@ -96,6 +96,7 @@ namespace Ryujinx.Graphics.Vulkan
         internal bool IsIntelArc { get; private set; }
         internal bool IsQualcommProprietary { get; private set; }
         internal bool IsMoltenVk { get; private set; }
+        internal bool SupportsMTL31 { get; private set; }
         internal bool IsTBDR { get; private set; }
         internal bool IsSharedMemory { get; private set; }
 
@@ -125,6 +126,8 @@ namespace Ryujinx.Graphics.Vulkan
                 // Any device running on MacOS is using MoltenVK, even Intel and AMD vendors.
                 IsMoltenVk = true;
             }
+
+            SupportsMTL31 = OperatingSystem.IsMacOSVersionAtLeast(14);
         }
 
         private unsafe void LoadFeatures(uint maxQueueCount, uint queueFamilyIndex)
