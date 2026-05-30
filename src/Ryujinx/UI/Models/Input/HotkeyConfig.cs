@@ -66,7 +66,7 @@ namespace Ryujinx.Ava.UI.Models.Input
 
         public KeyboardHotkeys GetConfig()
         {
-            var config = new KeyboardHotkeys
+            KeyboardHotkeys config = new()
             {
                 ToggleVSyncMode = ToggleVSyncMode,
                 Screenshot = Screenshot,

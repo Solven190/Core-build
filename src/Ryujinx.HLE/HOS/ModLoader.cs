@@ -3,6 +3,7 @@ using LibHac.Fs;
 using LibHac.Fs.Fsa;
 using LibHac.FsSystem;
 using LibHac.Loader;
+using LibHac.Tools.Fs;
 using LibHac.Tools.FsSystem;
 using LibHac.Tools.FsSystem.RomFs;
 using LibHac.Util;
@@ -154,7 +155,7 @@ namespace Ryujinx.HLE.HOS
 
         private static string EnsureBaseDirStructure(string modsBasePath)
         {
-            var modsDir = new DirectoryInfo(modsBasePath);
+            DirectoryInfo modsDir = new(modsBasePath);
 
             modsDir.CreateSubdirectory(AmsContentsDir);
             modsDir.CreateSubdirectory(AmsNsoPatchDir);
@@ -172,31 +173,31 @@ namespace Ryujinx.HLE.HOS
         {
             System.Text.StringBuilder types = new();
 
-            foreach (var modDir in dir.EnumerateDirectories())
+            foreach (DirectoryInfo modDir in dir.EnumerateDirectories())
             {
                 types.Clear();
                 Mod<DirectoryInfo> mod = new("", null, true);
 
                 if (StrEquals(RomfsDir, modDir.Name) && modDir.Parent != null)
                 {
-                    var modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
-                    var enabled = modData?.Enabled ?? true;
+                    Mod modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
+                    bool enabled = modData?.Enabled ?? true;
 
                     mods.RomfsDirs.Add(mod = new Mod<DirectoryInfo>(dir.Name, modDir, enabled));
                     types.Append('R');
                 }
                 else if (StrEquals(ExefsDir, modDir.Name) && modDir.Parent != null)
                 {
-                    var modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
-                    var enabled = modData?.Enabled ?? true;
+                    Mod modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
+                    bool enabled = modData?.Enabled ?? true;
 
                     mods.ExefsDirs.Add(mod = new Mod<DirectoryInfo>(dir.Name, modDir, enabled));
                     types.Append('E');
                 }
                 else if (StrEquals(TexturesDir, modDir.Name) && modDir.Parent != null)
                 {
-                    var modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
-                    var enabled = modData?.Enabled ?? true;
+                    Mod modData = modMetadata.Mods.FirstOrDefault(x => modDir.Parent.FullName.Equals(x.Path));
+                    bool enabled = modData?.Enabled ?? true;
 
                     mods.TextureDirs.Add(mod = new Mod<DirectoryInfo>(dir.Name, modDir, enabled));
                     types.Append('T');
@@ -219,8 +220,8 @@ namespace Ryujinx.HLE.HOS
 
         public static string GetApplicationDir(string modsBasePath, string applicationId)
         {
-            var contentsDir = new DirectoryInfo(Path.Combine(modsBasePath, AmsContentsDir));
-            var applicationModsPath = FindApplicationDir(contentsDir, applicationId);
+            DirectoryInfo contentsDir = new(Path.Combine(modsBasePath, AmsContentsDir));
+            DirectoryInfo applicationModsPath = FindApplicationDir(contentsDir, applicationId);
 
             if (applicationModsPath == null)
             {
@@ -262,7 +263,7 @@ namespace Ryujinx.HLE.HOS
                 return;
             }
 
-            foreach (var modDir in patchDir.EnumerateDirectories())
+            foreach (DirectoryInfo modDir in patchDir.EnumerateDirectories())
             {
                 patches.Add(new Mod<DirectoryInfo>(modDir.Name, modDir, true));
                 Logger.Info?.Print(LogClass.ModLoader, $"Found {type} patch '{modDir.Name}'");
@@ -291,11 +292,11 @@ namespace Ryujinx.HLE.HOS
                 }
             }
 
-            var fsFile = new FileInfo(Path.Combine(applicationDir.FullName, RomfsContainer));
+            FileInfo fsFile = new(Path.Combine(applicationDir.FullName, RomfsContainer));
             if (fsFile.Exists)
             {
-                var modData = modMetadata.Mods.FirstOrDefault(x => fsFile.FullName.Contains(x.Path));
-                var enabled = modData == null || modData.Enabled;
+                Mod modData = modMetadata.Mods.FirstOrDefault(x => fsFile.FullName.Contains(x.Path));
+                bool enabled = modData == null || modData.Enabled;
 
                 mods.RomfsContainers.Add(new Mod<FileInfo>($"<{applicationDir.Name} RomFs>", fsFile, enabled));
             }
@@ -303,8 +304,8 @@ namespace Ryujinx.HLE.HOS
             fsFile = new FileInfo(Path.Combine(applicationDir.FullName, ExefsContainer));
             if (fsFile.Exists)
             {
-                var modData = modMetadata.Mods.FirstOrDefault(x => fsFile.FullName.Contains(x.Path));
-                var enabled = modData == null || modData.Enabled;
+                Mod modData = modMetadata.Mods.FirstOrDefault(x => fsFile.FullName.Contains(x.Path));
+                bool enabled = modData == null || modData.Enabled;
 
                 mods.ExefsContainers.Add(new Mod<FileInfo>($"<{applicationDir.Name} ExeFs>", fsFile, enabled));
             }
@@ -321,7 +322,7 @@ namespace Ryujinx.HLE.HOS
 
             Logger.Info?.Print(LogClass.ModLoader, $"Searching mods for {((applicationId & 0x1000) != 0 ? "DLC" : "Application")} {applicationId:X16} in \"{contentsDir.FullName}\"");
 
-            var applicationDir = FindApplicationDir(contentsDir, $"{applicationId:x16}");
+            DirectoryInfo applicationDir = FindApplicationDir(contentsDir, $"{applicationId:x16}");
 
             if (applicationDir != null)
             {
@@ -461,9 +462,9 @@ namespace Ryujinx.HLE.HOS
                 return false;
             }
 
-            foreach (var path in searchDirPaths)
+            foreach (string path in searchDirPaths)
             {
-                var searchDir = new DirectoryInfo(path);
+                DirectoryInfo searchDir = new(path);
                 if (!searchDir.Exists)
                 {
                     Logger.Warning?.Print(LogClass.ModLoader, $"Mod Search Dir '{searchDir.FullName}' doesn't exist");
@@ -472,7 +473,7 @@ namespace Ryujinx.HLE.HOS
 
                 if (!TryQuery(searchDir, patches, modCaches))
                 {
-                    foreach (var subdir in searchDir.EnumerateDirectories())
+                    foreach (DirectoryInfo subdir in searchDir.EnumerateDirectories())
                     {
                         TryQuery(subdir, patches, modCaches);
                     }
@@ -501,14 +502,14 @@ namespace Ryujinx.HLE.HOS
                 return baseStorage;
             }
 
-            var fileSet = new HashSet<string>();
-            var builder = new RomFsBuilder();
+            HashSet<string> fileSet = new();
+            RomFsBuilder builder = new();
             int count = 0;
 
             Logger.Info?.Print(LogClass.ModLoader, $"Applying RomFS mods for Application {applicationId:X16}");
 
             // Prioritize loose files first
-            foreach (var mod in mods.RomfsDirs)
+            foreach (Mod<DirectoryInfo> mod in mods.RomfsDirs)
             {
                 if (!mod.Enabled)
                 {
@@ -523,7 +524,7 @@ namespace Ryujinx.HLE.HOS
             }
 
             // Then files inside images
-            foreach (var mod in mods.RomfsContainers)
+            foreach (Mod<FileInfo> mod in mods.RomfsContainers)
             {
                 if (!mod.Enabled)
                 {
@@ -548,12 +549,12 @@ namespace Ryujinx.HLE.HOS
             Logger.Info?.Print(LogClass.ModLoader, $"Replaced {fileSet.Count} file(s) over {count} mod(s). Processing base storage...");
 
             // And finally, the base romfs
-            var baseRom = new RomFsFileSystem(baseStorage);
-            foreach (var entry in baseRom.EnumerateEntries()
+            RomFsFileSystem baseRom = new(baseStorage);
+            foreach (DirectoryEntryEx entry in baseRom.EnumerateEntries()
                                          .Where(f => f.Type == DirectoryEntryType.File && !fileSet.Contains(f.FullPath))
                                          .OrderBy(f => f.FullPath, StringComparer.Ordinal))
             {
-                using var file = new UniqueRef<IFile>();
+                using UniqueRef<IFile> file = new();
 
                 baseRom.OpenFile(ref file.Ref, entry.FullPath.ToU8Span(), OpenMode.Read).ThrowIfFailure();
                 builder.AddFile(entry.FullPath, file.Release());
@@ -568,12 +569,12 @@ namespace Ryujinx.HLE.HOS
 
         private static void AddFiles(IFileSystem fs, string modName, string rootPath, ISet<string> fileSet, RomFsBuilder builder)
         {
-            foreach (var entry in fs.EnumerateEntries()
+            foreach (DirectoryEntryEx entry in fs.EnumerateEntries()
                                     .AsParallel()
                                     .Where(f => f.Type == DirectoryEntryType.File)
                                     .OrderBy(f => f.FullPath, StringComparer.Ordinal))
             {
-                var file = new LazyFile(entry.FullPath, rootPath, fs);
+                LazyFile file = new(entry.FullPath, rootPath, fs);
 
                 if (fileSet.Add(entry.FullPath))
                 {
@@ -600,7 +601,7 @@ namespace Ryujinx.HLE.HOS
 
             Logger.Info?.Print(LogClass.ModLoader, "Using replacement ExeFS partition");
 
-            var pfs = new PartitionFileSystem();
+            PartitionFileSystem pfs = new();
             pfs.Initialize(mods.ExefsContainers[0].Path.OpenRead().AsStorage()).ThrowIfFailure();
             exefs = pfs;
 
@@ -638,9 +639,9 @@ namespace Ryujinx.HLE.HOS
                 throw new ArgumentOutOfRangeException(nameof(nsos), nsos.Length, "NSO Count is incorrect");
             }
 
-            var exeMods = mods.ExefsDirs;
+            List<Mod<DirectoryInfo>> exeMods = mods.ExefsDirs;
 
-            foreach (var mod in exeMods)
+            foreach (Mod<DirectoryInfo> mod in exeMods)
             {
                 if (!mod.Enabled)
                 {
@@ -649,7 +650,7 @@ namespace Ryujinx.HLE.HOS
 
                 for (int i = 0; i < ProcessConst.ExeFsPrefixes.Length; ++i)
                 {
-                    var nsoName = ProcessConst.ExeFsPrefixes[i];
+                    string nsoName = ProcessConst.ExeFsPrefixes[i];
 
                     FileInfo nsoFile = new(Path.Combine(mod.Path.FullName, nsoName));
                     if (nsoFile.Exists)
@@ -717,7 +718,7 @@ namespace Ryujinx.HLE.HOS
 
         internal void ApplyNroPatches(NroExecutable nro)
         {
-            var nroPatches = _patches.NroPatches;
+            List<Mod<DirectoryInfo>> nroPatches = _patches.NroPatches;
 
             if (nroPatches.Count == 0)
             {
@@ -750,9 +751,9 @@ namespace Ryujinx.HLE.HOS
                 return;
             }
 
-            var textureMods = mods.TextureDirs;
+            List<Mod<DirectoryInfo>> textureMods = mods.TextureDirs;
 
-            foreach (var mod in textureMods)
+            foreach (Mod<DirectoryInfo> mod in textureMods)
             {
                 if (!mod.Enabled)
                 {
@@ -781,11 +782,11 @@ namespace Ryujinx.HLE.HOS
                 return;
             }
 
-            var cheats = mods.Cheats;
-            var processExes = tamperInfo.BuildIds.Zip(tamperInfo.CodeAddresses, (k, v) => new { k, v })
+            List<Cheat> cheats = mods.Cheats;
+            Dictionary<string, ulong> processExes = tamperInfo.BuildIds.Zip(tamperInfo.CodeAddresses, (k, v) => new { k, v })
                 .ToDictionary(x => x.k[..Math.Min(Cheat.CheatIdSize, x.k.Length)], x => x.v);
 
-            foreach (var cheat in cheats)
+            foreach (Cheat cheat in cheats)
             {
                 string cheatId = Path.GetFileNameWithoutExtension(cheat.Path.Name).ToUpper();
 
@@ -806,7 +807,7 @@ namespace Ryujinx.HLE.HOS
 
         internal static void EnableCheats(ulong applicationId, TamperMachine tamperMachine)
         {
-            var contentDirectory = FindApplicationDir(new DirectoryInfo(Path.Combine(GetModsBasePath(), AmsContentsDir)), $"{applicationId:x16}");
+            DirectoryInfo contentDirectory = FindApplicationDir(new DirectoryInfo(Path.Combine(GetModsBasePath(), AmsContentsDir)), $"{applicationId:x16}");
             string enabledCheatsPath = Path.Combine(contentDirectory.FullName, CheatDir, "enabled.txt");
 
             if (File.Exists(enabledCheatsPath))
@@ -826,11 +827,11 @@ namespace Ryujinx.HLE.HOS
                 patches[i] = new MemPatch();
             }
 
-            var buildIds = new List<string>(programs.Length);
+            List<string> buildIds = new(programs.Length);
 
             foreach (IExecutable p in programs)
             {
-                var buildId = p switch
+                string buildId = p switch
                 {
                     NsoExecutable nso => Convert.ToHexString(nso.BuildId).TrimEnd('0'),
                     NroExecutable nro => Convert.ToHexString(nro.Header.BuildId).TrimEnd('0'),
@@ -842,15 +843,15 @@ namespace Ryujinx.HLE.HOS
             int GetIndex(string buildId) => buildIds.FindIndex(id => id == buildId); // O(n) but list is small
 
             // Collect patches
-            foreach (var mod in mods)
+            foreach (Mod<DirectoryInfo> mod in mods)
             {
                 if (!mod.Enabled)
                 {
                     continue;
                 }
 
-                var patchDir = mod.Path;
-                foreach (var patchFile in patchDir.EnumerateFiles())
+                DirectoryInfo patchDir = mod.Path;
+                foreach (FileInfo patchFile in patchDir.EnumerateFiles())
                 {
                     if (StrEquals(".ips", patchFile.Extension)) // IPS|IPS32
                     {
@@ -865,18 +866,18 @@ namespace Ryujinx.HLE.HOS
 
                         Logger.Info?.Print(LogClass.ModLoader, $"Matching IPS patch '{patchFile.Name}' in '{mod.Name}' bid={buildId}");
 
-                        using var fs = patchFile.OpenRead();
-                        using var reader = new BinaryReader(fs);
+                        using FileStream fs = patchFile.OpenRead();
+                        using BinaryReader reader = new(fs);
 
-                        var patcher = new IpsPatcher(reader);
+                        IpsPatcher patcher = new(reader);
                         patcher.AddPatches(patches[index]);
                     }
                     else if (StrEquals(".pchtxt", patchFile.Extension)) // IPSwitch
                     {
-                        using var fs = patchFile.OpenRead();
-                        using var reader = new StreamReader(fs);
+                        using FileStream fs = patchFile.OpenRead();
+                        using StreamReader reader = new(fs);
 
-                        var patcher = new IPSwitchPatcher(reader);
+                        IPSwitchPatcher patcher = new(reader);
 
                         int index = GetIndex(patcher.BuildId);
                         if (index == -1)

@@ -85,7 +85,7 @@ namespace Spv.Generator
 
         public Instruction NewInstruction(Op opcode, uint id = Instruction.InvalidId, Instruction resultType = null)
         {
-            var result = _instPool.Allocate();
+            Instruction result = _instPool.Allocate();
             result.Set(opcode, id, resultType);
 
             return result;
@@ -93,7 +93,7 @@ namespace Spv.Generator
 
         public Instruction AddExtInstImport(string import)
         {
-            var key = new DeterministicStringKey(import);
+            DeterministicStringKey key = new(import);
 
             if (_extInstImports.TryGetValue(key, out Instruction extInstImport))
             {
@@ -113,7 +113,7 @@ namespace Spv.Generator
 
         private void AddTypeDeclaration(Instruction instruction, bool forceIdAllocation)
         {
-            var key = new TypeDeclarationKey(instruction);
+            TypeDeclarationKey key = new(instruction);
 
             if (!forceIdAllocation)
             {
@@ -214,7 +214,7 @@ namespace Spv.Generator
                 or Op.OpConstantNull
                 or Op.OpConstantComposite);
 
-            var key = new ConstantKey(constant);
+            ConstantKey key = new(constant);
 
             if (_constants.TryGetValue(key, out Instruction global))
             {

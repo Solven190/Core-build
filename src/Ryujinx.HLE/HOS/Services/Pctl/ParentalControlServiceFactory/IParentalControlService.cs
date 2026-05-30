@@ -1,5 +1,6 @@
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.HOS.Services.Arp;
+using Ryujinx.HLE.Loaders.Processes;
 using System;
 using static LibHac.Ns.ApplicationControlProperty;
 
@@ -53,7 +54,7 @@ namespace Ryujinx.HLE.HOS.Services.Pctl.ParentalControlServiceFactory
                     if (titleId != 0)
                     {
                         _titleId = titleId;
-                        var process = context.Device.Processes.GetProcess(_pid);
+                        ProcessResult process = context.Device.Processes.GetProcess(_pid);
 
                         // TODO: Call nn::arp::GetApplicationControlProperty here when implemented, if it return ResultCode.Success we assign fields.
                         _ratingAge = new int[process.ApplicationControlProperties.RatingAge.Length];

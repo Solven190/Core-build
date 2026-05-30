@@ -131,7 +131,7 @@ namespace Ryujinx.HLE.HOS.Services.Caps
                 filePath = GenerateFilePath(folderPath, applicationAlbumEntry, currentDateTime, hash);
             }
 
-            using var bitmap = new SKBitmap(new SKImageInfo(ScreenshotWidth, ScreenshotHeight, SKColorType.Rgba8888));
+            using SKBitmap bitmap = new(new SKImageInfo(ScreenshotWidth, ScreenshotHeight, SKColorType.Rgba8888));
 
             IntPtr pixels = bitmap.GetPixels();
 
@@ -142,8 +142,8 @@ namespace Ryujinx.HLE.HOS.Services.Caps
 
             Marshal.Copy(screenshotData, 0, pixels, ScreenshotDataSize);
 
-            using var data = bitmap.Encode(SKEncodedImageFormat.Jpeg, 80);
-            using var file = File.OpenWrite(filePath);
+            using SKData data = bitmap.Encode(SKEncodedImageFormat.Jpeg, 80);
+            using FileStream file = File.OpenWrite(filePath);
             data.SaveTo(file);
 
             return ResultCode.Success;

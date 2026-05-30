@@ -99,7 +99,7 @@ namespace Ryujinx.Horizon.Sdk.Ns
         {
             get
             {
-                var titles = new ApplicationTitle[TitleCount];
+                ApplicationTitle[] titles = new ApplicationTitle[TitleCount];
                 
                 if (TitleCompression != TitleCompressionValue.Enable)
                 {
@@ -114,8 +114,8 @@ namespace Ryujinx.Horizon.Sdk.Ns
 
                 byte[] decompressed = new byte[TitleCount * TitleEntrySize];
 
-                using (var compressedStream = new MemoryStream(compressedBlob.ToArray()))
-                using (var deflateStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+                using (MemoryStream compressedStream = new(compressedBlob.ToArray()))
+                using (DeflateStream deflateStream = new(compressedStream, CompressionMode.Decompress))
                 {
                     deflateStream.ReadExactly(decompressed, 0, decompressed.Length);
                 }

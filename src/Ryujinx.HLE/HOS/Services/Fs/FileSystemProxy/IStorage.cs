@@ -1,6 +1,7 @@
 using LibHac;
 using LibHac.Common;
 using LibHac.Sf;
+using Ryujinx.Memory;
 
 namespace Ryujinx.HLE.HOS.Services.Fs.FileSystemProxy
 {
@@ -31,7 +32,7 @@ namespace Ryujinx.HLE.HOS.Services.Fs.FileSystemProxy
                     size = bufferLen;
                 }
 
-                using var region = context.Memory.GetWritableRegion(bufferAddress, (int)bufferLen, true);
+                using WritableRegion region = context.Memory.GetWritableRegion(bufferAddress, (int)bufferLen, true);
                 Result result = _baseStorage.Get.Read((long)offset, new OutBuffer(region.Memory.Span), (long)size);
 
                 return (ResultCode)result.Value;

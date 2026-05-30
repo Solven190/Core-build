@@ -15,7 +15,7 @@ namespace Ryujinx.Common.Utilities
     {
         internal static TimeSpan Measure(Action action)
         {
-            var sw = new Stopwatch();
+            Stopwatch sw = new();
             sw.Start();
 
             try
@@ -66,7 +66,7 @@ namespace Ryujinx.Common.Utilities
         {
             if (Path.GetExtension(filename).Equals(".XCI", StringComparison.InvariantCultureIgnoreCase))
             {
-                var trimmer = new XCIFileTrimmer(filename, log);
+                XCIFileTrimmer trimmer = new(filename, log);
                 return trimmer.CanBeTrimmed;
             }
 
@@ -77,7 +77,7 @@ namespace Ryujinx.Common.Utilities
         {
             if (Path.GetExtension(filename).Equals(".XCI", StringComparison.InvariantCultureIgnoreCase))
             {
-                var trimmer = new XCIFileTrimmer(filename, log);
+                XCIFileTrimmer trimmer = new(filename, log);
                 return trimmer.CanBeUntrimmed;
             }
 
@@ -221,7 +221,7 @@ namespace Ryujinx.Common.Utilities
         {
             long maxReads = readSizeB / BufferSize;
             long read = 0;
-            var buffer = new byte[BufferSize];
+            byte[] buffer = new byte[BufferSize];
 
             while (true)
             {
@@ -287,7 +287,7 @@ namespace Ryujinx.Common.Utilities
 
             try
             {
-                var info = new FileInfo(Filename);
+                FileInfo info = new(Filename);
                 if ((info.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
                     try
@@ -308,7 +308,7 @@ namespace Ryujinx.Common.Utilities
                     return OperationOutcome.FileSizeChanged;
                 }
 
-                var outfileStream = new FileStream(_filename, FileMode.Open, FileAccess.Write, FileShare.Write);
+                FileStream outfileStream = new(_filename, FileMode.Open, FileAccess.Write, FileShare.Write);
 
                 try
                 {
@@ -347,7 +347,7 @@ namespace Ryujinx.Common.Utilities
             {
                 Log?.Write(LogType.Info, "Untrimming...");
 
-                var info = new FileInfo(Filename);
+                FileInfo info = new(Filename);
                 if ((info.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
                     try
@@ -368,7 +368,7 @@ namespace Ryujinx.Common.Utilities
                     return OperationOutcome.FileSizeChanged;
                 }
 
-                var outfileStream = new FileStream(_filename, FileMode.Append, FileAccess.Write, FileShare.Write);
+                FileStream outfileStream = new(_filename, FileMode.Append, FileAccess.Write, FileShare.Write);
                 long bytesToWriteB = UntrimmedFileSizeB - FileSizeB;
 
                 try
@@ -413,7 +413,7 @@ namespace Ryujinx.Common.Utilities
 
             try
             {
-                var buffer = new byte[BufferSize];
+                byte[] buffer = new byte[BufferSize];
                 Array.Fill<byte>(buffer, PaddingByte);
 
                 while (bytesLeftToWriteB > 0)

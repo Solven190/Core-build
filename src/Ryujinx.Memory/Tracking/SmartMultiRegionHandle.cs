@@ -45,7 +45,7 @@ namespace Ryujinx.Memory.Tracking
 
         public void ForceDirty(ulong address, ulong size)
         {
-            foreach (var handle in _handles)
+            foreach (RegionHandle handle in _handles)
             {
                 if (handle != null && handle.OverlapsWith(address, size))
                 {
@@ -56,7 +56,7 @@ namespace Ryujinx.Memory.Tracking
 
         public void RegisterAction(RegionSignal action)
         {
-            foreach (var handle in _handles)
+            foreach (RegionHandle handle in _handles)
             {
                 handle?.RegisterAction((_, _) => action(handle.Address, handle.Size));
             }
@@ -64,7 +64,7 @@ namespace Ryujinx.Memory.Tracking
 
         public void RegisterPreciseAction(PreciseRegionSignal action)
         {
-            foreach (var handle in _handles)
+            foreach (RegionHandle handle in _handles)
             {
                 handle?.RegisterPreciseAction((_, _, write) => action(handle.Address, handle.Size, write));
             }
@@ -267,7 +267,7 @@ namespace Ryujinx.Memory.Tracking
         {
             GC.SuppressFinalize(this);
 
-            foreach (var handle in _handles)
+            foreach (RegionHandle handle in _handles)
             {
                 handle?.Dispose();
             }

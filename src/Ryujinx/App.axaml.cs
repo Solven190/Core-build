@@ -77,7 +77,7 @@ namespace Ryujinx.Ava
             {
                 if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 {
-                    var result = await ContentDialogHelper.CreateConfirmationDialog(
+                    UserResult result = await ContentDialogHelper.CreateConfirmationDialog(
                         LocaleManager.Instance[LocaleKeys.DialogThemeRestartMessage],
                         LocaleManager.Instance[LocaleKeys.DialogThemeRestartSubMessage],
                         LocaleManager.Instance[LocaleKeys.InputDialogYes],
@@ -86,8 +86,8 @@ namespace Ryujinx.Ava
 
                     if (result == UserResult.Yes)
                     {
-                        var path = Environment.ProcessPath;
-                        var proc = Process.Start(path ?? string.Empty, CommandLineState.Arguments);
+                        string path = Environment.ProcessPath;
+                        Process proc = Process.Start(path ?? string.Empty, CommandLineState.Arguments);
                         desktop.Shutdown();
                         Environment.Exit(0);
                     }
@@ -149,7 +149,7 @@ namespace Ryujinx.Ava
         {
             if (Current is App { PlatformSettings: not null } app)
             {
-                var colorValues = app.PlatformSettings.GetColorValues();
+                PlatformColorValues colorValues = app.PlatformSettings.GetColorValues();
 
                 return ConvertThemeVariant(colorValues.ThemeVariant);
             }

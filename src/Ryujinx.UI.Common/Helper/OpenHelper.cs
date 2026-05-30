@@ -57,7 +57,7 @@ namespace Ryujinx.UI.Common.Helper
                 {
                     ObjectiveC.NSString nsStringPath = new(path);
                     ObjectiveC.Object nsUrl = new("NSURL");
-                    var urlPtr = nsUrl.GetFromMessage("fileURLWithPath:", nsStringPath);
+                    ObjectiveC.Object urlPtr = nsUrl.GetFromMessage("fileURLWithPath:", nsStringPath);
 
                     ObjectiveC.Object nsArray = new("NSArray");
                     ObjectiveC.Object urlArray = nsArray.GetFromMessage("arrayWithObject:", urlPtr);
@@ -96,7 +96,7 @@ namespace Ryujinx.UI.Common.Helper
             {
                 ObjectiveC.NSString nsStringPath = new(url);
                 ObjectiveC.Object nsUrl = new("NSURL");
-                var urlPtr = nsUrl.GetFromMessage("URLWithString:", nsStringPath);
+                ObjectiveC.Object urlPtr = nsUrl.GetFromMessage("URLWithString:", nsStringPath);
 
                 ObjectiveC.Object nsWorkspace = new("NSWorkspace");
                 ObjectiveC.Object sharedWorkspace = nsWorkspace.GetFromMessage("sharedWorkspace");

@@ -81,8 +81,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             _i2mClass = new InlineToMemoryClass(context, channel, initializeState: false);
 
-            var spec = new SpecializationStateUpdater(context);
-            var drawState = new DrawState();
+            SpecializationStateUpdater spec = new(context);
+            DrawState drawState = new();
 
             _drawManager = new DrawManager(context, channel, _state, drawState, spec);
             _blendManager = new AdvancedBlendManager(_state);
@@ -252,8 +252,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             }
             else
             {
-                var lhsVec = Unsafe.As<Span<T>, ReadOnlySpan<Vector128<uint>>>(ref lhs);
-                var rhsVec = Unsafe.As<Span<T>, ReadOnlySpan<Vector128<uint>>>(ref rhs);
+                ReadOnlySpan<Vector128<uint>> lhsVec = Unsafe.As<Span<T>, ReadOnlySpan<Vector128<uint>>>(ref lhs);
+                ReadOnlySpan<Vector128<uint>> rhsVec = Unsafe.As<Span<T>, ReadOnlySpan<Vector128<uint>>>(ref rhs);
 
                 return Vector128.EqualsAll(lhsVec[0], rhsVec[0]) &&
                     Vector128.EqualsAll(lhsVec[1], rhsVec[1]);
@@ -266,8 +266,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="masks">Blend enable</param>
         public void UpdateBlendEnable(Span<Boolean32> enable)
         {
-            var shadow = ShadowMode;
-            var state = _state.State.BlendEnable.AsSpan();
+            SetMmeShadowRamControlMode shadow = ShadowMode;
+            Span<Boolean32> state = _state.State.BlendEnable.AsSpan();
 
             if (shadow.IsReplay())
             {
@@ -293,8 +293,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="masks">Color masks</param>
         public void UpdateColorMasks(Span<RtColorMask> masks)
         {
-            var shadow = ShadowMode;
-            var state = _state.State.RtColorMask.AsSpan();
+            SetMmeShadowRamControlMode shadow = ShadowMode;
+            Span<RtColorMask> state = _state.State.RtColorMask.AsSpan();
 
             if (shadow.IsReplay())
             {
@@ -322,12 +322,12 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="type">Type of the binding</param>
         public void UpdateIndexBuffer(uint addrHigh, uint addrLow, IndexType type)
         {
-            var shadow = ShadowMode;
-            ref var state = ref _state.State.IndexBufferState;
+            SetMmeShadowRamControlMode shadow = ShadowMode;
+            ref IndexBufferState state = ref _state.State.IndexBufferState;
 
             if (shadow.IsReplay())
             {
-                ref var shadowState = ref _state.ShadowState.IndexBufferState;
+                ref IndexBufferState shadowState = ref _state.ShadowState.IndexBufferState;
                 addrHigh = shadowState.Address.High;
                 addrLow = shadowState.Address.Low;
                 type = shadowState.Type;
@@ -344,7 +344,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             if (shadow.IsTrack())
             {
-                ref var shadowState = ref _state.ShadowState.IndexBufferState;
+                ref IndexBufferState shadowState = ref _state.ShadowState.IndexBufferState;
                 shadowState.Address.High = addrHigh;
                 shadowState.Address.Low = addrLow;
                 shadowState.Type = type;
@@ -359,12 +359,12 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="addrLow">Low part of the address</param>
         public void UpdateUniformBufferState(int size, uint addrHigh, uint addrLow)
         {
-            var shadow = ShadowMode;
-            ref var state = ref _state.State.UniformBufferState;
+            SetMmeShadowRamControlMode shadow = ShadowMode;
+            ref UniformBufferState state = ref _state.State.UniformBufferState;
 
             if (shadow.IsReplay())
             {
-                ref var shadowState = ref _state.ShadowState.UniformBufferState;
+                ref UniformBufferState shadowState = ref _state.ShadowState.UniformBufferState;
                 size = shadowState.Size;
                 addrHigh = shadowState.Address.High;
                 addrLow = shadowState.Address.Low;
@@ -376,7 +376,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             if (shadow.IsTrack())
             {
-                ref var shadowState = ref _state.ShadowState.UniformBufferState;
+                ref UniformBufferState shadowState = ref _state.ShadowState.UniformBufferState;
                 shadowState.Size = size;
                 shadowState.Address.High = addrHigh;
                 shadowState.Address.Low = addrLow;
@@ -390,8 +390,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="offset">Offset to update with</param>
         public void SetShaderOffset(int index, uint offset)
         {
-            var shadow = ShadowMode;
-            ref var shaderState = ref _state.State.ShaderState[index];
+            SetMmeShadowRamControlMode shadow = ShadowMode;
+            ref ShaderState shaderState = ref _state.State.ShaderState[index];
 
             if (shadow.IsReplay())
             {
@@ -417,8 +417,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         /// <param name="ubState">Uniform buffer state</param>
         public void UpdateUniformBufferState(UniformBufferState ubState)
         {
-            var shadow = ShadowMode;
-            ref var state = ref _state.State.UniformBufferState;
+            SetMmeShadowRamControlMode shadow = ShadowMode;
+            ref UniformBufferState state = ref _state.State.UniformBufferState;
 
             if (shadow.IsReplay())
             {

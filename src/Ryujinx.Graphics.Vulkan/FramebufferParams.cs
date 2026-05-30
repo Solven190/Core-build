@@ -34,7 +34,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public FramebufferParams(Device device, TextureView view, uint width, uint height)
         {
-            var format = view.Info.Format;
+            Format format = view.Info.Format;
 
             bool isDepthStencil = format.IsDepthOrStencil();
 
@@ -112,7 +112,7 @@ namespace Ryujinx.Graphics.Vulkan
             {
                 if (IsValidTextureView(color))
                 {
-                    var texture = (TextureView)color;
+                    TextureView texture = (TextureView)color;
 
                     _attachments[index] = texture.GetImageViewForAttachment();
                     _colors[index] = texture;
@@ -123,7 +123,7 @@ namespace Ryujinx.Graphics.Vulkan
                     AttachmentFormats[index] = texture.VkFormat;
                     AttachmentIndices[index] = bindIndex;
 
-                    var format = texture.Info.Format;
+                    Format format = texture.Info.Format;
 
                     if (format.IsInteger())
                     {
@@ -348,7 +348,7 @@ namespace Ryujinx.Graphics.Vulkan
         {
             if (_colors != null && (uint)index < ColorAttachmentsCount)
             {
-                var format = _colors[index].Info.Format;
+                Format format = _colors[index].Info.Format;
 
                 if (format.IsSint())
                 {
@@ -403,7 +403,7 @@ namespace Ryujinx.Graphics.Vulkan
                 attachments[i] = _attachments[i].Get(cbs).Value;
             }
 
-            var framebufferCreateInfo = new FramebufferCreateInfo
+            FramebufferCreateInfo framebufferCreateInfo = new()
             {
                 SType = StructureType.FramebufferCreateInfo,
                 RenderPass = renderPass.Get(cbs).Value,
@@ -414,13 +414,13 @@ namespace Ryujinx.Graphics.Vulkan
                 Layers = Layers,
             };
 
-            api.CreateFramebuffer(_device, in framebufferCreateInfo, null, out var framebuffer).ThrowOnError();
+            api.CreateFramebuffer(_device, in framebufferCreateInfo, null, out Framebuffer framebuffer).ThrowOnError();
             return new Auto<DisposableFramebuffer>(new DisposableFramebuffer(api, _device, framebuffer), null, _attachments[..AttachmentsCount]);
         }
 
         public TextureView[] GetAttachmentViews()
         {
-            var result = new TextureView[AttachmentsCount];
+            TextureView[] result = new TextureView[AttachmentsCount];
             _colors?.AsSpan(..ColorAttachmentsCount).CopyTo(result.AsSpan());
 
             if (_depthStencil != null)

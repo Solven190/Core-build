@@ -32,7 +32,7 @@ namespace Ryujinx.Ava.Common.Locale
 
         private void Load()
         {
-            var localeLanguageCode = !string.IsNullOrEmpty(ConfigurationState.Instance.UI.LanguageCode.Value) ?
+            string localeLanguageCode = !string.IsNullOrEmpty(ConfigurationState.Instance.UI.LanguageCode.Value) ?
                 ConfigurationState.Instance.UI.LanguageCode.Value : CultureInfo.CurrentCulture.Name.Replace('-', '_');
 
             // Load en_US as default, if the target language translation is missing or incomplete.
@@ -63,7 +63,7 @@ namespace Ryujinx.Ava.Common.Locale
                 if (_localeStrings.TryGetValue(key, out string value))
                 {
                     // Check if the localized string needs to be formatted.
-                    if (_dynamicValues.TryGetValue(key, out var dynamicValue))
+                    if (_dynamicValues.TryGetValue(key, out object[] dynamicValue))
                     {
                         try
                         {
@@ -132,7 +132,7 @@ namespace Ryujinx.Ava.Common.Locale
 
         public void LoadLanguage(string languageCode)
         {
-            var locale = LoadJsonLanguage(languageCode);
+            Dictionary<LocaleKeys, string> locale = LoadJsonLanguage(languageCode);
 
             if (locale == null)
             {
@@ -144,7 +144,7 @@ namespace Ryujinx.Ava.Common.Locale
                 _localeLanguageCode = languageCode;
             }
 
-            foreach (var item in locale)
+            foreach (KeyValuePair<LocaleKeys, string> item in locale)
             {
                 _localeStrings[item.Key] = item.Value;
             }
@@ -156,7 +156,7 @@ namespace Ryujinx.Ava.Common.Locale
 
         private static Dictionary<LocaleKeys, string> LoadJsonLanguage(string languageCode)
         {
-            var localeStrings = new Dictionary<LocaleKeys, string>();
+            Dictionary<LocaleKeys, string> localeStrings = new();
             string languageJson = EmbeddedResources.ReadAllText($"Ryujinx/Assets/Locales/{languageCode}.json");
 
             if (languageJson == null)
@@ -165,11 +165,11 @@ namespace Ryujinx.Ava.Common.Locale
                 return null;
             }
 
-            var strings = JsonHelper.Deserialize(languageJson, CommonJsonContext.Default.StringDictionary);
+            Dictionary<string, string> strings = JsonHelper.Deserialize(languageJson, CommonJsonContext.Default.StringDictionary);
 
-            foreach (var item in strings)
+            foreach (KeyValuePair<string, string> item in strings)
             {
-                if (Enum.TryParse<LocaleKeys>(item.Key, out var key))
+                if (Enum.TryParse<LocaleKeys>(item.Key, out LocaleKeys key))
                 {
                     localeStrings[key] = item.Value;
                 }

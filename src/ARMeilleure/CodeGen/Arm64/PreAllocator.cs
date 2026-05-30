@@ -847,7 +847,7 @@ namespace ARMeilleure.CodeGen.Arm64
 
                         Debug.Assert(comp.Kind == OperandKind.Constant);
 
-                        var compType = (Comparison)comp.AsInt32();
+                        Comparison compType = (Comparison)comp.AsInt32();
 
                         return compType is Comparison.Equal or Comparison.NotEqual;
                     }

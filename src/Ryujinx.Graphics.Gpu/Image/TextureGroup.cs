@@ -239,7 +239,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             {
                 bool flushed = false;
 
-                foreach (var overlap in _incompatibleOverlaps)
+                foreach (TextureIncompatibleOverlap overlap in _incompatibleOverlaps)
                 {
                     flushed |= overlap.Group.Storage.FlushModified(true);
                 }
@@ -421,7 +421,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             {
                 if (_loadNeeded[baseHandle + i])
                 {
-                    var info = GetHandleInformation(baseHandle + i);
+                    (int BaseLayer, int BaseLevel, int Levels, int Layers, int Index) info = GetHandleInformation(baseHandle + i);
 
                     // Ensure the data for this handle is loaded in the span.
                     if (spanEndIndex <= i - 1)
@@ -444,7 +444,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                             }
                         }
 
-                        var endInfo = spanEndIndex == i ? info : GetHandleInformation(baseHandle + spanEndIndex);
+                        (int BaseLayer, int BaseLevel, int Levels, int Layers, int Index) endInfo = spanEndIndex == i ? info : GetHandleInformation(baseHandle + spanEndIndex);
 
                         spanBase = _allOffsets[info.Index];
                         int spanLast = _allOffsets[endInfo.Index + endInfo.Layers * endInfo.Levels - 1];
@@ -499,7 +499,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>True if flushes should be tracked, false otherwise</returns>
         private bool ShouldFlushTriggerTracking()
         {
-            foreach (var overlap in _incompatibleOverlaps)
+            foreach (TextureIncompatibleOverlap overlap in _incompatibleOverlaps)
             {
                 if (overlap.Group._flushIncompatibleOverlaps)
                 {
@@ -659,7 +659,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
                 bool canImport = Storage.Info.IsLinear && Storage.Info.Stride >= Storage.Info.Width * Storage.Info.FormatInfo.BytesPerPixel;
 
-                var hostPointer = canImport ? _physicalMemory.GetHostPointer(Storage.Range) : 0;
+                IntPtr hostPointer = canImport ? _physicalMemory.GetHostPointer(Storage.Range) : 0;
 
                 if (hostPointer != 0 && _context.Renderer.PrepareHostMapping(hostPointer, Storage.Size))
                 {
@@ -1049,7 +1049,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             int endOffset = _allOffsets[viewEnd] + _sliceSizes[lastLevel];
             int size = endOffset - offset;
 
-            var result = new List<RegionHandle>();
+            List<RegionHandle> result = new();
 
             for (int i = 0; i < TextureRange.Count; i++)
             {
@@ -1083,7 +1083,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             offset = _allOffsets[viewStart];
             ulong maxSize = Storage.Size - (ulong)offset;
 
-            var groupHandle = new TextureGroupHandle(
+            TextureGroupHandle groupHandle = new(
                 this,
                 offset,
                 Math.Min(maxSize, (ulong)size),
@@ -1190,17 +1190,17 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <param name="relativeOffset">The offset of the old handles in relation to the new ones</param>
         private void InheritHandles(TextureGroupHandle[] oldHandles, TextureGroupHandle[] handles, int relativeOffset)
         {
-            foreach (var group in handles)
+            foreach (TextureGroupHandle group in handles)
             {
-                foreach (var handle in group.Handles)
+                foreach (RegionHandle handle in group.Handles)
                 {
                     bool dirty = false;
 
-                    foreach (var oldGroup in oldHandles)
+                    foreach (TextureGroupHandle oldGroup in oldHandles)
                     {
                         if (group.OverlapsWith(oldGroup.Offset + relativeOffset, oldGroup.Size))
                         {
-                            foreach (var oldHandle in oldGroup.Handles)
+                            foreach (RegionHandle oldHandle in oldGroup.Handles)
                             {
                                 if (handle.OverlapsWith(oldHandle.Address, oldHandle.Size))
                                 {
@@ -1224,7 +1224,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                 }
             }
 
-            foreach (var oldGroup in oldHandles)
+            foreach (TextureGroupHandle oldGroup in oldHandles)
             {
                 oldGroup.Modified = false;
             }
@@ -1284,7 +1284,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                             continue;
                         }
 
-                        foreach (var oldGroup in _handles)
+                        foreach (TextureGroupHandle oldGroup in _handles)
                         {
                             if (!groupHandle.OverlapsWith(oldGroup.Offset, oldGroup.Size))
                             {
@@ -1295,7 +1295,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                             {
                                 bool hasMatch = false;
 
-                                foreach (var oldHandle in oldGroup.Handles)
+                                foreach (RegionHandle oldHandle in oldGroup.Handles)
                                 {
                                     if (oldHandle.RangeEquals(handle))
                                     {
@@ -1322,9 +1322,9 @@ namespace Ryujinx.Graphics.Gpu.Image
 
                 InheritHandles(_handles, handles, 0);
 
-                foreach (var oldGroup in _handles)
+                foreach (TextureGroupHandle oldGroup in _handles)
                 {
-                    foreach (var oldHandle in oldGroup.Handles)
+                    foreach (RegionHandle oldHandle in oldGroup.Handles)
                     {
                         oldHandle.Dispose();
                     }
@@ -1350,12 +1350,12 @@ namespace Ryujinx.Graphics.Gpu.Image
             else if (!(_hasMipViews || _hasLayerViews))
             {
                 // Single dirty region.
-                var cpuRegionHandles = new RegionHandle[TextureRange.Count];
+                RegionHandle[] cpuRegionHandles = new RegionHandle[TextureRange.Count];
                 int count = 0;
 
                 for (int i = 0; i < TextureRange.Count; i++)
                 {
-                    var currentRange = TextureRange.GetSubRange(i);
+                    MemoryRange currentRange = TextureRange.GetSubRange(i);
                     if (currentRange.Address != MemoryManager.PteUnmapped)
                     {
                         cpuRegionHandles[count++] = GenerateHandle(currentRange.Address, currentRange.Size);
@@ -1367,7 +1367,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                     Array.Resize(ref cpuRegionHandles, count);
                 }
 
-                var groupHandle = new TextureGroupHandle(this, 0, Storage.Size, _views, 0, 0, 0, _allOffsets.Length, cpuRegionHandles);
+                TextureGroupHandle groupHandle = new(this, 0, Storage.Size, _views, 0, 0, 0, _allOffsets.Length, cpuRegionHandles);
 
                 handles = [groupHandle];
             }
@@ -1385,7 +1385,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
                 if (_is3D)
                 {
-                    var handlesList = new List<TextureGroupHandle>();
+                    List<TextureGroupHandle> handlesList = new();
 
                     for (int i = 0; i < levelHandles; i++)
                     {
@@ -1468,8 +1468,8 @@ namespace Ryujinx.Graphics.Gpu.Image
             // Get the location of each texture within its storage, so we can find the handles to apply the dependency to.
             // This can consist of multiple disjoint regions, for example if this is a mip slice of an array texture.
 
-            var targetRange = new List<(int BaseHandle, int RegionCount)>();
-            var otherRange = new List<(int BaseHandle, int RegionCount)>();
+            List<(int BaseHandle, int RegionCount)> targetRange = new();
+            List<(int BaseHandle, int RegionCount)> otherRange = new();
 
             EvaluateRelevantHandles(firstLayer, firstLevel, other.Info.GetSlices(), other.Info.Levels, (baseHandle, regionCount, _, _) =>
             {

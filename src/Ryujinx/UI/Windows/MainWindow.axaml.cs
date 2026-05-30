@@ -179,9 +179,9 @@ namespace Ryujinx.Ava.UI.Windows
         {
             Dispatcher.UIThread.Post(() =>
             {
-                var ldnGameDataArray = e.LdnData;
+                IEnumerable<LdnGameData> ldnGameDataArray = e.LdnData;
                 ViewModel.LastLdnGameData = ldnGameDataArray;
-                foreach (var application in ViewModel.Applications)
+                foreach (ApplicationData application in ViewModel.Applications)
                 {
                     UpdateApplicationWithLdnData(application);
                 }
@@ -584,7 +584,7 @@ namespace Ryujinx.Ava.UI.Windows
 
         private void VolumeStatus_CheckedChanged(object sender, RoutedEventArgs e)
         {
-            var volumeSplitButton = sender as ToggleSplitButton;
+            ToggleSplitButton volumeSplitButton = sender as ToggleSplitButton;
             if (ViewModel.IsGameRunning)
             {
                 if (volumeSplitButton is { IsChecked: false })
@@ -708,11 +708,11 @@ namespace Ryujinx.Ava.UI.Windows
 
                 ApplicationLibrary.LoadApplications(ConfigurationState.Instance.UI.GameDirs);
 
-                var autoloadDirs = ConfigurationState.Instance.UI.AutoloadDirs.Value;
+                List<string> autoloadDirs = ConfigurationState.Instance.UI.AutoloadDirs.Value;
                 if (autoloadDirs.Count > 0)
                 {
-                    var updatesLoaded = ApplicationLibrary.AutoLoadTitleUpdates(autoloadDirs, out int updatesRemoved);
-                    var dlcLoaded = ApplicationLibrary.AutoLoadDownloadableContents(autoloadDirs, out int dlcRemoved);
+                    int updatesLoaded = ApplicationLibrary.AutoLoadTitleUpdates(autoloadDirs, out int updatesRemoved);
+                    int dlcLoaded = ApplicationLibrary.AutoLoadDownloadableContents(autoloadDirs, out int dlcRemoved);
 
                     ShowNewContentAddedDialog(dlcLoaded, dlcRemoved, updatesLoaded, updatesRemoved);
                 }

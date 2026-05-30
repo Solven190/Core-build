@@ -366,7 +366,7 @@ namespace Ryujinx.Input.SDL3
 
             if (HasConfiguration)
             {
-                var joyconStickConfig = GetLogicalJoyStickConfig(inputId);
+                JoyconConfigControllerStick<GamepadInputId, Common.Configuration.Hid.Controller.StickInputId> joyconStickConfig = GetLogicalJoyStickConfig(inputId);
 
                 if (joyconStickConfig != null)
                 {

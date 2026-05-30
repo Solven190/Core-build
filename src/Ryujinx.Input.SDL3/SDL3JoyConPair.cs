@@ -98,7 +98,7 @@ namespace Ryujinx.Input.SDL3
             string matchName = isLeft ? SDL3JoyCon.RightName : SDL3JoyCon.LeftName;
             match = 0;
 
-            foreach (var joyConId in joyConIds.Keys)
+            foreach (SDL_JoystickID joyConId in joyConIds.Keys)
             {
                 if (SDL_GetGamepadNameForID(joyConId) == matchName)
                 {

@@ -94,7 +94,7 @@ namespace Ryujinx.Common.Logging.Targets
                 return;
             }
 
-            using var signal = new ManualResetEventSlim(false);
+            using ManualResetEventSlim signal = new(false);
             try
             {
                 _messageQueue.Add(new FlushEventArgs(signal));

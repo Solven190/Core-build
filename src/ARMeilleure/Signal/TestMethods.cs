@@ -21,7 +21,7 @@ namespace ARMeilleure.Signal
         {
             EmitterContext context = new();
 
-            var result = WindowsPartialUnmapHandler.EmitRetryFromAccessViolation(context);
+            Operand result = WindowsPartialUnmapHandler.EmitRetryFromAccessViolation(context);
 
             context.Return(result);
 
@@ -38,7 +38,7 @@ namespace ARMeilleure.Signal
         {
             EmitterContext context = new();
 
-            var result = WindowsPartialUnmapHandler.EmitThreadLocalMapIntGetOrReserve(context, structPtr, context.LoadArgument(OperandType.I32, 0), context.LoadArgument(OperandType.I32, 1));
+            Operand result = WindowsPartialUnmapHandler.EmitThreadLocalMapIntGetOrReserve(context, structPtr, context.LoadArgument(OperandType.I32, 0), context.LoadArgument(OperandType.I32, 1));
 
             context.Return(result);
 

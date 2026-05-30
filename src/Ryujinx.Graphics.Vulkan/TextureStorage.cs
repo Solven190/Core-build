@@ -81,24 +81,24 @@ namespace Ryujinx.Graphics.Vulkan
 
             bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample();
 
-            var format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
-            var levels = (uint)info.Levels;
-            var layers = (uint)info.GetLayers();
-            var depth = (uint)(info.Target == Target.Texture3D ? info.Depth : 1);
+            VkFormat format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
+            uint levels = (uint)info.Levels;
+            uint layers = (uint)info.GetLayers();
+            uint depth = (uint)(info.Target == Target.Texture3D ? info.Depth : 1);
 
             VkFormat = format;
             _depthOrLayers = info.GetDepthOrLayers();
 
-            var type = info.Target.Convert();
+            ImageType type = info.Target.Convert();
 
-            var extent = new Extent3D((uint)info.Width, (uint)info.Height, depth);
+            Extent3D extent = new((uint)info.Width, (uint)info.Height, depth);
 
-            var sampleCountFlags = ConvertToSampleCountFlags(gd.Capabilities.SupportedSampleCounts, (uint)info.Samples);
+            SampleCountFlags sampleCountFlags = ConvertToSampleCountFlags(gd.Capabilities.SupportedSampleCounts, (uint)info.Samples);
 
             ImageUsageFlags usage = GetImageUsage(info.Format, info.Target, gd.Capabilities, isMsImageStorageSupported);
             UsageFlags = usage;
 
-            var flags = ImageCreateFlags.CreateMutableFormatBit | ImageCreateFlags.CreateExtendedUsageBit;
+            ImageCreateFlags flags = ImageCreateFlags.CreateMutableFormatBit | ImageCreateFlags.CreateExtendedUsageBit;
 
             // This flag causes mipmapped texture arrays to break on AMD GCN, so for that copy dependencies are forced for aliasing as cube.
             bool isCube = info.Target is Target.Cubemap or Target.CubemapArray;
@@ -114,7 +114,7 @@ namespace Ryujinx.Graphics.Vulkan
                 flags |= ImageCreateFlags.Create2DArrayCompatibleBit;
             }
 
-            var imageCreateInfo = new ImageCreateInfo
+            ImageCreateInfo imageCreateInfo = new()
             {
                 SType = StructureType.ImageCreateInfo,
                 ImageType = type,
@@ -134,8 +134,8 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (foreignAllocation == null)
             {
-                gd.Api.GetImageMemoryRequirements(device, _image, out var requirements);
-                var allocation = gd.MemoryAllocator.AllocateDeviceMemory(requirements, DefaultImageMemoryFlags);
+                gd.Api.GetImageMemoryRequirements(device, _image, out MemoryRequirements requirements);
+                MemoryAllocation allocation = gd.MemoryAllocator.AllocateDeviceMemory(requirements, DefaultImageMemoryFlags);
 
                 if (allocation.Memory.Handle == 0UL)
                 {
@@ -156,7 +156,7 @@ namespace Ryujinx.Graphics.Vulkan
             {
                 _foreignAllocationAuto = foreignAllocation;
                 foreignAllocation.IncrementReferenceCount();
-                var allocation = foreignAllocation.GetUnsafe();
+                MemoryAllocation allocation = foreignAllocation.GetUnsafe();
 
                 gd.Api.BindImageMemory(device, _image, allocation.Memory, allocation.Offset).ThrowOnError();
 
@@ -170,7 +170,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public TextureStorage CreateAliasedColorForDepthStorageUnsafe(Format format)
         {
-            var colorFormat = format switch
+            Format colorFormat = format switch
             {
                 Format.S8Uint => Format.R8Unorm,
                 Format.D16Unorm => Format.R16Unorm,
@@ -185,11 +185,11 @@ namespace Ryujinx.Graphics.Vulkan
 
         public TextureStorage CreateAliasedStorageUnsafe(Format format)
         {
-            if (_aliasedStorages == null || !_aliasedStorages.TryGetValue(format, out var storage))
+            if (_aliasedStorages == null || !_aliasedStorages.TryGetValue(format, out TextureStorage storage))
             {
                 _aliasedStorages ??= new Dictionary<Format, TextureStorage>();
 
-                var info = NewCreateInfoWith(ref _info, format, _info.BytesPerPixel);
+                TextureCreateInfo info = NewCreateInfoWith(ref _info, format, _info.BytesPerPixel);
 
                 storage = new TextureStorage(_gd, _device, info, _allocationAuto);
 
@@ -275,11 +275,11 @@ namespace Ryujinx.Graphics.Vulkan
                 }
             }
 
-            var aspectFlags = _info.Format.ConvertAspectFlags();
+            ImageAspectFlags aspectFlags = _info.Format.ConvertAspectFlags();
 
-            var subresourceRange = new ImageSubresourceRange(aspectFlags, 0, (uint)_info.Levels, 0, (uint)_info.GetLayers());
+            ImageSubresourceRange subresourceRange = new(aspectFlags, 0, (uint)_info.Levels, 0, (uint)_info.GetLayers());
 
-            var barrier = new ImageMemoryBarrier
+            ImageMemoryBarrier barrier = new()
             {
                 SType = StructureType.ImageMemoryBarrier,
                 SrcAccessMask = 0,
@@ -312,7 +312,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public static ImageUsageFlags GetImageUsage(Format format, Target target, in HardwareCapabilities capabilities, bool isMsImageStorageSupported)
         {
-            var usage = DefaultUsageFlags;
+            ImageUsageFlags usage = DefaultUsageFlags;
 
             if (format.IsDepthOrStencil())
             {
@@ -405,17 +405,17 @@ namespace Ryujinx.Graphics.Vulkan
 
                 int rowLength = (Info.GetMipStride(level) / Info.BytesPerPixel) * Info.BlockWidth;
 
-                var sl = new ImageSubresourceLayers(
+                ImageSubresourceLayers sl = new(
                     aspectFlags,
                     (uint)(dstLevel + level),
                     (uint)layer,
                     (uint)layers);
 
-                var extent = new Extent3D((uint)width, (uint)height, (uint)depth);
+                Extent3D extent = new((uint)width, (uint)height, (uint)depth);
 
                 int z = is3D ? dstLayer : 0;
 
-                var region = new BufferImageCopy(
+                BufferImageCopy region = new(
                     (ulong)offset,
                     (uint)BitUtils.AlignUp(rowLength, Info.BlockWidth),
                     (uint)BitUtils.AlignUp(height, Info.BlockHeight),
@@ -604,7 +604,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (_aliasedStorages != null)
             {
-                foreach (var storage in _aliasedStorages.Values)
+                foreach (TextureStorage storage in _aliasedStorages.Values)
                 {
                     storage.Dispose();
                 }

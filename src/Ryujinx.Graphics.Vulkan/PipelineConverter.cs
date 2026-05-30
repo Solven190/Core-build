@@ -16,7 +16,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             AttachmentDescription[] attachmentDescs = null;
 
-            var subpass = new SubpassDescription
+            SubpassDescription subpass = new()
             {
                 PipelineBindPoint = PipelineBindPoint.Graphics,
             };
@@ -111,11 +111,11 @@ namespace Ryujinx.Graphics.Vulkan
                 }
             }
 
-            var subpassDependency = CreateSubpassDependency(gd);
+            SubpassDependency subpassDependency = CreateSubpassDependency(gd);
 
             fixed (AttachmentDescription* pAttachmentDescs = attachmentDescs)
             {
-                var renderPassCreateInfo = new RenderPassCreateInfo
+                RenderPassCreateInfo renderPassCreateInfo = new()
                 {
                     SType = StructureType.RenderPassCreateInfo,
                     PAttachments = pAttachmentDescs,
@@ -126,7 +126,7 @@ namespace Ryujinx.Graphics.Vulkan
                     DependencyCount = 1,
                 };
 
-                gd.Api.CreateRenderPass(device, in renderPassCreateInfo, null, out var renderPass).ThrowOnError();
+                gd.Api.CreateRenderPass(device, in renderPassCreateInfo, null, out RenderPass renderPass).ThrowOnError();
 
                 return new DisposableRenderPass(gd.Api, device, renderPass);
             }
@@ -134,7 +134,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public static SubpassDependency CreateSubpassDependency(VulkanRenderer gd)
         {
-            var (access, stages) = BarrierBatch.GetSubpassAccessSuperset(gd);
+            (AccessFlags access, PipelineStageFlags stages) = BarrierBatch.GetSubpassAccessSuperset(gd);
 
             return new SubpassDependency(
                 0,
@@ -148,7 +148,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public unsafe static SubpassDependency2 CreateSubpassDependency2(VulkanRenderer gd)
         {
-            var (access, stages) = BarrierBatch.GetSubpassAccessSuperset(gd);
+            (AccessFlags access, PipelineStageFlags stages) = BarrierBatch.GetSubpassAccessSuperset(gd);
 
             return new SubpassDependency2(
                 StructureType.SubpassDependency2,
@@ -231,8 +231,8 @@ namespace Ryujinx.Graphics.Vulkan
 
             for (int i = 0; i < vaCount; i++)
             {
-                var attribute = vertexAttribsSpan[i];
-                var bufferIndex = attribute.IsZero ? 0 : attribute.BufferIndex + 1;
+                VertexAttribDescriptor attribute = vertexAttribsSpan[i];
+                int bufferIndex = attribute.IsZero ? 0 : attribute.BufferIndex + 1;
 
                 vertexAttributeDescriptionsSpan[i] = new VertexInputAttributeDescription(
                     (uint)i,
@@ -254,11 +254,11 @@ namespace Ryujinx.Graphics.Vulkan
             
             for (int i = 0; i < vbCount; i++)
             {
-                var vertexBuffer = vertexBuffersSpan[i];
+                BufferPipelineDescriptor vertexBuffer = vertexBuffersSpan[i];
 
                 if (vertexBuffer.Enable)
                 {
-                    var inputRate = vertexBuffer.Divisor != 0 ? VertexInputRate.Instance : VertexInputRate.Vertex;
+                    VertexInputRate inputRate = vertexBuffer.Divisor != 0 ? VertexInputRate.Instance : VertexInputRate.Vertex;
 
                     int alignedStride = vertexBuffer.Stride;
 
@@ -285,7 +285,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             for (int i = 0; i < Constants.MaxRenderTargets; i++)
             {
-                var blend = blendDescriptorsSpan[i];
+                BlendDescriptor blend = blendDescriptorsSpan[i];
 
                 if (blend.Enable && colorWriteMaskSpan[i] != 0)
                 {

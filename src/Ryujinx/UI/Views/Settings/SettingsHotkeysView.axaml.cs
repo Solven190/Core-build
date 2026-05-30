@@ -8,6 +8,7 @@ using Ryujinx.Ava.UI.Helpers;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Input;
 using Ryujinx.Input.Assigner;
+using Button = Ryujinx.Input.Button;
 using Key = Ryujinx.Common.Configuration.Hid.Key;
 
 namespace Ryujinx.Ava.UI.Views.Settings
@@ -59,15 +60,15 @@ namespace Ryujinx.Ava.UI.Views.Settings
 
                         this.Focus(NavigationMethod.Pointer);
 
-                        var keyboard = (IKeyboard)_avaloniaKeyboardDriver.GetGamepad("0");
+                        IKeyboard keyboard = (IKeyboard)_avaloniaKeyboardDriver.GetGamepad("0");
                         IButtonAssigner assigner = new KeyboardKeyAssigner(keyboard);
 
                         _currentAssigner.ButtonAssigned += (_, e) =>
                         {
                             if (e.ButtonValue.HasValue)
                             {
-                                var viewModel = (DataContext) as SettingsViewModel;
-                                var buttonValue = e.ButtonValue.Value;
+                                SettingsViewModel viewModel = (DataContext) as SettingsViewModel;
+                                Button buttonValue = e.ButtonValue.Value;
 
                                 if (viewModel != null)
                                 {

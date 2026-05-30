@@ -149,7 +149,7 @@ namespace Ryujinx.Horizon.Kernel.Generators
 
             if (syntaxReceiver != null)
             {
-                foreach (var method in syntaxReceiver.SvcImplementations)
+                foreach (MethodDeclarationSyntax method in syntaxReceiver.SvcImplementations)
                 {
                     GenerateMethod32(generator, context.Compilation, method);
                     GenerateMethod64(generator, context.Compilation, method);
@@ -214,7 +214,7 @@ namespace Ryujinx.Horizon.Kernel.Generators
             List<string> logInArgs = [];
             List<string> logOutArgs = [];
 
-            foreach (var methodParameter in method.ParameterList.Parameters)
+            foreach (ParameterSyntax methodParameter in method.ParameterList.Parameters)
             {
                 string name = methodParameter.Identifier.Text;
                 string argName = GetPrefixedArgName(name);
@@ -333,7 +333,7 @@ namespace Ryujinx.Horizon.Kernel.Generators
             List<string> logInArgs = [];
             List<string> logOutArgs = [];
 
-            foreach (var methodParameter in method.ParameterList.Parameters)
+            foreach (ParameterSyntax methodParameter in method.ParameterList.Parameters)
             {
                 string name = methodParameter.Identifier.Text;
                 string argName = GetPrefixedArgName(name);
@@ -476,7 +476,7 @@ namespace Ryujinx.Horizon.Kernel.Generators
             generator.EnterScope($"public static void Dispatch{suffix}(Syscall syscall, {TypeExecutionContext} context, int id)");
             generator.EnterScope("switch (id)");
 
-            foreach (var syscall in syscalls)
+            foreach (SyscallIdAndName syscall in syscalls)
             {
                 generator.AppendLine($"case {syscall.Id}:");
                 generator.IncreaseIndentation();

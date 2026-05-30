@@ -208,7 +208,7 @@ namespace Ryujinx.Ava.UI.Models.Input
 
         public InputConfig GetConfig()
         {
-            var config = new StandardControllerInputConfig
+            StandardControllerInputConfig config = new()
             {
                 Id = Id,
                 Backend = InputBackendType.GamepadSDL3,

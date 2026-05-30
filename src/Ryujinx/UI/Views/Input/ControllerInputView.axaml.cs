@@ -9,6 +9,7 @@ using Ryujinx.Ava.UI.ViewModels.Input;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Input;
 using Ryujinx.Input.Assigner;
+using Button = Ryujinx.Input.Button;
 using StickInputId = Ryujinx.Common.Configuration.Hid.Controller.StickInputId;
 
 namespace Ryujinx.Ava.UI.Views.Input
@@ -68,7 +69,7 @@ namespace Ryujinx.Ava.UI.Views.Input
 
                 if (_changeSlider != -1.0f && _changeSlider != (float)check.Value)
                 {
-                    var viewModel = (DataContext as ControllerInputViewModel);
+                    ControllerInputViewModel viewModel = (DataContext as ControllerInputViewModel);
                     viewModel?.ParentModel.IsModified = true;
 
                     _changeSlider = (float)check.Value;
@@ -127,7 +128,7 @@ namespace Ryujinx.Ava.UI.Views.Input
                         {
                             if (e.ButtonValue.HasValue)
                             {
-                                var buttonValue = e.ButtonValue.Value;
+                                Button buttonValue = e.ButtonValue.Value;
                                 viewModel.ParentModel.IsModified = true;
 
                                 switch (button.Name)

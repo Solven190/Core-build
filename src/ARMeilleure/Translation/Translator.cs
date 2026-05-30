@@ -242,7 +242,7 @@ namespace ARMeilleure.Translation
 
         internal TranslatedFunction Translate(ulong address, ExecutionMode mode, bool highCq, bool singleStep = false, bool pptcTranslation = false)
         {
-            var context = new ArmEmitterContext(
+            ArmEmitterContext context = new(
                 Memory,
                 CountTable,
                 FunctionTable,
@@ -286,10 +286,10 @@ namespace ARMeilleure.Translation
 
             Logger.EndPass(PassName.RegisterUsage);
 
-            var retType = OperandType.I64;
-            var argTypes = new OperandType[] { OperandType.I64 };
+            OperandType retType = OperandType.I64;
+            OperandType[] argTypes = new OperandType[] { OperandType.I64 };
 
-            var options = highCq ? CompilerOptions.HighCq : CompilerOptions.None;
+            CompilerOptions options = highCq ? CompilerOptions.HighCq : CompilerOptions.None;
 
             if (context.HasPtc && !singleStep)
             {
@@ -574,7 +574,7 @@ namespace ARMeilleure.Translation
 
             List<TranslatedFunction> functions = Functions.AsList();
 
-            foreach (var func in functions)
+            foreach (TranslatedFunction func in functions)
             {
                 JitCache.Unmap(func.FuncPointer);
 
@@ -583,7 +583,7 @@ namespace ARMeilleure.Translation
 
             Functions.Clear();
 
-            while (_oldFuncs.TryDequeue(out var kv))
+            while (_oldFuncs.TryDequeue(out KeyValuePair<ulong, TranslatedFunction> kv))
             {
                 JitCache.Unmap(kv.Value.FuncPointer);
 
@@ -604,7 +604,7 @@ namespace ARMeilleure.Translation
             {
                 while (Queue.Count > 0 && Queue.TryDequeue(out RejitRequest request))
                 {
-                    if (Functions.TryGetValue(request.Address, out var func) && func.CallCounter != null)
+                    if (Functions.TryGetValue(request.Address, out TranslatedFunction func) && func.CallCounter != null)
                     {
                         Volatile.Write(ref func.CallCounter.Value, 0);
                     }

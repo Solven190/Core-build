@@ -80,7 +80,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
                 {
                     // Storage buffer bindings may require special treatment.
 
-                    var rawStage = stage & BufferStage.StageMask;
+                    BufferStage rawStage = stage & BufferStage.StageMask;
 
                     if (rawStage == BufferStage.Fragment)
                     {
@@ -224,7 +224,7 @@ namespace Ryujinx.Graphics.Gpu.Memory
                     // Storage write.
                     _writeCount++;
 
-                    var rawStage = stage & BufferStage.StageMask;
+                    BufferStage rawStage = stage & BufferStage.StageMask;
 
                     if (rawStage == BufferStage.Fragment)
                     {

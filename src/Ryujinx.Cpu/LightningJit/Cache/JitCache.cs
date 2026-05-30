@@ -57,7 +57,7 @@ namespace Ryujinx.Cpu.LightningJit.Cache
                     return;
                 }
 
-                var firstRegion = new ReservedRegion(allocator, CacheSize);
+                ReservedRegion firstRegion = new(allocator, CacheSize);
                 _jitRegions.Add(firstRegion);
                 _activeRegionIndex = 0;
 
@@ -120,7 +120,7 @@ namespace Ryujinx.Cpu.LightningJit.Cache
             {
                 Debug.Assert(_initialized);
 
-                foreach (var region in _jitRegions)
+                foreach (ReservedRegion region in _jitRegions)
                 {
                     if (pointer.ToInt64() < region.Pointer.ToInt64() ||
                         pointer.ToInt64() >= (region.Pointer + CacheSize).ToInt64())
@@ -176,7 +176,7 @@ namespace Ryujinx.Cpu.LightningJit.Cache
             }
 
             int exhaustedRegion = _activeRegionIndex;
-            var newRegion = new ReservedRegion(_jitRegions[0].Allocator, CacheSize);
+            ReservedRegion newRegion = new(_jitRegions[0].Allocator, CacheSize);
             _jitRegions.Add(newRegion);
             _activeRegionIndex = _jitRegions.Count - 1;
             

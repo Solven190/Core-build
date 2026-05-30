@@ -34,7 +34,7 @@ namespace Ryujinx.Ava.UI.Views.Settings
             {
                 if (this.GetVisualRoot() is Window window)
                 {
-                    var result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                    IReadOnlyList<IStorageFolder> result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                     {
                         AllowMultiple = false,
                     });
@@ -84,7 +84,7 @@ namespace Ryujinx.Ava.UI.Views.Settings
             {
                 if (this.GetVisualRoot() is Window window)
                 {
-                    var result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                    IReadOnlyList<IStorageFolder> result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                     {
                         AllowMultiple = false,
                     });

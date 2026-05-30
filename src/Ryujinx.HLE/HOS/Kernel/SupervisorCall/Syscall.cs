@@ -105,7 +105,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
 
             KProcess process = new(_context);
 
-            using var _ = new OnScopeExit(process.DecrementReferenceCount);
+            using OnScopeExit _ = new(process.DecrementReferenceCount);
 
             KResourceLimit resourceLimit;
 
@@ -1418,7 +1418,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
 
             KCodeMemory codeMemory = new(_context);
 
-            using var _ = new OnScopeExit(codeMemory.DecrementReferenceCount);
+            using OnScopeExit _ = new(codeMemory.DecrementReferenceCount);
 
             KProcess currentProcess = KernelStatic.GetCurrentProcess();
 
@@ -2832,7 +2832,7 @@ namespace Ryujinx.HLE.HOS.Kernel.SupervisorCall
 
             KThread currentThread = KernelStatic.GetCurrentThread();
 
-            var syncObjs = new Span<KSynchronizationObject>(currentThread.WaitSyncObjects)[..handles.Length];
+            Span<KSynchronizationObject> syncObjs = new Span<KSynchronizationObject>(currentThread.WaitSyncObjects)[..handles.Length];
 
             if (handles.Length != 0)
             {

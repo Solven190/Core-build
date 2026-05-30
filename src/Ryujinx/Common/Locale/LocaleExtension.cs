@@ -19,7 +19,7 @@ namespace Ryujinx.Ava.Common.Locale
         {
             LocaleKeys keyToUse = Key;
 
-            var builder = new CompiledBindingPathBuilder();
+            CompiledBindingPathBuilder builder = new();
 
             builder
                 .Property(new ClrPropertyInfo("Item",
@@ -30,9 +30,9 @@ namespace Ryujinx.Ava.Common.Locale
                     return PropertyInfoAccessorFactory.CreateInpcPropertyAccessor(weakRef, iPropInfo);
                 });
 
-            var path = builder.Build();
+            CompiledBindingPath path = builder.Build();
 
-            var binding = new CompiledBindingExtension(path)
+            CompiledBindingExtension binding = new(path)
             {
                 Source = LocaleManager.Instance
             };

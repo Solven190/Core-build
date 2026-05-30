@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -32,15 +33,15 @@ namespace Ryujinx.Graphics.Device
                 _debugLogCallback = debugLogCallback;
             }
 
-            var fields = typeof(TState).GetFields();
+            FieldInfo[] fields = typeof(TState).GetFields();
             int offset = 0;
 
             for (int fieldIndex = 0; fieldIndex < fields.Length; fieldIndex++)
             {
-                var field = fields[fieldIndex];
+                FieldInfo field = fields[fieldIndex];
 
-                var currentFieldOffset = (int)Marshal.OffsetOf<TState>(field.Name);
-                var nextFieldOffset = fieldIndex + 1 == fields.Length ? Unsafe.SizeOf<TState>() : (int)Marshal.OffsetOf<TState>(fields[fieldIndex + 1].Name);
+                int currentFieldOffset = (int)Marshal.OffsetOf<TState>(field.Name);
+                int nextFieldOffset = fieldIndex + 1 == fields.Length ? Unsafe.SizeOf<TState>() : (int)Marshal.OffsetOf<TState>(fields[fieldIndex + 1].Name);
 
                 int sizeOfField = nextFieldOffset - currentFieldOffset;
 
@@ -48,7 +49,7 @@ namespace Ryujinx.Graphics.Device
                 {
                     int index = (offset + i) / RegisterSize;
 
-                    if (callbacks != null && callbacks.TryGetValue(field.Name, out var cb))
+                    if (callbacks != null && callbacks.TryGetValue(field.Name, out RwCallback cb))
                     {
                         if (cb.Read != null)
                         {

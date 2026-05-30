@@ -249,7 +249,7 @@ namespace Ryujinx.Cpu.Jit
 
             if (TryGetVirtualContiguous(va, data.Length, out MemoryBlock memoryBlock, out ulong offset))
             {
-                var target = memoryBlock.GetSpan(offset, data.Length);
+                Span<byte> target = memoryBlock.GetSpan(offset, data.Length);
 
                 bool changed = !data.SequenceEqual(target);
 
@@ -448,7 +448,7 @@ namespace Ryujinx.Cpu.Jit
                 return null;
             }
 
-            var regions = new List<HostMemoryRange>();
+            List<HostMemoryRange> regions = new();
             ulong endVa = va + size;
 
             try
@@ -489,7 +489,7 @@ namespace Ryujinx.Cpu.Jit
 
             int pages = GetPagesCount(va, (uint)size, out va);
 
-            var regions = new List<MemoryRange>();
+            List<MemoryRange> regions = new();
 
             ulong regionStart = GetPhysicalAddressInternal(va);
             ulong regionSize = PageSize;

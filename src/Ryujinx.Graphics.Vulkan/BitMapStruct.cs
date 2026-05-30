@@ -231,11 +231,11 @@ namespace Ryujinx.Graphics.Vulkan
 
         public BitMapStruct<T> Union(BitMapStruct<T> other)
         {
-            var result = new BitMapStruct<T>();
+            BitMapStruct<T> result = new();
 
-            var masksSpan = _masks.AsSpan();
-            var oMasksSpan = other._masks.AsSpan();
-            var nMasksSpan = result._masks.AsSpan();
+            Span<long> masksSpan = _masks.AsSpan();
+            Span<long> oMasksSpan = other._masks.AsSpan();
+            Span<long> nMasksSpan = result._masks.AsSpan();
 
             for (int i = 0; i < masksSpan.Length; i++)
             {

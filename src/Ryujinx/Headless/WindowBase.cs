@@ -1,3 +1,4 @@
+using LibHac.Ns;
 using LibHac.Util;
 using Ryujinx.Ava;
 using Ryujinx.Common;
@@ -10,6 +11,7 @@ using Ryujinx.Graphics.Gpu;
 using Ryujinx.Graphics.OpenGL;
 using Ryujinx.HLE.HOS.Applets;
 using Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.ApplicationProxy.Types;
+using Ryujinx.HLE.Loaders.Processes;
 using Ryujinx.HLE.UI;
 using Ryujinx.Input;
 using Ryujinx.Input.HLE;
@@ -158,8 +160,8 @@ namespace Ryujinx.Headless
 
         private void InitializeWindow()
         {
-            var activeProcess = Device.Processes.ActiveApplication;
-            var nacp = activeProcess.ApplicationControlProperties;
+            ProcessResult activeProcess = Device.Processes.ActiveApplication;
+            ApplicationControlProperty nacp = activeProcess.ApplicationControlProperties;
             int desiredLanguage = (int)Device.System.State.DesiredTitleLanguage;
 
             string titleNameSection = string.IsNullOrWhiteSpace(nacp.Title[desiredLanguage].NameString.ToString()) ? string.Empty : $" - {nacp.Title[desiredLanguage].NameString.ToString()}";

@@ -22,7 +22,7 @@ namespace Ryujinx.UI.Common.Helper
 
         public static List<(DownloadableContentModel, bool IsEnabled)> LoadDownloadableContentsJson(VirtualFileSystem vfs, ulong applicationIdBase)
         {
-            var downloadableContentJsonPath = PathToGameDLCJson(applicationIdBase);
+            string downloadableContentJsonPath = PathToGameDLCJson(applicationIdBase);
 
             if (!File.Exists(downloadableContentJsonPath))
             {
@@ -31,7 +31,7 @@ namespace Ryujinx.UI.Common.Helper
 
             try
             {
-                var downloadableContentContainerList = JsonHelper.DeserializeFromFile(downloadableContentJsonPath,
+                List<DownloadableContentContainer> downloadableContentContainerList = JsonHelper.DeserializeFromFile(downloadableContentJsonPath,
                     _serializerContext.ListDownloadableContentContainer);
                 return LoadDownloadableContents(vfs, downloadableContentContainerList);
             }
@@ -76,13 +76,13 @@ namespace Ryujinx.UI.Common.Helper
                 downloadableContentContainerList.Add(container);
             }
 
-            var downloadableContentJsonPath = PathToGameDLCJson(applicationIdBase);
+            string downloadableContentJsonPath = PathToGameDLCJson(applicationIdBase);
             JsonHelper.SerializeToFile(downloadableContentJsonPath, downloadableContentContainerList, _serializerContext.ListDownloadableContentContainer);
         }
 
         private static List<(DownloadableContentModel, bool IsEnabled)> LoadDownloadableContents(VirtualFileSystem vfs, List<DownloadableContentContainer> downloadableContentContainers)
         {
-            var result = new List<(DownloadableContentModel, bool IsEnabled)>();
+            List<(DownloadableContentModel, bool IsEnabled)> result = new();
 
             foreach (DownloadableContentContainer downloadableContentContainer in downloadableContentContainers)
             {
@@ -105,7 +105,7 @@ namespace Ryujinx.UI.Common.Helper
                         continue;
                     }
 
-                    var content = new DownloadableContentModel(nca.Header.TitleId,
+                    DownloadableContentModel content = new(nca.Header.TitleId,
                         downloadableContentContainer.ContainerPath,
                         downloadableContentNca.FullPath);
 

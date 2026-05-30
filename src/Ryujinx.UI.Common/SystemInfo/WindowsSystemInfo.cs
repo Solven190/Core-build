@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using Ryujinx.Common.Logging;
 using System;
 using System.Runtime.InteropServices;
@@ -31,7 +32,7 @@ namespace Ryujinx.UI.Common.SystemInfo
         {
             try
             {
-                using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
+                using RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
                     @"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
 
                 return key?.GetValue("ProcessorNameString")?.ToString()?.Trim();

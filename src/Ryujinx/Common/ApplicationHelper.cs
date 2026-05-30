@@ -24,6 +24,7 @@ using Ryujinx.UI.Common.Configuration;
 using Ryujinx.UI.Common.Helper;
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -144,7 +145,7 @@ namespace Ryujinx.Ava.Common
 
         public static void ExtractSection(string destination, NcaSectionType ncaSectionType, string titleFilePath, string titleName, int programIndex = 0)
         {
-            var cancellationToken = new CancellationTokenSource();
+            CancellationTokenSource cancellationToken = new();
 
             UpdateWaitWindow waitingDialog = new(
                 LocaleManager.Instance[LocaleKeys.DialogNcaExtractionTitle],
@@ -171,14 +172,14 @@ namespace Ryujinx.Ava.Common
                     }
                     else
                     {
-                        var pfsTemp = new PartitionFileSystem();
+                        PartitionFileSystem pfsTemp = new();
                         pfsTemp.Initialize(file.AsStorage()).ThrowIfFailure();
                         pfs = pfsTemp;
                     }
 
                     foreach (DirectoryEntryEx fileEntry in pfs.EnumerateEntries("/", "*.nca"))
                     {
-                        using var ncaFile = new UniqueRef<IFile>();
+                        using UniqueRef<IFile> ncaFile = new();
 
                         pfs.OpenFile(ref ncaFile.Ref, fileEntry.FullPath.ToU8Span(), OpenMode.Read).ThrowIfFailure();
 
@@ -244,8 +245,8 @@ namespace Ryujinx.Ava.Common
                     string source = DateTime.Now.ToFileTime().ToString()[10..];
                     string output = DateTime.Now.ToFileTime().ToString()[10..];
 
-                    using var uniqueSourceFs = new UniqueRef<IFileSystem>(ncaFileSystem);
-                    using var uniqueOutputFs = new UniqueRef<IFileSystem>(new LocalFileSystem(destination));
+                    using UniqueRef<IFileSystem> uniqueSourceFs = new(ncaFileSystem);
+                    using UniqueRef<IFileSystem> uniqueOutputFs = new(new LocalFileSystem(destination));
 
                     fsClient.Register(source.ToU8Span(), ref uniqueSourceFs.Ref);
                     fsClient.Register(output.ToU8Span(), ref uniqueOutputFs.Ref);
@@ -300,7 +301,7 @@ namespace Ryujinx.Ava.Common
         
         public static void ExtractAoc(string destination, string updateFilePath, string updateName)
         {
-            var cancellationToken = new CancellationTokenSource();
+            CancellationTokenSource cancellationToken = new();
 
             UpdateWaitWindow waitingDialog = new(
                 $"Ryujinx {Program.Version} - {LocaleManager.Instance[LocaleKeys.DialogNcaExtractionTitle]}",
@@ -318,13 +319,13 @@ namespace Ryujinx.Ava.Common
                 string extension = Path.GetExtension(updateFilePath).ToLower();
                 if (extension is ".nsp")
                 {
-                    var pfsTemp = new PartitionFileSystem();
+                    PartitionFileSystem pfsTemp = new();
                     pfsTemp.Initialize(file.AsStorage()).ThrowIfFailure();
                     IFileSystem pfs = pfsTemp;
 
                     foreach (DirectoryEntryEx fileEntry in pfs.EnumerateEntries("/", "*.nca"))
                     {
-                        using var ncaFile = new UniqueRef<IFile>();
+                        using UniqueRef<IFile> ncaFile = new();
 
                         pfs.OpenFile(ref ncaFile.Ref, fileEntry.FullPath.ToU8Span(), OpenMode.Read).ThrowIfFailure();
 
@@ -365,8 +366,8 @@ namespace Ryujinx.Ava.Common
                     string source = DateTime.Now.ToFileTime().ToString()[10..];
                     string output = DateTime.Now.ToFileTime().ToString()[10..];
 
-                    using var uniqueSourceFs = new UniqueRef<IFileSystem>(ncaFileSystem);
-                    using var uniqueOutputFs = new UniqueRef<IFileSystem>(new LocalFileSystem(destination));
+                    using UniqueRef<IFileSystem> uniqueSourceFs = new(ncaFileSystem);
+                    using UniqueRef<IFileSystem> uniqueOutputFs = new(new LocalFileSystem(destination));
 
                     fsClient.Register(source.ToU8Span(), ref uniqueSourceFs.Ref);
                     fsClient.Register(output.ToU8Span(), ref uniqueOutputFs.Ref);
@@ -422,7 +423,7 @@ namespace Ryujinx.Ava.Common
         {
             OsUtils.SetCoreDumpable(true);
 
-            var result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            IReadOnlyList<IStorageFolder> result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.FolderDialogExtractTitle],
                 AllowMultiple = false,
@@ -446,7 +447,7 @@ namespace Ryujinx.Ava.Common
         {
             OsUtils.SetCoreDumpable(true);
 
-            var result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            IReadOnlyList<IStorageFolder> result = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = LocaleManager.Instance[LocaleKeys.FolderDialogExtractTitle],
                 AllowMultiple = false,

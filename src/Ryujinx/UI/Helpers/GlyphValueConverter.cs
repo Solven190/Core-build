@@ -26,7 +26,7 @@ namespace Ryujinx.Ava.UI.Helpers
         {
             get
             {
-                if (_glyphs.TryGetValue(Enum.Parse<Glyph>(key), out var val))
+                if (_glyphs.TryGetValue(Enum.Parse<Glyph>(key), out string val))
                 {
                     return val;
                 }

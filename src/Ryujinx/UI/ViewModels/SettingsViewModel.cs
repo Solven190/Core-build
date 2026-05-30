@@ -15,6 +15,7 @@ using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Configuration.Multiplayer;
 using Ryujinx.Common.GraphicsDriver;
 using Ryujinx.Common.Logging;
+using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.Vulkan;
 using Ryujinx.HLE;
 using Ryujinx.HLE.FileSystem;
@@ -29,7 +30,10 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AntiAliasing = Ryujinx.Common.Configuration.AntiAliasing;
+using ScalingFilter = Ryujinx.Common.Configuration.ScalingFilter;
 using TimeZone = Ryujinx.Ava.UI.Models.TimeZone;
+using VSyncMode = Ryujinx.Common.Configuration.VSyncMode;
 
 namespace Ryujinx.Ava.UI.ViewModels
 {
@@ -475,7 +479,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         {
             AvailableGpus.Clear();
 
-            var devices = VulkanRenderer.GetPhysicalDevices();
+            DeviceInfo[] devices = VulkanRenderer.GetPhysicalDevices();
 
             if (devices.Length == 0)
             {
@@ -484,7 +488,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             }
             else
             {
-                foreach (var device in devices)
+                foreach (DeviceInfo device in devices)
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {

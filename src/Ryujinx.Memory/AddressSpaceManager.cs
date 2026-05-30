@@ -119,13 +119,13 @@ namespace Ryujinx.Memory
                 return [];
             }
 
-            var hostRegions = GetHostRegionsImpl(va, size);
+            List<HostMemoryRange> hostRegions = GetHostRegionsImpl(va, size);
             if (hostRegions == null)
             {
                 return null;
             }
 
-            var regions = new MemoryRange[hostRegions.Count];
+            MemoryRange[] regions = new MemoryRange[hostRegions.Count];
 
             ulong backingStart = (ulong)_backingMemory.Pointer;
             ulong backingEnd = backingStart + _backingMemory.Size;
@@ -134,7 +134,7 @@ namespace Ryujinx.Memory
 
             for (int i = 0; i < regions.Length; i++)
             {
-                var hostRegion = hostRegions[i];
+                HostMemoryRange hostRegion = hostRegions[i];
 
                 if (hostRegion.Address >= backingStart && hostRegion.Address < backingEnd)
                 {
@@ -159,7 +159,7 @@ namespace Ryujinx.Memory
 
             int pages = GetPagesCount(va, size, out va);
 
-            var regions = new List<HostMemoryRange>();
+            List<HostMemoryRange> regions = new();
 
             nuint regionStart = GetHostAddress(va);
             ulong regionSize = PageSize;

@@ -1,6 +1,7 @@
 using Ryujinx.Common.Logging;
 using Ryujinx.Memory;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Ryujinx.HLE.Debugger
 {
@@ -52,7 +53,7 @@ namespace Ryujinx.HLE.Debugger
                 return false;
             }
 
-            var originalInstruction = new byte[length];
+            byte[] originalInstruction = new byte[length];
             if (!ReadMemory(address, originalInstruction))
             {
                 Logger.Error?.Print(LogClass.GdbStub, $"Failed to read memory at 0x{address:X16} to set breakpoint.");
@@ -65,7 +66,7 @@ namespace Ryujinx.HLE.Debugger
                 return false;
             }
 
-            var breakpoint = new Breakpoint(originalInstruction);
+            Breakpoint breakpoint = new(originalInstruction);
             if (_breakpoints.TryAdd(address, breakpoint))
             {
                 Logger.Debug?.Print(LogClass.GdbStub, $"Breakpoint set at 0x{address:X16}");
@@ -106,7 +107,7 @@ namespace Ryujinx.HLE.Debugger
         /// </summary>
         public void ClearAll()
         {
-            foreach (var bp in _breakpoints)
+            foreach (KeyValuePair<ulong, Breakpoint> bp in _breakpoints)
             {
                 if (!WriteMemory(bp.Key, bp.Value.OriginalData))
                 {

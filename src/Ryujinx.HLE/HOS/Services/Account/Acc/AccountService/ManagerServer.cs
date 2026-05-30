@@ -51,7 +51,7 @@ namespace Ryujinx.HLE.HOS.Services.Account.Acc.AccountService
             byte[] deviceAccountId = new byte[0x10];
             RandomNumberGenerator.Fill(deviceAccountId);
 
-            var descriptor = new SecurityTokenDescriptor
+            SecurityTokenDescriptor descriptor = new()
             {
                 Subject = new ClaimsIdentity([new Claim(JwtRegisteredClaimNames.Sub, Convert.ToHexString(rawUserId).ToLower())]),
                 SigningCredentials = credentials,

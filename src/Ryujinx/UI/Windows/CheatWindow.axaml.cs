@@ -62,7 +62,7 @@ namespace Ryujinx.Ava.UI.Windows
 
             int cheatAdded = 0;
 
-            var mods = new ModLoader.ModCache();
+            ModLoader.ModCache mods = new();
 
             ModLoader.QueryContentsDir(mods, new DirectoryInfo(Path.Combine(modsBasePath, "contents")), titleIdValue, []);
 
@@ -71,7 +71,7 @@ namespace Ryujinx.Ava.UI.Windows
 
             CheatNode currentGroup = null;
 
-            foreach (var cheat in mods.Cheats)
+            foreach (ModLoader.Cheat cheat in mods.Cheats)
             {
                 if (cheat.Path.FullName != currentCheatFile)
                 {
@@ -84,7 +84,7 @@ namespace Ryujinx.Ava.UI.Windows
                     LoadedCheats.Add(currentGroup);
                 }
 
-                var model = new CheatNode(cheat.Name, buildId, "", false, enabled.Contains($"{buildId}-{cheat.Name}"));
+                CheatNode model = new(cheat.Name, buildId, "", false, enabled.Contains($"{buildId}-{cheat.Name}"));
                 currentGroup?.SubNodes.Add(model);
 
                 cheatAdded++;
@@ -109,9 +109,9 @@ namespace Ryujinx.Ava.UI.Windows
 
             List<string> enabledCheats = [];
 
-            foreach (var cheats in LoadedCheats)
+            foreach (CheatNode cheats in LoadedCheats)
             {
-                foreach (var cheat in cheats.SubNodes)
+                foreach (CheatNode cheat in cheats.SubNodes)
                 {
                     if (cheat.IsEnabled)
                     {

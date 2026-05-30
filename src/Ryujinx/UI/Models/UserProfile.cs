@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Ryujinx.Ava.UI.Controls;
@@ -48,7 +49,7 @@ namespace Ryujinx.Ava.UI.Models
 
         private void UpdateBackground()
         {
-            var currentApplication = Avalonia.Application.Current;
+            Application currentApplication = Avalonia.Application.Current;
             object color = null;
             currentApplication?.Styles.TryGetResource("ControlFillColorSecondary", currentApplication.ActualThemeVariant, out color);
 

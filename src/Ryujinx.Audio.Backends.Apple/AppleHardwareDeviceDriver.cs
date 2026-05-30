@@ -51,7 +51,7 @@ namespace Ryujinx.Audio.Backends.Apple
 
                 if (result == 0)
                 {
-                    AudioChannelLayout layout = new AudioChannelLayout
+                    AudioChannelLayout layout = new()
                     {
                         AudioChannelLayoutTag = kAudioChannelLayoutTag_MPEG_5_1_A,
                         AudioChannelBitmap = 0,

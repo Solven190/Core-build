@@ -49,7 +49,7 @@ namespace ARMeilleure.Common
 
             public TableSparseBlock(ulong size, Action<nint> ensureMapped, PageInitDelegate pageInit)
             {
-                var block = new SparseMemoryBlock(size, pageInit, null);
+                SparseMemoryBlock block = new(size, pageInit, null);
 
                 _trackingEvent = (ulong address, ulong _, bool _) =>
                 {
@@ -146,7 +146,7 @@ namespace ARMeilleure.Common
             Levels = levels;
             Mask = 0;
 
-            foreach (var level in Levels)
+            foreach (AddressTableLevel level in Levels)
             {
                 Mask |= level.Mask;
             }
@@ -366,7 +366,7 @@ namespace ARMeilleure.Common
         /// <returns>The new sparse block that was added</returns>
         private TableSparseBlock ReserveNewSparseBlock()
         {
-            var block = new TableSparseBlock(_sparseBlockSize, EnsureMapped, InitLeafPage);
+            TableSparseBlock block = new(_sparseBlockSize, EnsureMapped, InitLeafPage);
 
             _sparseReserved.Add(block);
             _sparseReservedOffset = 0;
@@ -384,7 +384,7 @@ namespace ARMeilleure.Common
         /// <returns>Allocated block</returns>
         private nint Allocate<T>(int length, T fill, bool leaf) where T : unmanaged
         {
-            var size = sizeof(T) * length;
+            int size = sizeof(T) * length;
 
             AddressTablePage page;
 
@@ -416,10 +416,10 @@ namespace ARMeilleure.Common
             }
             else
             {
-                var address = (nint)NativeAllocator.Instance.Allocate((uint)size);
+                IntPtr address = (nint)NativeAllocator.Instance.Allocate((uint)size);
                 page = new AddressTablePage(false, address);
 
-                var span = new Span<T>((void*)page.Address, length);
+                Span<T> span = new((void*)page.Address, length);
                 span.Fill(fill);
             }
 
@@ -448,7 +448,7 @@ namespace ARMeilleure.Common
         {
             if (!_disposed)
             {
-                foreach (var page in _pages)
+                foreach (AddressTablePage page in _pages)
                 {
                     if (!page.IsSparse)
                     {

@@ -471,7 +471,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             int textureId = _state.State.DrawTextureTextureId;
             int samplerId = _state.State.DrawTextureSamplerId;
 
-            (var texture, var sampler) = _channel.TextureManager.GetGraphicsTextureAndSampler(textureId, samplerId);
+            (Image.Texture texture, Sampler sampler) = _channel.TextureManager.GetGraphicsTextureAndSampler(textureId, samplerId);
 
             srcX0 *= texture.ScaleFactor;
             srcY0 *= texture.ScaleFactor;
@@ -684,8 +684,8 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             if (hasCount)
             {
-                var indirectBuffer = memory.BufferCache.GetBufferRange(indirectBufferRange, BufferStage.Indirect);
-                var parameterBuffer = memory.BufferCache.GetBufferRange(parameterBufferRange, BufferStage.Indirect);
+                BufferRange indirectBuffer = memory.BufferCache.GetBufferRange(indirectBufferRange, BufferStage.Indirect);
+                BufferRange parameterBuffer = memory.BufferCache.GetBufferRange(parameterBufferRange, BufferStage.Indirect);
 
                 if (indexed)
                 {
@@ -698,7 +698,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             }
             else
             {
-                var indirectBuffer = memory.BufferCache.GetBufferRange(indirectBufferRange, BufferStage.Indirect);
+                BufferRange indirectBuffer = memory.BufferCache.GetBufferRange(indirectBufferRange, BufferStage.Indirect);
 
                 if (indexed)
                 {
@@ -820,7 +820,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
             // If there is a mismatch on the host clip region and the one explicitly defined by the guest
             // on the screen scissor state, then we need to force only one texture to be bound to avoid
             // host clipping.
-            var screenScissorState = _state.State.ScreenScissorState;
+            ScreenScissorState screenScissorState = _state.State.ScreenScissorState;
             
             Span<ScissorState> scissorStateSpan = _state.State.ScissorState.AsSpan();
 
@@ -835,7 +835,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
                 if (fullClear && clearAffectedByScissor && scissorStateSpan[0].Enable)
                 {
-                    ref var scissorState = ref scissorStateSpan[0];
+                    ref ScissorState scissorState = ref scissorStateSpan[0];
 
                     fullClear = scissorState.X1 == screenScissorState.X &&
                         scissorState.Y1 == screenScissorState.Y &&
@@ -893,7 +893,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
                 if (clearAffectedByScissor && scissorStateSpan[0].Enable)
                 {
-                    ref var scissorState = ref scissorStateSpan[0];
+                    ref ScissorState scissorState = ref scissorStateSpan[0];
 
                     scissorX = Math.Max(scissorX, scissorState.X1);
                     scissorY = Math.Max(scissorY, scissorState.Y1);
@@ -922,7 +922,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             if (componentMask != 0)
             {
-                var clearColor = _state.State.ClearColors;
+                ClearColors clearColor = _state.State.ClearColors;
 
                 ColorF color = new(clearColor.Red, clearColor.Green, clearColor.Blue, clearColor.Alpha);
 

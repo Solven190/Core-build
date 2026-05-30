@@ -37,7 +37,7 @@ namespace Ryujinx.Ava.UI.Views.Input
             {
                 _dialogOpen = true;
 
-                var result = await ContentDialogHelper.CreateConfirmationDialogExtended(
+                UserResult result = await ContentDialogHelper.CreateConfirmationDialogExtended(
                     LocaleManager.Instance[LocaleKeys.DialogControllerSettingsModifiedConfirmMessage],
                     LocaleManager.Instance[LocaleKeys.DialogControllerSettingsModifiedConfirmSubMessage],
                     LocaleManager.Instance[LocaleKeys.InputDialogYes],
@@ -71,7 +71,7 @@ namespace Ryujinx.Ava.UI.Views.Input
                     if (e.AddedItems.Count > 0)
                     {
                         ViewModel.IsModified = true;
-                        var player = (PlayerModel)e.AddedItems[0];
+                        PlayerModel player = (PlayerModel)e.AddedItems[0];
                         if (player != null)
                         {
                             ViewModel.PlayerId = player.Id;

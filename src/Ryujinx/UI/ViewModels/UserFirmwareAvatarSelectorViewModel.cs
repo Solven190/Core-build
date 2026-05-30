@@ -64,7 +64,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         {
             Images.Clear();
 
-            foreach (var image in _avatarStore)
+            foreach (KeyValuePair<string, byte[]> image in _avatarStore)
             {
                 Images.Add(new ProfileImageModel(image.Key, image.Value));
             }
@@ -72,7 +72,7 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         private void ChangeImageBackground()
         {
-            foreach (var image in Images)
+            foreach (ProfileImageModel image in Images)
             {
                 image.BackgroundColor = new SolidColorBrush(BackgroundColor);
             }
@@ -100,7 +100,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                     // TODO: Parse DatabaseInfo.bin and table.bin files for more accuracy.
                     if (item.Type == DirectoryEntryType.File && item.FullPath.Contains("chara") && item.FullPath.Contains("szs"))
                     {
-                        using var file = new UniqueRef<IFile>();
+                        using UniqueRef<IFile> file = new();
 
                         romfs.OpenFile(ref file.Ref, ("/" + item.FullPath).ToU8Span(), OpenMode.Read).ThrowIfFailure();
 

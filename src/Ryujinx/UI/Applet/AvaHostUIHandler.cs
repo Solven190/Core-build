@@ -44,7 +44,7 @@ namespace Ryujinx.Ava.UI.Applet
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                var response = await ControllerAppletDialog.ShowControllerAppletDialog(_parent, args);
+                UserResult response = await ControllerAppletDialog.ShowControllerAppletDialog(_parent, args);
                 if (response == UserResult.Ok)
                 {
                     okPressed = true;
@@ -132,7 +132,7 @@ namespace Ryujinx.Ava.UI.Applet
                 try
                 {
                     _parent.ViewModel.AppHost.NpadManager.BlockInputUpdates();
-                    var response = await SwkbdAppletDialog.ShowInputDialog(LocaleManager.Instance[LocaleKeys.SoftwareKeyboard], args);
+                    (UserResult Result, string Input) response = await SwkbdAppletDialog.ShowInputDialog(LocaleManager.Instance[LocaleKeys.SoftwareKeyboard], args);
 
                     if (response.Result == UserResult.Ok)
                     {

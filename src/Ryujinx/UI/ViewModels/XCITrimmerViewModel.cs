@@ -10,6 +10,7 @@ using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using static Ryujinx.Common.Utilities.XCIFileTrimmer;
@@ -56,10 +57,10 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         private void LoadXCIApplications()
         {
-            var apps = _applicationLibrary.Applications.Items
+            IEnumerable<ApplicationData> apps = _applicationLibrary.Applications.Items
                 .Where(app => app.FileExtension == _FileExtXCI);
 
-            foreach (var xciApp in apps)
+            foreach (ApplicationData xciApp in apps)
                 AddOrUpdateXCITrimmerFile(CreateXCITrimmerFile(xciApp.Path));
 
             ApplicationsChanged();
@@ -69,7 +70,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             string path,
             OperationOutcome operationOutcome = OperationOutcome.Undetermined)
         {
-            var xciApp = _applicationLibrary.Applications.Items.First(app => app.FileExtension == _FileExtXCI && app.Path == path);
+            ApplicationData xciApp = _applicationLibrary.Applications.Items.First(app => app.FileExtension == _FileExtXCI && app.Path == path);
             return XCITrimmerFileModel.FromApplicationData(xciApp, _logger) with { ProcessingOutcome = operationOutcome };
         }
 
@@ -154,17 +155,17 @@ namespace Ryujinx.Ava.UI.ViewModels
 
             _processingMode = processingMode;
             Processing = true;
-            var cancellationToken = _cancellationTokenSource.Token;
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
 
             Thread XCIFileTrimThread = new(() =>
             {
-                var toProcess = Sort(SelectedXCIFiles
+                List<XCITrimmerFileModel> toProcess = Sort(SelectedXCIFiles
                     .Where(xci =>
                         (processingMode == ProcessingMode.Untrimming && xci.Untrimmable) ||
                         (processingMode == ProcessingMode.Trimming && xci.Trimmable)
                     )).ToList();
 
-                var viewsSaved = DisplayedXCIFiles.ToList();
+                List<XCITrimmerFileModel> viewsSaved = DisplayedXCIFiles.ToList();
 
                 Dispatcher.UIThread.Post(() =>
                 {
@@ -175,19 +176,19 @@ namespace Ryujinx.Ava.UI.ViewModels
 
                 try
                 {
-                    foreach (var xciApp in toProcess)
+                    foreach (XCITrimmerFileModel xciApp in toProcess)
                     {
                         if (cancellationToken.IsCancellationRequested)
                             break;
 
-                        var trimmer = new XCIFileTrimmer(xciApp.Path, _logger);
+                        XCIFileTrimmer trimmer = new(xciApp.Path, _logger);
 
                         Dispatcher.UIThread.Post(() =>
                         {
                             ProcessingApplication = xciApp;
                         });
 
-                        var outcome = OperationOutcome.Undetermined;
+                        OperationOutcome outcome = OperationOutcome.Undetermined;
 
                         try
                         {
@@ -349,7 +350,7 @@ namespace Ryujinx.Ava.UI.ViewModels
             Sort(AllXCIFiles)
                 .AsObservableChangeSet()
                 .Filter(Filter)
-                .Bind(out var view).AsObservableList();
+                .Bind(out ReadOnlyObservableCollection<XCITrimmerFileModel> view).AsObservableList();
 
             _displayedXCIFiles.Clear();
             _displayedXCIFiles.AddRange(view);

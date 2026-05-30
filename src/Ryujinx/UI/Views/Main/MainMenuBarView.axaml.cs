@@ -40,7 +40,7 @@ namespace Ryujinx.Ava.UI.Views.Main
         {
             List<CheckBox> checkBoxes = [];
 
-            foreach (var item in Enum.GetValues(typeof(FileTypes)))
+            foreach (object item in Enum.GetValues(typeof(FileTypes)))
             {
                 string fileName = Enum.GetName(typeof(FileTypes), item);
                 checkBoxes.Add(new CheckBox
@@ -69,7 +69,7 @@ namespace Ryujinx.Ava.UI.Views.Main
             {
                 string languageCode = Path.GetFileNameWithoutExtension(locale).Split('.').Last();
                 string languageJson = EmbeddedResources.ReadAllText($"{localePath}/{languageCode}{localeExt}");
-                var strings = JsonHelper.Deserialize(languageJson, CommonJsonContext.Default.StringDictionary);
+                Dictionary<string, string> strings = JsonHelper.Deserialize(languageJson, CommonJsonContext.Default.StringDictionary);
 
                 if (!strings.TryGetValue("Language", out string languageName))
                 {

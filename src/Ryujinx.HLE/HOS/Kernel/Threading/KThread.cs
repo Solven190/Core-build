@@ -1272,7 +1272,7 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
         {
             if (_schedulerWaitEvent == null)
             {
-                var schedulerWaitEvent = new ManualResetEventSlim(false);
+                ManualResetEventSlim schedulerWaitEvent = new(false);
 
                 if (Interlocked.Exchange(ref _schedulerWaitEvent, schedulerWaitEvent) == null)
                 {

@@ -179,7 +179,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
         {
             try
             {
-                var data = new byte[len];
+                byte[] data = new byte[len];
                 Debugger.DebugProcess.CpuMemory.Read(addr, data);
                 Processor.ReplyHex(data);
             }
@@ -196,7 +196,7 @@ namespace Ryujinx.HLE.Debugger.Gdb
         {
             try
             {
-                var data = new byte[len];
+                byte[] data = new byte[len];
                 for (ulong i = 0; i < len; i++)
                 {
                     data[i] = (byte)ss.ReadLengthAsHex(2);

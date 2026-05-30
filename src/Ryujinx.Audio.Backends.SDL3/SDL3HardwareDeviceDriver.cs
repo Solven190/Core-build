@@ -130,7 +130,7 @@ namespace Ryujinx.Audio.Backends.SDL3
         {
             SDL_AudioSpec desired = GetSDL3Spec(requestedSampleFormat, requestedSampleRate, requestedChannelCount);
             SDL_AudioSpec got = desired;
-            var pCallback = callback != null ? (SDL_AudioStreamCallbackPointer)Marshal.GetFunctionPointerForDelegate(callback) : null;
+            SDL_AudioStreamCallbackPointer pCallback = callback != null ? (SDL_AudioStreamCallbackPointer)Marshal.GetFunctionPointerForDelegate(callback) : null;
 
             // From SDL 3 and on, SDL requires us to set this as a hint
             SDL_SetHint(SDL_HINT_AUDIO_DEVICE_SAMPLE_FRAMES, $"{sampleCount}");

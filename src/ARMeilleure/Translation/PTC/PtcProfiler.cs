@@ -119,9 +119,9 @@ namespace ARMeilleure.Translation.PTC
 
         public ConcurrentQueue<(ulong address, FuncProfile funcProfile)> GetProfiledFuncsToTranslate(TranslatorCache<TranslatedFunction> funcs)
         {
-            var profiledFuncsToTranslate = new ConcurrentQueue<(ulong address, FuncProfile funcProfile)>();
+            ConcurrentQueue<(ulong address, FuncProfile funcProfile)> profiledFuncsToTranslate = new();
 
-            foreach (var profiledFunc in ProfiledFuncs)
+            foreach (KeyValuePair<ulong, FuncProfile> profiledFunc in ProfiledFuncs)
             {
                 if (!funcs.ContainsKey(profiledFunc.Key) && !profiledFunc.Value.Blacklist)
                 {
@@ -142,7 +142,7 @@ namespace ARMeilleure.Translation.PTC
         {
             List<ulong> funcs = [];
 
-            foreach (var profiledFunc in ProfiledFuncs)
+            foreach (KeyValuePair<ulong, FuncProfile> profiledFunc in ProfiledFuncs)
             {
                 if (profiledFunc.Value.Blacklist)
                 {

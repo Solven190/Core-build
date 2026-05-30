@@ -50,7 +50,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public void BindVertexBuffer(VulkanRenderer gd, CommandBufferScoped cbs, uint binding, ref PipelineState state, VertexBufferUpdater updater)
         {
-            var autoBuffer = _buffer;
+            Auto<DisposableBuffer> autoBuffer = _buffer;
 
             if (_handle != BufferHandle.Null)
             {

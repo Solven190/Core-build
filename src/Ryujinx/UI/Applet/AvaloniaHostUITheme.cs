@@ -50,7 +50,7 @@ namespace Ryujinx.Ava.UI.Applet
 
         private string GetWindowsFontByLanguage()
         {
-            var culture = CultureInfo.CurrentUICulture;
+            CultureInfo culture = CultureInfo.CurrentUICulture;
             string langCode = culture.Name;
 
             return culture.TwoLetterISOLanguageName switch

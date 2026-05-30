@@ -1,3 +1,4 @@
+using Microsoft.IO;
 using Ryujinx.Common;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.Memory;
@@ -82,7 +83,7 @@ namespace Ryujinx.HLE.HOS.Services
 
             KernelStatic.StartInitialProcess(context, creationInfo, _defaultCapabilities, 44, () =>
             {
-                var currentThread = KernelStatic.GetCurrentThread();
+                KThread currentThread = KernelStatic.GetCurrentThread();
                 currentThread.HostThread.Name = $"{{{Name}}}";
 
                 Main();
@@ -241,7 +242,7 @@ namespace Ryujinx.HLE.HOS.Services
                     }
                 }
 
-                var rc = _context.Syscall.ReplyAndReceive(out int signaledIndex, handles.AsSpan(0, handleCount), replyTargetHandle, -1);
+                Result rc = _context.Syscall.ReplyAndReceive(out int signaledIndex, handles.AsSpan(0, handleCount), replyTargetHandle, -1);
 
                 _selfThread.HandlePostSyscall();
 
@@ -313,7 +314,7 @@ namespace Ryujinx.HLE.HOS.Services
         {
             _context.Syscall.CloseHandle(serverSessionHandle);
 
-            if (RemoveSessionObj(serverSessionHandle, out var session))
+            if (RemoveSessionObj(serverSessionHandle, out IpcService session))
             {
                 (session as IDisposable)?.Dispose();
             }
@@ -457,7 +458,7 @@ namespace Ryujinx.HLE.HOS.Services
 
                 response.RawData = _responseDataStream.ToArray();
 
-                var responseStream = response.GetStreamTipc();
+                RecyclableMemoryStream responseStream = response.GetStreamTipc();
                 _selfProcess.CpuMemory.Write(_selfThread.TlsAddress, responseStream.GetReadOnlySequence());
                 MemoryStreamManager.Shared.ReleaseStream(responseStream);
             }
@@ -468,7 +469,7 @@ namespace Ryujinx.HLE.HOS.Services
 
             if (!isTipcCommunication)
             {
-                var responseStream = response.GetStream((long)_selfThread.TlsAddress, recvListAddr | ((ulong)PointerBufferSize << 48));
+                RecyclableMemoryStream responseStream = response.GetStream((long)_selfThread.TlsAddress, recvListAddr | ((ulong)PointerBufferSize << 48));
                 _selfProcess.CpuMemory.Write(_selfThread.TlsAddress, responseStream.GetReadOnlySequence());
                 MemoryStreamManager.Shared.ReleaseStream(responseStream);
             }

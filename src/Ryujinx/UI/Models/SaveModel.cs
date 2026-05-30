@@ -46,7 +46,7 @@ namespace Ryujinx.Ava.UI.Models
             TitleId = info.ProgramId;
             UserId = info.UserId;
 
-            var appData = MainWindow.MainWindowViewModel.Applications.FirstOrDefault(x => x.IdString.ToUpper() == TitleIdString);
+            ApplicationData appData = MainWindow.MainWindowViewModel.Applications.FirstOrDefault(x => x.IdString.ToUpper() == TitleIdString);
 
             InGameList = appData != null;
 
@@ -70,7 +70,7 @@ namespace Ryujinx.Ava.UI.Models
 
             Task.Run(() =>
             {
-                var saveRoot = Path.Combine(VirtualFileSystem.GetNandPath(), $"user/save/{info.SaveDataId:x16}");
+                string saveRoot = Path.Combine(VirtualFileSystem.GetNandPath(), $"user/save/{info.SaveDataId:x16}");
 
                 long totalSize = GetDirectorySize(saveRoot);
 
@@ -79,14 +79,14 @@ namespace Ryujinx.Ava.UI.Models
                     long size = 0;
                     if (Directory.Exists(path))
                     {
-                        var directories = Directory.GetDirectories(path);
-                        foreach (var directory in directories)
+                        string[] directories = Directory.GetDirectories(path);
+                        foreach (string directory in directories)
                         {
                             size += GetDirectorySize(directory);
                         }
 
-                        var files = Directory.GetFiles(path);
-                        foreach (var file in files)
+                        string[] files = Directory.GetFiles(path);
+                        foreach (string file in files)
                         {
                             size += new FileInfo(file).Length;
                         }

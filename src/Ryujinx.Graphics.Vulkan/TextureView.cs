@@ -63,20 +63,20 @@ namespace Ryujinx.Graphics.Vulkan
 
             bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample();
 
-            var format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
-            var usage = TextureStorage.GetImageUsage(info.Format, info.Target, gd.Capabilities, isMsImageStorageSupported) & storage.UsageFlags;
+            VkFormat format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
+            ImageUsageFlags usage = TextureStorage.GetImageUsage(info.Format, info.Target, gd.Capabilities, isMsImageStorageSupported) & storage.UsageFlags;
 
-            var levels = (uint)info.Levels;
-            var layers = (uint)info.GetLayers();
+            uint levels = (uint)info.Levels;
+            uint layers = (uint)info.GetLayers();
 
             VkFormat = format;
 
-            var type = info.Target.ConvertView();
+            ImageViewType type = info.Target.ConvertView();
 
-            var swizzleR = info.SwizzleR.Convert();
-            var swizzleG = info.SwizzleG.Convert();
-            var swizzleB = info.SwizzleB.Convert();
-            var swizzleA = info.SwizzleA.Convert();
+            ComponentSwizzle swizzleR = info.SwizzleR.Convert();
+            ComponentSwizzle swizzleG = info.SwizzleG.Convert();
+            ComponentSwizzle swizzleB = info.SwizzleB.Convert();
+            ComponentSwizzle swizzleA = info.SwizzleA.Convert();
 
             if (info.Format is Format.R5G5B5A1Unorm or Format.R5G5B5X1Unorm or Format.R5G6B5Unorm)
             {
@@ -84,8 +84,8 @@ namespace Ryujinx.Graphics.Vulkan
             }
             else if (VkFormat == VkFormat.R4G4B4A4UnormPack16 || info.Format == Format.A1B5G5R5Unorm)
             {
-                var tempB = swizzleB;
-                var tempA = swizzleA;
+                ComponentSwizzle tempB = swizzleB;
+                ComponentSwizzle tempA = swizzleA;
 
                 swizzleB = swizzleG;
                 swizzleA = swizzleR;
@@ -93,23 +93,23 @@ namespace Ryujinx.Graphics.Vulkan
                 swizzleG = tempB;
             }
 
-            var componentMapping = new ComponentMapping(swizzleR, swizzleG, swizzleB, swizzleA);
+            ComponentMapping componentMapping = new(swizzleR, swizzleG, swizzleB, swizzleA);
 
-            var aspectFlags = info.Format.ConvertAspectFlags(info.DepthStencilMode);
-            var aspectFlagsDepth = info.Format.ConvertAspectFlags();
+            ImageAspectFlags aspectFlags = info.Format.ConvertAspectFlags(info.DepthStencilMode);
+            ImageAspectFlags aspectFlagsDepth = info.Format.ConvertAspectFlags();
 
-            var subresourceRange = new ImageSubresourceRange(aspectFlags, (uint)firstLevel, levels, (uint)firstLayer, layers);
-            var subresourceRangeDepth = new ImageSubresourceRange(aspectFlagsDepth, (uint)firstLevel, levels, (uint)firstLayer, layers);
+            ImageSubresourceRange subresourceRange = new(aspectFlags, (uint)firstLevel, levels, (uint)firstLayer, layers);
+            ImageSubresourceRange subresourceRangeDepth = new(aspectFlagsDepth, (uint)firstLevel, levels, (uint)firstLayer, layers);
 
             unsafe Auto<DisposableImageView> CreateImageView(ComponentMapping cm, ImageSubresourceRange sr, ImageViewType viewType, ImageUsageFlags usageFlags)
             {
-                var imageViewUsage = new ImageViewUsageCreateInfo
+                ImageViewUsageCreateInfo imageViewUsage = new()
                 {
                     SType = StructureType.ImageViewUsageCreateInfo,
                     Usage = usageFlags,
                 };
 
-                var imageCreateInfo = new ImageViewCreateInfo
+                ImageViewCreateInfo imageCreateInfo = new()
                 {
                     SType = StructureType.ImageViewCreateInfo,
                     Image = storage.GetImageForViewCreation(),
@@ -120,7 +120,7 @@ namespace Ryujinx.Graphics.Vulkan
                     PNext = &imageViewUsage,
                 };
 
-                gd.Api.CreateImageView(device, in imageCreateInfo, null, out var imageView).ThrowOnError();
+                gd.Api.CreateImageView(device, in imageCreateInfo, null, out ImageView imageView).ThrowOnError();
                 return new Auto<DisposableImageView>(new DisposableImageView(gd.Api, device, imageView), null, storage.GetImage());
             }
 
@@ -136,7 +136,7 @@ namespace Ryujinx.Graphics.Vulkan
             _imageView = CreateImageView(componentMapping, subresourceRange, type, shaderUsage);
 
             // Framebuffer attachments and storage images requires a identity component mapping.
-            var identityComponentMapping = new ComponentMapping(
+            ComponentMapping identityComponentMapping = new(
                 ComponentSwizzle.R,
                 ComponentSwizzle.G,
                 ComponentSwizzle.B,
@@ -210,8 +210,8 @@ namespace Ryujinx.Graphics.Vulkan
 
         public void CopyTo(ITexture destination, int firstLayer, int firstLevel)
         {
-            var src = this;
-            var dst = (TextureView)destination;
+            TextureView src = this;
+            TextureView dst = (TextureView)destination;
 
             if (!Valid || !dst.Valid)
             {
@@ -220,10 +220,10 @@ namespace Ryujinx.Graphics.Vulkan
 
             _gd.PipelineInternal.EndRenderPass();
 
-            var cbs = _gd.PipelineInternal.CurrentCommandBuffer;
+            CommandBufferScoped cbs = _gd.PipelineInternal.CurrentCommandBuffer;
 
-            var srcImage = src.GetImage().Get(cbs).Value;
-            var dstImage = dst.GetImage().Get(cbs).Value;
+            Image srcImage = src.GetImage().Get(cbs).Value;
+            Image dstImage = dst.GetImage().Get(cbs).Value;
 
             if (!dst.Info.Target.IsMultisample() && Info.Target.IsMultisample())
             {
@@ -272,8 +272,8 @@ namespace Ryujinx.Graphics.Vulkan
 
         public void CopyTo(ITexture destination, int srcLayer, int dstLayer, int srcLevel, int dstLevel)
         {
-            var src = this;
-            var dst = (TextureView)destination;
+            TextureView src = this;
+            TextureView dst = (TextureView)destination;
 
             if (!Valid || !dst.Valid)
             {
@@ -282,10 +282,10 @@ namespace Ryujinx.Graphics.Vulkan
 
             _gd.PipelineInternal.EndRenderPass();
 
-            var cbs = _gd.PipelineInternal.CurrentCommandBuffer;
+            CommandBufferScoped cbs = _gd.PipelineInternal.CurrentCommandBuffer;
 
-            var srcImage = src.GetImage().Get(cbs).Value;
-            var dstImage = dst.GetImage().Get(cbs).Value;
+            Image srcImage = src.GetImage().Get(cbs).Value;
+            Image dstImage = dst.GetImage().Get(cbs).Value;
 
             if (!dst.Info.Target.IsMultisample() && Info.Target.IsMultisample())
             {
@@ -329,21 +329,21 @@ namespace Ryujinx.Graphics.Vulkan
 
         public void CopyTo(ITexture destination, Extents2D srcRegion, Extents2D dstRegion, bool linearFilter)
         {
-            var dst = (TextureView)destination;
+            TextureView dst = (TextureView)destination;
 
             if (_gd.CommandBufferPool.OwnedByCurrentThread)
             {
                 _gd.PipelineInternal.EndRenderPass();
 
-                var cbs = _gd.PipelineInternal.CurrentCommandBuffer;
+                CommandBufferScoped cbs = _gd.PipelineInternal.CurrentCommandBuffer;
 
                 CopyToImpl(cbs, dst, srcRegion, dstRegion, linearFilter);
             }
             else
             {
-                var cbp = _gd.BackgroundResources.Get().GetPool();
+                CommandBufferPool cbp = _gd.BackgroundResources.Get().GetPool();
 
-                using var cbs = cbp.Rent();
+                using CommandBufferScoped cbs = cbp.Rent();
 
                 CopyToImpl(cbs, dst, srcRegion, dstRegion, linearFilter);
             }
@@ -351,10 +351,10 @@ namespace Ryujinx.Graphics.Vulkan
 
         private void CopyToImpl(CommandBufferScoped cbs, TextureView dst, Extents2D srcRegion, Extents2D dstRegion, bool linearFilter)
         {
-            var src = this;
+            TextureView src = this;
 
-            var srcFormat = GetCompatibleGalFormat(src.Info.Format);
-            var dstFormat = GetCompatibleGalFormat(dst.Info.Format);
+            Format srcFormat = GetCompatibleGalFormat(src.Info.Format);
+            Format dstFormat = GetCompatibleGalFormat(dst.Info.Format);
 
             bool srcUsesStorageFormat = src.VkFormat == src.Storage.VkFormat;
             bool dstUsesStorageFormat = dst.VkFormat == dst.Storage.VkFormat;
@@ -582,7 +582,7 @@ namespace Ryujinx.Graphics.Vulkan
                 return this;
             }
 
-            if (_selfManagedViews != null && _selfManagedViews.TryGetValue(format, out var view))
+            if (_selfManagedViews != null && _selfManagedViews.TryGetValue(format, out TextureView view))
             {
                 return view;
             }
@@ -622,12 +622,12 @@ namespace Ryujinx.Graphics.Vulkan
         public byte[] GetData(int x, int y, int width, int height)
         {
             int size = width * height * Info.BytesPerPixel;
-            using var bufferHolder = _gd.BufferManager.Create(_gd, size);
+            using BufferHolder bufferHolder = _gd.BufferManager.Create(_gd, size);
 
-            using (var cbs = _gd.CommandBufferPool.Rent())
+            using (CommandBufferScoped cbs = _gd.CommandBufferPool.Rent())
             {
-                var buffer = bufferHolder.GetBuffer(cbs.CommandBuffer).Get(cbs).Value;
-                var image = GetImage().Get(cbs).Value;
+                VkBuffer buffer = bufferHolder.GetBuffer(cbs.CommandBuffer).Get(cbs).Value;
+                Image image = GetImage().Get(cbs).Value;
 
                 CopyFromOrToBuffer(cbs.CommandBuffer, buffer, image, size, true, 0, 0, x, y, width, height);
             }
@@ -669,12 +669,12 @@ namespace Ryujinx.Graphics.Vulkan
         public void CopyTo(BufferRange range, int layer, int level, int stride)
         {
             _gd.PipelineInternal.EndRenderPass();
-            var cbs = _gd.PipelineInternal.CurrentCommandBuffer;
+            CommandBufferScoped cbs = _gd.PipelineInternal.CurrentCommandBuffer;
 
             int outSize = Info.GetMipSize(level);
             int hostSize = GetBufferDataLength(outSize);
 
-            var image = GetImage().Get(cbs).Value;
+            Image image = GetImage().Get(cbs).Value;
             int offset = range.Offset;
 
             Auto<DisposableBuffer> autoBuffer = _gd.BufferManager.GetBuffer(cbs.CommandBuffer, range.Handle, true);
@@ -783,7 +783,7 @@ namespace Ryujinx.Graphics.Vulkan
         {
             int bufferDataLength = GetBufferDataLength(data.Length);
 
-            using var bufferHolder = _gd.BufferManager.Create(_gd, bufferDataLength);
+            using BufferHolder bufferHolder = _gd.BufferManager.Create(_gd, bufferDataLength);
 
             Auto<DisposableImage> imageAuto = GetImage();
 
@@ -791,7 +791,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             bool loadInline = Storage.HasCommandBufferDependency(_gd.PipelineInternal.CurrentCommandBuffer);
 
-            var cbs = loadInline ? _gd.PipelineInternal.CurrentCommandBuffer : _gd.PipelineInternal.GetPreloadCommandBuffer();
+            CommandBufferScoped cbs = loadInline ? _gd.PipelineInternal.CurrentCommandBuffer : _gd.PipelineInternal.GetPreloadCommandBuffer();
 
             if (loadInline)
             {
@@ -800,8 +800,8 @@ namespace Ryujinx.Graphics.Vulkan
 
             CopyDataToBuffer(bufferHolder.GetDataStorage(0, bufferDataLength), data);
 
-            var buffer = bufferHolder.GetBuffer(cbs.CommandBuffer).Get(cbs).Value;
-            var image = imageAuto.Get(cbs).Value;
+            VkBuffer buffer = bufferHolder.GetBuffer(cbs.CommandBuffer).Get(cbs).Value;
+            Image image = imageAuto.Get(cbs).Value;
 
             if (region.HasValue)
             {
@@ -937,24 +937,24 @@ namespace Ryujinx.Graphics.Vulkan
 
                 int rowLength = ((stride == 0 ? Info.GetMipStride(dstLevel + level) : stride) / Info.BytesPerPixel) * Info.BlockWidth;
 
-                var aspectFlags = Info.Format.ConvertAspectFlags();
+                ImageAspectFlags aspectFlags = Info.Format.ConvertAspectFlags();
 
                 if (aspectFlags == (ImageAspectFlags.DepthBit | ImageAspectFlags.StencilBit))
                 {
                     aspectFlags = ImageAspectFlags.DepthBit;
                 }
 
-                var sl = new ImageSubresourceLayers(
+                ImageSubresourceLayers sl = new(
                     aspectFlags,
                     (uint)(FirstLevel + dstLevel + level),
                     (uint)(FirstLayer + layer),
                     (uint)layers);
 
-                var extent = new Extent3D((uint)width, (uint)height, (uint)depth);
+                Extent3D extent = new((uint)width, (uint)height, (uint)depth);
 
                 int z = is3D ? dstLayer : 0;
 
-                var region = new BufferImageCopy(
+                BufferImageCopy region = new(
                     (ulong)offset,
                     (uint)AlignUpNpot(rowLength, Info.BlockWidth),
                     (uint)AlignUpNpot(height, Info.BlockHeight),
@@ -996,16 +996,16 @@ namespace Ryujinx.Graphics.Vulkan
             int width,
             int height)
         {
-            var aspectFlags = Info.Format.ConvertAspectFlags();
+            ImageAspectFlags aspectFlags = Info.Format.ConvertAspectFlags();
 
             if (aspectFlags == (ImageAspectFlags.DepthBit | ImageAspectFlags.StencilBit))
             {
                 aspectFlags = ImageAspectFlags.DepthBit;
             }
 
-            var sl = new ImageSubresourceLayers(aspectFlags, (uint)(FirstLevel + dstLevel), (uint)(FirstLayer + dstLayer), 1);
+            ImageSubresourceLayers sl = new(aspectFlags, (uint)(FirstLevel + dstLevel), (uint)(FirstLayer + dstLayer), 1);
 
-            var extent = new Extent3D((uint)width, (uint)height, 1);
+            Extent3D extent = new((uint)width, (uint)height, 1);
 
             int rowLengthAlignment = Info.BlockWidth;
 
@@ -1015,7 +1015,7 @@ namespace Ryujinx.Graphics.Vulkan
                 rowLengthAlignment = 4 / Info.BytesPerPixel;
             }
 
-            var region = new BufferImageCopy(
+            BufferImageCopy region = new(
                 0,
                 (uint)AlignUpNpot(width, rowLengthAlignment),
                 (uint)AlignUpNpot(height, Info.BlockHeight),
@@ -1083,7 +1083,7 @@ namespace Ryujinx.Graphics.Vulkan
             CommandBufferScoped cbs,
             FramebufferParams fb)
         {
-            var key = fb.GetRenderPassCacheKey();
+            RenderPassCacheKey key = fb.GetRenderPassCacheKey();
 
             if (_renderPasses == null || !_renderPasses.TryGetValue(ref key, out RenderPassHolder rpHolder))
             {
@@ -1131,9 +1131,9 @@ namespace Ryujinx.Graphics.Vulkan
 
                     if (_renderPasses != null)
                     {
-                        var renderPasses = _renderPasses.Values.ToArray();
+                        RenderPassHolder[] renderPasses = _renderPasses.Values.ToArray();
 
-                        foreach (var pass in renderPasses)
+                        foreach (RenderPassHolder pass in renderPasses)
                         {
                             pass.Dispose();
                         }
@@ -1141,7 +1141,7 @@ namespace Ryujinx.Graphics.Vulkan
 
                     if (_selfManagedViews != null)
                     {
-                        foreach (var view in _selfManagedViews.Values)
+                        foreach (TextureView view in _selfManagedViews.Values)
                         {
                             view.Dispose();
                         }

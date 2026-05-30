@@ -30,7 +30,7 @@ namespace Ryujinx.UI.Common.Helper
 
         public static List<(TitleUpdateModel Update, bool IsSelected)> LoadTitleUpdatesJson(VirtualFileSystem vfs, ulong applicationIdBase)
         {
-            var titleUpdatesJsonPath = PathToGameUpdatesJson(applicationIdBase);
+            string titleUpdatesJsonPath = PathToGameUpdatesJson(applicationIdBase);
 
             if (!File.Exists(titleUpdatesJsonPath))
             {
@@ -39,7 +39,7 @@ namespace Ryujinx.UI.Common.Helper
 
             try
             {
-                var titleUpdateWindowData = JsonHelper.DeserializeFromFile(titleUpdatesJsonPath, _serializerContext.TitleUpdateMetadata);
+                TitleUpdateMetadata titleUpdateWindowData = JsonHelper.DeserializeFromFile(titleUpdatesJsonPath, _serializerContext.TitleUpdateMetadata);
                 return LoadTitleUpdates(vfs, titleUpdateWindowData, applicationIdBase);
             }
             catch
@@ -51,7 +51,7 @@ namespace Ryujinx.UI.Common.Helper
 
         public static void SaveTitleUpdatesJson(VirtualFileSystem vfs, ulong applicationIdBase, List<(TitleUpdateModel, bool IsSelected)> updates)
         {
-            var titleUpdateWindowData = new TitleUpdateMetadata
+            TitleUpdateMetadata titleUpdateWindowData = new()
             {
                 Selected = "",
                 Paths = [],
@@ -73,13 +73,13 @@ namespace Ryujinx.UI.Common.Helper
                 }
             }
 
-            var titleUpdatesJsonPath = PathToGameUpdatesJson(applicationIdBase);
+            string titleUpdatesJsonPath = PathToGameUpdatesJson(applicationIdBase);
             JsonHelper.SerializeToFile(titleUpdatesJsonPath, titleUpdateWindowData, _serializerContext.TitleUpdateMetadata);
         }
 
         private static List<(TitleUpdateModel Update, bool IsSelected)> LoadTitleUpdates(VirtualFileSystem vfs, TitleUpdateMetadata titleUpdateMetadata, ulong applicationIdBase)
         {
-            var result = new List<(TitleUpdateModel, bool IsSelected)>();
+            List<(TitleUpdateModel, bool IsSelected)> result = new();
 
             IntegrityCheckLevel checkLevel = ConfigurationState.Instance.System.EnableFsIntegrityChecks
                 ? IntegrityCheckLevel.ErrorOnInvalid
@@ -121,8 +121,8 @@ namespace Ryujinx.UI.Common.Helper
                     nacpFile.Get.Read(out _, 0, SpanHelpers.AsByteSpan(ref controlData), ReadOption.None)
                         .ThrowIfFailure();
 
-                    var displayVersion = controlData.DisplayVersionString.ToString();
-                    var update = new TitleUpdateModel(content.ApplicationId, content.Version.Version,
+                    string displayVersion = controlData.DisplayVersionString.ToString();
+                    TitleUpdateModel update = new(content.ApplicationId, content.Version.Version,
                         displayVersion, path);
 
                     result.Add((update, path == titleUpdateMetadata.Selected));

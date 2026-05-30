@@ -13,6 +13,7 @@ using Ryujinx.HLE.HOS.Services.Am.AppletAE.Storage;
 using Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.ApplicationProxy.Types;
 using Ryujinx.HLE.HOS.Services.Sdb.Pdm.QueryService;
 using Ryujinx.HLE.HOS.SystemState;
+using Ryujinx.HLE.Loaders.Processes;
 using Ryujinx.Horizon.Common;
 using System;
 using System.Numerics;
@@ -117,7 +118,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
         public ResultCode EnsureSaveData(ServiceCtx context)
         {
             Uid userId = context.RequestData.ReadStruct<AccountUid>().ToLibHacUid();
-            var process = context.Device.Processes.GetProcess(_pid);
+            ProcessResult process = context.Device.Processes.GetProcess(_pid);
 
             // Mask out the low nibble of the program ID to get the application ID
             ApplicationId applicationId = new(process.Identity.ApplicationId);
@@ -238,7 +239,7 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletOE.ApplicationProxyService.Applicati
             ushort index = (ushort)context.RequestData.ReadUInt64();
             long saveSize = context.RequestData.ReadInt64();
             long journalSize = context.RequestData.ReadInt64();
-            var process = context.Device.Processes.GetProcess(_pid);
+            ProcessResult process = context.Device.Processes.GetProcess(_pid);
 
             // Mask out the low nibble of the program ID to get the application ID
             ApplicationId applicationId = new(process.Identity.ApplicationId);

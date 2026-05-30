@@ -361,7 +361,7 @@ namespace Ryujinx.Graphics.GAL.Multithreading
 
         public unsafe bool TryHostConditionalRendering(ICounterEvent value, ulong compare, bool isEqual)
         {
-            var evt = value as ThreadedCounterEvent;
+            ThreadedCounterEvent evt = value as ThreadedCounterEvent;
             if (evt != null)
             {
                 if (compare == 0 && evt.Type == CounterType.SamplesPassed && evt.ClearCounter)

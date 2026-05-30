@@ -248,17 +248,17 @@ namespace Ryujinx.Input.SDL3
                 SDL3Driver.Instance.OnJoystickDisconnected -= HandleJoyStickDisconnected;
 
                 // Simulate a full disconnect when disposing
-                foreach (var gamepad in _gamepadsIds)
+                foreach (KeyValuePair<SDL_JoystickID, string> gamepad in _gamepadsIds)
                 {
                     OnGamepadDisconnected?.Invoke(gamepad.Value);
                 }
 
-                foreach (var gamepad in _joyConsIds)
+                foreach (KeyValuePair<SDL_JoystickID, string> gamepad in _joyConsIds)
                 {
                     OnGamepadDisconnected?.Invoke(gamepad.Value);
                 }
 
-                foreach (var gamepad in _linkedJoyConsIds)
+                foreach (KeyValuePair<SDL_JoystickID, string> gamepad in _linkedJoyConsIds)
                 {
                     OnGamepadDisconnected?.Invoke(gamepad.Value);
                 }
@@ -331,7 +331,7 @@ namespace Ryujinx.Input.SDL3
         {
             lock (_gamepadsIds)
             {
-                foreach (var gamepad in _gamepadsIds)
+                foreach (KeyValuePair<SDL_JoystickID, string> gamepad in _gamepadsIds)
                 {
                     yield return GetGamepad(gamepad.Value);
                 }
@@ -339,7 +339,7 @@ namespace Ryujinx.Input.SDL3
 
             lock (_joyConsIds)
             {
-                foreach (var gamepad in _joyConsIds)
+                foreach (KeyValuePair<SDL_JoystickID, string> gamepad in _joyConsIds)
                 {
                     yield return GetGamepad(gamepad.Value);
                 }
@@ -347,7 +347,7 @@ namespace Ryujinx.Input.SDL3
 
             lock (_linkedJoyConsIds)
             {
-                foreach (var gamepad in _linkedJoyConsIds)
+                foreach (KeyValuePair<SDL_JoystickID, string> gamepad in _linkedJoyConsIds)
                 {
                     yield return GetGamepad(gamepad.Value);
                 }
