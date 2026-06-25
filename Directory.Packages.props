@@ -31,7 +31,6 @@
     <PackageVersion Include="OpenTK.Core" Version="4.9.4" />
     <PackageVersion Include="OpenTK.Graphics" Version="4.9.4" />
     <PackageVersion Include="OpenTK.Audio.OpenAL" Version="4.9.4" />
-    <PackageVersion Include="OpenTK.Windowing.GraphicsLibraryFramework" Version="4.9.4" />
     <PackageVersion Include="Open.NAT.Core" Version="2.1.0.5" />
     <PackageVersion Include="Ryujinx.Audio.OpenAL" Version="1.25.2" />
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.Linux" Version="6.1.4-build6" />
