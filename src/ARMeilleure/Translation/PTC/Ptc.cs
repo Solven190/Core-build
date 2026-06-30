@@ -4,6 +4,7 @@ using ARMeilleure.CodeGen.Unwinding;
 using ARMeilleure.Common;
 using ARMeilleure.Memory;
 using ARMeilleure.State;
+using ARMeilleure.Translation.Cache;
 using Ryujinx.Common;
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
@@ -31,7 +32,7 @@ namespace ARMeilleure.Translation.PTC
         private const string OuterHeaderMagicString = "PTCohd\0\0";
         private const string InnerHeaderMagicString = "PTCihd\0\0";
 
-        private const uint InternalVersion = 7010; //! To be incremented manually for each change to the ARMeilleure project.
+        private const uint InternalVersion = 7016; //! To be incremented manually for each change to the ARMeilleure project.
 
         private const string ActualDir = "0";
         private const string BackupDir = "1";
@@ -48,6 +49,8 @@ namespace ARMeilleure.Translation.PTC
         private const CompressionLevel SaveCompressionLevel = CompressionLevel.Fastest;
 
         public PtcProfiler Profiler { get; }
+
+        private readonly JitCache _jitCache;
 
         // Carriers.
         private MemoryStream _infosStream;
@@ -79,7 +82,7 @@ namespace ARMeilleure.Translation.PTC
         private volatile int _translateTotalCount;
         public event Action<PtcLoadingState, int, int> PtcStateChanged;
 
-        public Ptc()
+        public Ptc(JitCache jitCache)
         {
             Profiler = new PtcProfiler(this);
 
@@ -89,6 +92,8 @@ namespace ARMeilleure.Translation.PTC
             _innerHeaderMagic = BinaryPrimitives.ReadUInt64LittleEndian(EncodingCache.UTF8NoBOM.GetBytes(InnerHeaderMagicString).AsSpan());
 
             _waitEvent = new ManualResetEvent(true);
+
+            _jitCache = jitCache;
 
             _disposed = false;
 
@@ -725,7 +730,7 @@ namespace ARMeilleure.Translation.PTC
             return new UnwindInfo(pushEntries, prologueSize);
         }
 
-        private static TranslatedFunction FastTranslate(
+        private TranslatedFunction FastTranslate(
             byte[] code,
             Counter<uint> callCounter,
             ulong guestSize,
@@ -733,7 +738,7 @@ namespace ARMeilleure.Translation.PTC
             bool highCq)
         {
             CompiledFunction cFunc = new(code, unwindInfo, RelocInfo.Empty);
-            GuestFunction gFunc = cFunc.MapWithPointer<GuestFunction>(out nint gFuncPointer);
+            GuestFunction gFunc = cFunc.MapWithPointer<GuestFunction>(_jitCache, out nint gFuncPointer);
 
             return new TranslatedFunction(gFunc, gFuncPointer, callCounter, guestSize, highCq);
         }

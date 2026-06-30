@@ -23,11 +23,30 @@ namespace ARMeilleure.Translation.Cache
             }
         }
 
+        private readonly int _regionSize;
+        private int _regionCount;
+
         private readonly List<MemoryBlock> _blocks = [];
 
-        public CacheMemoryAllocator(int capacity)
+        public CacheMemoryAllocator(int regionSize, int initialRegionCount = 1)
         {
-            _blocks.Add(new MemoryBlock(0, capacity));
+            _regionCount = 0;
+            _regionSize = regionSize;
+
+            for (; initialRegionCount > 0; initialRegionCount--)
+            {
+                _blocks.Add(new MemoryBlock(_regionSize * _regionCount, _regionSize));
+                _regionCount++;
+            }
+        }
+
+        public void AddNewBlocks(int count)
+        {
+            for (; count > 0; count--)
+            {
+                _blocks.Add(new MemoryBlock(_regionSize * _regionCount, _regionSize));
+                _regionCount++;
+            }
         }
 
         public int Allocate(int size)
@@ -66,11 +85,12 @@ namespace ARMeilleure.Translation.Cache
                 index = ~index;
             }
 
-            if (index < _blocks.Count)
+            int endOffs = block.Offset + block.Size;
+
+            // Don't merge blocks from different allocations
+            if (index < _blocks.Count && endOffs % _regionSize != 0)
             {
                 MemoryBlock next = _blocks[index];
-
-                int endOffs = block.Offset + block.Size;
 
                 if (next.Offset == endOffs)
                 {
@@ -79,7 +99,8 @@ namespace ARMeilleure.Translation.Cache
                 }
             }
 
-            if (index > 0)
+            // Don't merge blocks from different allocations
+            if (index > 0 && block.Offset % _regionSize != 0)
             {
                 MemoryBlock prev = _blocks[index - 1];
 
