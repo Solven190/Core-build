@@ -14,7 +14,7 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Concentus" Version="2.2.2" />
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
-    <PackageVersion Include="DynamicData" Version="9.4.31" />
+    <PackageVersion Include="DynamicData" Version="9.4.33" />
     <PackageVersion Include="FluentAvaloniaUI" Version="2.5.1" />
     <PackageVersion Include="Gommon" Version="2.8.1.2" />
     <PackageVersion Include="Humanizer" Version="3.0.10" />
