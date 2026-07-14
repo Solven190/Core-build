@@ -104,7 +104,9 @@ namespace Ryujinx.Cpu.LightningJit.Cache
         {
             int endOffs = offset + size;
             int regionStart = (offset % (int)CacheSize) & ~_pageMask;
-            int regionEnd = ((endOffs % (int)CacheSize) + _pageMask) & ~_pageMask;
+            int regionEnd = endOffs % (int)CacheSize == 0
+                ? (((int)CacheSize) + _pageMask) & ~_pageMask
+                : ((endOffs % (int)CacheSize) + _pageMask) & ~_pageMask;
 
             GetRegion(offset).Block.MapAsRwx((ulong)regionStart, (ulong)(regionEnd - regionStart));
         }
@@ -113,7 +115,9 @@ namespace Ryujinx.Cpu.LightningJit.Cache
         {
             int endOffs = offset + size;
             int regionStart = (offset % (int)CacheSize) & ~_pageMask;
-            int regionEnd = ((endOffs % (int)CacheSize) + _pageMask) & ~_pageMask;
+            int regionEnd = endOffs % (int)CacheSize == 0
+                ? (((int)CacheSize) + _pageMask) & ~_pageMask
+                : ((endOffs % (int)CacheSize) + _pageMask) & ~_pageMask;
 
             GetRegion(offset).Block.MapAsRx((ulong)regionStart, (ulong)(regionEnd - regionStart));
         }
