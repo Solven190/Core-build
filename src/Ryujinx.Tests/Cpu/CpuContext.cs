@@ -13,7 +13,10 @@ namespace Ryujinx.Tests.Cpu
 
         public CpuContext(IMemoryManager memory, bool for64Bit)
         {
-            _translator = new Translator(new JitMemoryAllocator(), memory, AddressTable<ulong>.CreateForArm(for64Bit, memory.Type));
+            bool sparse = memory.Type is not MemoryManagerType.SoftwareMmu and not MemoryManagerType.SoftwarePageTable;
+            IAddressTable<ulong> functionTable = sparse ? SparseAddressTable<ulong>.CreateForArm(for64Bit) : AddressTable<ulong>.CreateForArm(for64Bit);
+            
+            _translator = new Translator(new JitMemoryAllocator(), memory, functionTable);
             memory.UnmapEvent += UnmapHandler;
         }
 

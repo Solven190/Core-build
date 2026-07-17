@@ -1,15 +1,9 @@
-using ARMeilleure.Memory;
-using Ryujinx.Common;
-using Ryujinx.Cpu.Signal;
-using Ryujinx.Memory;
+using ARMeilleure.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
-using static Ryujinx.Cpu.MemoryEhMeilleure;
 
-namespace ARMeilleure.Common
+namespace Ryujinx.Cpu
 {
     /// <summary>
     /// Represents a table of guest address to a value.
@@ -17,84 +11,12 @@ namespace ARMeilleure.Common
     /// <typeparam name="TEntry">Type of the value</typeparam>
     public unsafe class AddressTable<TEntry> : IAddressTable<TEntry> where TEntry : unmanaged
     {
-        /// <summary>
-        /// Represents a page of the address table.
-        /// </summary>
-        private readonly struct AddressTablePage
-        {
-            /// <summary>
-            /// True if the allocation belongs to a sparse block, false otherwise.
-            /// </summary>
-            public readonly bool IsSparse;
-
-            /// <summary>
-            /// Base address for the page.
-            /// </summary>
-            public readonly nint Address;
-
-            public AddressTablePage(bool isSparse, nint address)
-            {
-                IsSparse = isSparse;
-                Address = address;
-            }
-        }
-
-        /// <summary>
-        /// A sparsely mapped block of memory with a signal handler to map pages as they're accessed.
-        /// </summary>
-        private readonly struct TableSparseBlock : IDisposable
-        {
-            public readonly SparseMemoryBlock Block;
-            private readonly TrackingEventDelegate _trackingEvent;
-
-            public TableSparseBlock(ulong size, Action<nint> ensureMapped, PageInitDelegate pageInit)
-            {
-                SparseMemoryBlock block = new(size, pageInit, null);
-
-                _trackingEvent = (ulong address, ulong _, bool _) =>
-                {
-                    ulong pointer = (ulong)block.Block.Pointer + address;
-                    ensureMapped((nint)pointer);
-                    return pointer;
-                };
-
-                bool added = NativeSignalHandler.AddTrackedRegion(
-                    (nuint)block.Block.Pointer,
-                    (nuint)(block.Block.Pointer + (nint)block.Block.Size),
-                    Marshal.GetFunctionPointerForDelegate(_trackingEvent));
-
-                if (!added)
-                {
-                    throw new InvalidOperationException("Number of allowed tracked regions exceeded.");
-                }
-
-                Block = block;
-            }
-
-            public void Dispose()
-            {
-                NativeSignalHandler.RemoveTrackedRegion((nuint)Block.Block.Pointer);
-
-                Block.Dispose();
-            }
-        }
-
         private bool _disposed;
         private TEntry** _table;
-        private readonly List<AddressTablePage> _pages;
-        private TEntry _fill;
+        private readonly List<nint> _pages;
 
-        private readonly MemoryBlock _sparseFill;
-        private readonly SparseMemoryBlock _fillBottomLevel;
-        private readonly TEntry* _fillBottomLevelPtr;
-
-        private readonly List<TableSparseBlock> _sparseReserved;
-        private readonly ReaderWriterLockSlim _sparseLock;
-
-        private ulong _sparseBlockSize;
-        private ulong _sparseReservedOffset;
-
-        public bool Sparse { get; }
+        /// <inheritdoc/>
+        public AddressTableType TableType => AddressTableType.Default;
 
         /// <inheritdoc/>
         public ulong Mask { get; }
@@ -103,17 +25,7 @@ namespace ARMeilleure.Common
         public AddressTableLevel[] Levels { get; }
 
         /// <inheritdoc/>
-        public TEntry Fill
-        {
-            get
-            {
-                return _fill;
-            }
-            set
-            {
-                UpdateFill(value);
-            }
-        }
+        public TEntry Fill { get; set; }
 
         /// <inheritdoc/>
         public nint Base
@@ -131,17 +43,16 @@ namespace ARMeilleure.Common
 
         /// <summary>
         /// Constructs a new instance of the <see cref="AddressTable{TEntry}"/> class with the specified list of
-        /// <see cref="Level"/>.
+        /// <see cref="AddressTableLevel"/>.
         /// </summary>
         /// <param name="levels">Levels for the address table</param>
-        /// <param name="sparse">True if the bottom page should be sparsely mapped</param>
         /// <exception cref="ArgumentNullException"><paramref name="levels"/> is null</exception>
         /// <exception cref="ArgumentException">Length of <paramref name="levels"/> is less than 2</exception>
-        public AddressTable(AddressTableLevel[] levels, bool sparse)
+        public AddressTable(AddressTableLevel[] levels)
         {
             ArgumentNullException.ThrowIfNull(levels);
 
-            _pages = new List<AddressTablePage>(capacity: 16);
+            _pages = new List<nint>(capacity: 16);
 
             Levels = levels;
             Mask = 0;
@@ -150,25 +61,6 @@ namespace ARMeilleure.Common
             {
                 Mask |= level.Mask;
             }
-
-            Sparse = sparse;
-
-            if (sparse)
-            {
-                // If the address table is sparse, allocate a fill block
-
-                _sparseFill = new MemoryBlock(268435456ul, MemoryAllocationFlags.Mirrorable); //low Power TC uses size: 65536ul
-
-                ulong bottomLevelSize = (1ul << levels.Last().Length) * (ulong)sizeof(TEntry);
-
-                _fillBottomLevel = new SparseMemoryBlock(bottomLevelSize, null, _sparseFill);
-                _fillBottomLevelPtr = (TEntry*)_fillBottomLevel.Block.Pointer;
-
-                _sparseReserved = [];
-                _sparseLock = new ReaderWriterLockSlim();
-
-                _sparseBlockSize = bottomLevelSize;
-            }
         }
 
         /// <summary>
@@ -176,29 +68,10 @@ namespace ARMeilleure.Common
         /// Selects the best table structure for A32/A64, taking into account the selected memory manager type.
         /// </summary>
         /// <param name="for64Bits">True if the guest is A64, false otherwise</param>
-        /// <param name="type">Memory manager type</param>
         /// <returns>An <see cref="AddressTable{TEntry}"/> for ARM function lookup</returns>
-        public static AddressTable<TEntry> CreateForArm(bool for64Bits, MemoryManagerType type)
+        public static AddressTable<TEntry> CreateForArm(bool for64Bits)
         {
-            // Assume software memory means that we don't want to use any signal handlers.
-            bool sparse = type != MemoryManagerType.SoftwareMmu && type != MemoryManagerType.SoftwarePageTable;
-
-            return new AddressTable<TEntry>(AddressTablePresets.GetArmPreset(for64Bits, sparse), sparse);
-        }
-
-        /// <summary>
-        /// Update the fill value for the bottom level of the table.
-        /// </summary>
-        /// <param name="fillValue">New fill value</param>
-        private void UpdateFill(TEntry fillValue)
-        {
-            if (_sparseFill != null)
-            {
-                Span<byte> span = _sparseFill.GetSpan(0, (int)_sparseFill.Size);
-                MemoryMarshal.Cast<byte, TEntry>(span).Fill(fillValue);
-            }
-
-            _fill = fillValue;
+            return new AddressTable<TEntry>(AddressTablePresets.GetArmPreset(for64Bits, false));
         }
 
         /// <summary>
@@ -206,17 +79,7 @@ namespace ARMeilleure.Common
         /// </summary>
         /// <param name="address"></param>
         /// <param name="size"></param>
-        public void SignalCodeRange(ulong address, ulong size)
-        {
-            AddressTableLevel bottom = Levels.Last();
-            ulong bottomLevelEntries = 1ul << bottom.Length;
-
-            ulong entryIndex = address >> bottom.Index;
-            ulong entries = size >> bottom.Index;
-            entries += entryIndex - BitUtils.AlignDown(entryIndex, bottomLevelEntries);
-
-            _sparseBlockSize = Math.Max(_sparseBlockSize, BitUtils.AlignUp(entries, bottomLevelEntries) * (ulong)sizeof(TEntry));
-        }
+        public void SignalCodeRange(ulong address, ulong size) { }
 
         /// <inheritdoc/>
         public bool IsValid(ulong address)
@@ -240,8 +103,6 @@ namespace ARMeilleure.Common
 
                 long index = Levels[^1].GetValue(address);
 
-                EnsureMapped((nint)(page + index));
-
                 return ref page[index];
             }
         }
@@ -260,19 +121,19 @@ namespace ARMeilleure.Common
                 ref AddressTableLevel level = ref Levels[i];
                 if (page != null)
                 {
-                    ref TEntry* nextPage = ref page[level.GetValue(address)];
+                    ref TEntry* nextPage = ref page![level.GetValue(address)];
 
-                    if (nextPage == null || nextPage == _fillBottomLevelPtr)
+                    if (nextPage == null)
                     {
                         ref AddressTableLevel nextLevel = ref Levels[i + 1];
 
                         if (i == Levels.Length - 2)
                         {
-                            nextPage = (TEntry*)Allocate(1 << nextLevel.Length, Fill, leaf: true);
+                            nextPage = (TEntry*)Allocate(1 << nextLevel.Length, Fill);
                         }
                         else
                         {
-                            nextPage = (TEntry*)Allocate(1 << nextLevel.Length, GetFillValue(i), leaf: false);
+                            nextPage = (TEntry*)Allocate(1 << nextLevel.Length, nint.Zero);
                         }
                     }
 
@@ -284,57 +145,6 @@ namespace ARMeilleure.Common
         }
 
         /// <summary>
-        /// Ensure the given pointer is mapped in any overlapping sparse reservations.
-        /// </summary>
-        /// <param name="ptr">Pointer to be mapped</param>
-        private void EnsureMapped(nint ptr)
-        {
-            if (Sparse)
-            {
-                // Check sparse allocations to see if the pointer is in any of them.
-                // Ensure the page is committed if there's a match.
-
-                _sparseLock.EnterReadLock();
-
-                try
-                {
-                    foreach (TableSparseBlock reserved in _sparseReserved)
-                    {
-                        SparseMemoryBlock sparse = reserved.Block;
-
-                        if (ptr >= sparse.Block.Pointer && ptr < sparse.Block.Pointer + (nint)sparse.Block.Size)
-                        {
-                            sparse.EnsureMapped((ulong)(ptr - sparse.Block.Pointer));
-
-                            break;
-                        }
-                    }
-                }
-                finally
-                {
-                    _sparseLock.ExitReadLock();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get the fill value for a non-leaf level of the table.
-        /// </summary>
-        /// <param name="level">Level to get the fill value for</param>
-        /// <returns>The fill value</returns>
-        private nint GetFillValue(int level)
-        {
-            if (_fillBottomLevel != null && level == Levels.Length - 2)
-            {
-                return (nint)_fillBottomLevelPtr;
-            }
-            else
-            {
-                return nint.Zero;
-            }
-        }
-
-        /// <summary>
         /// Lazily initialize and get the root page of the <see cref="AddressTable{TEntry}"/>.
         /// </summary>
         /// <returns>Root page of the <see cref="AddressTable{TEntry}"/></returns>
@@ -343,35 +153,12 @@ namespace ARMeilleure.Common
             if (_table == null)
             {
                 if (Levels.Length == 1)
-                    _table = (TEntry**)Allocate(1 << Levels[0].Length, Fill, leaf: true);
+                    _table = (TEntry**)Allocate(1 << Levels[0].Length, Fill);
                 else
-                    _table = (TEntry**)Allocate(1 << Levels[0].Length, GetFillValue(0), leaf: false);
+                    _table = (TEntry**)Allocate(1 << Levels[0].Length, nint.Zero);
             }
 
             return _table;
-        }
-
-        /// <summary>
-        /// Initialize a leaf page with the fill value.
-        /// </summary>
-        /// <param name="page">Page to initialize</param>
-        private void InitLeafPage(Span<byte> page)
-        {
-            MemoryMarshal.Cast<byte, TEntry>(page).Fill(_fill);
-        }
-
-        /// <summary>
-        /// Reserve a new sparse block, and add it to the list.
-        /// </summary>
-        /// <returns>The new sparse block that was added</returns>
-        private TableSparseBlock ReserveNewSparseBlock()
-        {
-            TableSparseBlock block = new(_sparseBlockSize, EnsureMapped, InitLeafPage);
-
-            _sparseReserved.Add(block);
-            _sparseReservedOffset = 0;
-
-            return block;
         }
 
         /// <summary>
@@ -380,54 +167,21 @@ namespace ARMeilleure.Common
         /// <typeparam name="T">Type of elements</typeparam>
         /// <param name="length">Number of elements</param>
         /// <param name="fill">Fill value</param>
-        /// <param name="leaf"><see langword="true"/> if leaf; otherwise <see langword="false"/></param>
         /// <returns>Allocated block</returns>
-        private nint Allocate<T>(int length, T fill, bool leaf) where T : unmanaged
+        private nint Allocate<T>(int length, T fill) where T : unmanaged
         {
             int size = sizeof(T) * length;
 
-            AddressTablePage page;
+            nint address = (nint)NativeAllocator.Instance.Allocate((uint)size);
 
-            if (Sparse && leaf)
-            {
-                _sparseLock.EnterWriteLock();
+            Span<T> span = new((void*)address, length);
+            span.Fill(fill);
 
-                SparseMemoryBlock block;
-
-                if (_sparseReserved.Count == 0)
-                {
-                    block = ReserveNewSparseBlock().Block;
-                }
-                else
-                {
-                    block = _sparseReserved.Last().Block;
-
-                    if (_sparseReservedOffset == block.Block.Size)
-                    {
-                        block = ReserveNewSparseBlock().Block;
-                    }
-                }
-
-                page = new AddressTablePage(true, block.Block.Pointer + (nint)_sparseReservedOffset);
-
-                _sparseReservedOffset += (ulong)size;
-
-                _sparseLock.ExitWriteLock();
-            }
-            else
-            {
-                IntPtr address = (nint)NativeAllocator.Instance.Allocate((uint)size);
-                page = new AddressTablePage(false, address);
-
-                Span<T> span = new((void*)page.Address, length);
-                span.Fill(fill);
-            }
-
-            _pages.Add(page);
+            _pages.Add(address);
 
             //TranslatorEventSource.Log.AddressTableAllocated(size, leaf);
 
-            return page.Address;
+            return address;
         }
 
         /// <summary>
@@ -446,32 +200,17 @@ namespace ARMeilleure.Common
         /// <param name="disposing"><see langword="true"/> to dispose managed resources also; otherwise just unmanaged resouces</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                foreach (AddressTablePage page in _pages)
-                {
-                    if (!page.IsSparse)
-                    {
-                        Marshal.FreeHGlobal(page.Address);
-                    }
-                }
-
-                if (Sparse)
-                {
-                    foreach (TableSparseBlock block in _sparseReserved)
-                    {
-                        block.Dispose();
-                    }
-
-                    _sparseReserved.Clear();
-
-                    _fillBottomLevel.Dispose();
-                    _sparseFill.Dispose();
-                    _sparseLock.Dispose();
-                }
-
-                _disposed = true;
+                return;
             }
+
+            foreach (nint page in _pages)
+            {
+                Marshal.FreeHGlobal(page);
+            }
+
+            _disposed = true;
         }
 
         /// <summary>

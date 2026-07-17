@@ -28,7 +28,7 @@ namespace ARMeilleure.Translation
         private readonly Ptc _ptc;
 
         internal TranslatorCache<TranslatedFunction> Functions { get; }
-        internal IAddressTable<ulong> FunctionTable { get; }
+        public IAddressTable<ulong> FunctionTable { get; }
         internal EntryTable<uint> CountTable { get; }
         internal TranslatorStubs Stubs { get; }
         internal TranslatorQueue Queue { get; }
@@ -53,7 +53,9 @@ namespace ARMeilleure.Translation
 
             CountTable = new EntryTable<uint>();
             Functions = new TranslatorCache<TranslatedFunction>();
+            
             FunctionTable = functionTable;
+            
             Stubs = new TranslatorStubs(JitCache, FunctionTable);
 
             FunctionTable.Fill = (ulong)Stubs.SlowDispatchStub;

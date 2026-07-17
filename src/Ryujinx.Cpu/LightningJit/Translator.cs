@@ -24,11 +24,11 @@ namespace Ryujinx.Cpu.LightningJit
         private bool _disposed;
 
         internal TranslatorCache<TranslatedFunction> Functions { get; }
-        internal AddressTable<ulong> FunctionTable { get; }
+        internal IAddressTable<ulong> FunctionTable { get; }
         internal TranslatorStubs Stubs { get; }
         internal IMemoryManager Memory { get; }
 
-        public Translator(IMemoryManager memory, AddressTable<ulong> functionTable)
+        public Translator(IMemoryManager memory, IAddressTable<ulong> functionTable)
         {
             Memory = memory;
 
@@ -45,6 +45,7 @@ namespace Ryujinx.Cpu.LightningJit
 
             Functions = new TranslatorCache<TranslatedFunction>();
             FunctionTable = functionTable;
+            
             Stubs = new TranslatorStubs(_jitCache, FunctionTable, _noWxCache);
 
             FunctionTable.Fill = (ulong)Stubs.SlowDispatchStub;

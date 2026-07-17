@@ -21,6 +21,7 @@ namespace Ryujinx.Memory
         private ulong _mappedBlockUsage;
 
         private readonly ulong[] _mappedPageBitmap;
+        private readonly MemoryBlock _fill;
 
         public MemoryBlock Block => _reservedBlock;
 
@@ -34,23 +35,24 @@ namespace Ryujinx.Memory
             int pages = (int)BitUtils.DivRoundUp(size, _pageSize);
             int bitmapEntries = BitUtils.DivRoundUp(pages, 64);
             _mappedPageBitmap = new ulong[bitmapEntries];
+            _fill = fill;
 
-            if (fill != null)
+            if (_fill is not null)
             {
+                if (_fill.Size % _pageSize !=0)
+                {
+                    throw new ArgumentException("Fill memory block should be page sized.", nameof(_fill));
+                }
+                
                 // Fill the block with mappings from the fill block.
 
-                if (fill.Size % _pageSize != 0)
-                {
-                    throw new ArgumentException("Fill memory block should be page aligned.", nameof(fill));
-                }
-
-                int repeats = (int)BitUtils.DivRoundUp(size, fill.Size);
+                int repeats = (int)BitUtils.DivRoundUp(size, _fill.Size);
 
                 ulong offset = 0;
                 for (int i = 0; i < repeats; i++)
                 {
-                    _reservedBlock.MapView(fill, 0, offset, Math.Min(fill.Size, size - offset));
-                    offset += fill.Size;
+                    _reservedBlock.MapView(_fill, 0, offset, Math.Min(_fill.Size, size - offset));
+                    offset += _fill.Size;
                 }
             }
 
@@ -75,6 +77,12 @@ namespace Ryujinx.Memory
             }
 
             _pageInit(block.GetSpan(_mappedBlockUsage, (int)_pageSize));
+
+            if (_fill is not null)
+            {
+                _reservedBlock.UnmapView(_fill, pageOffset, _pageSize);
+            }
+            
             _reservedBlock.MapView(block, _mappedBlockUsage, pageOffset, _pageSize);
 
             _mappedBlockUsage += _pageSize;

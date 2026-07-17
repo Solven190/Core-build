@@ -13,7 +13,7 @@ namespace Ryujinx.Cpu.LightningJit
             CpuPreset cpuPreset,
             IMemoryManager memoryManager,
             ulong address,
-            AddressTable<ulong> funcTable,
+            IAddressTable<ulong> funcTable,
             nint dispatchStubPtr,
             ExecutionMode executionMode,
             Architecture targetArch)

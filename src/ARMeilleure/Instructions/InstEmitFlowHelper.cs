@@ -5,7 +5,7 @@ using ARMeilleure.IntermediateRepresentation;
 using ARMeilleure.State;
 using ARMeilleure.Translation;
 using ARMeilleure.Translation.PTC;
-
+using System.Linq;
 using static ARMeilleure.Instructions.InstEmitHelper;
 using static ARMeilleure.IntermediateRepresentation.Operand.Factory;
 
@@ -236,9 +236,9 @@ namespace ARMeilleure.Instructions
 
                 hostAddress = context.Load(OperandType.I64, hostAddressAddr);
             }
-            else if (table.Sparse)
+            else if (table.TableType ==  AddressTableType.Sparse)
             {
-                // Inline table lookup. Only enabled when the sparse function table is enabled with 2 levels.
+                // Inline table lookup. Only enabled when the sparse function table is enabled with 1 level.
                 // Deliberately attempts to avoid branches.
 
                 Operand tableBase = !context.HasPtc ?
@@ -247,24 +247,21 @@ namespace ARMeilleure.Instructions
 
                 hostAddress = tableBase;
 
-                for (int i = 0; i < table.Levels.Length; i++)
-                {
-                    AddressTableLevel level = table.Levels[i];
-                    int clearBits = 64 - (level.Index + level.Length);
+                AddressTableLevel level = table.Levels.Last();
+                int clearBits = 64 - (level.Index + level.Length);
 
-                    Operand index = context.ShiftLeft(
-                        context.ShiftRightUI(context.ShiftLeft(guestAddress, Const(clearBits)), Const(clearBits + level.Index)),
-                        Const(3)
-                    );
+                Operand index = context.ShiftLeft(
+                    context.ShiftRightUI(context.ShiftLeft(guestAddress, Const(clearBits)), Const(clearBits + level.Index)),
+                    Const(3)
+                );
 
-                    hostAddress = context.Load(OperandType.I64, context.Add(hostAddress, index));
-                }
+                hostAddress = context.Load(OperandType.I64, context.Add(hostAddress, index));
             }
             else
             {
                 hostAddress = !context.HasPtc ?
-                    Const((long)context.Stubs.DispatchStub) :
-                    Const((long)context.Stubs.DispatchStub, Ptc.DispatchStubSymbol);
+                    Const(context.Stubs.DispatchStub) :
+                    Const(context.Stubs.DispatchStub, Ptc.DispatchStubSymbol);
             }
 
             if (isJump)

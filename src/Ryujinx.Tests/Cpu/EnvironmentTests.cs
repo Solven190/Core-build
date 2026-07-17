@@ -1,8 +1,8 @@
 using ARMeilleure.Common;
-using ARMeilleure.Memory;
 using ARMeilleure.Translation;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
+using Ryujinx.Cpu;
 using Ryujinx.Cpu.Jit;
 using Ryujinx.Tests.Memory;
 using System;
@@ -23,7 +23,7 @@ namespace Ryujinx.Tests.Cpu
             _translator ??= new Translator(
                 new JitMemoryAllocator(), 
                 new MockMemoryManager(),
-                AddressTable<ulong>.CreateForArm(true, MemoryManagerType.SoftwarePageTable));
+                AddressTable<ulong>.CreateForArm(true));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]

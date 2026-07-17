@@ -5,11 +5,10 @@ namespace ARMeilleure.Common
     public interface IAddressTable<TEntry> : IDisposable where TEntry : unmanaged
     {
         /// <summary>
-        /// True if the address table's bottom level is sparsely mapped.
-        /// This also ensures the second bottom level is filled with a dummy page rather than 0.
+        /// Gets the <see cref="AddressTableType"/> of the <see cref="IAddressTable{TEntry}"/> instance.
         /// </summary>
-        bool Sparse { get; }
-
+        AddressTableType TableType { get; }
+        
         /// <summary>
         /// Gets the bits used by the <see cref="Levels"/> of the <see cref="IAddressTable{TEntry}"/> instance.
         /// </summary>
@@ -30,6 +29,13 @@ namespace ARMeilleure.Common
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="EntryTable{TEntry}"/> instance was disposed</exception>
         nint Base { get; }
+
+        /// <summary>
+        /// Signal that the given code range exists.
+        /// </summary>
+        /// <param name="address">Guest code range address</param>
+        /// <param name="size">Guest code range size</param>
+        void SignalCodeRange(ulong address, ulong size);
 
         /// <summary>
         /// Determines if the specified <paramref name="address"/> is in the range of the

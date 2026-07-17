@@ -22,7 +22,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             public readonly RegisterAllocator RegisterAllocator;
             public readonly MemoryManagerType MemoryManagerType;
             public readonly TailMerger TailMerger;
-            public readonly AddressTable<ulong> FuncTable;
+            public readonly IAddressTable<ulong> FuncTable;
             public readonly nint DispatchStubPointer;
 
             private readonly RegisterSaveRestore _registerSaveRestore;
@@ -33,7 +33,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
                 RegisterAllocator registerAllocator,
                 MemoryManagerType mmType,
                 TailMerger tailMerger,
-                AddressTable<ulong> funcTable,
+                IAddressTable<ulong> funcTable,
                 RegisterSaveRestore registerSaveRestore,
                 nint dispatchStubPointer,
                 nint pageTablePointer)
@@ -225,7 +225,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             }
         }
 
-        public static CompiledFunction Compile(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, AddressTable<ulong> funcTable, nint dispatchStubPtr, bool isThumb)
+        public static CompiledFunction Compile(CpuPreset cpuPreset, IMemoryManager memoryManager, ulong address, IAddressTable<ulong> funcTable, nint dispatchStubPtr, bool isThumb)
         {
             MultiBlock multiBlock = Decoder<InstEmit>.DecodeMulti(cpuPreset, memoryManager, address, isThumb);
 

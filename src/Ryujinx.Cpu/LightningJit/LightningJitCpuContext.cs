@@ -9,15 +9,15 @@ namespace Ryujinx.Cpu.LightningJit
     {
         private readonly ITickSource _tickSource;
         private readonly Translator _translator;
-        private readonly AddressTable<ulong> _functionTable;
 
         public LightningJitCpuContext(ITickSource tickSource, IMemoryManager memory, bool for64Bit)
         {
             _tickSource = tickSource;
 
-            _functionTable = AddressTable<ulong>.CreateForArm(for64Bit, memory.Type);
-
-            _translator = new Translator(memory, _functionTable);
+            bool sparse = memory.Type is not MemoryManagerType.SoftwareMmu and not MemoryManagerType.SoftwarePageTable;
+            IAddressTable<ulong> functionTable = sparse ? SparseAddressTable<ulong>.CreateForArm(for64Bit) : AddressTable<ulong>.CreateForArm(for64Bit);
+            
+            _translator = new Translator(memory, functionTable);
 
             memory.UnmapEvent += UnmapHandler;
         }
@@ -54,7 +54,7 @@ namespace Ryujinx.Cpu.LightningJit
         /// <inheritdoc/>
         public void PrepareCodeRange(ulong address, ulong size)
         {
-            _functionTable.SignalCodeRange(address, size);
+            _translator.FunctionTable.SignalCodeRange(address, size);
         }
 
         public void Dispose()
