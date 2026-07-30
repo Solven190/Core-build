@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using static SDL.SDL3;
 
@@ -41,6 +42,9 @@ namespace Ryujinx.SDL3.Common
 
         private SDL3Driver() { }
 
+        private static readonly HttpClient _httpClient = new();
+        private const string GamepadDbUrl = "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt";
+        
         public void Initialize()
         {
             lock (_lock)
@@ -95,8 +99,10 @@ namespace Ryujinx.SDL3.Common
 
                 SDL_SetEventEnabled((uint)SDL_EventType.SDL_EVENT_GAMEPAD_SENSOR_UPDATE, false);
 
-                string gamepadDbPath = Path.Combine(AppDataManager.BaseDirPath, "SDL_GameControllerDB.txt");
+                string gamepadDbPath = Path.Combine(AppDataManager.BaseDirPath, "gamecontrollerdb.txt");
 
+                UpdateGamepadDb(gamepadDbPath);
+                
                 if (File.Exists(gamepadDbPath))
                 {
                     SDL_AddGamepadMappingsFromFile(gamepadDbPath);
@@ -109,6 +115,37 @@ namespace Ryujinx.SDL3.Common
             }
         }
 
+        private static void UpdateGamepadDb(string gamepadDbPath)
+        {
+            try
+            {
+                byte[] remoteBytes = _httpClient.GetByteArrayAsync(GamepadDbUrl).GetAwaiter().GetResult();
+
+                bool shouldWrite = true;
+
+                if (File.Exists(gamepadDbPath))
+                {
+                    byte[] localBytes = File.ReadAllBytes(gamepadDbPath);
+
+                    if (localBytes.AsSpan().SequenceEqual(remoteBytes))
+                    {
+                        shouldWrite = false;
+                    }
+                }
+
+                if (shouldWrite)
+                {
+                    File.WriteAllBytes(gamepadDbPath ?? "", remoteBytes);
+
+                    Logger.Info?.Print(LogClass.Application, "Updated gamepad database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning?.Print(LogClass.Application, $"Failed to check/download gamepad database, using existing local copy if present: {ex.Message}");
+            }
+        }
+        
         public bool RegisterWindow(SDL_WindowID windowId, Action<SDL_Event> windowEventHandler)
         {
             return _registeredWindowHandlers.TryAdd(windowId, windowEventHandler);
