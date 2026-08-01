@@ -15,7 +15,6 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
 
         private readonly Dictionary<ulong, List<KThread>> _condVarThreads;
         private readonly Dictionary<ulong, List<KThread>> _arbiterThreads;
-        private readonly ByDynamicPriority _byDynamicPriority;
 
         public KAddressArbiter(KernelContext context)
         {
@@ -23,7 +22,6 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
 
             _condVarThreads = [];
             _arbiterThreads = [];
-            _byDynamicPriority = new ByDynamicPriority();
         }
 
         public Result ArbitrateLock(int ownerHandle, ulong mutexAddress, int requesterHandle)
@@ -142,14 +140,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
 
             if (_condVarThreads.TryGetValue(condVarAddress, out List<KThread> threads))
             {
-                int i = 0;
+                int i = FindDynamicPriorityFifoInsertionIndex(threads, currentThread);
 
-                if (threads.Count > 0)
-                {
-                    i = threads.BinarySearch(currentThread, _byDynamicPriority);
-                    if (i < 0) i = ~i;
-                }
-                
+
                 threads.Insert(i, currentThread);
             }
             else
@@ -332,14 +325,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
                 
                 if (_arbiterThreads.TryGetValue(address, out List<KThread> threads))
                 {
-                    int i = 0;
+                    int i = FindDynamicPriorityFifoInsertionIndex(threads, currentThread);
 
-                    if (threads.Count > 0)
-                    {
-                        i = threads.BinarySearch(currentThread, _byDynamicPriority);
-                        if (i < 0) i = ~i;
-                    }
-                
+
                     threads.Insert(i, currentThread);
                 }
                 else
@@ -424,14 +412,9 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
                 
                 if (_arbiterThreads.TryGetValue(address, out List<KThread> threads))
                 {
-                    int i = 0;
+                    int i = FindDynamicPriorityFifoInsertionIndex(threads, currentThread);
 
-                    if (threads.Count > 0)
-                    {
-                        i = threads.BinarySearch(currentThread, _byDynamicPriority);
-                        if (i < 0) i = ~i;
-                    }
-                
+
                     threads.Insert(i, currentThread);
                 }
                 else
@@ -627,12 +610,28 @@ namespace Ryujinx.HLE.HOS.Kernel.Threading
             return validCount;
         }
         
-        private class ByDynamicPriority : IComparer<KThread>
+        private static int FindDynamicPriorityFifoInsertionIndex(List<KThread> threads, KThread currentThread)
         {
-            public int Compare(KThread x, KThread y)
+            int low = 0;
+            int high = threads.Count;
+
+            // Lower numeric values represent higher priorities. Use upper-bound insertion
+            // to preserve FIFO order among waiters with the same dynamic priority.
+            while (low < high)
             {
-                return x!.DynamicPriority.CompareTo(y!.DynamicPriority);
+                int middle = low + ((high - low) >> 1);
+
+                if (threads[middle].DynamicPriority <= currentThread.DynamicPriority)
+                {
+                    low = middle + 1;
+                }
+                else
+                {
+                    high = middle;
+                }
             }
+
+            return low;
         }
     }
 }
