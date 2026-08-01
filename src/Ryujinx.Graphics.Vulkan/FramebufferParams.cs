@@ -32,6 +32,29 @@ namespace Ryujinx.Graphics.Vulkan
         public bool HasDepthStencil { get; private set; }
         public int ColorAttachmentsCount => AttachmentsCount - (HasDepthStencil ? 1 : 0);
 
+        public bool SetVirtualSize(uint width, uint height, uint layers)
+        {
+            if (AttachmentsCount != 0)
+            {
+                return false;
+            }
+
+            width = Math.Max(1u, width);
+            height = Math.Max(1u, height);
+            layers = Math.Max(1u, layers);
+
+            if (Width == width && Height == height && Layers == layers)
+            {
+                return false;
+            }
+
+            Width = width;
+            Height = height;
+            Layers = layers;
+
+            return true;
+        }
+
         public FramebufferParams(Device device, TextureView view, uint width, uint height)
         {
             Format format = view.Info.Format;

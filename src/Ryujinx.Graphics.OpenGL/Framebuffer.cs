@@ -20,6 +20,27 @@ namespace Ryujinx.Graphics.OpenGL
         private int _colorsCount;
         private bool _dualSourceBlend;
 
+        public bool HasAttachments
+        {
+            get
+            {
+                if (_depthStencil != null)
+                {
+                    return true;
+                }
+
+                for (int index = 0; index < _colors.Length; index++)
+                {
+                    if (_colors[index] != null)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
         public Framebuffer()
         {
             Handle = GL.GenFramebuffer();
@@ -32,6 +53,12 @@ namespace Ryujinx.Graphics.OpenGL
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, Handle);
             return Handle;
+        }
+
+        public void SetDefaultSize(int width, int height)
+        {
+            GL.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferDefaultParameter.FramebufferDefaultWidth, Math.Max(1, width));
+            GL.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferDefaultParameter.FramebufferDefaultHeight, Math.Max(1, height));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -105,13 +132,20 @@ namespace Ryujinx.Graphics.OpenGL
             _colorsCount = colorsCount;
         }
 
-        private static void SetDrawBuffersImpl(int colorsCount)
+        private void SetDrawBuffersImpl(int colorsCount)
         {
             DrawBuffersEnum[] drawBuffers = new DrawBuffersEnum[colorsCount];
 
             for (int index = 0; index < colorsCount; index++)
             {
-                drawBuffers[index] = DrawBuffersEnum.ColorAttachment0 + index;
+                if (_colors[index] != null)
+                {
+                    drawBuffers[index] = DrawBuffersEnum.ColorAttachment0 + index;
+                }
+                else
+                {
+                    drawBuffers[index] = DrawBuffersEnum.None;
+                }
             }
 
             GL.DrawBuffers(colorsCount, drawBuffers);

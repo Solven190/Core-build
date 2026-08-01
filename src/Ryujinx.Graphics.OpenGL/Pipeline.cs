@@ -1537,6 +1537,11 @@ namespace Ryujinx.Graphics.OpenGL
         {
             DrawCount++;
 
+            if (!_framebuffer.HasAttachments && _viewportArray.Length >= 4)
+            {
+                _framebuffer.SetDefaultSize((int)_viewportArray[2], (int)_viewportArray[3]);
+            }
+
             _unit0Texture?.Bind(0);
         }
 

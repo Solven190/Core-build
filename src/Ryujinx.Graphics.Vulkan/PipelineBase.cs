@@ -843,6 +843,11 @@ namespace Ryujinx.Graphics.Vulkan
         public void SetImage(ShaderStage stage, int binding, ITexture image)
         {
             _descriptorSetUpdater.SetImage(Cbs, stage, binding, image);
+
+            if (stage == ShaderStage.Fragment && image is TextureView view)
+            {
+                FramebufferParams?.SetVirtualSize((uint)view.Width, (uint)view.Height, (uint)view.Layers);
+            }
         }
 
         public void SetImage(int binding, Auto<DisposableImageView> image)
@@ -1607,6 +1612,24 @@ namespace Ryujinx.Graphics.Vulkan
 
         private bool RecreateGraphicsPipelineIfNeeded()
         {
+            if (FramebufferParams != null &&
+                FramebufferParams.AttachmentsCount == 0 &&
+                FramebufferParams.Width == 1 &&
+                FramebufferParams.Height == 1 &&
+                DynamicState.ViewportsCount != 0)
+            {
+                // An attachmentless fragment pass can reach its first draw before the storage
+                // image descriptor is rebound. At that point the null framebuffer still has
+                // its constructor fallback of 1x1, even though the guest viewport already
+                // describes the real render area. Seed the virtual framebuffer from that
+                // viewport so the first storage-image draw is not clipped to one pixel.
+                Silk.NET.Vulkan.Viewport viewport = DynamicState.Viewports[0];
+                uint width = (uint)Math.Max(1f, Math.Abs(viewport.Width));
+                uint height = (uint)Math.Max(1f, Math.Abs(viewport.Height));
+
+                FramebufferParams.SetVirtualSize(width, height, 1);
+            }
+
             if (AutoFlush.ShouldFlushDraw(DrawCount))
             {
                 Gd.FlushAllCommands();
