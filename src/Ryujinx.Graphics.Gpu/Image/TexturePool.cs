@@ -185,6 +185,16 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             if (texture == null)
             {
+                // A pool index may point at an uninitialized guest heap slot. Validate the
+                // descriptor address before decoding format, dimensions, or layout fields.
+                ulong address = descriptor.UnpackAddress();
+
+                if (address == 0 || !_channel.MemoryManager.IsMapped(address))
+                {
+                    _invalidMap.Set(id);
+                    return ref descriptor;
+                }
+
                 if (_invalidMap.IsSet(id))
                 {
                     return ref descriptor;

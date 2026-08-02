@@ -54,6 +54,12 @@ namespace Ryujinx.Graphics.Vulkan
 
         public void SetSamplers(int index, ISampler[] samplers)
         {
+            // Buffer textures use VkBufferView descriptors and do not have samplers.
+            if (_isBuffer)
+            {
+                return;
+            }
+
             for (int i = 0; i < samplers.Length; i++)
             {
                 ISampler sampler = samplers[i];
@@ -109,6 +115,13 @@ namespace Ryujinx.Graphics.Vulkan
 
         public void QueueWriteToReadBarriers(CommandBufferScoped cbs, PipelineStageFlags stageFlags)
         {
+            // Texture-buffer arrays contain buffer views rather than image TextureStorage refs.
+            // Buffer synchronization is handled when BufferManager binds their storage.
+            if (_isBuffer)
+            {
+                return;
+            }
+
             HashSet<TextureStorage> storages = _storages;
 
             if (storages == null)
