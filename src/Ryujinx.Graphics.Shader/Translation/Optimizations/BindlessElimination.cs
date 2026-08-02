@@ -70,19 +70,7 @@ namespace Ryujinx.Graphics.Shader.Translation.Optimizations
 
             Operand bindlessHandle = texOp.GetSource(0);
 
-            if (bindlessHandle.AsgOp is PhiNode phi)
-            {
-                for (int srcIndex = 0; srcIndex < phi.SourcesCount; srcIndex++)
-                {
-                    Operand phiSource = phi.GetSource(srcIndex);
-
-                    if (phiSource.AsgOp is not PhiNode && !IsBindlessAccessAllowed(phiSource))
-                    {
-                        return false;
-                    }
-                }
-            }
-            else if (!IsBindlessAccessAllowed(bindlessHandle))
+            if (!IsBindlessAccessAllowed(bindlessHandle))
             {
                 return false;
             }
@@ -100,7 +88,10 @@ namespace Ryujinx.Graphics.Shader.Translation.Optimizations
 
             texOp.SetSource(0, textureIndex);
 
-            bool hasSampler = !texOp.Inst.IsImage();
+            // Buffer textures use a TIC/BufferView only and never consume a sampler.
+            // Avoiding a sampler descriptor array here is especially important for bindless
+            // texture buffers, where the array can span the entire sampler pool for no benefit.
+            bool hasSampler = !texOp.Inst.IsImage() && texOp.Type != SamplerType.TextureBuffer;
 
             SetBindingPair textureSetAndBinding = resourceManager.GetTextureOrImageBinding(
                 texOp.Inst,
@@ -143,26 +134,112 @@ namespace Ryujinx.Graphics.Shader.Translation.Optimizations
 
         private static bool IsBindlessAccessAllowed(Operand bindlessHandle)
         {
-            if (bindlessHandle.Type == OperandType.ConstantBuffer)
-            {
-                // Bindless access with handles from constant buffer is allowed.
+            // Walk only SSA merges and integer operations that can transparently construct
+            // or select a packed texture/sampler handle. Do not walk arbitrary operations:
+            // finding an unrelated resource load elsewhere in the SSA graph must not enable
+            // descriptor-array access for this handle.
+            const int MaxVisitedOperands = 256;
+            const int MaxDepth = 64;
 
-                return true;
+            Stack<(Operand Operand, int Depth)> work = new();
+            HashSet<Operand> visited = new();
+
+            work.Push((bindlessHandle, 0));
+
+            while (work.Count != 0 && visited.Count < MaxVisitedOperands)
+            {
+                (Operand operand, int depth) = work.Pop();
+
+                if (operand == null || depth > MaxDepth || !visited.Add(operand))
+                {
+                    continue;
+                }
+
+                if (operand.Type == OperandType.ConstantBuffer)
+                {
+                    // Constant buffers are accepted by the existing direct-handle path and
+                    // remain accepted when SSA merges or integer handle arithmetic obscure them.
+                    return true;
+                }
+
+                if (operand.AsgOp is PhiNode phi)
+                {
+                    for (int index = 0; index < phi.SourcesCount; index++)
+                    {
+                        Operand source = phi.GetSource(index);
+
+                        if (source.Type != OperandType.Undefined)
+                        {
+                            work.Push((source, depth + 1));
+                        }
+                    }
+
+                    continue;
+                }
+
+                if (operand.AsgOp is not Operation operation)
+                {
+                    continue;
+                }
+
+                Instruction inst = operation.Inst & Instruction.Mask;
+
+                if (inst == Instruction.Load)
+                {
+                    // Preserve the performance restriction. Static CBUF operands are already
+                    // accepted above; accept their dynamically indexed Load form as the same
+                    // resource class, plus the existing shader-input and storage-buffer sources.
+                    // Other loads remain traversal barriers and cannot authorize a pool array.
+                    if (operation.StorageKind == StorageKind.ConstantBuffer ||
+                        operation.StorageKind == StorageKind.Input ||
+                        operation.StorageKind == StorageKind.StorageBuffer)
+                    {
+                        return true;
+                    }
+
+                    continue;
+                }
+
+                if (!IsHandleConstructionOperation(inst))
+                {
+                    // Texture/image operations, arbitrary loads, floating-point conversions,
+                    // calls and other unrelated calculations are deliberate traversal barriers.
+                    continue;
+                }
+
+                for (int index = 0; index < operation.SourcesCount; index++)
+                {
+                    work.Push((operation.GetSource(index), depth + 1));
+                }
             }
 
-            if (bindlessHandle.AsgOp is not Operation handleOp ||
-                handleOp.Inst != Instruction.Load ||
-                (handleOp.StorageKind != StorageKind.Input && handleOp.StorageKind != StorageKind.StorageBuffer))
-            {
-                // Right now, we only allow bindless access when the handle comes from a shader input or storage buffer.
-                // This is an artificial limitation to prevent it from being used in cases where it
-                // would have a large performance impact of loading all textures in the pool.
-                // It might be removed in the future, if we can mitigate the performance impact.
+            return false;
+        }
 
-                return false;
-            }
-
-            return true;
+        private static bool IsHandleConstructionOperation(Instruction inst)
+        {
+            return inst is
+                Instruction.Add or
+                Instruction.Subtract or
+                Instruction.Multiply or
+                Instruction.MultiplyHighS32 or
+                Instruction.MultiplyHighU32 or
+                Instruction.BitwiseAnd or
+                Instruction.BitwiseExclusiveOr or
+                Instruction.BitwiseNot or
+                Instruction.BitwiseOr or
+                Instruction.BitfieldExtractS32 or
+                Instruction.BitfieldExtractU32 or
+                Instruction.BitfieldInsert or
+                Instruction.ShiftLeft or
+                Instruction.ShiftRightS32 or
+                Instruction.ShiftRightU32 or
+                Instruction.MinimumU32 or
+                Instruction.MaximumU32 or
+                Instruction.ClampU32 or
+                Instruction.ConditionalSelect or
+                Instruction.Copy or
+                Instruction.VectorExtract;
         }
 
         private static bool TryConvertBindless(BasicBlock block, ResourceManager resourceManager, IGpuAccessor gpuAccessor, TextureOperation texOp)
