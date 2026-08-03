@@ -175,16 +175,16 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
 
         /// <summary>
-        /// Initialize all incompatible overlaps in the list, registering them with the other texture groups
-        /// and creating copy dependencies when partially compatible.
+        /// Initializes all incompatible overlaps in the list, registers them with the other texture groups,
+        /// and creates regular or exact raw byte copy dependencies where supported.
         /// </summary>
         public void InitializeOverlaps()
         {
             foreach (TextureIncompatibleOverlap overlap in _incompatibleOverlaps)
             {
-                if (overlap.Compatibility == TextureViewCompatibility.LayoutIncompatible)
+                if (overlap.Compatibility <= TextureViewCompatibility.LayoutIncompatible)
                 {
-                    CreateCopyDependency(overlap.Group, false);
+                    CreateCopyDependency(overlap.Group, false, overlap.Compatibility);
                 }
 
                 overlap.Group._incompatibleOverlaps.Add(new TextureIncompatibleOverlap(this, overlap.Compatibility));
@@ -1532,13 +1532,57 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
 
         /// <summary>
-        /// Creates a copy dependency to another texture group, where handles overlap.
-        /// Scans through all handles to find compatible patches in the other group.
+        /// Determines whether an exact raw byte copy dependency can be safely created
+        /// between this texture group and another fully incompatible texture group.
+        /// </summary>
+        /// <param name="other">The overlapping texture group to evaluate</param>
+        /// <returns>
+        /// True if both texture groups describe the same contiguous guest memory range
+        /// and have compatible logical payload sizes and resource properties for an exact raw byte copy;
+        /// otherwise, false
+        /// </returns>
+        private bool CanCreateRawCopyDependency(TextureGroup other)
+        {
+            TextureInfo info = Storage.Info;
+            TextureInfo otherInfo = other.Storage.Info;
+            long size = (long)info.Width * info.Height * info.GetDepth() * info.FormatInfo.BytesPerPixel;
+            long otherSize = (long)otherInfo.Width * otherInfo.Height * otherInfo.GetDepth() * otherInfo.FormatInfo.BytesPerPixel;
+
+            return size > 0 &&
+                size <= int.MaxValue &&
+                size == otherSize &&
+                Storage.Range.Count == 1 &&
+                other.Storage.Range.Count == 1 &&
+                Storage.Range.GetSubRange(0).Address == other.Storage.Range.GetSubRange(0).Address &&
+                Storage.Range.GetSubRange(0).Size == other.Storage.Range.GetSubRange(0).Size &&
+                info.Levels == 1 &&
+                otherInfo.Levels == 1 &&
+                info.GetSlices() == 1 &&
+                otherInfo.GetSlices() == 1 &&
+                info.Samples == 1 &&
+                otherInfo.Samples == 1 &&
+                info.Target != Target.TextureBuffer &&
+                otherInfo.Target != Target.TextureBuffer &&
+                !info.FormatInfo.IsCompressed &&
+                !otherInfo.FormatInfo.IsCompressed &&
+                !info.FormatInfo.Format.IsDepthOrStencil() &&
+                !otherInfo.FormatInfo.Format.IsDepthOrStencil();
+        }
+
+        /// <summary>
+        /// Creates copy dependencies between overlapping handles in this texture group
+        /// and another texture group.
+        /// Regular texture copy dependencies are created for compatible handle pairs.
+        /// For fully incompatible groups, an exact raw byte copy dependency may be created
+        /// when the strict raw copy requirements are satisfied.
         /// </summary>
         /// <param name="other">The texture group that overlaps this one</param>
-        /// <param name="copyTo">True if this texture is first copied to the given one, false for the opposite direction</param>
-        public void CreateCopyDependency(TextureGroup other, bool copyTo)
+        /// <param name="copyTo">True if this texture should initially be copied to the other texture; false if the other texture should initially be copied to this texture</param>
+        /// <param name="compatibility">The view compatibility between the two texture groups, used to determine whether a regular texture copy or an exact raw byte copy may be used</param>
+        public void CreateCopyDependency(TextureGroup other, bool copyTo,
+            TextureViewCompatibility compatibility = TextureViewCompatibility.LayoutIncompatible)
         {
+            bool rawCopy = compatibility == TextureViewCompatibility.Incompatible && CanCreateRawCopyDependency(other);
             for (int i = 0; i < _allOffsets.Length; i++)
             {
                 (_, int level) = GetLayerLevelForView(i);
@@ -1557,8 +1601,10 @@ namespace Ryujinx.Graphics.Gpu.Image
                         TextureInfo info = Storage.Info;
                         TextureInfo otherInfo = other.Storage.Info;
 
-                        if (TextureCompatibility.ViewLayoutCompatible(info, otherInfo, level, otherLevel) &&
-                            TextureCompatibility.CopySizeMatches(info, otherInfo, level, otherLevel))
+                        bool textureCopy = TextureCompatibility.ViewLayoutCompatible(info, otherInfo, level, otherLevel) &&
+                            TextureCompatibility.CopySizeMatches(info, otherInfo, level, otherLevel);
+
+                        if (textureCopy || rawCopy)
                         {
                             // These textures are copy compatible. Create the dependency.
 
@@ -1568,18 +1614,34 @@ namespace Ryujinx.Graphics.Gpu.Image
                             TextureGroupHandle handle = _handles[i];
                             TextureGroupHandle otherHandle = other._handles[j];
 
-                            handle.CreateCopyDependency(otherHandle, copyTo);
+                            handle.CreateCopyDependency(otherHandle, copyTo, rawCopy);
 
                             // If "copyTo" is true, this texture must copy to the other.
                             // Otherwise, it must copy to this texture.
 
                             if (copyTo)
                             {
-                                otherHandle.Copy(_context, handle);
+                                if (rawCopy)
+                                {
+                                    otherHandle.DeferCopy(handle, true);
+                                    otherHandle.Copy(_context);
+                                }
+                                else
+                                {
+                                    otherHandle.Copy(_context, handle);
+                                }
                             }
                             else
                             {
-                                handle.Copy(_context, otherHandle);
+                                if (rawCopy)
+                                {
+                                    handle.DeferCopy(otherHandle, true);
+                                    handle.Copy(_context);
+                                }
+                                else
+                                {
+                                    handle.Copy(_context, otherHandle);
+                                }
                             }
                         }
                     }
@@ -1588,18 +1650,19 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
 
         /// <summary>
-        /// Registers another texture group as an incompatible overlap, if not already registered.
+        /// Registers another texture group as an incompatible overlap, if it has not already been registered,
+        /// and creates a supported copy dependency when requested.
         /// </summary>
-        /// <param name="other">The texture group to add to the incompatible overlaps list</param>
-        /// <param name="copy">True if the overlap should register copy dependencies</param>
+        /// <param name="other">The incompatible texture overlap to register</param>
+        /// <param name="copy">True to attempt to create a regular or exact raw byte copy dependency for the overlapping texture groups; otherwise, false</param>
         public void RegisterIncompatibleOverlap(TextureIncompatibleOverlap other, bool copy)
         {
             if (!_incompatibleOverlaps.Any(overlap => overlap.Group == other.Group))
             {
-                if (copy && other.Compatibility == TextureViewCompatibility.LayoutIncompatible)
+                if (copy && other.Compatibility <= TextureViewCompatibility.LayoutIncompatible)
                 {
                     // Any of the group's views may share compatibility, even if the parents do not fully.
-                    CreateCopyDependency(other.Group, false);
+                    CreateCopyDependency(other.Group, false, other.Compatibility);
                 }
 
                 _incompatibleOverlaps.Add(other);

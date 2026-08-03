@@ -17,21 +17,30 @@ namespace Ryujinx.Graphics.Gpu.Image
         public TextureDependency Other;
 
         /// <summary>
-        /// Create a new texture dependency.
+        /// Indicates whether this dependency requires an exact raw byte copy
+        /// instead of a regular texture copy.
+        /// </summary>
+        public readonly bool RawCopy;
+
+        /// <summary>
+        /// Creates a new texture dependency.
         /// </summary>
         /// <param name="handle">The handle that owns the dependency</param>
-        public TextureDependency(TextureGroupHandle handle)
+        /// <param name="rawCopy">True if copies performed for this dependency must preserve the exact raw bytes; false to use a regular texture copy</param>
+        public TextureDependency(TextureGroupHandle handle, bool rawCopy = false)
         {
             Handle = handle;
+            RawCopy = rawCopy;
         }
 
         /// <summary>
-        /// Signal that the owner of this dependency has been modified,
-        /// meaning that the other dependency's handle must defer a copy from it.
+        /// Signals that the owner of this dependency has been modified,
+        /// causing the other dependency's handle to defer a copy from it.
+        /// The dependency's copy mode is propagated to the deferred copy.
         /// </summary>
         public void SignalModified()
         {
-            Other.Handle.DeferCopy(Handle);
+            Other.Handle.DeferCopy(Handle, RawCopy);
         }
     }
 }

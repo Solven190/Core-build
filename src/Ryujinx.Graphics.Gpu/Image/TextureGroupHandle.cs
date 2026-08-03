@@ -1,3 +1,5 @@
+using Ryujinx.Common.Memory;
+using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.Gpu.Synchronization;
 using Ryujinx.Memory.Tracking;
 using System;
@@ -107,6 +109,12 @@ namespace Ryujinx.Graphics.Gpu.Image
         public TextureGroupHandle DeferredCopy { get; set; }
 
         /// <summary>
+        /// Indicates whether the pending deferred copy must preserve the exact raw bytes
+        /// instead of using a regular texture copy.
+        /// </summary>
+        public bool DeferredCopyRaw { get; set; }
+
+        /// <summary>
         /// Create a new texture group handle, representing a range of views in a storage texture.
         /// </summary>
         /// <param name="group">The TextureGroup that the handle belongs to</param>
@@ -160,8 +168,9 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
 
         /// <summary>
-        /// The action to perform when a memory tracking handle is flipped to dirty.
-        /// This notifies overlapping textures that the memory needs to be synchronized.
+        /// Handles a memory tracking region becoming dirty.
+        /// This notifies all overlapping textures that their memory must be synchronized
+        /// and discards any pending deferred copy state.
         /// </summary>
         private void DirtyAction()
         {
@@ -177,7 +186,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                 }
             }
 
-            DeferredCopy = null;
+            ClearDeferredCopy();
         }
 
         /// <summary>
@@ -186,7 +195,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// </summary>
         public void DiscardData()
         {
-            DeferredCopy = null;
+            ClearDeferredCopy();
 
             foreach (RegionHandle handle in Handles)
             {
@@ -469,14 +478,22 @@ namespace Ryujinx.Graphics.Gpu.Image
             return syncpoint || !lastInBuffer;
         }
 
+        private void ClearDeferredCopy()
+        {
+            DeferredCopy = null;
+            DeferredCopyRaw = false;
+        }
+
         /// <summary>
-        /// Signal that a copy dependent texture has been modified, and must have its data copied to this one.
+        /// Defers a copy from another texture group handle until this handle is next synchronized.
         /// </summary>
-        /// <param name="copyFrom">The texture handle that must defer a copy to this one</param>
-        public void DeferCopy(TextureGroupHandle copyFrom)
+        /// <param name="copyFrom">The texture group handle containing the source data</param>
+        /// <param name="rawCopy">True if the deferred copy must preserve the exact raw bytes; false to use a regular texture copy</param>
+        public void DeferCopy(TextureGroupHandle copyFrom, bool rawCopy = false)
         {
             Modified = false;
             DeferredCopy = copyFrom;
+            DeferredCopyRaw = rawCopy;
 
             _group.Storage.SignalGroupDirty();
 
@@ -487,11 +504,12 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
 
         /// <summary>
-        /// Create a copy dependency between this handle, and another.
+        /// Creates a two-way copy dependency between this handle and another handle.
         /// </summary>
-        /// <param name="other">The handle to create a copy dependency to</param>
-        /// <param name="copyToOther">True if a copy should be deferred to all of the other handle's dependencies</param>
-        public void CreateCopyDependency(TextureGroupHandle other, bool copyToOther = false)
+        /// <param name="other">The other handle participating in the dependency</param>
+        /// <param name="copyToOther">True if a pending copy from this handle should also be propagated to the other handle's existing dependencies; otherwise, false</param>
+        /// <param name="rawCopy">True if the dependency must use exact raw byte copies; false to use regular texture copies</param>
+        public void CreateCopyDependency(TextureGroupHandle other, bool copyToOther = false, bool rawCopy = false)
         {
             // Does this dependency already exist?
             foreach (TextureDependency existing in Dependencies)
@@ -506,14 +524,19 @@ namespace Ryujinx.Graphics.Gpu.Image
             _group.HasCopyDependencies = true;
             other._group.HasCopyDependencies = true;
 
-            TextureDependency dependency = new(this);
-            TextureDependency otherDependency = new(other);
+            TextureDependency dependency = new(this, rawCopy);
+            TextureDependency otherDependency = new(other, rawCopy);
 
             dependency.Other = otherDependency;
             otherDependency.Other = dependency;
 
             Dependencies.Add(dependency);
             other.Dependencies.Add(otherDependency);
+
+            if (rawCopy)
+            {
+                return;
+            }
 
             // Recursively create dependency:
             // All of this handle's dependencies must depend on the other.
@@ -559,19 +582,24 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
 
         /// <summary>
-        /// Perform a copy from the provided handle to this one, or perform a deferred copy if none is provided.
+        /// Copies texture data from the provided handle to this handle,
+        /// or fulfills the pending deferred copy when no source handle is provided.
+        /// Depending on the dependency mode, the operation uses either a regular texture copy
+        /// or an exact raw byte copy.
         /// </summary>
-        /// <param name="context">GPU context to register sync for modified handles</param>
-        /// <param name="fromHandle">The handle to copy from. If not provided, this method will copy from and clear the deferred copy instead</param>
-        /// <returns>True if the copy was performed, false otherwise</returns>
+        /// <param name="context">The GPU context used to register synchronization for modified handles</param>
+        /// <param name="fromHandle">The handle to copy from, or null to use and acknowledge the pending deferred copy</param>
+        /// <returns>True if the copy was performed; otherwise, false</returns>
         public bool Copy(GpuContext context, TextureGroupHandle fromHandle = null)
         {
             bool result = false;
             bool shouldCopy = false;
+            bool rawCopy = false;
 
             if (fromHandle == null)
             {
                 fromHandle = DeferredCopy;
+                rawCopy = DeferredCopyRaw;
 
                 if (fromHandle != null)
                 {
@@ -584,7 +612,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                     if (fromHandle._bindCount == 0)
                     {
                         // Repeat the copy in future if the bind count is greater than 0.
-                        DeferredCopy = null;
+                        ClearDeferredCopy();
                     }
                 }
             }
@@ -606,12 +634,35 @@ namespace Ryujinx.Graphics.Gpu.Image
                     to.PropagateScale(from);
                 }
 
-                from.HostTexture.CopyTo(
-                    to.HostTexture,
-                    fromHandle._firstLayer,
-                    _firstLayer,
-                    fromHandle._firstLevel,
-                    _firstLevel);
+                if (rawCopy)
+                {
+                    PinnedSpan<byte> pinned = from.HostTexture.GetData(fromHandle._firstLayer, fromHandle._firstLevel);
+                    try
+                    {
+                        ReadOnlySpan<byte> data = pinned.Get();
+                        long targetSize = (long)to.Width * to.Height * to.Info.GetDepth() * to.Info.FormatInfo.BytesPerPixel;
+
+                        if (targetSize <= 0 || targetSize > int.MaxValue || data.Length != targetSize)
+                        {
+                            return false;
+                        }
+
+                        to.HostTexture.SetData(MemoryOwner<byte>.RentCopy(data), _firstLayer, _firstLevel);
+                    }
+                    finally
+                    {
+                        pinned.Dispose();
+                    }
+                }
+                else
+                {
+                    from.HostTexture.CopyTo(
+                        to.HostTexture,
+                        fromHandle._firstLayer,
+                        _firstLayer,
+                        fromHandle._firstLevel,
+                        _firstLevel);
+                }
 
                 if (fromHandle.Modified)
                 {
