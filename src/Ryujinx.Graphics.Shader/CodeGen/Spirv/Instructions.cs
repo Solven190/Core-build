@@ -1241,6 +1241,23 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Spirv
 
             SpvInstruction pCoords = AssemblePVector(pCount);
 
+            if (!intCoords)
+            {
+                SpvInstruction nfFp32 = context.TypeFP32();
+                SpvInstruction nfType = pCount > 1 ? context.TypeVector(nfFp32, pCount) : nfFp32;
+                SpvInstruction nfZero = context.Constant(nfFp32, 0f);
+
+                if (pCount > 1)
+                {
+                    SpvInstruction[] nfElems = new SpvInstruction[pCount];
+                    for (int nfI = 0; nfI < pCount; nfI++) { nfElems[nfI] = nfZero; }
+                    nfZero = context.ConstantComposite(nfType, nfElems);
+                }
+
+                SpvInstruction nfBool = pCount > 1 ? context.TypeVector(context.TypeBool(), pCount) : context.TypeBool();
+                pCoords = context.Select(nfType, context.IsNan(nfBool, pCoords), nfZero, pCoords);
+            }
+
             SpvInstruction AssembleDerivativesVector(int count)
             {
                 if (count > 1)
