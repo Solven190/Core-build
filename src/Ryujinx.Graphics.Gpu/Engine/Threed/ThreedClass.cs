@@ -268,10 +268,11 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
         {
             SetMmeShadowRamControlMode shadow = ShadowMode;
             Span<Boolean32> state = _state.State.BlendEnable.AsSpan();
+            Span<Boolean32> shadowState = _state.ShadowState.BlendEnable.AsSpan();
 
             if (shadow.IsReplay())
             {
-                state.CopyTo(enable);
+                shadowState.CopyTo(enable);
             }
 
             if (!UnsafeEquals32Byte(enable, state))
@@ -283,7 +284,7 @@ namespace Ryujinx.Graphics.Gpu.Engine.Threed
 
             if (shadow.IsTrack())
             {
-                enable.CopyTo(state);
+                enable.CopyTo(shadowState);
             }
         }
 
