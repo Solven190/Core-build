@@ -783,8 +783,28 @@ namespace Ryujinx.HLE.HOS
             }
 
             List<Cheat> cheats = mods.Cheats;
-            Dictionary<string, ulong> processExes = tamperInfo.BuildIds.Zip(tamperInfo.CodeAddresses, (k, v) => new { k, v })
-                .ToDictionary(x => x.k[..Math.Min(Cheat.CheatIdSize, x.k.Length)], x => x.v);
+            Dictionary<string, ulong> processExes = new();
+
+            foreach ((string buildId, ulong codeAddress) in tamperInfo.BuildIds.Zip(tamperInfo.CodeAddresses))
+            {
+                string normalizedBuildId = buildId[..Math.Min(Cheat.CheatIdSize, buildId.Length)];
+
+                if (processExes.TryGetValue(normalizedBuildId, out ulong existingAddress))
+                {
+                    if (existingAddress != codeAddress)
+                    {
+                        Logger.Warning?.Print(
+                            LogClass.ModLoader,
+                            $"Duplicate BuildId prefix '{normalizedBuildId}' has different code addresses. " +
+                            $"Existing: 0x{existingAddress:X}, duplicate: 0x{codeAddress:X}. " +
+                            $"Keeping the first one.");
+                    }
+
+                    continue;
+                }
+
+                processExes.Add(normalizedBuildId, codeAddress);
+            }
 
             foreach (Cheat cheat in cheats)
             {
