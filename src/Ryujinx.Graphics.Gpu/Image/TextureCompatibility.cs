@@ -381,12 +381,15 @@ namespace Ryujinx.Graphics.Gpu.Image
             }
 
             // Some APIs align the width for copy and render target textures,
-            // so the width may not match in this case for different uses of the same texture.
+            // so the width may not match for different uses of the same texture.
             // To account for this, we compare the aligned width here.
-            // We expect height to always match exactly, if the texture is the same.
+            // However, matching block footprints are not sufficient for compressed textures;
+            // their logical dimensions must also match.
             if (alignedWidthMatches && lhsSize.Height == rhsSize.Height)
             {
-                return (exact && lhsSize.Width != rhsSize.Width) || lhsSize.Width < rhsSize.Width
+                return ((lhs.FormatInfo.IsCompressed || rhs.FormatInfo.IsCompressed) &&
+                        (Math.Max(1, lhs.Width >> level) != rhs.Width || Math.Max(1, lhs.Height >> level) != rhs.Height)) ||
+                       (exact && lhsSize.Width != rhsSize.Width) || lhsSize.Width < rhsSize.Width
                     ? TextureViewCompatibility.CopyOnly
                     : result;
             }
