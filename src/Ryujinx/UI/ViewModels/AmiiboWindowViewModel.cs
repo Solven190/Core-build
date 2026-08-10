@@ -429,7 +429,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, "https://amiibo.ryujinx.org/"));
+                HttpResponseMessage response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, "https://raw.githubusercontent.com/Ryubing/Nfc/refs/heads/main/tags.json"));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -448,7 +448,7 @@ namespace Ryujinx.Ava.UI.ViewModels
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync("https://amiibo.ryujinx.org/");
+                HttpResponseMessage response = await _httpClient.GetAsync("https://raw.githubusercontent.com/Ryubing/Nfc/refs/heads/main/tags.json");
 
                 if (response.IsSuccessStatusCode)
                 {
