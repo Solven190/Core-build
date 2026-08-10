@@ -77,13 +77,13 @@
                                         IsCheckedChanged="Order_Checked"
                                         Content="{locale:Locale OrderAscending}"
                                         GroupName="Order"
-                                        IsChecked="{Binding SortingAscending, Mode=OneTime}"
+                                        IsChecked="{Binding SortingAscending, Mode=TwoWay}"
                                         Tag="Ascending" />
                                     <RadioButton
                                         IsCheckedChanged="Order_Checked"
                                         Content="{locale:Locale OrderDescending}"
                                         GroupName="Order"
-                                        IsChecked="{Binding !SortingAscending, Mode=OneTime}"
+                                        IsChecked="{Binding !SortingAscending, Mode=TwoWay}"
                                         Tag="Descending" />
                                 </StackPanel>
                             </Flyout>

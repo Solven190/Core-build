@@ -69,13 +69,13 @@ namespace Ryujinx.Ava.UI.Windows
 
         public void Sort_Checked(object sender, RoutedEventArgs args)
         {
-            if (sender is RadioButton { Tag: string sortField })
+            if (sender is RadioButton { IsChecked: true, Tag: string sortField })
                 ViewModel.SortingField = Enum.Parse<XCITrimmerViewModel.SortField>(sortField);
         }
 
         public void Order_Checked(object sender, RoutedEventArgs args)
         {
-            if (sender is RadioButton { Tag: string sortOrder })
+            if (sender is RadioButton { IsChecked: true, Tag: string sortOrder })
                 ViewModel.SortingAscending = sortOrder is "Ascending";
         }
 

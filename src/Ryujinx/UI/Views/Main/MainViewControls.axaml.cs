@@ -32,18 +32,14 @@ namespace Ryujinx.Ava.UI.Views.Main
 
         public void Sort_Checked(object sender, RoutedEventArgs args)
         {
-            if (sender is RadioButton button)
-            {
-                ViewModel.Sort(Enum.Parse<ApplicationSort>(button.Tag?.ToString() ?? string.Empty));
-            }
+            if (sender is RadioButton { IsChecked: true, Tag: string sortStrategy })
+                ViewModel.Sort(Enum.Parse<ApplicationSort>(sortStrategy));
         }
 
         public void Order_Checked(object sender, RoutedEventArgs args)
         {
-            if (sender is RadioButton button)
-            {
-                ViewModel.Sort(button.Tag?.ToString() != "Descending");
-            }
+            if (sender is RadioButton { IsChecked: true, Tag: string sortOrder })
+                ViewModel.Sort(sortOrder is not "Descending");
         }
 
         private void SearchBox_OnKeyUp(object sender, KeyEventArgs e)
