@@ -1,12 +1,10 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Platform;
-using Avalonia.Threading;
-using FluentAvalonia.Core;
 using FluentAvalonia.UI.Controls;
 using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.HLE.FileSystem;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Ryujinx.Ava.UI.Windows
@@ -79,9 +77,9 @@ namespace Ryujinx.Ava.UI.Windows
             NavPanel.SelectedItem = NavPanel.MenuItems.ElementAt(0);
         }
 
-        private void NavPanelOnSelectionChanged(object sender, NavigationViewSelectionChangedEventArgs e)
+        private void NavPanelOnSelectionChanged(object sender, FANavigationViewSelectionChangedEventArgs e)
         {
-            if (e.SelectedItem is NavigationViewItem navItem && navItem.Tag is not null)
+            if (e.SelectedItem is FANavigationViewItem navItem && navItem.Tag is not null)
             {
                 switch (navItem.Tag.ToString())
                 {
