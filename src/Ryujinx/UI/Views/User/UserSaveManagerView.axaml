@@ -114,7 +114,7 @@
                                     BorderBrush="{DynamicResource AppListHoverBackgroundColor}"
                                     BorderThickness="1"
                                     IsVisible="{Binding !InGameList}">
-                                    <ui:SymbolIcon
+                                    <ui:FASymbolIcon
                                         Symbol="Help"
                                         FontSize="30"
                                         HorizontalAlignment="Center"
@@ -151,7 +151,7 @@
                                     MinHeight="0"
                                     Name="OpenLocation"
                                     Click="OpenLocation">
-                                    <ui:SymbolIcon
+                                    <ui:FASymbolIcon
                                         Symbol="OpenFolder"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center" />
@@ -164,7 +164,7 @@
                                     MinHeight="0"
                                     Name="Delete"
                                     Click="Delete">
-                                    <ui:SymbolIcon
+                                    <ui:FASymbolIcon
                                         Symbol="Delete"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center" />
@@ -183,7 +183,7 @@
                 Width="50"
                 MinWidth="50"
                 Click="GoBack">
-                <ui:SymbolIcon Symbol="Back" />
+                <ui:FASymbolIcon Symbol="Back" />
             </Button>
         </StackPanel>
     </Grid>

@@ -8,6 +8,7 @@ using Ryujinx.Ava.UI.Controls;
 using Ryujinx.Ava.UI.Models;
 using Ryujinx.Ava.UI.ViewModels;
 using Button = Avalonia.Controls.Button;
+using NavigationEventArgs = FluentAvalonia.UI.Navigation.FANavigationEventArgs;
 
 namespace Ryujinx.Ava.UI.Views.User
 {
@@ -23,7 +24,7 @@ namespace Ryujinx.Ava.UI.Views.User
 
             if (Program.PreviewerDetached)
             {
-                AddHandler(Frame.NavigatedToEvent, (_, e) =>
+                AddHandler(FAFrame.NavigatedToEvent, (_, e) =>
                 {
                     NavigatedTo(e);
                 }, RoutingStrategies.Direct);
@@ -34,15 +35,15 @@ namespace Ryujinx.Ava.UI.Views.User
         {
             if (Program.PreviewerDetached)
             {
-                if (arg.NavigationMode == NavigationMode.New)
+                if (arg.NavigationMode == FANavigationMode.New)
                 {
                     _parent = (NavigationDialogHost)arg.Parameter;
                     ViewModel = _parent.ViewModel;
                 }
 
-                if (arg.NavigationMode == NavigationMode.Back)
+                if (arg.NavigationMode == FANavigationMode.Back)
                 {
-                    ((ContentDialog)_parent.Parent)?.Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle];
+                    ((FAContentDialog)_parent.Parent)?.Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle];
                 }
 
                 DataContext = ViewModel;
@@ -123,7 +124,7 @@ namespace Ryujinx.Ava.UI.Views.User
 
         private void Close(object sender, RoutedEventArgs e)
         {
-            ((ContentDialog)_parent.Parent)?.Hide();
+            ((FAContentDialog)_parent.Parent)?.Hide();
         }
     }
 }

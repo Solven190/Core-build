@@ -98,7 +98,7 @@
                             <ComboBoxItem
                                 Content="{locale:Locale SettingsTabGraphicsResolutionScaleCustom}" />
                         </ComboBox>
-                        <ui:NumberBox
+                        <ui:FANumberBox
                             Margin="10,0,0,0"
                             ToolTip.Tip="{locale:Locale ResolutionScaleEntryTooltip}"
                             MinWidth="150"

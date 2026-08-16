@@ -34,11 +34,11 @@ namespace Ryujinx.Ava.UI.Windows
             FlowDirection = LocaleManager.Instance.IsRTL() ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         }
 
-        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+        /* protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
 
             ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome | ExtendClientAreaChromeHints.OSXThickTitleBar;
-        }
+        } */
     }
 }

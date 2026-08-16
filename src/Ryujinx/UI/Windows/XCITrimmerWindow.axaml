@@ -96,7 +96,7 @@
                     MaxHeight="29"
                     Margin="5 0 5 0"
                     HorizontalAlignment="Stretch"
-                    Watermark="{locale:Locale Search}"
+                    PlaceholderText="{locale:Locale Search}"
                     Text="{Binding Search}" />
                 <StackPanel
                     Grid.Column="2"

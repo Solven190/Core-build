@@ -32,7 +32,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Avalonia.Controls.DataGrid" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
     <PackageReference Include="Svg.Controls.Avalonia" />

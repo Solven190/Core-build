@@ -35,7 +35,7 @@ namespace Ryujinx.Ava.UI.Views.Input
         {
             RumbleInputView content = new(viewModel);
 
-            ContentDialog contentDialog = new()
+            FAContentDialog contentDialog = new()
             {
                 Title = LocaleManager.Instance[LocaleKeys.ControllerRumbleTitle],
                 PrimaryButtonText = LocaleManager.Instance[LocaleKeys.ControllerSettingsSave],

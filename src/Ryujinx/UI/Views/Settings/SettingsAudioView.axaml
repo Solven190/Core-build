@@ -55,7 +55,7 @@
                                Text="{locale:Locale SettingsTabSystemAudioVolume}"
                                ToolTip.Tip="{locale:Locale AudioVolumeTooltip}"
                                Width="250" />
-                    <ui:NumberBox Value="{Binding Volume}"
+                    <ui:FANumberBox Value="{Binding Volume}"
                             ToolTip.Tip="{locale:Locale AudioVolumeTooltip}"
                             Width="350"
                             SmallChange="1"

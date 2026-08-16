@@ -1,7 +1,7 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Navigation;
 using Ryujinx.Ava.Common.Locale;
@@ -13,6 +13,7 @@ using Ryujinx.HLE.FileSystem;
 using SkiaSharp;
 using System.Collections.Generic;
 using System.IO;
+using NavigationEventArgs = FluentAvalonia.UI.Navigation.FANavigationEventArgs;
 
 namespace Ryujinx.Ava.UI.Views.User
 {
@@ -27,7 +28,7 @@ namespace Ryujinx.Ava.UI.Views.User
         public UserProfileImageSelectorView()
         {
             InitializeComponent();
-            AddHandler(Frame.NavigatedToEvent, (_, e) =>
+            AddHandler(FAFrame.NavigatedToEvent, (_, e) =>
             {
                 NavigatedTo(e);
             }, RoutingStrategies.Direct);
@@ -39,11 +40,11 @@ namespace Ryujinx.Ava.UI.Views.User
             {
                 switch (arg.NavigationMode)
                 {
-                    case NavigationMode.New:
+                    case FANavigationMode.New:
                         (_parent, _profile) = ((NavigationDialogHost, TempProfile))arg.Parameter;
                         _contentManager = _parent.ContentManager;
 
-                        ((ContentDialog)_parent.Parent)?.Title = $"{LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle]} - {LocaleManager.Instance[LocaleKeys.ProfileImageSelectionHeader]}";
+                        ((FAContentDialog)_parent.Parent)?.Title = $"{LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle]} - {LocaleManager.Instance[LocaleKeys.ProfileImageSelectionHeader]}";
 
                         if (Program.PreviewerDetached)
                         {
@@ -52,7 +53,7 @@ namespace Ryujinx.Ava.UI.Views.User
                         }
 
                         break;
-                    case NavigationMode.Back:
+                    case FANavigationMode.Back:
                         if (_profile.Image != null)
                         {
                             _parent.GoBack();
@@ -65,8 +66,8 @@ namespace Ryujinx.Ava.UI.Views.User
         private async void Import_OnClick(object sender, RoutedEventArgs e)
         {
             OsUtils.SetCoreDumpable(true);
-            
-            if (this.GetVisualRoot() is Window window)
+
+            if (TopLevel.GetTopLevel(this) is Window window)
             {
                 IReadOnlyList<IStorageFile> result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {

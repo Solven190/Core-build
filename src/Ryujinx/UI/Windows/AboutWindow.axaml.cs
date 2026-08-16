@@ -24,7 +24,7 @@ namespace Ryujinx.Ava.UI.Windows
 
         public static async Task Show()
         {
-            ContentDialog contentDialog = new()
+            FAContentDialog contentDialog = new()
             {
                 PrimaryButtonText = "",
                 SecondaryButtonText = "",

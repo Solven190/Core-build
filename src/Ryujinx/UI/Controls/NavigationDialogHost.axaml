@@ -9,9 +9,9 @@
     d:DesignHeight="450"
     x:Class="Ryujinx.Ava.UI.Controls.NavigationDialogHost"
     Focusable="True">
-    <ui:Frame 
+    <ui:FAFrame 
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         x:Name="ContentFrame">
-    </ui:Frame>
+    </ui:FAFrame>
 </UserControl>

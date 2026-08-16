@@ -30,7 +30,7 @@ namespace Ryujinx.Ava.UI.Windows
 
         public static async Task Show(MainWindowViewModel mainWindowViewModel)
         {
-            ContentDialog contentDialog = new()
+            FAContentDialog contentDialog = new()
             {
                 PrimaryButtonText = "",
                 SecondaryButtonText = "",
@@ -59,7 +59,7 @@ namespace Ryujinx.Ava.UI.Windows
 
         private void Close(object sender, RoutedEventArgs e)
         {
-            ((ContentDialog)Parent)?.Hide();
+            ((FAContentDialog)Parent)?.Hide();
         }
 
         private void Cancel(Object sender, RoutedEventArgs e)

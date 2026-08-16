@@ -8,7 +8,7 @@ namespace Ryujinx.Ava.UI.Controls
     {
         public UpdateWaitWindow(string primaryText, string secondaryText, CancellationTokenSource cancellationToken) : this(primaryText, secondaryText)
         {
-            SystemDecorations = SystemDecorations.Full;
+            WindowDecorations = WindowDecorations.Full;
             ShowInTaskbar = true;
 
             Closing += (_, _) => cancellationToken.Cancel();
@@ -19,7 +19,7 @@ namespace Ryujinx.Ava.UI.Controls
             PrimaryText.Text = primaryText;
             SecondaryText.Text = secondaryText;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            SystemDecorations = SystemDecorations.BorderOnly;
+            WindowDecorations = WindowDecorations.BorderOnly;
             ShowInTaskbar = false;
         }
 

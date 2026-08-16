@@ -11,7 +11,7 @@ namespace Ryujinx.Ava.UI.Windows
 
             TransparencyLevelHint = [WindowTransparencyLevel.Transparent];
             WindowStartupLocation = WindowStartupLocation.Manual;
-            SystemDecorations = SystemDecorations.None;
+            WindowDecorations = WindowDecorations.None;
             ExtendClientAreaTitleBarHeightHint = 0;
             Background = Brushes.Transparent;
             CanResize = false;

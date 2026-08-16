@@ -12,12 +12,12 @@
     Title="ContentDialogOverlayWindow"
     Focusable="False">
     <window:StyleableWindow.Styles>
-        <Style Selector="ui|ContentDialog /template/ Panel#LayoutRoot">
+        <Style Selector="ui|FAContentDialog /template/ Panel#LayoutRoot">
             <Setter Property="Background"
                     Value="Transparent" />
         </Style>
     </window:StyleableWindow.Styles>
-    <ui:ContentDialog Name="ContentDialog"
+    <ui:FAContentDialog Name="ContentDialog"
                       IsPrimaryButtonEnabled="True"
                       IsSecondaryButtonEnabled="True"
                       IsVisible="False"

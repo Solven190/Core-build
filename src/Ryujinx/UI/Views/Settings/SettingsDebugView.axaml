@@ -41,7 +41,7 @@
                     <TextBlock VerticalAlignment="Center"
                                Text="{locale:Locale SettingsTabDebugGDBStubPort}"
                                Width="250" />
-                    <ui:NumberBox Value="{Binding GDBStubPort}"
+                    <ui:FANumberBox Value="{Binding GDBStubPort}"
                                   Width="350"
                                   SmallChange="1"
                                   LargeChange="10"

@@ -19,6 +19,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Button = Avalonia.Controls.Button;
+using NavigationEventArgs = FluentAvalonia.UI.Navigation.FANavigationEventArgs;
 using UserId = LibHac.Fs.UserId;
 
 namespace Ryujinx.Ava.UI.Views.User
@@ -35,7 +36,7 @@ namespace Ryujinx.Ava.UI.Views.User
         public UserSaveManagerView()
         {
             InitializeComponent();
-            AddHandler(Frame.NavigatedToEvent, (_, e) =>
+            AddHandler(FAFrame.NavigatedToEvent, (_, e) =>
             {
                 NavigatedTo(e);
             }, RoutingStrategies.Direct);
@@ -47,7 +48,7 @@ namespace Ryujinx.Ava.UI.Views.User
             {
                 switch (arg.NavigationMode)
                 {
-                    case NavigationMode.New:
+                    case FANavigationMode.New:
                         (NavigationDialogHost parent, AccountManager accountManager, HorizonClient client, VirtualFileSystem virtualFileSystem) = ((NavigationDialogHost parent, AccountManager accountManager, HorizonClient client, VirtualFileSystem virtualFileSystem))arg.Parameter;
                         _accountManager = accountManager;
                         _horizonClient = client;
@@ -58,7 +59,7 @@ namespace Ryujinx.Ava.UI.Views.User
                 }
 
                 DataContext = ViewModel = new UserSaveManagerViewModel(_accountManager);
-                ((ContentDialog)_parent.Parent)?.Title = $"{LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle]} - {ViewModel.SaveManagerHeading}";
+                ((FAContentDialog)_parent.Parent)?.Title = $"{LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle]} - {ViewModel.SaveManagerHeading}";
 
                 Task.Run(LoadSaves);
             }

@@ -1196,7 +1196,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 {
                     await ContentDialogHelper.ShowTextDialog(
                         LocaleManager.Instance[numAdded > 0 || numRemoved > 0 ? LocaleKeys.RyujinxConfirm : LocaleKeys.RyujinxInfo],
-                        msg, "", "", "", LocaleManager.Instance[LocaleKeys.InputDialogOk], (int)Symbol.Checkmark);
+                        msg, "", "", "", LocaleManager.Instance[LocaleKeys.InputDialogOk], (int)FASymbol.Checkmark);
                 });
             }
 
@@ -1275,9 +1275,12 @@ namespace Ryujinx.Ava.UI.ViewModels
             Glyph = Glyph.Grid;
         }
 
-        public void SetAspectRatio(AspectRatio aspectRatio)
+        public void SetAspectRatio(object aspectRatio)
         {
-            ConfigurationState.Instance.Graphics.AspectRatio.Value = aspectRatio;
+            if (aspectRatio is AspectRatio ratio)
+            {
+                ConfigurationState.Instance.Graphics.AspectRatio.Value = ratio;
+            }
         }
 
         public async Task InstallFirmwareFromFile()

@@ -46,7 +46,7 @@
             Text="{Binding Message}"
             TextInput="Message_TextInput"
             TextWrapping="Wrap"
-            UseFloatingWatermark="True" />
+            UseFloatingPlaceholder="True" />
         <TextBlock
             Name="Error"
             Grid.Row="4"

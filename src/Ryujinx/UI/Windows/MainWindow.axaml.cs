@@ -125,17 +125,15 @@ namespace Ryujinx.Ava.UI.Windows
             }
         }
 
-        protected override void OnClosed(EventArgs e)
+        /* protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             if (PlatformSettings != null)
             {
-                /// <summary>
-                /// Unsubscribe to the ColorValuesChanged event
-                /// </summary>
+                // Unsubscribe to the ColorValuesChanged event
                 PlatformSettings.ColorValuesChanged -= OnPlatformColorValuesChanged;
             }
-        }
+        } */
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
@@ -309,7 +307,7 @@ namespace Ryujinx.Ava.UI.Windows
                 LocaleManager.Instance[LocaleKeys.LinuxVmMaxMapCountDialogButtonUntilRestart],
                 LocaleManager.Instance[LocaleKeys.LinuxVmMaxMapCountDialogButtonPersistent],
                 LocaleManager.Instance[LocaleKeys.InputDialogNo],
-                (int)Symbol.Help
+                (int)FASymbol.Help
             );
 
             int rc;
@@ -494,7 +492,11 @@ namespace Ryujinx.Ava.UI.Windows
             _windowStartupWidthDelta = Math.Max(0, Width - ViewModel.WindowWidth);
             _windowStartupHeightDelta = Math.Max(0, Height - ViewModel.WindowHeight);
 
-            PlatformSettings?.ColorValuesChanged += OnPlatformColorValuesChanged;
+            // Subscribe to the ColorValuesChanged event
+            /* if (PlatformSettings != null)
+            {
+                PlatformSettings.ColorValuesChanged += OnPlatformColorValuesChanged;
+            } */
 
             ViewModel.Initialize(
                 ContentManager,
@@ -744,7 +746,7 @@ namespace Ryujinx.Ava.UI.Windows
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 await ContentDialogHelper.ShowTextDialog(LocaleManager.Instance[LocaleKeys.DialogConfirmationTitle],
-                    msg, "", "", "", LocaleManager.Instance[LocaleKeys.InputDialogOk], (int)Symbol.Checkmark);
+                    msg, "", "", "", LocaleManager.Instance[LocaleKeys.InputDialogOk], (int)FASymbol.Checkmark);
             });
         }
     }

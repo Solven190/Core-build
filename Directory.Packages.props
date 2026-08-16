@@ -3,19 +3,19 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="11.3.18" />
-    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="11.3.13" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.3.18" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.18" />
-    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.3.18" />
-    <PackageVersion Include="Svg.Controls.Avalonia" Version="11.3.9.5" />
-    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="11.3.9.5" />
+    <PackageVersion Include="Avalonia" Version="12.1.1" />
+    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="12.1.1" />
+    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.13" />
+    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Concentus" Version="2.2.2" />
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageVersion Include="DynamicData" Version="9.4.33" />
-    <PackageVersion Include="FluentAvaloniaUI" Version="2.5.1" />
+    <PackageVersion Include="FluentAvaloniaUI" Version="3.0.2" />
     <PackageVersion Include="Gommon" Version="2.8.1.2" />
     <PackageVersion Include="Humanizer" Version="3.0.10" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />

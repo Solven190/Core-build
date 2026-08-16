@@ -22,7 +22,7 @@ namespace Ryujinx.Ava.UI.Views.Main
         {
             base.OnAttachedToVisualTree(e);
 
-            if (VisualRoot is MainWindow window)
+            if (TopLevel.GetTopLevel(this) is MainWindow window)
             {
                 ViewModel = window.ViewModel;
             }

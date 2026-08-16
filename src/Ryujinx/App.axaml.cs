@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
@@ -39,6 +40,10 @@ namespace Ryujinx.Ava
             FAUISettings.SetAnimationsEnabledAtAppLevel(false);
 
             AvaloniaXamlLoader.Load(this);
+            
+#if DEBUG
+            this.AttachDeveloperTools(options => options.Gesture = new KeyGesture(Key.F12, KeyModifiers.Control));
+#endif
 
             if (OperatingSystem.IsMacOS())
             {

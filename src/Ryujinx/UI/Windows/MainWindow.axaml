@@ -23,7 +23,7 @@
     WindowStartupLocation="Manual"
     Focusable="True">
     <Window.Styles>
-        <Style Selector="TitleBar:fullscreen">
+        <Style Selector="WindowDrawnDecorations:fullscreen /template/ Border">
             <Setter Property="Background" Value="#000000" />
         </Style>
     </Window.Styles>

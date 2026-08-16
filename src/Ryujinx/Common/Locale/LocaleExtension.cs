@@ -1,3 +1,4 @@
+using Avalonia.Data;
 using Avalonia.Data.Core;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;

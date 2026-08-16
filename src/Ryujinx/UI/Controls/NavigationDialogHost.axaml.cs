@@ -74,7 +74,7 @@ namespace Ryujinx.Ava.UI.Controls
             VirtualFileSystem ownerVirtualFileSystem, HorizonClient ownerHorizonClient)
         {
             NavigationDialogHost content = new(ownerAccountManager, ownerContentManager, ownerVirtualFileSystem, ownerHorizonClient);
-            ContentDialog contentDialog = new()
+            FAContentDialog contentDialog = new()
             {
                 Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle],
                 PrimaryButtonText = "",

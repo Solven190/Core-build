@@ -21,7 +21,7 @@ namespace Ryujinx.Ava.UI.Controls
         private int _inputMin;
         private readonly string _placeholder;
 
-        private ContentDialog _host;
+        private FAContentDialog _host;
 
         public SwkbdAppletDialog(string mainText, string secondaryText, string placeholder, string message)
         {
@@ -32,11 +32,11 @@ namespace Ryujinx.Ava.UI.Controls
             _placeholder = placeholder;
             InitializeComponent();
 
-            Input.Watermark = _placeholder;
+            Input.PlaceholderText = _placeholder;
 
-            if (string.IsNullOrWhiteSpace(Input.Watermark))
+            if (string.IsNullOrWhiteSpace(Input.PlaceholderText))
             {
-                Input.UseFloatingWatermark = false;
+                Input.UseFloatingPlaceholder = false;
             }
 
             Input.AddHandler(TextInputEvent, Message_TextInput, RoutingStrategies.Tunnel, true);
@@ -48,7 +48,7 @@ namespace Ryujinx.Ava.UI.Controls
             InitializeComponent();
         }
 
-        protected override void OnGotFocus(GotFocusEventArgs e)
+        protected override void OnGotFocus(FocusChangedEventArgs e)
         {
             // FIXME: This does not work. Might be a bug in Avalonia with DialogHost
             //        Currently focus will be redirected to the overlay window instead.
@@ -61,7 +61,7 @@ namespace Ryujinx.Ava.UI.Controls
 
         public static async Task<(UserResult Result, string Input)> ShowInputDialog(string title, SoftwareKeyboardUIArgs args)
         {
-            ContentDialog contentDialog = new();
+            FAContentDialog contentDialog = new();
 
             UserResult result = UserResult.Cancel;
 
@@ -80,9 +80,9 @@ namespace Ryujinx.Ava.UI.Controls
             contentDialog.CloseButtonText = LocaleManager.Instance[LocaleKeys.InputDialogCancel];
             contentDialog.Content = content;
 
-            void Handler(ContentDialog sender, ContentDialogClosedEventArgs eventArgs)
+            void Handler(FAContentDialog sender, FAContentDialogClosedEventArgs eventArgs)
             {
-                if (eventArgs.Result == ContentDialogResult.Primary)
+                if (eventArgs.Result == FAContentDialogResult.Primary)
                 {
                     result = UserResult.Ok;
                     input = content.Input.Text;
@@ -174,7 +174,7 @@ namespace Ryujinx.Ava.UI.Controls
         {
             if (e.Key == Key.Enter && _host.IsPrimaryButtonEnabled)
             {
-                _host.Hide(ContentDialogResult.Primary);
+                _host.Hide(FAContentDialogResult.Primary);
             }
             else
             {

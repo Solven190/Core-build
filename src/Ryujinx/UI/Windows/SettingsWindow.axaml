@@ -40,7 +40,7 @@
             <settings:SettingsLoggingView Name="LoggingPage" />
             <settings:SettingsDebugView Name="DebugPage" />
         </Grid>
-        <ui:NavigationView
+        <ui:FANavigationView
             Grid.Row="1"
             IsSettingsVisible="False"
             Name="NavPanel"
@@ -50,63 +50,63 @@
             VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch"
             OpenPaneLength="200">
-            <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem
+            <ui:FANavigationView.MenuItems>
+                <ui:FANavigationViewItem
                     IsSelected="True"
                     Content="{locale:Locale SettingsTabGeneral}"
                     Tag="UiPage"
                     IconSource="New" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabInput}"
                     Tag="InputPage"
                     IconSource="Games" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabHotkeys}"
                     Tag="HotkeysPage"
                     IconSource="Keyboard" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabSystem}"
                     Tag="SystemPage"
                     IconSource="Settings" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabCpu}"
                     Tag="CpuPage">
-                    <ui:NavigationViewItem.IconSource>
-                        <ui:FontIconSource
+                    <ui:FANavigationViewItem.IconSource>
+                        <ui:FAFontIconSource
                             FontFamily="avares://Ryujinx/Assets/Fonts#Segoe Fluent Icons"
                             Glyph="{helpers:GlyphValueConverter Chip}" />
-                    </ui:NavigationViewItem.IconSource>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem
+                    </ui:FANavigationViewItem.IconSource>
+                </ui:FANavigationViewItem>
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabGraphics}"
                     Tag="GraphicsPage"
                     IconSource="Image" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabAudio}"
                     IconSource="Audio"
                     Tag="AudioPage" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabNetwork}"
                     Tag="NetworkPage"
                     IconSource="Globe" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabLogging}"
                     Tag="LoggingPage"
                     IconSource="Document" />
-                <ui:NavigationViewItem
+                <ui:FANavigationViewItem
                     Content="{locale:Locale SettingsTabDebug}"
                     Tag="DebugPage"
                     IconSource="Star" />
-            </ui:NavigationView.MenuItems>
-            <ui:NavigationView.Styles>
+            </ui:FANavigationView.MenuItems>
+            <ui:FANavigationView.Styles>
                 <Style Selector="Grid#PlaceholderGrid">
                     <Setter Property="Height" Value="40" />
                 </Style>
-                <Style Selector="ui|NavigationViewItem ui|SymbolIcon">
+                <Style Selector="ui|FANavigationViewItem ui|FASymbolIcon">
                     <Setter Property="FlowDirection" Value="LeftToRight" />
                 </Style>
-            </ui:NavigationView.Styles>
-        </ui:NavigationView>
+            </ui:FANavigationView.Styles>
+        </ui:FANavigationView>
         <ReversibleStackPanel
             Grid.Row="2"
             Margin="10"

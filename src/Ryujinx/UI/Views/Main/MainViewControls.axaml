@@ -25,7 +25,7 @@
             VerticalAlignment="Stretch"
             Command="{Binding SetListMode}"
             IsEnabled="{Binding IsGrid}">
-            <ui:FontIcon
+            <ui:FAFontIcon
                 Margin="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
@@ -39,7 +39,7 @@
             VerticalAlignment="Stretch"
             Command="{Binding SetGridMode}"
             IsEnabled="{Binding IsList}">
-            <ui:FontIcon
+            <ui:FAFontIcon
                 Margin="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
@@ -79,7 +79,7 @@
             DockPanel.Dock="Right"
             KeyUp="SearchBox_OnKeyUp"
             Text="{Binding SearchText}"
-            Watermark="{locale:Locale MenuSearch}" />
+            PlaceholderText="{locale:Locale MenuSearch}" />
         <DropDownButton
             Width="150"
             HorizontalAlignment="Right"

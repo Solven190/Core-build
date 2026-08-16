@@ -79,7 +79,7 @@
                                     ToolTip.Tip="{locale:Locale FSAccessLogModeTooltip}"
                                     Text="{locale:Locale SettingsTabLoggingFsGlobalAccessLogMode}"
                                     Width="285" />
-                            <ui:NumberBox
+                            <ui:FANumberBox
                                 Maximum="3"
                                 Minimum="0"
                                 Width="150"

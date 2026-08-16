@@ -1,7 +1,7 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.VisualTree;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Common.Utilities;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace Ryujinx.Ava.UI.Views.Settings
             }
             else
             {
-                if (this.GetVisualRoot() is Window window)
+                if (TopLevel.GetTopLevel(this) is Window window)
                 {
                     IReadOnlyList<IStorageFolder> result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                     {
@@ -82,7 +82,7 @@ namespace Ryujinx.Ava.UI.Views.Settings
             }
             else
             {
-                if (this.GetVisualRoot() is Window window)
+                if (TopLevel.GetTopLevel(this) is Window window)
                 {
                     IReadOnlyList<IStorageFolder> result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                     {

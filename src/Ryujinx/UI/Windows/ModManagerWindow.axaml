@@ -46,7 +46,7 @@
                     MinHeight="27"
                     MaxHeight="27"
                     HorizontalAlignment="Stretch"
-                    Watermark="{locale:Locale Search}"
+                    PlaceholderText="{locale:Locale Search}"
                     Text="{Binding Search}" />
             </Grid>
         </Panel>
@@ -91,7 +91,7 @@
                                         MinHeight="0"
                                         ToolTip.Tip="{Binding Path}"
                                         Click="OpenLocation">
-                                        <ui:SymbolIcon
+                                        <ui:FASymbolIcon
                                             Symbol="OpenFolder"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center" />
@@ -103,7 +103,7 @@
                                         MinWidth="0"
                                         MinHeight="0"
                                         Click="DeleteMod">
-                                        <ui:SymbolIcon
+                                        <ui:FASymbolIcon
                                             Symbol="Cancel"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center" />

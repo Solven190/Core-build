@@ -34,7 +34,7 @@
                 Width="50"
                 MinWidth="50"
                 Click="GoBack">
-                <ui:SymbolIcon Symbol="Back" />
+                <ui:FASymbolIcon Symbol="Back" />
             </Button>
         </StackPanel>
         <StackPanel
