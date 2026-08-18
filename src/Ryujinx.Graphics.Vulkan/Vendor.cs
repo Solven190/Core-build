@@ -27,6 +27,9 @@ namespace Ryujinx.Graphics.Vulkan
         [GeneratedRegex("NVIDIA GeForce (R|G)?TX? (\\d{3}\\d?)M?")]
         public static partial Regex NvidiaConsumerClassRegex();
 
+        [GeneratedRegex(@"^\d+\.\d+\.\d+\.\d+$")]
+        internal static partial Regex IntelWindowsDriverVersionRegex();
+
         public static Vendor FromId(uint id)
         {
             return id switch
