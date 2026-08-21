@@ -48,7 +48,7 @@ def get_new_name(
     return Path(os.path.join(output_directory, input_component))
 
 def get_archs(dylib_path: Path) -> list[str]:
-    res = subprocess.check_output([LIPO, "-info", str(dylib_path)]).decode("utf-8")
+    res = subprocess.check_output([LIPO, "-info", str(dylib_path.absolute())]).decode("utf-8")
     if res.startswith("Non-fat file"):
         return [res.split(":")[-1].strip()]
     else:

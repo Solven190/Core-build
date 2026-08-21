@@ -440,6 +440,11 @@ namespace Ryujinx.UI.Common.Configuration
         public GraphicsBackend GraphicsBackend { get; set; }
 
         /// <summary>
+        /// Vulkan translation layer
+        /// </summary>
+        public TranslationLayer TranslationLayer { get; set; }
+
+        /// <summary>
         /// Preferred GPU
         /// </summary>
         public string PreferredGpu { get; set; }

@@ -43,7 +43,6 @@ using Ryujinx.UI.App.Common;
 using Ryujinx.UI.Common;
 using Ryujinx.UI.Common.Configuration;
 using Ryujinx.UI.Common.Helper;
-using Silk.NET.Vulkan;
 using SkiaSharp;
 using SPB.Graphics.Exceptions;
 using SPB.Graphics.Vulkan;
@@ -939,10 +938,11 @@ namespace Ryujinx.Ava
             if (ConfigurationState.Instance.Graphics.GraphicsBackend.Value == GraphicsBackend.Vulkan)
             {
                 renderer = new VulkanRenderer(
-                    Vk.GetApi(),
+                    VulkanSpbApi.GetApiFromSpb(),
                     ((EmbeddedWindowVulkan)RendererHost.EmbeddedWindow).CreateSurface,
                     VulkanHelper.GetRequiredInstanceExtensions,
-                    ConfigurationState.Instance.Graphics.PreferredGpu.Value);
+                    ConfigurationState.Instance.Graphics.PreferredGpu.Value,
+                    ConfigurationState.Instance.Graphics.TranslationLayer.Value);
             }
             else
             {
@@ -1183,7 +1183,12 @@ namespace Ryujinx.Ava
         {
             _viewModel.BackendText = ConfigurationState.Instance.Graphics.GraphicsBackend.Value switch
             {
-                GraphicsBackend.Vulkan => "Vulkan",
+                GraphicsBackend.Vulkan when !OperatingSystem.IsMacOS() => "Vulkan",
+                GraphicsBackend.Vulkan when Environment.GetEnvironmentVariable("VK_DRIVER_FILES")!.Contains("MoltenVK")
+                    => "MoltenVK",
+                GraphicsBackend.Vulkan when
+                    Environment.GetEnvironmentVariable("VK_DRIVER_FILES")!.Contains("kosmickrisp") => "KosmicKrisp",
+                GraphicsBackend.Vulkan => _viewModel.BackendText,
                 GraphicsBackend.OpenGl => "OpenGL",
                 _ => throw new NotImplementedException()
             };

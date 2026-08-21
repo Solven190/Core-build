@@ -28,7 +28,7 @@
                 Spacing="10">
                 <TextBlock Classes="h1" Text="{locale:Locale SettingsTabGraphicsAPI}" />
                 <StackPanel Margin="10,0,0,0" Orientation="Vertical" Spacing="10">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" IsVisible="{Binding !IsMacOS}">
                         <TextBlock VerticalAlignment="Center"
                                 ToolTip.Tip="{locale:Locale SettingsTabGraphicsBackendTooltip}"
                                 Text="{locale:Locale SettingsTabGraphicsBackend}"
@@ -45,6 +45,22 @@
                                 Content="OpenGL" />
                         </ComboBox>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" IsVisible="{Binding IsMacOS}">
+                        <TextBlock VerticalAlignment="Center"
+                                   ToolTip.Tip="{locale:Locale SettingsTabTranslationLayerTooltip}"
+                                   Text="{locale:Locale SettingsTabTranslationLayer}"
+                                   Width="250" />
+                        <ComboBox Width="350"
+                                  HorizontalContentAlignment="Left"
+                                  ToolTip.Tip="{locale:Locale SettingsTabTranslationLayerTooltip}"
+                                  SelectedIndex="{Binding TranslationLayerIndex}">
+                            <ComboBoxItem
+                                Content="MoltenVK" />
+                            <ComboBoxItem
+                                IsEnabled="{Binding IsKosmicKrispAvailable}"
+                                Content="KosmicKrisp" />
+                        </ComboBox>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVulkanSelected}">
                         <TextBlock VerticalAlignment="Center"
                                 ToolTip.Tip="{locale:Locale SettingsTabGraphicsPreferredGpuTooltip}"
@@ -56,7 +72,24 @@
                                 SelectedIndex="{Binding PreferredGpuIndex}"
                                 ItemsSource="{Binding AvailableGpus}"/>
                     </StackPanel>
-                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center"
+                                       ToolTip.Tip="{locale:Locale GraphicsBackendThreadingTooltip}"
+                                       Text="{locale:Locale SettingsTabGraphicsBackendMultithreading}"
+                                       Width="250" />
+                            <ComboBox Width="350"
+                                      HorizontalContentAlignment="Left"
+                                      ToolTip.Tip="{locale:Locale GalThreadingTooltip}"
+                                      SelectedIndex="{Binding GraphicsBackendMultithreadingIndex}">
+                                <ComboBoxItem
+                                    Content="{locale:Locale CommonAuto}" />
+                                <ComboBoxItem
+                                    Content="{locale:Locale CommonOff}" />
+                                <ComboBoxItem
+                                    Content="{locale:Locale CommonOn}" />
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
                 <Separator Height="1" />
                 <TextBlock Classes="h1" Text="{locale:Locale SettingsTabGraphicsFeatures}" />
                 <StackPanel Margin="10,0,0,0" Orientation="Vertical" Spacing="10">

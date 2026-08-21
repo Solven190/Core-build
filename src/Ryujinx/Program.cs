@@ -8,7 +8,6 @@ using Ryujinx.Common.GraphicsDriver;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.SystemInterop;
 using Ryujinx.Common.Utilities;
-using Ryujinx.Graphics.Vulkan.MoltenVK;
 using Ryujinx.Headless;
 using Ryujinx.Modules;
 using Ryujinx.SDL3.Common;
@@ -26,7 +25,6 @@ namespace Ryujinx.Ava
 {
     internal partial class Program
     {
-        //
         public static double WindowScaleFactor { get; set; }
         public static double DesktopScaleFactor { get; set; } = 1.0;
         public static string Version { get; private set; }
@@ -113,11 +111,6 @@ namespace Ryujinx.Ava
         {
             // Parse arguments
             CommandLineState.ParseArguments(args);
-
-            if (OperatingSystem.IsMacOS())
-            {
-                MVKInitialization.InitializeResolver();
-            }
 
             // Delete backup files after updating.
             Task.Run(Updater.CleanupUpdate);
@@ -218,18 +211,31 @@ namespace Ryujinx.Ava
 
             UseHardwareAcceleration = ConfigurationState.Instance.EnableHardwareAcceleration.Value;
 
-            // Check if graphics backend was overridden
-            if (CommandLineState.OverrideGraphicsBackend != null)
+            // Change graphics backend from OpenGL to Vulkan on macOS
+            if (OperatingSystem.IsMacOS() && (ConfigurationState.Instance.Graphics.GraphicsBackend.Value == GraphicsBackend.OpenGl))
             {
-                if (CommandLineState.OverrideGraphicsBackend.ToLower() == "opengl")
-                {
-                    ConfigurationState.Instance.Graphics.GraphicsBackend.Value = GraphicsBackend.OpenGl;
-                }
-                else if (CommandLineState.OverrideGraphicsBackend.ToLower() == "vulkan")
-                {
-                    ConfigurationState.Instance.Graphics.GraphicsBackend.Value = GraphicsBackend.Vulkan;
-                }
+                ConfigurationState.Instance.Graphics.GraphicsBackend.Value = GraphicsBackend.Vulkan;
             }
+
+            // Check if graphics backend was overridden
+            if (CommandLineState.OverrideGraphicsBackend is not null)
+            {
+                ConfigurationState.Instance.Graphics.GraphicsBackend.Value = CommandLineState.OverrideGraphicsBackend.ToLower() switch
+                    {
+                        "opengl" => GraphicsBackend.OpenGl,
+                        "vulkan" => GraphicsBackend.Vulkan,
+                        _ => ConfigurationState.Instance.Graphics.GraphicsBackend.Value
+                    };
+            }
+
+            // Check if translation layer was overridden
+            if (CommandLineState.OverrideTranslationLayer is not null)
+                ConfigurationState.Instance.Graphics.TranslationLayer.Value = CommandLineState.OverrideTranslationLayer.ToLower() switch
+                {
+                    "moltenvk" => TranslationLayer.MoltenVK,
+                    "kosmickrisp" => TranslationLayer.KosmicKrisp,
+                    _ => ConfigurationState.Instance.Graphics.TranslationLayer.Value
+                };
 
             // Check if backend threading was overridden
             if (CommandLineState.OverrideBackendThreading is not null)

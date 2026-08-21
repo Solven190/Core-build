@@ -99,6 +99,7 @@ namespace Ryujinx.Graphics.Vulkan
                 DriverId.MesaNvk => "NVK",
                 DriverId.ImaginationOpenSourceMesa => "Imagination (Open)",
                 DriverId.MesaHoneykrisp => "Honeykrisp",
+                DriverId.MesaKosmickrisp => "KosmicKrisp",
                 _ => id.ToString(),
             };
         }

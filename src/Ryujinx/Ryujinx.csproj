@@ -47,11 +47,12 @@
     <PackageReference Include="Ryujinx.Graphics.Nvdec.Dependencies.Linux" Condition="'$(RuntimeIdentifier)' == 'linux-x64' OR '$(RuntimeIdentifier)' == 'linux-arm64'" />
     <PackageReference Include="Ryujinx.Graphics.Nvdec.Dependencies.macOS" Condition="'$(RuntimeIdentifier)' == 'osx-x64' OR '$(RuntimeIdentifier)' == 'osx-arm64'" />
     <PackageReference Include="Ryujinx.Graphics.Nvdec.Dependencies.Windows" Condition="'$(RuntimeIdentifier)' == 'win-x64' OR '$(RuntimeIdentifier)' == 'win-arm64'" />
+    <PackageReference Include="Ryujinx.Graphics.Vulkan.KosmicKrisp" Condition="'$(RuntimeIdentifier)' != 'linux-x64' AND '$(RuntimeIdentifier)' != 'linux-arm64' AND '$(RuntimeIdentifier)' != 'win-x64' AND '$(RuntimeIdentifier)' != 'win-arm64' AND '$(RuntimeIdentifier)' != 'osx-x64'" />
+    <PackageReference Include="Ryujinx.SPB" />
     <PackageReference Include="Ryujinx.Graphics.Vulkan.MoltenVK" Condition="'$(RuntimeIdentifier)' == 'osx-x64' OR '$(RuntimeIdentifier)' == 'osx-arm64'" />
     <PackageReference Include="Silk.NET.Vulkan" />
     <PackageReference Include="Silk.NET.Vulkan.Extensions.EXT" />
     <PackageReference Include="Silk.NET.Vulkan.Extensions.KHR" />
-    <PackageReference Include="SPB" />
     <PackageReference Include="SharpZipLib" />
   </ItemGroup>
 

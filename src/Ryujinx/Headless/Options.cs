@@ -131,7 +131,10 @@ namespace Ryujinx.Headless
             
             if (NeedsOverride(nameof(GraphicsBackend)))
                 GraphicsBackend = configurationState.Graphics.GraphicsBackend;
-            
+
+            if (NeedsOverride(nameof(TranslationLayer)))
+                TranslationLayer = configurationState.Graphics.TranslationLayer;
+
             if (NeedsOverride(nameof(AntiAliasing)))
                 AntiAliasing = configurationState.Graphics.AntiAliasing;
             
@@ -369,6 +372,9 @@ namespace Ryujinx.Headless
 
         [Option("graphics-backend", Required = false, Default = GraphicsBackend.Vulkan, HelpText = "Change Graphics Backend to use.")]
         public GraphicsBackend GraphicsBackend { get; set; }
+
+        [Option("translation-layer", Required = false, Default = TranslationLayer.MoltenVK, HelpText = "Change Translation Layer to use.")]
+        public TranslationLayer TranslationLayer { get; set; }
 
         [Option("preferred-gpu-vendor", Required = false, Default = "", HelpText = "When using the Vulkan backend, prefer using the GPU from the specified vendor.")]
         public string PreferredGPUVendor { get; set; }

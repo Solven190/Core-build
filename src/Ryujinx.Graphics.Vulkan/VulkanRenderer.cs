@@ -3,7 +3,6 @@ using Ryujinx.Common.Logging;
 using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.Shader;
 using Ryujinx.Graphics.Shader.Translation;
-using Ryujinx.Graphics.Vulkan.MoltenVK;
 using Ryujinx.Graphics.Vulkan.Queries;
 using Silk.NET.Vulkan;
 using Silk.NET.Vulkan.Extensions.EXT;
@@ -97,6 +96,7 @@ namespace Ryujinx.Graphics.Vulkan
         internal bool IsIntelArc { get; private set; }
         internal bool IsQualcommProprietary { get; private set; }
         internal bool IsMoltenVk { get; private set; }
+        internal bool IsKosmicKrisp { get; private set; }
         internal bool SupportsMTL31 { get; private set; }
         internal bool IsTBDR { get; private set; }
         internal bool IsSharedMemory { get; private set; }
@@ -111,7 +111,7 @@ namespace Ryujinx.Graphics.Vulkan
 
         public event EventHandler<ScreenCaptureImageInfo> ScreenCaptured;
 
-        public VulkanRenderer(Vk api, Func<Instance, Vk, SurfaceKHR> surfaceFunc, Func<string[]> requiredExtensionsFunc, string preferredGpuId)
+        public VulkanRenderer(Vk api, Func<Instance, Vk, SurfaceKHR> surfaceFunc, Func<string[]> requiredExtensionsFunc, string preferredGpuId, TranslationLayer translationLayer)
         {
             _getSurface = surfaceFunc;
             _getRequiredExtensions = requiredExtensionsFunc;
@@ -121,12 +121,20 @@ namespace Ryujinx.Graphics.Vulkan
             Textures = [];
             Samplers = [];
 
+            // MoltenVK is required for any device running < macOS 26, even Intel and AMD vendors.
+            // KosmicKrisp, a Vulkan conformant implementation running on top of Metal 4, requires macOS 26.
             if (OperatingSystem.IsMacOS())
             {
-                MVKInitialization.Initialize();
-
-                // Any device running on MacOS is using MoltenVK, even Intel and AMD vendors.
-                IsMoltenVk = true;
+                if (translationLayer == TranslationLayer.MoltenVK)
+                {
+                    VulkanDriver.MoltenVK();
+                    IsMoltenVk = true;
+                }
+                if (translationLayer == TranslationLayer.KosmicKrisp)
+                {
+                    VulkanDriver.KosmicKrisp();
+                    IsKosmicKrisp = true;
+                }
             }
 
             SupportsMTL31 = OperatingSystem.IsMacOSVersionAtLeast(14);
@@ -842,14 +850,14 @@ namespace Ryujinx.Graphics.Vulkan
 
         /// <summary>
         /// Gets the available Vulkan devices using the default Vulkan API
-        /// object returned by <see cref="Vk.GetApi()"/>
+        /// object returned by <see cref="VulkanSpbApi.GetApiFromSpb()"/>
         /// </summary>
         /// <returns></returns>
         public static DeviceInfo[] GetPhysicalDevices()
         {
             try
             {
-                return VulkanInitialization.GetSuitablePhysicalDevices(Vk.GetApi());
+                return VulkanInitialization.GetSuitablePhysicalDevices(VulkanSpbApi.GetApiFromSpb());
             }
             catch (Exception ex)
             {

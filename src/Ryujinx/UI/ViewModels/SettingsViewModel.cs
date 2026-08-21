@@ -118,6 +118,8 @@ namespace Ryujinx.Ava.UI.ViewModels
 
         public bool IsHypervisorAvailable => OperatingSystem.IsMacOS() && RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
 
+        public bool IsKosmicKrispAvailable => OperatingSystem.IsMacOSVersionAtLeast(15);
+
         public bool GameDirectoryChanged
         {
             get => _gameDirectoryChanged;
@@ -317,9 +319,19 @@ namespace Ryujinx.Ava.UI.ViewModels
             get;
             set
             {
-                field = value;
+                field = IsMacOS ? 0 : value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsVulkanSelected));
+            }
+        }
+
+        public int TranslationLayerIndex
+        {
+            get;
+            set
+            {
+                field = value;
+                OnPropertyChanged();
             }
         }
 
@@ -626,6 +638,7 @@ namespace Ryujinx.Ava.UI.ViewModels
 
             // Graphics
             GraphicsBackendIndex = (int)config.Graphics.GraphicsBackend.Value;
+            TranslationLayerIndex = (int)config.Graphics.TranslationLayer.Value;
             // Physical devices are queried asynchronously hence the preferred index config value is loaded in LoadAvailableGpus().
             EnableShaderCache = config.Graphics.EnableShaderCache;
             EnableTextureRecompression = config.Graphics.EnableTextureRecompression;
@@ -746,6 +759,7 @@ namespace Ryujinx.Ava.UI.ViewModels
 
             // Graphics
             config.Graphics.GraphicsBackend.Value = (GraphicsBackend)GraphicsBackendIndex;
+            config.Graphics.TranslationLayer.Value = (TranslationLayer)TranslationLayerIndex;
             config.Graphics.PreferredGpu.Value = _gpuIds.ElementAtOrDefault(PreferredGpuIndex);
             config.Graphics.EnableShaderCache.Value = EnableShaderCache;
             config.Graphics.EnableTextureRecompression.Value = EnableTextureRecompression;

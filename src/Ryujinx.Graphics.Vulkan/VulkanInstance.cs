@@ -13,7 +13,6 @@ namespace Ryujinx.Graphics.Vulkan
     {
         private readonly Vk _api;
         public readonly Instance Instance;
-        public readonly Version32 InstanceVersion;
 
         private bool _disposed;
 
@@ -21,22 +20,6 @@ namespace Ryujinx.Graphics.Vulkan
         {
             _api = api;
             Instance = instance;
-
-            if (api.GetInstanceProcAddr(instance, "vkEnumerateInstanceVersion") == nint.Zero)
-            {
-                InstanceVersion = Vk.Version10;
-            }
-            else
-            {
-                uint rawInstanceVersion = 0;
-
-                if (api.EnumerateInstanceVersion(ref rawInstanceVersion) != Result.Success)
-                {
-                    rawInstanceVersion = Vk.Version11.Value;
-                }
-
-                InstanceVersion = (Version32)rawInstanceVersion;
-            }
         }
 
         public static Result Create(Vk api, ref InstanceCreateInfo createInfo, out VulkanInstance instance)

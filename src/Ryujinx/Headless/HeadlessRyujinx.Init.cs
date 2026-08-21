@@ -289,7 +289,7 @@ namespace Ryujinx.Headless
             if (options.GraphicsBackend == GraphicsBackend.Vulkan && window is VulkanWindow vulkanWindow)
             {
                 string preferredGpuId = string.Empty;
-                Vk api = Vk.GetApi();
+                Vk api = VulkanSpbApi.GetApiFromSpb();
 
                 if (!string.IsNullOrEmpty(options.PreferredGPUVendor))
                 {
@@ -310,7 +310,8 @@ namespace Ryujinx.Headless
                     api,
                     (instance, _) => new SurfaceKHR((ulong)(vulkanWindow.CreateWindowSurface(instance.Handle))),
                     VulkanWindow.GetRequiredInstanceExtensions,
-                    preferredGpuId);
+                    preferredGpuId,
+                    options.TranslationLayer);
             }
 
             return new OpenGLRenderer();

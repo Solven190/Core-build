@@ -12,7 +12,6 @@ using Ryujinx.Cpu;
 using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.Gpu;
 using Ryujinx.Graphics.Gpu.Shader;
-using Ryujinx.Graphics.Vulkan.MoltenVK;
 using Ryujinx.HLE;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS;
@@ -72,11 +71,6 @@ namespace Ryujinx.Headless
 
                     invoked.WaitOne();
                 };
-            }
-
-            if (OperatingSystem.IsMacOS())
-            {
-                MVKInitialization.InitializeResolver();
             }
 
             Parser.Default.ParseArguments<Options>(args)

@@ -588,6 +588,11 @@ namespace Ryujinx.UI.Common.Configuration
             public ReactiveObject<GraphicsBackend> GraphicsBackend { get; private set; }
 
             /// <summary>
+            /// Vulkan translation layer
+            /// </summary>
+            public ReactiveObject<TranslationLayer> TranslationLayer { get; private set; }
+
+            /// <summary>
             /// Applies anti-aliasing to the renderer.
             /// </summary>
             public ReactiveObject<AntiAliasing> AntiAliasing { get; private set; }
@@ -639,6 +644,8 @@ namespace Ryujinx.UI.Common.Configuration
                 EnableTextureRecompression.Event += static (_, e) => LogValueChange(e, nameof(EnableTextureRecompression));
                 GraphicsBackend = new ReactiveObject<GraphicsBackend>();
                 GraphicsBackend.Event += static (_, e) => LogValueChange(e, nameof(GraphicsBackend));
+                TranslationLayer = new ReactiveObject<TranslationLayer>();
+                TranslationLayer.Event += static (_, e) => LogValueChange(e, nameof(TranslationLayer));
                 PreferredGpu = new ReactiveObject<string>();
                 PreferredGpu.Event += static (_, e) => LogValueChange(e, nameof(PreferredGpu));
                 EnableMacroHLE = new ReactiveObject<bool>();
@@ -935,6 +942,7 @@ namespace Ryujinx.UI.Common.Configuration
                 ControllerConfig = [],
                 InputConfig = Hid.InputConfig,
                 GraphicsBackend = Graphics.GraphicsBackend,
+                TranslationLayer = Graphics.TranslationLayer,
                 PreferredGpu = Graphics.PreferredGpu,
                 MultiplayerLanInterfaceId = Multiplayer.LanInterfaceId,
                 MultiplayerMode = Multiplayer.Mode,
@@ -958,6 +966,7 @@ namespace Ryujinx.UI.Common.Configuration
             Graphics.MaxAnisotropy.Value = -1.0f;
             Graphics.AspectRatio.Value = AspectRatio.Fixed16x9;
             Graphics.GraphicsBackend.Value = DefaultGraphicsBackend();
+            Graphics.TranslationLayer.Value = TranslationLayer.MoltenVK;
             Graphics.PreferredGpu.Value = "";
             Graphics.ShadersDumpPath.Value = "";
             Graphics.TexturesDumpPath.Value = "";
@@ -1806,6 +1815,15 @@ namespace Ryujinx.UI.Common.Configuration
                 configurationFileUpdated = true;
             }
 
+            if (configurationFileFormat.Version < 62)
+            {
+                Ryujinx.Common.Logging.Logger.Warning?.Print(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 62.");
+
+                configurationFileFormat.TranslationLayer = TranslationLayer.MoltenVK;
+
+                configurationFileUpdated = true;
+            }
+
             Logger.EnableFileLog.Value = configurationFileFormat.EnableFileLog;
             Graphics.ResScale.Value = configurationFileFormat.ResScale;
             Graphics.ResScaleCustom.Value = configurationFileFormat.ResScaleCustom;
@@ -1818,6 +1836,7 @@ namespace Ryujinx.UI.Common.Configuration
             Graphics.EnableTextureRealTimeEdit.Value = configurationFileFormat.GraphicsEnableTextureRealTimeEdit;
             Graphics.BackendThreading.Value = configurationFileFormat.BackendThreading;
             Graphics.GraphicsBackend.Value = configurationFileFormat.GraphicsBackend;
+            Graphics.TranslationLayer.Value = configurationFileFormat.TranslationLayer;
             Graphics.PreferredGpu.Value = configurationFileFormat.PreferredGpu;
             Graphics.AntiAliasing.Value = configurationFileFormat.AntiAliasing;
             Graphics.ScalingFilter.Value = configurationFileFormat.ScalingFilter;

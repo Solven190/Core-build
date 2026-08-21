@@ -18,14 +18,18 @@ mkdir "$APP_BUNDLE_DIRECTORY/Contents/Resources"
 cp "$PUBLISH_DIRECTORY/Ryujinx" "$APP_BUNDLE_DIRECTORY/Contents/MacOS/Ryujinx"
 chmod u+x "$APP_BUNDLE_DIRECTORY/Contents/MacOS/Ryujinx"
 
+# List all dylibs in PUBLISH_DIRECTORY
+ls -la "$PUBLISH_DIRECTORY"/*.dylib
+
 # Then all libraries
-cp "$PUBLISH_DIRECTORY"/*.dylib "$APP_BUNDLE_DIRECTORY/Contents/Frameworks"
+find "$PUBLISH_DIRECTORY" -name "*.dylib" -exec cp {} "$APP_BUNDLE_DIRECTORY/Contents/Frameworks" \;
 
 # Then resources
 cp Info.plist "$APP_BUNDLE_DIRECTORY/Contents"
 cp Ryujinx.icns "$APP_BUNDLE_DIRECTORY/Contents/Resources/Ryujinx.icns"
 cp updater.sh "$APP_BUNDLE_DIRECTORY/Contents/Resources/updater.sh"
 cp Assets.car "$APP_BUNDLE_DIRECTORY/Contents/Resources/Assets.car"
+cp -r vulkan "$APP_BUNDLE_DIRECTORY/Contents/Resources"
 cp -r "$PUBLISH_DIRECTORY/THIRDPARTY.md" "$APP_BUNDLE_DIRECTORY/Contents/Resources"
 
 echo -n "APPL????" > "$APP_BUNDLE_DIRECTORY/Contents/PkgInfo"
