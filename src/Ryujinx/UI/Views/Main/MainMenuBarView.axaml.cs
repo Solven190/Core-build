@@ -119,6 +119,11 @@ namespace Ryujinx.Ava.UI.Views.Main
             Window.ViewModel.AppHost?.Resume();
         }
 
+        private void RestartEmulation_Click(object sender, RoutedEventArgs e)
+        {
+            Window.ViewModel?.RestartEmulation();
+        }
+
         public async void OpenMiiApplet(object sender, RoutedEventArgs e)
         {
             string contentPath = ViewModel.ContentManager.GetInstalledContentPath(0x0100000000001009, StorageId.BuiltInSystem, NcaContentType.Program);
