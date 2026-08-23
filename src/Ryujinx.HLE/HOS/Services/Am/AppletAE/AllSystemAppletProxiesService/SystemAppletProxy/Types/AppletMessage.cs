@@ -32,5 +32,6 @@ namespace Ryujinx.HLE.HOS.Services.Am.AppletAE.AllSystemAppletProxiesService.Sys
         DetectShortPressingCaptureButton = 90,
         AlbumScreenShotTaken = 92,
         AlbumRecordingSaved = 93,
+        StartupLogoDisappeared = 95, // 21.0.0+
     }
 }
