@@ -1,4 +1,5 @@
 using ARMeilleure.Memory;
+using ARMeilleure.Translation.PTC;
 using System.Runtime.Versioning;
 
 namespace Ryujinx.Cpu.AppleHv
@@ -32,7 +33,7 @@ namespace Ryujinx.Cpu.AppleHv
         {
         }
 
-        public IDiskCacheLoadState LoadDiskCache(string titleIdText, string displayVersion, bool enabled, string cacheSelector)
+        public IDiskCacheLoadState LoadDiskCache(PtcCacheInfo cacheInfo, bool enabled)
         {
             return new DummyDiskCacheLoadState();
         }

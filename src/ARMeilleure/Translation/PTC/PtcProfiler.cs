@@ -23,7 +23,7 @@ namespace ARMeilleure.Translation.PTC
     {
         private const string OuterHeaderMagicString = "Pohd\0\0\0\0";
 
-        private const uint InternalVersion = 6698; //! Not to be incremented manually for each change to the ARMeilleure project.
+        private const uint InternalVersion = 7031; //! Not to be incremented manually for each change to the ARMeilleure project.
 
         private static readonly uint[] _migrateInternalVersions = 
         [
@@ -254,7 +254,12 @@ namespace ARMeilleure.Translation.PTC
 
             long fileSize = new FileInfo(fileName).Length;
 
-            Logger.Info?.Print(LogClass.Ptc, $"{(isBackup ? "Loaded Backup Profiling Info" : "Loaded Profiling Info")} (size: {fileSize} bytes, profiled functions: {ProfiledFuncs.Count}).");
+            Logger.Info?.Print(
+                LogClass.Ptc,
+                $"{(isBackup ? "Loaded Backup Profiling Info" : "Loaded Profiling Info")} " +
+                $"(pid: {_ptc.CacheInfo.ProcessId}, title: {_ptc.CacheInfo.TitleIdText}, version: '{_ptc.CacheInfo.DisplayVersion}', " +
+                $"kind: {_ptc.CacheInfo.ProcessKind}, selector: '{_ptc.CacheInfo.CacheSelector}', key: '{_ptc.CacheInfo.CacheKey}', " +
+                $"path: '{fileName}', size: {fileSize} bytes, profiled functions: {ProfiledFuncs.Count}).");
 
             return true;
         }
@@ -375,7 +380,11 @@ namespace ARMeilleure.Translation.PTC
 
             if (fileSize != 0L)
             {
-                Logger.Info?.Print(LogClass.Ptc, $"Saved Profiling Info (size: {fileSize} bytes, profiled functions: {profiledFuncsCount}).");
+                Logger.Info?.Print(
+                    LogClass.Ptc,
+                    $"Saved Profiling Info (pid: {_ptc.CacheInfo.ProcessId}, title: {_ptc.CacheInfo.TitleIdText}, version: '{_ptc.CacheInfo.DisplayVersion}', " +
+                    $"kind: {_ptc.CacheInfo.ProcessKind}, selector: '{_ptc.CacheInfo.CacheSelector}', key: '{_ptc.CacheInfo.CacheKey}', " +
+                    $"path: '{fileName}', size: {fileSize} bytes, profiled functions: {profiledFuncsCount}).");
             }
         }
 

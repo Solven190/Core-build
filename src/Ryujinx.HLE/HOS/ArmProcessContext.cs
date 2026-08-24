@@ -1,4 +1,5 @@
 using ARMeilleure.Memory;
+using ARMeilleure.Translation.PTC;
 using Ryujinx.Cpu;
 using Ryujinx.Graphics.Gpu;
 using Ryujinx.HLE.HOS.Kernel.Process;
@@ -9,12 +10,10 @@ namespace Ryujinx.HLE.HOS
     interface IArmProcessContext : IProcessContext
     {
         IDiskCacheLoadState Initialize(
-            string titleIdText,
-            string displayVersion,
+            PtcCacheInfo cacheInfo,
             bool diskCacheEnabled,
             ulong codeAddress,
-            ulong codeSize,
-            string cacheSelector);
+            ulong codeSize);
     }
 
     class ArmProcessContext<T> : IArmProcessContext where T : class, IVirtualMemoryManagerTracked, IMemoryManager
@@ -64,15 +63,13 @@ namespace Ryujinx.HLE.HOS
         }
 
         public IDiskCacheLoadState Initialize(
-            string titleIdText,
-            string displayVersion,
+            PtcCacheInfo cacheInfo,
             bool diskCacheEnabled,
             ulong codeAddress,
-            ulong codeSize,
-            string cacheSelector)
+            ulong codeSize)
         {
             _cpuContext.PrepareCodeRange(codeAddress, codeSize);
-            return _cpuContext.LoadDiskCache(titleIdText, displayVersion, diskCacheEnabled, cacheSelector);
+            return _cpuContext.LoadDiskCache(cacheInfo, diskCacheEnabled);
         }
 
         public void InvalidateCacheRegion(ulong address, ulong size)

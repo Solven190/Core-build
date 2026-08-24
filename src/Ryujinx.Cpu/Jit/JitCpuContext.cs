@@ -1,6 +1,7 @@
 using ARMeilleure.Common;
 using ARMeilleure.Memory;
 using ARMeilleure.Translation;
+using ARMeilleure.Translation.PTC;
 using Ryujinx.Cpu.Signal;
 
 namespace Ryujinx.Cpu.Jit
@@ -51,9 +52,9 @@ namespace Ryujinx.Cpu.Jit
         }
 
         /// <inheritdoc/>
-        public IDiskCacheLoadState LoadDiskCache(string titleIdText, string displayVersion, bool enabled, string cacheSelector)
+        public IDiskCacheLoadState LoadDiskCache(PtcCacheInfo cacheInfo, bool enabled)
         {
-            return new JitDiskCacheLoadState(_translator.LoadDiskCache(titleIdText, displayVersion, enabled, cacheSelector));
+            return new JitDiskCacheLoadState(_translator.LoadDiskCache(cacheInfo, enabled));
         }
 
         /// <inheritdoc/>

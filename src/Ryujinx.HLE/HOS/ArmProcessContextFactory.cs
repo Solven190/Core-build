@@ -1,3 +1,4 @@
+using ARMeilleure.Translation.PTC;
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.Cpu;
@@ -7,6 +8,7 @@ using Ryujinx.Cpu.LightningJit;
 using Ryujinx.Graphics.Gpu;
 using Ryujinx.HLE.HOS.Kernel;
 using Ryujinx.HLE.HOS.Kernel.Process;
+using Ryujinx.HLE.Loaders.Processes;
 using Ryujinx.Memory;
 using System;
 using System.Runtime.InteropServices;
@@ -17,8 +19,10 @@ namespace Ryujinx.HLE.HOS
     {
         private readonly ITickSource _tickSource;
         private readonly GpuContext _gpu;
-        private readonly string _titleIdText;
+        private readonly ulong _programId;
+        private readonly byte _programIndex;
         private readonly string _displayVersion;
+        private readonly ProcessKind _processKind;
         private readonly bool _diskCacheEnabled;
         private readonly string _diskCacheSelector;
         private readonly ulong _codeAddress;
@@ -29,8 +33,10 @@ namespace Ryujinx.HLE.HOS
         public ArmProcessContextFactory(
             ITickSource tickSource,
             GpuContext gpu,
-            string titleIdText,
+            ulong programId,
+            byte programIndex,
             string displayVersion,
+            ProcessKind processKind,
             bool diskCacheEnabled,
             string diskCacheSelector,
             ulong codeAddress,
@@ -38,8 +44,10 @@ namespace Ryujinx.HLE.HOS
         {
             _tickSource = tickSource;
             _gpu = gpu;
-            _titleIdText = titleIdText;
+            _programId = programId;
+            _programIndex = programIndex;
             _displayVersion = displayVersion;
+            _processKind = processKind;
             _diskCacheEnabled = diskCacheEnabled;
             _diskCacheSelector = diskCacheSelector;
             _codeAddress = codeAddress;
@@ -121,8 +129,18 @@ namespace Ryujinx.HLE.HOS
             }
 
             string cacheSelector = _diskCacheSelector ?? "default";
+            string programIdText = _programId == 0 ? string.Empty : $"{_programId:x16}";
+            string applicationIdText = _programId == 0 ? string.Empty : $"{_programId & ~0xFul:x16}";
+            PtcCacheInfo cacheInfo = new(
+                pid,
+                programIdText,
+                applicationIdText,
+                _programIndex,
+                _displayVersion,
+                _processKind.ToString(),
+                cacheSelector);
 
-            DiskCacheLoadState = processContext.Initialize(_titleIdText, _displayVersion, _diskCacheEnabled, _codeAddress, _codeSize, cacheSelector);
+            DiskCacheLoadState = processContext.Initialize(cacheInfo, _diskCacheEnabled, _codeAddress, _codeSize);
 
             return processContext;
         }

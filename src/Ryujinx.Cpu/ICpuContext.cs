@@ -1,4 +1,5 @@
 using System;
+using ARMeilleure.Translation.PTC;
 
 namespace Ryujinx.Cpu
 {
@@ -44,11 +45,10 @@ namespace Ryujinx.Cpu
         /// <remarks>
         /// If the execution engine is recompiling guest code, this can be used to load cached code from disk.
         /// </remarks>
-        /// <param name="titleIdText">Title ID of the application in padded hex form</param>
-        /// <param name="displayVersion">Version of the application</param>
+        /// <param name="cacheInfo">Identity and selector for the process-owned disk cache</param>
         /// <param name="enabled">True if the cache should be loaded from disk if it exists, false otherwise</param>
         /// <returns>Disk cache load progress reporter and manager</returns>
-        IDiskCacheLoadState LoadDiskCache(string titleIdText, string displayVersion, bool enabled, string cacheSelector);
+        IDiskCacheLoadState LoadDiskCache(PtcCacheInfo cacheInfo, bool enabled);
 
         /// <summary>
         /// Indicates that code has been loaded into guest memory, and that it might be executed in the future.

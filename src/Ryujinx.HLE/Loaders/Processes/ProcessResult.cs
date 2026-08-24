@@ -87,7 +87,7 @@ namespace Ryujinx.HLE.Loaders.Processes
             AllowCodeMemoryForJit = allowCodeMemoryForJit;
         }
 
-        private static ProcessKind GetProcessKind(ulong programId)
+        internal static ProcessKind GetProcessKind(ulong programId)
         {
             if (programId == 0)
             {
