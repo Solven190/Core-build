@@ -32,7 +32,7 @@ namespace ARMeilleure.Translation.PTC
         private const string OuterHeaderMagicString = "PTCohd\0\0";
         private const string InnerHeaderMagicString = "PTCihd\0\0";
 
-        private const uint InternalVersion = 7020; //! To be incremented manually for each change to the ARMeilleure project. Your value was 7031, keeping this comment here just so you have the reference.
+        private const uint InternalVersion = 7031; //! To be incremented manually for each change to the ARMeilleure project.
 
         private const string ActualDir = "0";
         private const string BackupDir = "1";
@@ -520,11 +520,7 @@ namespace ARMeilleure.Translation.PTC
 
             if (fileSize != 0L)
             {
-                Logger.Info?.Print(
-                    LogClass.Ptc,
-                    $"Saved Translation Cache (pid: {CacheInfo.ProcessId}, title: {CacheInfo.TitleIdText}, version: '{CacheInfo.DisplayVersion}', " +
-                    $"kind: {CacheInfo.ProcessKind}, selector: '{CacheInfo.CacheSelector}', key: '{CacheInfo.CacheKey}', " +
-                    $"path: '{fileName}', size: {fileSize} bytes, translated functions: {translatedFuncsCount}).");
+                Logger.Info?.Print(LogClass.Ptc, $"Saved Translation Cache (size: {fileSize} bytes, translated functions: {translatedFuncsCount}).");
             }
         }
 
