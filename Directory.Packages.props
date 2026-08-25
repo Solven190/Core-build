@@ -8,8 +8,8 @@
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="12.1.1" />
-    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.13" />
-    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.13" />
+    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.15" />
+    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.15" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Concentus" Version="2.2.2" />
