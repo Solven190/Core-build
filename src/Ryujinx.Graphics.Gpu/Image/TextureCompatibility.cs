@@ -195,16 +195,6 @@ namespace Ryujinx.Graphics.Gpu.Image
             return true;
         }
 
-        /// <summary>
-        /// Determines whether a texture can flush its data back to guest memory.
-        /// </summary>
-        /// <param name="info">Texture that will have its data flushed</param>
-        /// <param name="caps">Host GPU Capabilities</param>
-        /// <returns>True if the texture can flush, false otherwise</returns>
-        public static bool CanTextureFlush(Texture texture, in Capabilities caps)
-        {
-            return !texture.HasImportOverride() && CanTextureFlush(texture.Info, caps);
-        }
 
         /// <summary>
         /// Determines whether a texture can flush its data back to guest memory.
@@ -212,14 +202,15 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <param name="info">Texture information</param>
         /// <param name="caps">Host GPU Capabilities</param>
         /// <returns>True if the texture can flush, false otherwise</returns>
-        private static bool CanTextureFlush(TextureInfo info, in Capabilities caps)
+       public static bool CanTextureFlush(TextureInfo info, Capabilities caps)
         {
-            if (IsFormatHostIncompatible(info, in caps))
+            if (IsFormatHostIncompatible(info, caps))
             {
                 return false; // Flushing this format is not supported, as it may have been converted to another host format.
             }
 
-            if (info.Target is Target.Texture2DMultisample or Target.Texture2DMultisampleArray)
+            if (info.Target is Target.Texture2DMultisample or
+                Target.Texture2DMultisampleArray)
             {
                 return false; // Flushing multisample textures is not supported, the host does not allow getting their data.
             }
@@ -400,7 +391,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
                 return stride == rhs.Stride ? TextureViewCompatibility.CopyOnly : TextureViewCompatibility.LayoutIncompatible;
             }
-            else if (lhs.Target.IsMultisample() != rhs.Target.IsMultisample() && alignedWidthMatches && lhsAlignedSize.Height == rhsAlignedSize.Height)
+            else if (lhs.Target.IsMultisample != rhs.Target.IsMultisample && alignedWidthMatches && lhsAlignedSize.Height == rhsAlignedSize.Height)
             {
                 // Copy between multisample and non-multisample textures with mismatching size is allowed,
                 // as long aligned size matches.

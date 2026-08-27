@@ -61,7 +61,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             gd.Textures.Add(this);
 
-            bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample();
+            bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample;
 
             VkFormat format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
             ImageUsageFlags usage = TextureStorage.GetImageUsage(info.Format, info.Target, gd.Capabilities, isMsImageStorageSupported) & storage.UsageFlags;
@@ -126,7 +126,7 @@ namespace Ryujinx.Graphics.Vulkan
 
             ImageUsageFlags shaderUsage = ImageUsageFlags.SampledBit;
 
-            if (info.Format.IsImageCompatible() && (_gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample()))
+            if (info.Format.IsImageCompatible() && (_gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample))
             {
                 shaderUsage |= ImageUsageFlags.StorageBit;
             }
@@ -225,12 +225,12 @@ namespace Ryujinx.Graphics.Vulkan
             Image srcImage = src.GetImage().Get(cbs).Value;
             Image dstImage = dst.GetImage().Get(cbs).Value;
 
-            if (!dst.Info.Target.IsMultisample() && Info.Target.IsMultisample())
+            if (!dst.Info.Target.IsMultisample && Info.Target.IsMultisample)
             {
                 int layers = Math.Min(Info.GetLayers(), dst.Info.GetLayers() - firstLayer);
                 _gd.HelperShader.CopyMSToNonMS(_gd, cbs, src, dst, 0, firstLayer, layers);
             }
-            else if (dst.Info.Target.IsMultisample() && !Info.Target.IsMultisample())
+            else if (dst.Info.Target.IsMultisample && !Info.Target.IsMultisample)
             {
                 int layers = Math.Min(Info.GetLayers(), dst.Info.GetLayers() - firstLayer);
                 _gd.HelperShader.CopyNonMSToMS(_gd, cbs, src, dst, 0, firstLayer, layers);
@@ -287,11 +287,11 @@ namespace Ryujinx.Graphics.Vulkan
             Image srcImage = src.GetImage().Get(cbs).Value;
             Image dstImage = dst.GetImage().Get(cbs).Value;
 
-            if (!dst.Info.Target.IsMultisample() && Info.Target.IsMultisample())
+            if (!dst.Info.Target.IsMultisample && Info.Target.IsMultisample)
             {
                 _gd.HelperShader.CopyMSToNonMS(_gd, cbs, src, dst, srcLayer, dstLayer, 1);
             }
-            else if (dst.Info.Target.IsMultisample() && !Info.Target.IsMultisample())
+            else if (dst.Info.Target.IsMultisample && !Info.Target.IsMultisample)
             {
                 _gd.HelperShader.CopyNonMSToMS(_gd, cbs, src, dst, srcLayer, dstLayer, 1);
             }

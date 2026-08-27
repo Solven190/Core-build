@@ -717,6 +717,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                 }
 
                 DeferredCopy = old.DeferredCopy;
+                DeferredCopyRaw = old.DeferredCopyRaw;
             }
         }
 

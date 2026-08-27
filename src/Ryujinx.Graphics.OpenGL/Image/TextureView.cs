@@ -116,8 +116,8 @@ namespace Ryujinx.Graphics.OpenGL.Image
         {
             TextureView destinationView = (TextureView)destination;
 
-            bool srcIsMultisample = Target.IsMultisample();
-            bool dstIsMultisample = destinationView.Target.IsMultisample();
+            bool srcIsMultisample = Target.IsMultisample;
+            bool dstIsMultisample = destinationView.Target.IsMultisample;
 
             if (dstIsMultisample != srcIsMultisample && Info.Format.IsDepthOrStencil())
             {
@@ -172,8 +172,8 @@ namespace Ryujinx.Graphics.OpenGL.Image
         {
             TextureView destinationView = (TextureView)destination;
 
-            bool srcIsMultisample = Target.IsMultisample();
-            bool dstIsMultisample = destinationView.Target.IsMultisample();
+            bool srcIsMultisample = Target.IsMultisample;
+            bool dstIsMultisample = destinationView.Target.IsMultisample;
 
             if (dstIsMultisample != srcIsMultisample && Info.Format.IsDepthOrStencil())
             {
@@ -216,7 +216,7 @@ namespace Ryujinx.Graphics.OpenGL.Image
             Extents2D srcRegion = new(0, 0, Width, Height);
             Extents2D dstRegion = new(0, 0, destinationView.Width, destinationView.Height);
 
-            if (destinationView.Target.IsMultisample())
+            if (destinationView.Target.IsMultisample)
             {
                 TextureView intermmediate = _renderer.TextureCopy.IntermediatePool.GetOrCreateWithAtLeast(
                     Info.Target,

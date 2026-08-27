@@ -147,7 +147,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             _allOffsets = size.AllOffsets;
             _sliceSizes = size.SliceSizes;
 
-            if (Storage.Target.HasDepthOrLayers() && Storage.Info.GetSlices() > GranularLayerThreshold)
+            if (Storage.Target.HasDepthOrLayers && Storage.Info.GetSlices() > GranularLayerThreshold)
             {
                 _hasLayerViews = true;
                 _hasMipViews = true;
@@ -182,7 +182,11 @@ namespace Ryujinx.Graphics.Gpu.Image
         {
             foreach (TextureIncompatibleOverlap overlap in _incompatibleOverlaps)
             {
-                if (overlap.Compatibility <= TextureViewCompatibility.LayoutIncompatible)
+                // LayoutIncompatible and better may still use a regular texture copy dependency.
+                // Fully Incompatible pairs are not copy compatible in general, but may still qualify for an
+                // exact raw byte copy dependency (checked internally by CreateCopyDependency) when they map
+                // to exactly the same guest memory, such as differently typed/sized aliases of the same data.
+                if (overlap.Compatibility <= TextureViewCompatibility.Incompatible)
                 {
                     CreateCopyDependency(overlap.Group, false, overlap.Compatibility);
                 }
@@ -225,7 +229,6 @@ namespace Ryujinx.Graphics.Gpu.Image
                 SignalAllDirty();
             }
         }
-
 
         /// <summary>
         /// Flushes incompatible overlaps if the storage format requires it, and they have been modified.
@@ -324,7 +327,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         {
             FlushIncompatibleOverlapsIfNeeded();
 
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split, _) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split, bound) =>
             {
                 bool dirty = false;
                 bool anyModified = false;
@@ -479,7 +482,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <param name="texture">The texture to synchronize dependents of</param>
         public void SynchronizeDependents(Texture texture)
         {
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _, _) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split, bound) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -571,7 +574,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             tracked = tracked || ShouldFlushTriggerTracking();
             bool flushed = false;
 
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split, _) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split, bound) =>
             {
                 int startSlice = 0;
                 int endSlice = 0;
@@ -652,14 +655,14 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             if (_flushBuffer == BufferHandle.Null)
             {
-                if (!TextureCompatibility.CanTextureFlush(Storage, _context.Capabilities))
+                if (!TextureCompatibility.CanTextureFlush(Storage.Info, _context.Capabilities))
                 {
                     return;
                 }
 
                 bool canImport = Storage.Info.IsLinear && Storage.Info.Stride >= Storage.Info.Width * Storage.Info.FormatInfo.BytesPerPixel;
 
-                IntPtr hostPointer = canImport ? _physicalMemory.GetHostPointer(Storage.Range) : 0;
+                nint hostPointer = canImport ? _physicalMemory.GetHostPointer(Storage.Range) : 0;
 
                 if (hostPointer != 0 && _context.Renderer.PrepareHostMapping(hostPointer, Storage.Size))
                 {
@@ -716,7 +719,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             ClearIncompatibleOverlaps(texture);
 
-            EvaluateRelevantHandles(texture, (baseHandle, regionCount, _, _) =>
+            EvaluateRelevantHandles(texture, (baseHandle, regionCount, split, bound) =>
             {
                 for (int i = 0; i < regionCount; i++)
                 {
@@ -1049,7 +1052,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             int endOffset = _allOffsets[viewEnd] + _sliceSizes[lastLevel];
             int size = endOffset - offset;
 
-            List<RegionHandle> result = new();
+            List<RegionHandle> result = [];
 
             for (int i = 0; i < TextureRange.Count; i++)
             {
@@ -1162,7 +1165,6 @@ namespace Ryujinx.Graphics.Gpu.Image
 
             SignalAllDirty();
         }
-
 
         /// <summary>
         /// Removes a view from the group, removing it from all overlap lists.
@@ -1385,7 +1387,7 @@ namespace Ryujinx.Graphics.Gpu.Image
 
                 if (_is3D)
                 {
-                    List<TextureGroupHandle> handlesList = new();
+                    List<TextureGroupHandle> handlesList = [];
 
                     for (int i = 0; i < levelHandles; i++)
                     {
@@ -1468,15 +1470,15 @@ namespace Ryujinx.Graphics.Gpu.Image
             // Get the location of each texture within its storage, so we can find the handles to apply the dependency to.
             // This can consist of multiple disjoint regions, for example if this is a mip slice of an array texture.
 
-            List<(int BaseHandle, int RegionCount)> targetRange = new();
-            List<(int BaseHandle, int RegionCount)> otherRange = new();
+            List<(int BaseHandle, int RegionCount)> targetRange = [];
+            List<(int BaseHandle, int RegionCount)> otherRange = [];
 
-            EvaluateRelevantHandles(firstLayer, firstLevel, other.Info.GetSlices(), other.Info.Levels, (baseHandle, regionCount, _, _) =>
+            EvaluateRelevantHandles(firstLayer, firstLevel, other.Info.GetSlices(), other.Info.Levels, (baseHandle, regionCount, split, specialData) =>
             {
                 targetRange.Add((baseHandle, regionCount));
                 return true;
             }, out _);
-            otherGroup.EvaluateRelevantHandles(other, (baseHandle, regionCount, _, _) =>
+            otherGroup.EvaluateRelevantHandles(other, (baseHandle, regionCount, split, specialData) =>
             {
                 otherRange.Add((baseHandle, regionCount));
                 return true;
@@ -1601,7 +1603,15 @@ namespace Ryujinx.Graphics.Gpu.Image
                         TextureInfo info = Storage.Info;
                         TextureInfo otherInfo = other.Storage.Info;
 
-                        bool textureCopy = TextureCompatibility.ViewLayoutCompatible(info, otherInfo, level, otherLevel) &&
+                        // ViewLayoutCompatible/CopySizeMatches only reason about textures with some genuine
+                        // format relationship (LayoutIncompatible or better) - they are not aware of, and must
+                        // never be used to justify, a plain texture-to-texture copy (which some backends
+                        // implement via a reinterpreting view) between fully Incompatible aliases such as a
+                        // depth format and an unrelated color format. For Incompatible pairs, only the strict
+                        // raw byte copy dependency below (which explicitly excludes depth/stencil formats) may
+                        // be used.
+                        bool textureCopy = compatibility != TextureViewCompatibility.Incompatible &&
+                            TextureCompatibility.ViewLayoutCompatible(info, otherInfo, level, otherLevel) &&
                             TextureCompatibility.CopySizeMatches(info, otherInfo, level, otherLevel);
 
                         if (textureCopy || rawCopy)
@@ -1659,9 +1669,12 @@ namespace Ryujinx.Graphics.Gpu.Image
         {
             if (!_incompatibleOverlaps.Any(overlap => overlap.Group == other.Group))
             {
-                if (copy && other.Compatibility <= TextureViewCompatibility.LayoutIncompatible)
+                if (copy && other.Compatibility <= TextureViewCompatibility.Incompatible)
                 {
                     // Any of the group's views may share compatibility, even if the parents do not fully.
+                    // Fully Incompatible groups are also let through here, since CreateCopyDependency will
+                    // fall back to an exact raw byte copy dependency for them when the strict requirements
+                    // for one are met (see CanCreateRawCopyDependency).
                     CreateCopyDependency(other.Group, false, other.Compatibility);
                 }
 
@@ -1763,7 +1776,7 @@ namespace Ryujinx.Graphics.Gpu.Image
                     }
                 }
 
-                if (TextureCompatibility.CanTextureFlush(Storage, _context.Capabilities) && !(inBuffer && _flushBufferImported))
+                if (TextureCompatibility.CanTextureFlush(Storage.Info, _context.Capabilities) && !(inBuffer && _flushBufferImported))
                 {
                     FlushSliceRange(false, handle.BaseSlice, handle.BaseSlice + handle.SliceCount, inBuffer, Storage.GetFlushTexture());
                 }
@@ -1803,4 +1816,3 @@ namespace Ryujinx.Graphics.Gpu.Image
         }
     }
 }
-

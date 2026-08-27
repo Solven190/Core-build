@@ -79,7 +79,7 @@ namespace Ryujinx.Graphics.Vulkan
             _device = device;
             _info = info;
 
-            bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample();
+            bool isMsImageStorageSupported = gd.Capabilities.SupportsShaderStorageImageMultisample || !info.Target.IsMultisample;
 
             VkFormat format = _gd.FormatCapabilities.ConvertToVkFormat(info.Format, isMsImageStorageSupported);
             uint levels = (uint)info.Levels;
@@ -323,7 +323,7 @@ namespace Ryujinx.Graphics.Vulkan
                 usage |= ImageUsageFlags.ColorAttachmentBit;
             }
 
-            if (format.IsImageCompatible() && (isMsImageStorageSupported || !target.IsMultisample()))
+            if (format.IsImageCompatible() && (isMsImageStorageSupported || !target.IsMultisample))
             {
                 usage |= ImageUsageFlags.StorageBit;
             }

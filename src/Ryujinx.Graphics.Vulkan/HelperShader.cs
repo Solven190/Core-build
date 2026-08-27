@@ -406,10 +406,10 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (dstIsDepthOrStencil)
             {
-                _pipeline.SetProgram(src.Info.Target.IsMultisample() ? _programDepthBlitMs : _programDepthBlit);
+                _pipeline.SetProgram(src.Info.Target.IsMultisample ? _programDepthBlitMs : _programDepthBlit);
                 _pipeline.SetDepthTest(new DepthTestDescriptor(true, true, CompareOp.Always));
             }
-            else if (src.Info.Target.IsMultisample())
+            else if (src.Info.Target.IsMultisample)
             {
                 _pipeline.SetProgram(_programColorBlitMs);
             }
@@ -566,12 +566,12 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (isDepth)
             {
-                _pipeline.SetProgram(src.Info.Target.IsMultisample() ? _programDepthBlitMs : _programDepthBlit);
+                _pipeline.SetProgram(src.Info.Target.IsMultisample ? _programDepthBlitMs : _programDepthBlit);
                 _pipeline.SetDepthTest(new DepthTestDescriptor(true, true, CompareOp.Always));
             }
             else
             {
-                _pipeline.SetProgram(src.Info.Target.IsMultisample() ? _programStencilBlitMs : _programStencilBlit);
+                _pipeline.SetProgram(src.Info.Target.IsMultisample ? _programStencilBlitMs : _programStencilBlit);
                 _pipeline.SetStencilTest(CreateStencilTestDescriptor(true));
             }
 

@@ -1117,7 +1117,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <returns>True if data was flushed, false otherwise</returns>
         public bool FlushModified(bool tracked = true)
         {
-            return TextureCompatibility.CanTextureFlush(this, _context.Capabilities) && Group.FlushModified(this, tracked);
+            return TextureCompatibility.CanTextureFlush(Info, _context.Capabilities) && Group.FlushModified(this, tracked);
         }
 
         /// <summary>
@@ -1131,7 +1131,7 @@ namespace Ryujinx.Graphics.Gpu.Image
         /// <param name="tracked">Whether or not the flush triggers write tracking. If it doesn't, the texture will not be blacklisted for scaling either.</param>
         public void Flush(bool tracked)
         {
-            if (TextureCompatibility.CanTextureFlush(this, _context.Capabilities))
+            if (TextureCompatibility.CanTextureFlush(Info, _context.Capabilities))
             {
                 FlushTextureDataToGuest(tracked);
             }
@@ -1336,7 +1336,7 @@ namespace Ryujinx.Graphics.Gpu.Image
             {
                 result = TextureCompatibility.PropagateViewCompatibility(result, TextureCompatibility.ViewTargetCompatible(Info, info, ref caps));
 
-                bool bothMs = Info.Target.IsMultisample() && info.Target.IsMultisample();
+                bool bothMs = Info.Target.IsMultisample && info.Target.IsMultisample;
                 if (bothMs && (Info.SamplesInX != info.SamplesInX || Info.SamplesInY != info.SamplesInY))
                 {
                     result = TextureViewCompatibility.Incompatible;
