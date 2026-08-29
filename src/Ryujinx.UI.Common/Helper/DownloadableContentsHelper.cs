@@ -31,7 +31,7 @@ namespace Ryujinx.UI.Common.Helper
 
             try
             {
-                Logger.Info?.Print(LogClass.Configuration, $"Found downloadable content data for {applicationIdBase:x16} at {downloadableContentJsonPath}");
+                // Logger.Info?.Print(LogClass.Configuration, $"Found downloadable content data for {applicationIdBase:x16} at {downloadableContentJsonPath}");
                 List<DownloadableContentContainer> downloadableContentContainerList = JsonHelper.DeserializeFromFile(downloadableContentJsonPath,_serializerContext.ListDownloadableContentContainer);
                 return LoadDownloadableContents(vfs, downloadableContentContainerList);
             }

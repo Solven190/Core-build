@@ -39,7 +39,7 @@ namespace Ryujinx.UI.Common.Helper
 
             try
             {
-                Logger.Info?.Print(LogClass.Application, $"Found title updates data for {applicationIdBase:x16} at {titleUpdatesJsonPath}");
+                // Logger.Info?.Print(LogClass.Application, $"Found title updates data for {applicationIdBase:x16} at {titleUpdatesJsonPath}");
                 TitleUpdateMetadata titleUpdateWindowData = JsonHelper.DeserializeFromFile(titleUpdatesJsonPath, _serializerContext.TitleUpdateMetadata);
                 return LoadTitleUpdates(vfs, titleUpdateWindowData, applicationIdBase);
             }
