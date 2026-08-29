@@ -6,6 +6,8 @@ using Ryujinx.Ava.Common.Locale;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.UI.Common.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ryujinx.Ava.UI.Windows
@@ -81,20 +83,17 @@ namespace Ryujinx.Ava.UI.Windows
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            foreach (object content in e.AddedItems)
+            List<XCITrimmerFileModel> added = [.. e.AddedItems.OfType<XCITrimmerFileModel>()];
+            List<XCITrimmerFileModel> removed = [.. e.RemovedItems.OfType<XCITrimmerFileModel>()];
+
+            foreach (XCITrimmerFileModel applicationData in added)
             {
-                if (content is XCITrimmerFileModel applicationData)
-                {
-                    ViewModel.Select(applicationData);
-                }
+                ViewModel.Select(applicationData);
             }
 
-            foreach (object content in e.RemovedItems)
+            foreach (XCITrimmerFileModel applicationData in removed)
             {
-                if (content is XCITrimmerFileModel applicationData)
-                {
-                    ViewModel.Deselect(applicationData);
-                }
+                ViewModel.Deselect(applicationData);
             }
         }
     }
