@@ -71,7 +71,14 @@ namespace Ryujinx.HLE.HOS.Services.Account.Acc
             return _applicationServiceServer.IsUserRegistrationRequestPermitted(context);
         }
 
-        [CommandCmif(51)]
+        [CommandCmif(51)] // 1.0.0 – 18.1.0
+        // TrySelectUserWithoutInteraction(bool) -> nn::account::Uid
+        public ResultCode TrySelectUserWithoutInteractionDeprecated(ServiceCtx context)
+        {
+            return _applicationServiceServer.TrySelectUserWithoutInteraction(context);
+        }
+
+        [CommandCmif(52)] // 19.0.0+
         // TrySelectUserWithoutInteraction(bool) -> nn::account::Uid
         public ResultCode TrySelectUserWithoutInteraction(ServiceCtx context)
         {
