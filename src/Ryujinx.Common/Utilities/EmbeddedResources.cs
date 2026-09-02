@@ -126,8 +126,13 @@ namespace Ryujinx.Common
 
         public static string[] GetAllAvailableResources(string path, string ext = "")
         {
-            return ResolveManifestPath(path).Item1.GetManifestResourceNames()
-                .Where(r => r.EndsWith(ext))
+            (Assembly assembly, string resourcePath) = ResolveManifestPath(path);
+
+            string manifestPath = assembly.GetName().Name + "." + resourcePath.Replace('/', '.');
+
+            return assembly.GetManifestResourceNames()
+                .Where(r => r.StartsWith(manifestPath + ".", StringComparison.Ordinal))
+                .Where(r => r.EndsWith(ext, StringComparison.Ordinal))
                 .ToArray();
         }
 
