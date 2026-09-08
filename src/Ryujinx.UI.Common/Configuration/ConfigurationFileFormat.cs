@@ -16,7 +16,7 @@ namespace Ryujinx.UI.Common.Configuration
         /// <summary>
         /// The current version of the file format
         /// </summary>
-        public const int CurrentVersion = 62;
+        public const int CurrentVersion = 61;
 
         /// <summary>
         /// Version of the configuration file format
