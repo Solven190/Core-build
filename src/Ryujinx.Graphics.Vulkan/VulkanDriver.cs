@@ -13,7 +13,7 @@ namespace Ryujinx.Graphics.Vulkan
             string[] searchPaths =
             [
                 Path.Combine(contentsDir, "Resources", "vulkan", "icd.d", fileName),
-                Path.Combine(contentsDir, "vulkan", "icd.d", fileName)
+                Path.Combine(contentsDir, fileName)
             ];
 
             foreach (string icdPath in searchPaths)
