@@ -3,13 +3,13 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="12.1.1" />
+    <PackageVersion Include="Avalonia" Version="12.1.2" />
     <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.2" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
-    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="12.1.1" />
-    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.15" />
-    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.15" />
+    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="12.1.2" />
+    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.17" />
+    <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.17" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Concentus" Version="2.2.2" />
@@ -20,8 +20,8 @@
     <PackageVersion Include="Humanizer" Version="3.0.10" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
-    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.21.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.22.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
     <PackageVersion Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
     <PackageVersion Include="MsgPack.Cli" Version="1.0.1" />
     <PackageVersion Include="NetCoreServer" Version="8.0.7" />
@@ -36,7 +36,7 @@
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.Linux" Version="6.1.4-build6" />
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.macOS" Version="5.0.3-build14" />
     <PackageVersion Include="Ryujinx.Graphics.Nvdec.Dependencies.Windows" Version="6.1.4-build6" />
-    <PackageVersion Include="Ryujinx.Graphics.Vulkan.MoltenVK" Version="1.4.2-ryujinx.6" />
+    <PackageVersion Include="Ryujinx.Graphics.Vulkan.MoltenVK" Version="1.4.3-ryujinx.1" />
     <PackageVersion Include="Ryujinx.LibHac" Version="0.21.0-alpha.133" />
     <PackageVersion Include="Ryujinx.SDL3-CS" Version="2026.707.0" />
     <PackageVersion Include="securifybv.ShellLink" Version="0.1.0" />
@@ -48,7 +48,7 @@
     <PackageVersion Include="SkiaSharp" Version="3.119.4" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.4" />
     <PackageVersion Include="SPB" Version="0.0.4-build32" />
-    <PackageVersion Include="System.IO.Hashing" Version="10.0.11" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.12" />
     <PackageVersion Include="UnicornEngine.Unicorn" Version="2.1.0" />
   </ItemGroup>
 </Project>
