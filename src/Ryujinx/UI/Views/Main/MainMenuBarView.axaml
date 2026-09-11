@@ -6,9 +6,6 @@
     xmlns:locale="clr-namespace:Ryujinx.Ava.Common.Locale"
     mc:Ignorable="d"
     xmlns:viewModels="clr-namespace:Ryujinx.Ava.UI.ViewModels"
-    xmlns:controls="clr-namespace:Ryujinx.Ava.UI.Controls"
-    xmlns:common="clr-namespace:Ryujinx.Common;assembly=Ryujinx.Common"
-    xmlns:renderDocApi="clr-namespace:Ryujinx.Graphics.RenderDocApi;assembly=Ryujinx.Graphics.RenderDocApi"
     x:DataType="viewModels:MainWindowViewModel"
     x:Class="Ryujinx.Ava.UI.Views.Main.MainMenuBarView">
     <Design.DataContext>
@@ -232,23 +229,23 @@
                     IsEnabled="{Binding IsGameRunning}" />
                 <Separator IsVisible="{Binding RenderDocIsAvailable}" />
                 <MenuItem
+                    Click="StartRenderDocCapture_Click"
                     IsVisible="{Binding ShowStartCaptureButton}"
-                    Command="{Binding StartRenderDocCapture}"
                     CommandParameter="{Binding}"
-                    Header="{locale:Locale RenderDoc_MenuBarActions_StartCapture}"
+                    Header="{locale:Locale MenuBarActions_StartCapture}"
                     IsEnabled="{Binding IsGameRunning}" />
                 <MenuItem
+                    Click="EndRenderDocCapture_Click"
                     IsVisible="{Binding ShowEndCaptureButton}"
-                    Command="{Binding EndRenderDocCapture}"
                     CommandParameter="{Binding}"
-                    Header="{locale:Locale RenderDoc_MenuBarActions_EndCapture}"
+                    Header="{locale:Locale MenuBarActions_EndCapture}"
                     IsEnabled="{Binding IsGameRunning}" />
                 <MenuItem
+                    Click="DiscardRenderDocCapture_Click"
                     IsVisible="{Binding ShowEndCaptureButton}"
-                    Command="{Binding DiscardRenderDocCapture}"
                     CommandParameter="{Binding}"
-                    Header="{locale:Locale RenderDoc_MenuBarActions_DiscardCapture}"
-                    ToolTip.Tip="{locale:Locale RenderDoc_MenuBarActions_DiscardCapture_ToolTip}"
+                    Header="{locale:Locale MenuBarActions_DiscardCapture}"
+                    ToolTip.Tip="{locale:Locale MenuBarActions_DiscardCapture_ToolTip}"
                     IsEnabled="{Binding IsGameRunning}" />
             </MenuItem>
             <MenuItem VerticalAlignment="Center" Header="{locale:Locale MenuBarTools}">

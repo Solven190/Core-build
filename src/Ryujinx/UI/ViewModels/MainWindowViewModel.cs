@@ -2157,53 +2157,7 @@ namespace Ryujinx.Ava.UI.ViewModels
                 OnPropertyChanged(nameof(ShowEndCaptureButton));
             }
         }
-        
-        public static RelayCommand<MainWindowViewModel> StartRenderDocCapture { get; } =
-            Commands.CreateConditional<MainWindowViewModel>(vm => RenderDoc.IsAvailable && !vm.ShowLoadProgress,
-                viewModel =>
-                {
-                    if (!RenderDoc.IsFrameCapturing)
-                    {
-                        if (viewModel.AppHost.RendererHost
-                            .EmbeddedWindow.StartRenderDocCapture(viewModel.AppHost.Device))
-                        {
-                            Logger.Info?.Print(LogClass.Application, "Starting RenderDoc capture.");
-                        }
-                    }
 
-                    viewModel.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
-                });
-
-        public static RelayCommand<MainWindowViewModel> EndRenderDocCapture { get; } =
-            Commands.CreateConditional<MainWindowViewModel>(vm => RenderDoc.IsAvailable && !vm.ShowLoadProgress,
-                viewModel =>
-                {
-                    if (RenderDoc.IsFrameCapturing)
-                    {
-                        if (viewModel.AppHost.RendererHost.EmbeddedWindow.EndRenderDocCapture())
-                        {
-                            Logger.Info?.Print(LogClass.Application, "Ended RenderDoc capture.");
-                        }
-                    }
-
-                    viewModel.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
-                });
-
-        public static RelayCommand<MainWindowViewModel> DiscardRenderDocCapture { get; } =
-            Commands.CreateConditional<MainWindowViewModel>(vm => RenderDoc.IsAvailable  && !vm.ShowLoadProgress,
-                viewModel =>
-                {
-                    if (RenderDoc.IsFrameCapturing)
-                    {
-                        if (viewModel.AppHost.RendererHost.EmbeddedWindow.DiscardRenderDocCapture())
-                        {
-                            Logger.Info?.Print(LogClass.Application, "Discarded RenderDoc capture.");
-                        }
-                    }
-
-                    viewModel.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
-                });
-        
         #endregion
     }
 }

@@ -9,7 +9,9 @@ using Ryujinx.Ava.UI.Helpers;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Ava.UI.Windows;
 using Ryujinx.Common;
+using Ryujinx.Common.Logging;
 using Ryujinx.Common.Utilities;
+using Ryujinx.Graphics.RenderDocApi;
 using Ryujinx.HLE.HOS.Services.Nfc.AmiiboDecryption;
 using Ryujinx.Modules;
 using Ryujinx.UI.App.Common;
@@ -264,6 +266,52 @@ namespace Ryujinx.Ava.UI.Views.Main
                     Window.Arrange(new Rect(Window.Position.X, Window.Position.Y, width, height));
                 });
             }
+        }
+
+        public void StartRenderDocCapture_Click(object sender, RoutedEventArgs args)
+        {
+            MainWindowViewModel viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
+
+            if (!RenderDoc.IsFrameCapturing && RenderDoc.IsAvailable && viewModel is not { ShowLoadProgress: true })
+            {
+                if (viewModel != null && viewModel.AppHost.RendererHost
+                        .EmbeddedWindow.StartRenderDocCapture(viewModel.AppHost.Device))
+                {
+                    Logger.Info?.Print(LogClass.Application, "Starting RenderDoc capture.");
+                }
+            }
+
+            viewModel?.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+        }
+
+        public void EndRenderDocCapture_Click(object sender, RoutedEventArgs args)
+        {
+            MainWindowViewModel viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
+
+            if (RenderDoc.IsFrameCapturing && RenderDoc.IsAvailable && viewModel is not { ShowLoadProgress: true })
+            {
+                if (viewModel != null && viewModel.AppHost.RendererHost.EmbeddedWindow.EndRenderDocCapture())
+                {
+                    Logger.Info?.Print(LogClass.Application, "Ended RenderDoc capture.");
+                }
+            }
+
+            viewModel?.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
+        }
+
+        public void DiscardRenderDocCapture_Click(object sender, RoutedEventArgs args)
+        {
+            MainWindowViewModel viewModel = (sender as MenuItem)?.DataContext as MainWindowViewModel;
+
+            if (RenderDoc.IsFrameCapturing && RenderDoc.IsAvailable && viewModel is not { ShowLoadProgress: true })
+            {
+                if (viewModel != null && viewModel.AppHost.RendererHost.EmbeddedWindow.DiscardRenderDocCapture())
+                {
+                    Logger.Info?.Print(LogClass.Application, "Discarded RenderDoc capture.");
+                }
+            }
+
+            viewModel?.RenderDocIsCapturing = RenderDoc.IsFrameCapturing;
         }
 
         public async void CheckForUpdates(object sender, RoutedEventArgs e)
