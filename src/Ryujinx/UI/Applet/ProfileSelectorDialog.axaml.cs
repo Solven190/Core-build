@@ -8,8 +8,8 @@ using Ryujinx.Ava.UI.Helpers;
 using Ryujinx.Ava.UI.ViewModels;
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.HOS.Services.Account.Acc;
+using Ryujinx.UI.Common.Configuration;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using UserProfile = Ryujinx.Ava.UI.Models.UserProfile;
 using UserProfileSft = Ryujinx.HLE.HOS.Services.Account.Acc.UserProfile;
@@ -81,6 +81,13 @@ namespace Ryujinx.Ava.UI.Applet
 
         public static async Task<(UserId Id, bool Result)> ShowInputDialog(ProfileSelectorDialogViewModel viewModel)
         {
+
+            if (ConfigurationState.Instance.System.SkipUserProfilesManager)
+            {
+                UserId defaultId = viewModel.SelectedUserId;
+                return (defaultId, true);
+            }
+
             FAContentDialog contentDialog = new()
             {
                 Title = LocaleManager.Instance[LocaleKeys.UserProfileWindowTitle],
