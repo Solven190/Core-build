@@ -1,0 +1,223 @@
+name: Android Build
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+env:
+  ANDROID_PLATFORM: 'android-37.0'
+  ANDROID_BUILD_TOOLS: '37.0.0'
+  NDK_VERSION: '28.2.13676358'
+  CMAKE_SDK_VERSION: '3.22.1'
+  CMAKE_NATIVE_VERSION: '4.1.2'
+  JAVA_VERSION: '21'
+  DOTNET_VERSION: '9.0.x'
+  CCACHE_DIR: /tmp/ccache
+  CCACHE_MAXSIZE: 2G
+  GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=512m"'
+  CMDLINE_TOOLS_BUILD: '11076708'
+  LIBHAC_VERSION: '0.21.0-alpha.128'
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: legacy
+            description: armv8
+            gradle_task: assembleMainlineArmv8Release
+            apk_dir: mainlineArmv8
+            artifact_name: kenji-nx-legacy
+
+          - name: standard
+            description: armv8.2
+            gradle_task: assembleMainlineArmv82Release
+            apk_dir: mainlineArmv82
+            artifact_name: kenji-nx-standard
+
+          - name: sd8g3
+            description: Snapdragon 8 Gen 3 / 8 Elite (armv8.7)
+            gradle_task: assembleMainlineArmv87Release
+            apk_dir: mainlineArmv87
+            artifact_name: kenji-nx-sd8g3-8e
+
+          - name: sd8eg5
+            description: Snapdragon 8 Elite Gen 5 (SVE2)
+            gradle_task: assembleMainlineSd8eg5Release
+            apk_dir: mainlineSd8eg5
+            artifact_name: kenji-nx-sd8eg5
+
+          - name: optimized
+            description: Optimized armv8.2
+            gradle_task: assembleOptimizedArmv82Release
+            apk_dir: optimizedArmv82
+            artifact_name: kenji-nx-optimized
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache Android SDK
+        id: cache-android-sdk
+        uses: actions/cache@v4
+        with:
+          path: ~/android-sdk
+          key: android-sdk-${{ env.NDK_VERSION }}-${{ env.ANDROID_PLATFORM }}-${{ env.CMAKE_NATIVE_VERSION }}
+
+      - name: Install Android SDK
+        if: steps.cache-android-sdk.outputs.cache-hit != 'true'
+        run: |
+          export ANDROID_HOME=$HOME/android-sdk
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          cd "$HOME"
+          wget -q "https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_BUILD}_latest.zip" -O tools.zip
+          unzip -q tools.zip -d cmdline-tools-temp
+          mv cmdline-tools-temp/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          yes | sdkmanager --licenses || true
+          sdkmanager \
+            "platform-tools" \
+            "platforms;${ANDROID_PLATFORM}" \
+            "build-tools;${ANDROID_BUILD_TOOLS}" \
+            "ndk;${NDK_VERSION}" \
+            "cmake;${CMAKE_SDK_VERSION}"
+
+          cd /tmp
+          wget -q "https://github.com/Kitware/CMake/releases/download/v${CMAKE_NATIVE_VERSION}/cmake-${CMAKE_NATIVE_VERSION}-linux-x86_64.tar.gz" -O cmake.tar.gz
+          tar -xzf cmake.tar.gz
+          CMAKE_INSTALL_DIR="$ANDROID_HOME/cmake/${CMAKE_NATIVE_VERSION}"
+          mkdir -p "$CMAKE_INSTALL_DIR"
+          cp -r "cmake-${CMAKE_NATIVE_VERSION}-linux-x86_64/." "$CMAKE_INSTALL_DIR/"
+
+      - name: Configure environment
+        run: |
+          export ANDROID_HOME=$HOME/android-sdk
+
+          # SDK 37 ships its platform folder as "android-37.0"; symlink it to
+          # "android-37" so Gradle resolves it under the name it expects.
+          if [ -d "$ANDROID_HOME/platforms/android-37.0" ] && [ ! -d "$ANDROID_HOME/platforms/android-37" ]; then
+            ln -s android-37.0 "$ANDROID_HOME/platforms/android-37"
+          fi
+
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          echo "$ANDROID_HOME/cmake/${CMAKE_NATIVE_VERSION}/bin" >> "$GITHUB_PATH"
+
+          NDK_PATH="$ANDROID_HOME/ndk/${NDK_VERSION}"
+          TOOLCHAIN="$NDK_PATH/toolchains/llvm/prebuilt/linux-x86_64"
+          echo "ANDROID_NDK_HOME=$NDK_PATH" >> "$GITHUB_ENV"
+          echo "$TOOLCHAIN/bin" >> "$GITHUB_PATH"
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-ccache-${{ matrix.name }}-${{ hashFiles('src/KenjinxAndroid/app/src/main/cpp/**', 'src/KenjinxAndroid/CMakeLists.txt') }}
+          restore-keys: ${{ runner.os }}-ccache-${{ matrix.name }}-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            src/KenjinxAndroid/.gradle
+          key: ${{ runner.os }}-gradle-${{ matrix.name }}-${{ hashFiles('src/KenjinxAndroid/**/*.gradle*', 'src/KenjinxAndroid/**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-${{ matrix.name }}-
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.config') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Cache debug keystore
+        id: cache-keystore
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.config/.android/debug.keystore
+          key: debug-keystore
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Set up ccache
+        run: |
+          sudo apt-get install -y ccache
+          ccache -M "${{ env.CCACHE_MAXSIZE }}"
+          mkdir -p "${{ env.CCACHE_DIR }}"
+          echo "USE_CCACHE=1" >> "$GITHUB_ENV"
+          echo "NDK_CCACHE=ccache" >> "$GITHUB_ENV"
+          echo "CCACHE_DIR=${{ env.CCACHE_DIR }}" >> "$GITHUB_ENV"
+
+      - name: Generate debug keystore
+        if: steps.cache-keystore.outputs.cache-hit != 'true'
+        run: |
+          sudo mkdir -p /home/runner/.config/.android/
+          sudo chmod 755 /home/runner/.config/.android/
+          keytool -genkey -v \
+            -keystore /home/runner/.config/.android/debug.keystore \
+            -storepass android -alias androiddebugkey \
+            -keypass android -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Configure NuGet sources
+        run: |
+          find . -iname "nuget.config" -delete
+          cat > nuget.config << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+              <add key="ryujinx-projects" value="https://git.ryujinx.app/api/packages/projects/nuget/index.json" />
+            </packageSources>
+          </configuration>
+          EOF
+          dotnet nuget locals all --clear
+
+      - name: Build ${{ matrix.description }}
+        working-directory: src/KenjinxAndroid
+        run: |
+          chmod +x gradlew
+          echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m" >> gradle.properties
+          cat > local.properties << EOF
+          sdk.dir=$ANDROID_HOME
+          ndk.dir=$ANDROID_NDK_HOME
+          cmake.dir=$ANDROID_HOME/cmake/${CMAKE_NATIVE_VERSION}
+          EOF
+          ./gradlew ${{ matrix.gradle_task }} \
+            -Porg.kenjinx.config=release \
+            -Pandroid.ndkPath="$ANDROID_NDK_HOME" \
+            -Pandroid.enableCcache=true \
+            --no-daemon \
+            --build-cache \
+            --parallel
+
+      - name: Show ccache stats
+        run: ccache -s
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: src/KenjinxAndroid/app/build/outputs/apk/${{ matrix.apk_dir }}/release/*.apk
